@@ -1,7 +1,7 @@
 util.AddNetworkString( "UpdateStatTrak" )
 util.AddNetworkString( "SendInitialStatTrak" )
 
-st = {}
+--[[st = {}
 
 st.attachments = {}
 
@@ -9,7 +9,7 @@ if ( CustomizableWeaponry.registeredAttachments ) then
 	for k, v in ipairs( CustomizableWeaponry.registeredAttachments ) do
 		table.insert( st.attachments, v.name )
 	end
-end
+end]]
 
 wep_att = {}
 
@@ -132,9 +132,9 @@ end )
 
 hook.Add( "PlayerSpawn", "ST_PlayerSpawn", function( ply )
 	timer.Simple( 0.5, function()
-        if ply == nil then return end -- fixed by cobalt 1/30/16
+        if ply == nil then return end
 		local weps = ply:GetWeapons()
-		st[ ply ] = weps
+		--st[ ply ] = weps
 		
 		local tab = {}
 		
@@ -147,8 +147,7 @@ hook.Add( "PlayerSpawn", "ST_PlayerSpawn", function( ply )
 				table.insert( tab, { x, 0 } )
 			end
 		end
-		print("First time wep_att call - ", wep_att )
-		PrintTable( wep_att )
+
 		net.Start( "SendInitialStatTrak" )
 			net.WriteTable( tab )
 			net.WriteTable( wep_att )
@@ -173,10 +172,10 @@ hook.Add( "PlayerSpawn", "ST_PlayerSpawn", function( ply )
 	end )
 end )
 
-hook.Add( "Think", "UpdateSTWeps", function()
+--[[hook.Add( "Think", "UpdateSTWeps", function()
 	for k, v in next, player.GetAll() do
 		if st[ v ] ~= v:GetWeapons() then
 			st[ v ] = v:GetWeapons()
 		end
 	end
-end )
+end )]]

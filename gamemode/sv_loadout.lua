@@ -121,6 +121,28 @@ extras = {
 	{ "Medkit", "weapon_medkit", 0, "models/weapons/w_medkit.mdl", 0 }
 }
 
+function FixSlot( weapons, slot )
+	if istable( weapons ) then
+		for k, v in pairs( weapons ) do
+			if weapons.GetStored( v[2] ) then
+				weapons.GetStored( v[2] ).Slot = slot
+				weapons.GetStored( v[2] ).SlotPos = 0
+			end
+		end
+	elseif isstring( weapons ) then
+		if weapons.GetStored( weapons ) then
+			weapons.GetStored( weapons ).Slot = slot
+			weapons.GetStored( weapons ).SlotPos = 0
+		end
+	end
+end
+
+hook.Add( "PostInitEntity", "FixWeaponSlots", function()
+	FixSlot( primaries, 1 )
+	FixSlot( secondaries, 2 )
+	FixSlot( extras, 3 )
+end )
+
 perks = {}
 
 function RegisterPerk( name, value, lvl, hint )
@@ -234,14 +256,15 @@ function isExtra( class )
 	return false
 end
 
-function FixExploit( ply, wep )
+--[[function FixExploit( ply, wep )
 	ply:StripWeapon( wep )
 	local ent = ents.Create( wep )
 	ent:SetPos( ply:GetPos() )
 	ent:Spawn()
-end
+end]]
 
-function CheckWeapons()
+--//I fail to see the purpose of this, and it's being ran in a think hook, so disabling
+--[[function CheckWeapons()
 	for k, v in next, player.GetAll() do
 		if v and v ~= NULL and IsValid( v ) and v:Alive() then
 			if v:GetWeapons() then
@@ -285,9 +308,10 @@ function CheckWeapons()
 		end
 	end
 end
-hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )
+hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )]]
 
-hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind ) 
+--//Disabling because we only want players dropping their weapons when they pick up a different one
+--[[hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind ) 
 	if bind == KEY_Q then
 		if not ply.spawning then
 			if ply and IsValid( ply ) and ply:IsPlayer() and ply:Team() ~= nil and ply:Team() ~= 0 then
@@ -323,11 +347,15 @@ hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind )
 			end
 		end
 	end
-end )
+end )]]
 
+--//The point of this is to remove one magazine's worth of ammo from the player's ammo pool - was written extremely poorly
 function GM:WeaponEquip( wep )
 	timer.Simple( 0, function() -- this will call the following on the next frame
-        if wep == nil || wep:GetOwner() == nil then
+		if wep and wep:IsValid() and wep:GetOwner() then
+			wep:GetOwner():RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
+		end
+        --[[if wep == nil || wep:GetOwner() == nil then
             return;
         end -- fixed by cobalt 1/30/16
 		if not IsValid( wep:GetOwner() ) then
@@ -339,12 +367,13 @@ function GM:WeaponEquip( wep )
 		end
 		if not ply.spawning then
 			ply:RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
-		end
+		end]]
 	end )
 end
 
-hook.Add( "PlayerCanPickupWeapon", "CheckPickups", function( ply, wep )
-	if isPrimary( wep:GetClass() ) then
+hook.Add( "PlayerCanPickupWeapon", "NoAutoPickup", function( ply, wep )
+	return false --This will be done with a button prompt
+	--[[if isPrimary( wep:GetClass() ) then
 		if ply.curprimary == nil then
 			if wep.rspawn then
 				return false
@@ -374,25 +403,29 @@ hook.Add( "PlayerCanPickupWeapon", "CheckPickups", function( ply, wep )
 		else
 			return false
 		end
-	end
+	end]]
 end )
 
-hook.Add( "PlayerDeath", "clearthings", function( ply )
+--//Used to remove dropped weapons to prevent entity buildup
+hook.Add( "PlayerDeath", "ClearDroppedWeapons", function( ply )
 	if ply.LastUsedWep then	
 		if not isExtra( ply.LastUsedWep ) then
 			local ent = ents.Create( ply.LastUsedWep )
 			ent:SetPos( ply:GetPos() )
 			ent:Spawn()
-			timer.Simple( 15, function()
-                if ent == nil || ent:GetOwner() == nil then return end -- fixed by cobalt 1/30/16
+			timer.Simple( 60, function()
+				if ent and ent:IsValid() then
+					ent:Remove()
+				end
+                --[[if ent == nil || ent:GetOwner() == nil then return end -- fixed by cobalt 1/30/16
 				if ent:GetOwner():IsValid() and ent:GetOwner():IsPlayer() then 
 				else
 					ent:Remove()
-				end
+				end]]
 			end )
 		end
 	end
-	ply.curprimary = nil
+	--[[ply.curprimary = nil
 	ply.cursecondary = nil
-	ply.curextra = nil
+	ply.curextra = nil]]
 end )

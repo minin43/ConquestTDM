@@ -1,18 +1,22 @@
 SetGlobalInt( "Unbalanced", 0 )
+local teamPrevent = 0
 hook.Add( "Think", "TeamBalance", function()
-	local amtB = #team.GetPlayers( 2 )
-	local amtR = #team.GetPlayers( 1 )
-	if amtB - amtR >= 3 then
-		if GetGlobalInt( "Unbalanced" ) ~= 2 then
-			SetGlobalInt( "Unbalanced", 2 )
-		end
-	elseif amtR - amtB >= 3 then
-		if GetGlobalInt( "Unbalanced" ) ~= 1 then
-			SetGlobalInt( "Unbalanced", 1 )
-		end
-	elseif amtB - amtR < 3 and amtR - amtB < 3 then
-		if GetGlobalInt( "Unbalanced" ) ~= 0 then
-			SetGlobalInt( "Unbalanced", 0 )
+	if CurTime() > teamPrevent then
+		teamPrevent = CurTime() + 4
+		local amtB = #team.GetPlayers( 2 )
+		local amtR = #team.GetPlayers( 1 )
+		if amtB - amtR >= 3 then
+			if GetGlobalInt( "Unbalanced" ) ~= 2 then
+				SetGlobalInt( "Unbalanced", 2 )
+			end
+		elseif amtR - amtB >= 3 then
+			if GetGlobalInt( "Unbalanced" ) ~= 1 then
+				SetGlobalInt( "Unbalanced", 1 )
+			end
+		elseif amtB - amtR < 3 and amtR - amtB < 3 then
+			if GetGlobalInt( "Unbalanced" ) ~= 0 then
+				SetGlobalInt( "Unbalanced", 0 )
+			end
 		end
 	end
 end )
@@ -23,7 +27,7 @@ function team.GetSortedPlayers( tea )
 	return tab
 end
 
-timer.Create( "TeamBalance", 10, 0, function()
+timer.Create( "TeamBalance", 30, 0, function()
 	if GetGlobalInt( "Unbalanced" ) > 0 then
 		local more
 		local less

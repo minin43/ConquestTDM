@@ -195,7 +195,7 @@ function LoadoutMenu()
 	sec.ID = 1
 	local equ = choose:AddSheet( "Equipment", equipment )
 	equ.ID = 2
-	local per = choose:AddSheet( "Perks", perks )
+	local per = choose:AddSheet( "Perks", perks ) --Change here?
 	per.ID = 3
 
 	for k, v in pairs( choose.Items ) do
@@ -491,7 +491,7 @@ function LoadoutMenu()
 	perksbutton:SetSize( choose:GetWide() / 4, 48 )
 	perksbutton:SetPos( choose:GetWide() / 4 * 3, 56 )
 	perksbutton.Paint = function()
-		draw.SimpleText( "PERKS", "Exo 2 Tab", perksbutton:GetWide() / 2, perksbutton:GetTall() / 2, FontColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "CLASSES", "Exo 2 Tab", perksbutton:GetWide() / 2, perksbutton:GetTall() / 2, FontColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return true
 	end
 	perksbutton.DoClick = function()
@@ -534,7 +534,8 @@ function LoadoutMenu()
 		{ "Staff", 204 },
 		{ "Head Admin", 205 },
 		{ "Co-Owner", 206 },
-		{ "Developer", 209 }
+		{ "Developer", 209 },
+		{ "Secret", 206 }
 	}
 
 	net.Receive( "RequestWeaponsCallback", function()
@@ -597,7 +598,7 @@ function LoadoutMenu()
                 surface.SetTextColor( 0, 0, 0, 255 )
                 surface.SetTextPos( 72, 16 )
                 surface.DrawText( v[ 1 ] )
-                if blv > num and blv <= 100 and vip < 203 then
+                if blv > num and blv <= 200 and vip < 203 then
                     surface.SetDrawColor( 213, 0, 0, 255 )
                     surface.SetMaterial( locked )
                     surface.DrawTexturedRect( 16, 16, 40, 40 )
@@ -742,7 +743,7 @@ function LoadoutMenu()
                             buy.restricted = 1
                             return
                         end
-                        if blv > num and blv <= 100 and vip < 203 then
+                        if blv > num and blv <= 200 and vip < 203 then
                             buy.restricted = 1
                             return
                         end

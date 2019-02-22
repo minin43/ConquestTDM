@@ -356,28 +356,28 @@ hook.Add( "PlayerAuthed", "CheckCookies", function( ply )
 end )
 
 -- you can turn on cheats and allowcslua serverside if you want to i guess
-hook.Add( "Think", "SetGlobalBools", function()
-	local cheats = GetConVar( "sv_cheats" ):GetBool()
-	if cheats then
-		if not GetGlobalBool( "cheats" ) == true then
-			SetGlobalBool( "cheats", true )
-		end
-	else
-		if not GetGlobalBool( "cheats" ) == false then
-			SetGlobalBool( "cheats", false )
-		end
-	end
-	local acl = GetConVar( "sv_allowcslua" ):GetBool()
-	if acl then
-		if not GetGlobalBool( "allowcslua" ) == true then
-			SetGlobalBool( "allowcslua", true )
-		end
-	else
-		if not GetGlobalBool( "allowcslua" ) == false then
-			SetGlobalBool( "allowcslua", false )
-		end
-	end
-end )
+-- hook.Add( "Think", "SetGlobalBools", function()
+	-- local cheats = GetConVar( "sv_cheats" ):GetBool()
+	-- if cheats then
+		-- if not GetGlobalBool( "cheats" ) == true then
+			-- SetGlobalBool( "cheats", true )				Don't even need this since Cake will do this for you
+		-- end
+	-- else
+		-- if not GetGlobalBool( "cheats" ) == false then
+			-- SetGlobalBool( "cheats", false )
+		-- end
+	-- end
+	-- local acl = GetConVar( "sv_allowcslua" ):GetBool()
+	-- if acl then
+		-- if not GetGlobalBool( "allowcslua" ) == true then
+			-- SetGlobalBool( "allowcslua", true )
+		-- end
+	-- else
+		-- if not GetGlobalBool( "allowcslua" ) == false then
+			-- SetGlobalBool( "allowcslua", false )
+		-- end
+	-- end
+-- end )
 
 hook.Add( "Initialize", "StartUp", function()
 	hax.Init()

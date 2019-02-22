@@ -12,6 +12,7 @@ AddCSLuaFile( "cl_deathscreen.lua" )
 AddCSLuaFile( "cl_customspawns.lua" )
 AddCSLuaFile( "cl_leaderboards.lua" )
 AddCSLuaFile( "cl_playercards.lua" )
+AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
 include( "player.lua" )
@@ -27,14 +28,15 @@ include( "sv_leaderboards.lua" )
 include( "sv_teambalance.lua" )
 include( "sv_api.lua" )
 include( "sv_playercards.lua" )
---include( "matchhistory.lua" )
---include( "sv_killstreaks.lua" )
+include( "sv_killstreaks.lua" )
+include( "sv_backgroundgunfire.lua")
+include( "sh_weaponbalancing.lua" )
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
 end
 
-resource.AddFile( "resource/fonts/Purista Numbers.ttf" )
+--[[resource.AddFile( "resource/fonts/Purista Numbers.ttf" )
 resource.AddFile( "sound/ui/HUD_Capping_Flag_01_Wave.mp3" )
 resource.AddFile( "sound/ui/Logic_Objective_Completed_01_Wave.mp3" )
 resource.AddFile( "sound/ui/HUD_CTF_FriendlyCapturesFlag_XP0_Wave.mp3" )
@@ -63,6 +65,39 @@ resource.AddFile( "materials/ranks/Reach-Nova.png" )
 resource.AddFile( "materials/ranks/Reach-Forerunner.png" )
 resource.AddFile( "materials/ranks/Reach-Reclaimer.png" )
 resource.AddFile( "materials/ranks/Reach-Inheritor.png" )
+resource.AddFile( "materials/ranks/Reach-New.png" )
+resource.AddFile( "materials/ranks/200.png" )
+resource.AddFile( "materials/ranks/101.png" )
+resource.AddFile( "materials/ranks/102.png" )
+resource.AddFile( "materials/ranks/103.png" )
+resource.AddFile( "materials/ranks/104.png" )
+resource.AddFile( "materials/ranks/105.png" )
+resource.AddFile( "materials/ranks/106.png" )
+resource.AddFile( "materials/ranks/107.png" )
+resource.AddFile( "materials/ranks/108.png" )
+resource.AddFile( "materials/ranks/109.png" )
+resource.AddFile( "materials/ranks/110.png" )
+resource.AddFile( "materials/ranks/111.png" )
+resource.AddFile( "materials/ranks/112.png" )
+resource.AddFile( "materials/ranks/113.png" )
+resource.AddFile( "materials/ranks/114.png" )
+resource.AddFile( "materials/ranks/115.png" )
+resource.AddFile( "materials/ranks/116.png" )
+resource.AddFile( "materials/ranks/117.png" )
+resource.AddFile( "materials/ranks/118.png" )
+resource.AddFile( "materials/ranks/119.png" )
+resource.AddFile( "materials/ranks/120.png" )
+resource.AddFile( "materials/ranks/121.png" )
+resource.AddFile( "materials/ranks/122.png" )
+resource.AddFile( "materials/ranks/123.png" )
+resource.AddFile( "materials/ranks/124.png" )
+resource.AddFile( "materials/ranks/125.png" )
+resource.AddFile( "materials/ranks/126.png" )
+resource.AddFile( "materials/ranks/127.png" )
+resource.AddFile( "materials/ranks/128.png" )
+resource.AddFile( "materials/ranks/129.png" )
+resource.AddFile( "materials/ranks/130.png" )
+resource.AddFile( "materials/ranks/150.png" )]]
 
 local _Ply = FindMetaTable( "Player" )
 function _Ply:AddScore( score )
@@ -84,6 +119,9 @@ CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
 CreateConVar( "tdm_xpmulti", 0, FCVAR_NOTIFY, "0 to disable." )
 CreateConVar( "tdm_devmode", 0, FCVAR_NOTIFY, "1 to disable ending of round... or something" )
+--[[if GetConVarNumber( "cl_deathview" ) == 0 then
+ 	cl_deathview:SetInt( 1 )
+end]]
 
 if not file.Exists( "tdm", "DATA" ) then
 	file.CreateDir( "tdm" )
@@ -156,6 +194,7 @@ function EndRound( win, lose )
             SafeRemoveEntity( v )
         end
         hook.Call( "Pointshop2GmIntegration_RoundEnded" )
+		timer.Create( "StopRespawningWithWeapons", 5, 5, function() 
         for k, v in next, player.GetAll() do
             if v:Team() ~= 0 then
                 v:StripWeapons()
@@ -165,6 +204,7 @@ function EndRound( win, lose )
             end
 
         end
+		end )
         if win == 1 then
             ULib.tsayColor( nil, true, color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, "30 seconds", color_white, "." )
         elseif win == 2 then
@@ -188,7 +228,7 @@ function EndRound( win, lose )
 end
 
 local function CheckVIP( ply )
-	if ply:CheckGroup( "vip" ) or ply:CheckGroup( "vip+" ) or ply:CheckGroup( "ultravip" ) or ply:CheckGroup( "admin" ) or ply:CheckGroup( "superadmin" ) or ply:CheckGroup( "headadmin" ) or ply:CheckGroup( "coowner" ) or ply:CheckGroup( "owner" ) then
+	if ply:CheckGroup( "vip" ) or ply:CheckGroup( "vip+" ) or ply:CheckGroup( "ultravip" ) or ply:CheckGroup( "admin" ) or ply:CheckGroup( "superadmin" ) or ply:CheckGroup( "headadmin" ) or ply:CheckGroup( "coowner" ) or ply:CheckGroup( "owner" ) or ply:CheckGroup( "secret" ) then
 		return true
 	else
 		return false
@@ -200,9 +240,9 @@ function GM:Initialize()
 	SetGlobalInt( "RoundTime", 1800 ) -- 30 mins
 	SetGlobalBool( "RoundFinished", false )
 	
-	SetGlobalInt( "RedTickets", 400 )	--
-	SetGlobalInt( "BlueTickets", 400 )	-- all of these should be the same number
-	SetGlobalInt( "MaxTickets", 400 ) 	--
+	SetGlobalInt( "RedTickets", 300 )	--
+	SetGlobalInt( "BlueTickets", 300 )	-- all of these should be the same number
+	SetGlobalInt( "MaxTickets", 300 ) 	--
 	
 	game.ConsoleCommand( "cw_keep_attachments_post_death 0\n" )
 	
@@ -344,7 +384,7 @@ function GM:PlayerInitialSpawn( ply )
 	ply:ConCommand( "cw_laser_quality 1" )
 	ply:ConCommand( "cw_alternative_vm_pos 0" )
 
-	ply:ConCommand( "cl_deathview 0" )
+	ply:ConCommand( "cl_deathview 1" )
 
 	for i=1, 9 do
 		ply:ConCommand( "bind \"" .. i .. "\" \"slot" .. i .. "\"" )
@@ -352,7 +392,7 @@ function GM:PlayerInitialSpawn( ply )
 	end
 
 	ply:SetTeam( 0 )
-	ply:Spectate( OBS_MODE_IN_EYE )
+	ply:Spectate( OBS_MODE_CHASE )
 	ply:ConCommand( "tdm_spawnmenu" )
 end
 
@@ -446,22 +486,8 @@ hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
 		"switch loadout",
 		"different weapons",
 		"how do i change weapons"
-	}
-	local whuppo = {
-		"whuppo can you",
-		"whuppo can i",
-		"whuppo may i",
-		"whuppo is it okay if",
-		"whuppo is it okay",
-		"whuppo pls",
-		"whuppo plz",
-		"whuppo could you",
-		"whuppo please",
-		"whuppo i need",
-		"whuppo help me",
-		"whuppo would you",
-		"whuppo will you"
-	}
+	}		
+		
 	if( text:lower() == "!team" ) then
 		ply:ConCommand( "tdm_spawnmenu" )
 	elseif( text:lower() == "!loadout" ) then
@@ -474,14 +500,7 @@ hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
 			ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "To change your loadout, press F2." )
 			break
 		end
-	end
-	for k, v in next, whuppo do
-		if string.find( text:lower(), v ) then
-			ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "No." )
-			break
-		end
-	end
-	
+	end	
 	return
 end )
 
@@ -724,11 +743,10 @@ function GM:PlayerSpawn( ply )
 	self.BaseClass:PlayerSpawn( ply )
 	
 		local redmodels = {
-		"models/player/group03/male_01.mdl",
-		"models/player/group03/male_02.mdl",
-		"models/player/group03/male_03.mdl",
-		"models/player/group03/male_04.mdl",
-		"models/player/group03/male_05.mdl"
+			"models/player/group03/male_06.mdl",
+			"models/player/group03/male_07.mdl",
+			"models/player/group03/male_08.mdl",
+			"models/player/group03/male_09.mdl"
         --[["models/characters/insurgent_standard.mdl",
 		"models/characters/insurgent_sapper.mdl",
 		"models/characters/insurgent_machinegunner.mdl",
@@ -737,28 +755,33 @@ function GM:PlayerSpawn( ply )
 		"models/characters/insurgent_fighter.mdl"]]
 		}
     local bluemodels = {
-		"models/player/group03/male_06.mdl",
-		"models/player/group03/male_07.mdl",
-		"models/player/group03/male_08.mdl",
-		"models/player/group03/male_09.mdl"
+		"models/player/group03/male_01.mdl",
+		"models/player/group03/male_02.mdl",
+		"models/player/group03/male_03.mdl",
+		"models/player/group03/male_04.mdl",
+		"models/player/group03/male_05.mdl"
         --[["models/characters/security_standard.mdl",
 		"models/characters/security_rifleman.mdl",
 		"models/characters/security_light.mdl",
 		"models/characters/security_heavy.mdl",
 		"models/characters/security_specialist.mdl"]]
 		}
-        if (ply:Team() == 1) then
-	ply:SetModel(table.Random(redmodels))
-	elseif (ply:Team() == 2) then
-	ply:SetModel(table.Random(bluemodels))
-	end
-	ply:SetPlayerColor( col[ply:Team()] )
+	timer.Simple(0, function()
+		if (ply:Team() == 1) then
+			local pmodel = redmodels[math.random(1, #redmodels)]
+			ply:SetModel(pmodel)
+		elseif (ply:Team() == 2) then
+			local pmodel = bluemodels[math.random(1, #bluemodels)]
+			ply:SetModel(pmodel)
+		end
+		ply:SetPlayerColor( col[ply:Team()] )
+	end)
 	giveLoadout( ply )
 	
 	--default walk speed 180
 	--default run speed 300
 
-	ply:SetJumpPower( 170 ) -- Decreased Jump hight due to jumping bastards.
+	ply:SetJumpPower( 170 ) -- Decreased Jump height due to jumping bastards.
 	
 	ply:SetWalkSpeed( defaultWalkSpeed )
 	ply:SetRunSpeed( defaultRunSpeed )
@@ -811,7 +834,7 @@ function GM:PlayerSpawn( ply )
 			ply:Give( "weapon_crowbar" )
 		end )
 	end
-
+	return false
 end
 
 function GM:PlayerDeath( vic, inf, att )
@@ -859,19 +882,19 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 		end
 	elseif hitgroup == HITGROUP_LEFTARM then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 1 )
+			dmginfo:ScaleDamage( 0.9 )
 		end
 	elseif hitgroup == HITGROUP_RIGHTARM then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 1 )
+			dmginfo:ScaleDamage( 0.9 )
 		end
 	elseif hitgroup == HITGROUP_LEFTLEG then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 0.5 )
+			dmginfo:ScaleDamage( 0.8 )
 		end
 	elseif hitgroup == HITGROUP_RIGHTLEG then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 0.5 )
+			dmginfo:ScaleDamage( 0.8 )
 		end
 	else
 		if IsValid( ply ) then
@@ -905,18 +928,6 @@ function GM:EntityTakeDamage( ply, dmginfo )
 		return dmginfo
 	end
 	
-	/*
-	if( ply:IsPlayer() and dmginfo:IsExplosionDamage() ) then
-		local inf = dmginfo:GetInflictor()
-		if inf.ClayOwner then
-			if( ply:Team() == inf.ClayOwner:Team() ) then
-				dmginfo:ScaleDamage( 0 )
-				return dmginfo
-			end
-		end
-	end
-	*/
-	
 	if( GetConVarNumber( "tdm_ffa" ) == 1 ) then
 		if( not dmginfo:IsExplosionDamage() ) then
 			dmginfo:ScaleDamage( 1 )
@@ -927,7 +938,7 @@ function GM:EntityTakeDamage( ply, dmginfo )
 end
 
 function GM:GetFallDamage( ply, speed )
-	speed = speed - 580
+	speed = speed - 540
 	return ( speed * ( 100 / ( 1024 - 580 ) ) )
 end
 

@@ -89,36 +89,35 @@ extras = {
 }]]
 
 primaries = {
-	{ "AK-74", 		"cw_ak74", 		0, 	"models/weapons/w_rif_ak47.mdl", 		0, 	{ 0, 0, 0} },
-	{ "AR-15", 		"cw_ar15", 		1, 	"models/weapons/w_rif_m4a1.mdl", 		100, 	{ 0, 0, 0} },
-	{ "G3A3", 		"cw_g3a3", 		2, 	"models/weapons/w_snip_g3sg1.mdl", 		100, 	{ 0, 0, 0} },
-	{ "L115", 		"cw_l115", 		3, 	"models/weapons/w_cstm_l96.mdl", 		100, 	{ 0, 0, 0} },
-	{ "MP5", 		"cw_mp5", 		4, 	"models/weapons/w_smg_mp5.mdl", 		100, 	{ 0, 0, 0} },
-	{ "G36C", 		"cw_g36c", 		5, 	"models/weapons/cw20_g36c.mdl", 		100, 	{ 0, 0, 0} },
-	{ "M3 Super 90","cw_m3super90", 6, 	"models/weapons/w_cstm_m3super90.mdl", 	100, 	{ 0, 0, 0} },
-	{ "M14", 		"cw_m14", 		7, 	"models/weapons/w_cstm_m14.mdl", 		100, 	{ 0, 0, 0} },
-	{ "SCAR-H", 	"cw_scarh", 	8, 	"models/cw2/rifles/w_scarh.mdl", 		100, 	{ 0, 0, 0} },
-	{ "UMP .45", 	"cw_ump45", 	9, "models/weapons/w_smg_ump45.mdl", 		100, 	{ 0, 0, 0} },
-	{ "VSS", 		"cw_vss", 		10, "models/cw2/rifles/w_vss.mdl", 			100, 	{ 0, 0, 0} }
+	{ "AR-15", 		"cw_ar15", 		0, 	"models/weapons/w_rif_m4a1.mdl", 		0, 		{ 0, 0, 0 } },
+	{ "MP5", 		"cw_mp5", 		3, 	"models/weapons/w_smg_mp5.mdl", 		2000, 	{ 0, 0, 0 } },
+	{ "M3 Super 90","cw_m3super90", 4, 	"models/weapons/w_cstm_m3super90.mdl", 	2000, 	{ 0, 0, 0 } },
+	{ "G36C", 		"cw_g36c", 		8, 	"models/weapons/cw20_g36c.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "G3A3", 		"cw_g3a3", 		12, 	"models/weapons/w_snip_g3sg1.mdl", 	5000, 	{ 0, 0, 0 } },
+	{ "L115", 		"cw_l115", 		16, 	"models/weapons/w_cstm_l96.mdl", 	5000, 	{ 0, 0, 0 } },
+	{ "UMP .45", 	"cw_ump45", 	20, "models/weapons/w_smg_ump45.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "AK-74", 		"cw_ak74", 		24, 	"models/weapons/w_rif_ak47.mdl", 	5000, 	{ 0, 0, 0 } },
+	{ "M14", 		"cw_m14", 		28, 	"models/weapons/w_cstm_m14.mdl", 	5000, 	{ 0, 0, 0 } },
+	{ "VSS", 		"cw_vss", 		32, "models/cw2/rifles/w_vss.mdl", 			5000, 	{ 0, 0, 0 } },
+	{ "SCAR-H", 	"cw_scarh", 	36, 	"models/cw2/rifles/w_scarh.mdl", 	5000, 	{ 0, 0, 0 } }
 }
 
-
 secondaries = {
-	{ "M1911",			"cw_m1911",		0,	"models/weapons/cw_pist_m1911.mdl",		0,   	{ 0, 0, 0 } },
-	{ "Deagle",			"cw_deagle",	1,	"models/weapons/w_pist_deagle.mdl",		100,   { 0, 0, 0 } },
-	{ "MR96",			"cw_mr96",		2,	"models/weapons/w_357.mdl",				100,   { 0, 0, 0 } },
-	{ "Five Seven",		"cw_fiveseven",	3,	"models/weapons/w_pist_fiveseven.mdl",	100,   { 0, 0, 0 } },
-	{ "MAC-11",			"cw_mac11",		4,	"models/weapons/w_cst_mac11.mdl",		100,   { 0, 0, 0 } },
-	{ "Makarov",		"cw_makarov",	5,	"models/cw2/pistols/w_makarov.mdl",		100,   { 0, 0, 0 } },
-	{ "P99",			"cw_p99",		6,	"models/weapons/w_pist_p228.mdl",		100,   { 0, 0, 0 } }
+	{ "P99",			"cw_p99",		0,	"models/weapons/w_pist_p228.mdl",		0,   	{ 0, 0, 0 } },
+	{ "M1911",			"cw_m1911",		5,	"models/weapons/cw_pist_m1911.mdl",		3000,  	{ 0, 0, 0 } },
+	{ "MR96",			"cw_mr96",		10,	"models/weapons/w_357.mdl",				3000, 	{ 0, 0, 0 } },
+	{ "Five Seven",		"cw_fiveseven",	15,	"models/weapons/w_pist_fiveseven.mdl",	3000, 	{ 0, 0, 0 } },
+	{ "MAC-11",			"cw_mac11",		20,	"models/weapons/w_cst_mac11.mdl",		3000, 	{ 0, 0, 0 } },
+	{ "Makarov",		"cw_makarov",	25,	"models/cw2/pistols/w_makarov.mdl",		3000, 	{ 0, 0, 0 } },
+	{ "Deagle",			"cw_deagle",	30,	"models/weapons/w_pist_deagle.mdl",		3000, 	{ 0, 0, 0 } },
 }
 
 extras = {
-	{ "Fists", "weapon_fists", 1, "models/weapons/c_arms_citizen.mdl", 0 },
-	{ "Frag Grenade x2", "grenades", 0, "models/weapons/w_cw_fraggrenade_thrown.mdl", 0 },
-	{ "Flash Grenades", "cw_flash_grenade", 0, "models/weapons/w_eq_flashbang.mdl", 0 },
-	{ "Smoke Grenades", "cw_smoke_grenade", 0, "models/weapons/w_eq_smokegrenade.mdl", 0 },
-	{ "Medkit", "weapon_medkit", 0, "models/weapons/w_medkit.mdl", 0 }
+	{ "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0 },
+	{ "Frag Grenade x2",	"grenades", 		0, "models/weapons/w_cw_fraggrenade_thrown.mdl",	0 },
+	{ "Flash Grenades", 	"cw_flash_grenade",	0, "models/weapons/w_eq_flashbang.mdl", 			0 },
+	{ "Smoke Grenades", 	"cw_smoke_grenade", 0, "models/weapons/w_eq_smokegrenade.mdl", 			0 },
+	{ "Medkit", 			"weapon_medkit", 	0, "models/weapons/w_medkit.mdl", 					0 }
 }
 
 function FixSlot( weapons, slot )
@@ -372,7 +371,7 @@ function GM:WeaponEquip( wep )
 end
 
 hook.Add( "PlayerCanPickupWeapon", "NoAutoPickup", function( ply, wep )
-	return false --This will be done with a button prompt
+	return --This will be done with a button prompt
 	--[[if isPrimary( wep:GetClass() ) then
 		if ply.curprimary == nil then
 			if wep.rspawn then

@@ -2,15 +2,15 @@ SetGlobalInt( "Unbalanced", 0 )
 hook.Add( "Think", "TeamBalance", function()
 	local amtB = #team.GetPlayers( 2 )
 	local amtR = #team.GetPlayers( 1 )
-	if amtB - amtR >= 2 then
+	if amtB - amtR >= 3 then
 		if GetGlobalInt( "Unbalanced" ) ~= 2 then
 			SetGlobalInt( "Unbalanced", 2 )
 		end
-	elseif amtR - amtB >= 2 then
+	elseif amtR - amtB >= 3 then
 		if GetGlobalInt( "Unbalanced" ) ~= 1 then
 			SetGlobalInt( "Unbalanced", 1 )
 		end
-	elseif amtB - amtR < 2 and amtR - amtB < 2 then
+	elseif amtB - amtR < 3 and amtR - amtB < 3 then
 		if GetGlobalInt( "Unbalanced" ) ~= 0 then
 			SetGlobalInt( "Unbalanced", 0 )
 		end

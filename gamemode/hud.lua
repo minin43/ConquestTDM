@@ -24,8 +24,8 @@ surface.CreateFont( "PrimaryAmmo", { font = "Exo 2", size = 80 } )
 surface.CreateFont( "PrimaryAmmoBG", { font = "Exo 2", size = 80, blursize = 6 } )
 surface.CreateFont( "SecondaryAmmo", { font = "Exo 2", size = 40 } )
 surface.CreateFont( "SecondaryAmmoBG", { font = "Exo 2", size = 40, blursize = 6 } )
-surface.CreateFont( "Health", { font = "Exo 2", size = 23, weight = 600 } )
-surface.CreateFont( "HealthBG", { font = "Exo 2", size = 23, weight = 600, blursize = 6 } )
+surface.CreateFont( "Health", { font = "Exo 2", size = 20, weight = 500, antialias = true } )
+surface.CreateFont( "HealthBG", { font = "Exo 2", size = 80, weight = 600, antialias = true } )
 surface.CreateFont( "Time", { font = "Exo 2", size = 28, weight = 1 } )
 surface.CreateFont( "Info", { font = "Exo 2", size = 24, weight = 1 } )
 surface.CreateFont( "Killfeed", { font = "BF4 Numbers", size = 20, weight = 1 } )
@@ -36,15 +36,21 @@ surface.CreateFont( "NameBG", { font = "Exo 2", size = 24, blursize = 2 } )
 surface.CreateFont( "Level", { font = "Exo 2", size = 18 } )
 surface.CreateFont( "LevelBG", { font = "Exo 2", size = 18, blursize = 2 } )
 
+surface.CreateFont( "UT3", { font = "Unreal Tournament", size = 125, antialias = false, shadow = false, outline = true } )
+surface.CreateFont( "UT3-Back", { font = "Unreal Tournament", size = 128, antialias = false, shadow = false, outline = true } )
+surface.CreateFont( "UT3-Small", { font = "Unreal Tournament", size = 79, antialias = true } )
+
+local redicon = Material( "hud/redicon.png" )
+local redicon2 = Material( "hud/redicon2.png" )
+local blueicon = Material( "hud/blueicon.png" )
+local blueicon2 = Material( "hud/blueicon2.png" )
 
 CreateClientConVar( "hud_lag", 1, true, true )
 CreateClientConVar( "hud_halo", 1, true, true )
 CreateClientConVar( "hud_fade", 1, true, true )
 CreateClientConVar( "hud_indicator", 1, true, true )
 CreateClientConVar( "hud_showexp", 0, true, true )
-
---CreateClientConVar( "hud_zoom", 1, true, true )
---CreateClientConVar( "whuppowhatareyoudoingpleasestopthis", 0, true, true )
+CreateClientConVar( "hud_old", 1, true, true )
 
 -- http://lua-users.org/wiki/FormattingNumbers
 local function comma_value( amount )
@@ -141,6 +147,12 @@ usermessage.Hook( "damage_death", function()
 	hitpos = {}
 end )
 
+--[[timer.Create( "AAGunFire", math.Rand( 20, 30 ), 0, function()
+	surface.PlaySound( "hud/aa_gun_firing" .. math.random( 1, 6 ) .. ".wav" )
+end)
+timer.Create( "AAGunFireExtra", math.Rand( 15, 30 ), 0, function()
+	surface.PlaySound( "hud/aa_gun_firing_extra" .. math.random( 1, 4 ) .. ".wav" )
+end)]]
 
 local drawtime = {
 	{ x = ScrW() / 2 - 90 + 20, y = 0 },
@@ -165,422 +177,955 @@ globalblue, globalred, bluealpha, redalpha = 0, 0, 0, 0
 levelpercent = 0
 curmoney = 0
 
-hook.Add( "HUDPaint", "hud_main", function()	
+local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
+local bloodpulse = true
+local pulse = 0
 
-	if GetGlobalBool( "RoundFinished" ) == true then
-		return
-	end
+hook.Add( "HUDPaint", "hud_main", function()
 
-	-- sway
-	if not hl.na then
-		hl.na = LocalPlayer():EyeAngles()
-	end
-
-	hl.la = hl.na
-	hl.ca = LocalPlayer():EyeAngles()
+	if GetConVarNumber("hud_old") == 0 then
+		if GetGlobalBool( "RoundFinished" ) == true then
+			return
+		end
 	
+		-- sway
+		if not hl.na then
+			hl.na = LocalPlayer():EyeAngles()
+		end
 	
-	if hl.la.y < -90 and hl.ca.y > 90 then
-		hl.la.y = hl.la.y + 360
-	elseif hl.la.y > 90 and hl.ca.y < -90 then
-		hl.la.y = hl.la.y - 360
-	end
-
-	hl.la.x = hl.la.x
-
-	if GetConVarNumber( "hud_lag" ) == 1 then
-		hl.x = ( hl.ca.y - hl.la.y ) / 2.4
-		hl.y = ( hl.la.p - hl.ca.p ) / 2.4
-	else
-		hl.x = 0
-		hl.y = 0
-	end
-	hl.nm = FrameTime() * 24 --This is the speed at which the hud moves. 5 is a good number.
-	hl.na = Angle( ( hl.ca.p * hl.nm + hl.la.p ) / ( hl.nm + 1 ), ( hl.ca.y * hl.nm + hl.la.y ) / ( hl.nm + 1 ), 0 ) --Set the new angle
+		hl.la = hl.na
+		hl.ca = LocalPlayer():EyeAngles()
+		
+		
+		if hl.la.y < -90 and hl.ca.y > 90 then
+			hl.la.y = hl.la.y + 360
+		elseif hl.la.y > 90 and hl.ca.y < -90 then
+			hl.la.y = hl.la.y - 360
+		end
 	
-	if LocalPlayer():Team() == 0 then
-		if LocalPlayer():GetObserverTarget() then
-			n = LP():GetObserverTarget():Name()
-			nhp = LP():GetObserverTarget():Health()
+		hl.la.x = hl.la.x
+	
+		if GetConVarNumber( "hud_lag" ) == 1 then
+			hl.x = ( hl.ca.y - hl.la.y ) / 2.4
+			hl.y = ( hl.la.p - hl.ca.p ) / 2.4
 		else
-			n = "Nobody"
-			nhp = 100
+			hl.x = 0
+			hl.y = 0
 		end
-		if LocalPlayer():GetObserverMode() == OBS_MODE_ROAMING then
-			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, 35 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, 35, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		elseif LocalPlayer():GetObserverMode() == OBS_MODE_CHASE then
-			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, 35 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, 35, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, 52 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, 52, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		elseif LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE then
-			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, 35 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, 35, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, 52 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, 52, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		end
+		hl.nm = FrameTime() * 24 --This is the speed at which the hud moves. 5 is a good number.
+		hl.na = Angle( ( hl.ca.p * hl.nm + hl.la.p ) / ( hl.nm + 1 ), ( hl.ca.y * hl.nm + hl.la.y ) / ( hl.nm + 1 ), 0 ) --Set the new angle
 		
-		draw.NoTexture()
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawPoly( drawtime )
-		surface.DrawPoly( drawtime_fix )
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawPoly( drawscore )
-		local num = GetGlobalInt( "RoundTime" )
-		local col
-		if num <= 60 then
-			col = Color( 255, 0, 0, 255 )
-		elseif num > 60 then
-			col = Color( 255, 255, 255, 200 )
-		end
-		local t = string.FormattedTime( tostring( num ) )
-		t.m = tostring( t.m )
-		t.s = tostring( t.s )
-		if #t.m == 1 then
-			t.m = "0" .. t.m
-		end
-		if #t.s == 1 then
-			t.s = "0" .. t.s
-		end
-		draw.SimpleText( t.m .. ":" .. t.s, "spectime", ScrW() / 2, 11, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		
-		if GetGlobalBool( "ticketmode" ) == true then
-			redtix = GetGlobalInt( "RedTickets" )
-			draw.SimpleText( redtix, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		if LocalPlayer():Team() == 0 then
+			if LocalPlayer():GetObserverTarget() then
+				n = LP():GetObserverTarget():Name() or ""
+				nhp = LP():GetObserverTarget():Health() or 0
+			else
+				n = "Nobody"
+				nhp = 100
+			end
+			if LocalPlayer():GetObserverMode() == OBS_MODE_ROAMING then
+				draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, 35 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, 35, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			elseif LocalPlayer():GetObserverMode() == OBS_MODE_CHASE then
+				draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, 35 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, 35, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, 52 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, 52, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			elseif LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE then
+				draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, 35 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, 35, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, 52 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, 52, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			end
 			
-			bluetix = GetGlobalInt( "BlueTickets" )
-			draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		else
-			draw.SimpleText( "000", "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "000", "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.NoTexture()
+			surface.SetDrawColor( 0, 0, 0, 200 )
+			surface.DrawPoly( drawtime )
+			surface.DrawPoly( drawtime_fix )
+			surface.SetDrawColor( 0, 0, 0, 200 )
+			surface.DrawPoly( drawscore )
+			local num = GetGlobalInt( "RoundTime" )
+			local col
+			if num <= 60 then
+				col = Color( 255, 0, 0, 255 )
+			elseif num > 60 then
+				col = Color( 255, 255, 255, 200 )
+			end
+			local t = string.FormattedTime( tostring( num ) )
+			t.m = tostring( t.m )
+			t.s = tostring( t.s )
+			if #t.m == 1 then
+				t.m = "0" .. t.m
+			end
+			if #t.s == 1 then
+				t.s = "0" .. t.s
+			end
+			draw.SimpleText( t.m .. ":" .. t.s, "spectime", ScrW() / 2, 11, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			
+			if GetGlobalBool( "ticketmode" ) == true then
+				redtix = GetGlobalInt( "RedTickets" )
+				draw.SimpleText( redtix, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+				
+				bluetix = GetGlobalInt( "BlueTickets" )
+				draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			else
+				draw.SimpleText( "000", "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "000", "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			end
+			
+			return
 		end
-		
-		return
-	end
-
-	surface.SetFont( "Info" )
-	local info = "[F1] Team | [F2] Loadout"
-	local num = surface.GetTextSize( info )
-
-	local _time = GetGlobalInt( "RoundTime" )
-	local col = Color( 255, 255, 255, 255 )
-	if _time <= 60 then
-		col = Color( math.abs( math.sin( RealTime() * ( 13 - ( _time / 5 ) ) ) * 205 ) + 50, 0, 0, 255 )
-	end
-	local time = string.FormattedTime( tostring( _time ) )
-	time.m = tostring( time.m )
-	time.s = tostring( time.s )
-	if #time.m == 1 then
-		time.m = "0" .. time.m
-	end
-	if #time.s == 1 then
-		time.s = "0" .. time.s
-	end
-
-	surface.SetDrawColor( 0, 0, 0, 100 )
-	surface.DrawRect( 32, 64, 70, 27 )
-	surface.DrawRect( 32, 64, num + 32 + 70, 27 )
-	surface.SetDrawColor( 0, 0, 0, 200 )
-	surface.SetTexture( gradient )
-	surface.DrawTexturedRect( 32 + 70, 64, 4, 27 )
-
-	draw.SimpleText( time.m .. ":" .. time.s, "Time", 68, 63, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-	surface.SetFont( "Info" )
-	surface.SetTextColor( 255, 255, 255, 200 )
-	surface.SetTextPos( 102 + 16, 64 )
-	surface.DrawText( info )
-
-	surface.SetTextColor( 255, 255, 255, 80 )
-	surface.SetTextPos( 32, 32 )
-	surface.DrawText( "CTDM 2.0 ALPHA | WORK IN PROGRESS | build 073015a" )
-
-	if LP():Alive() then
-
-		for k, v in next, hitpos do
+	
+		surface.SetFont( "Info" )
+		local info = "[F1] Team | [F2] Loadout"
+		local num = surface.GetTextSize( info )
+	
+		local _time = GetGlobalInt( "RoundTime" )
+		local col = Color( 255, 255, 255, 255 )
+		if _time <= 60 then
+			col = Color( math.abs( math.sin( RealTime() * ( 13 - ( _time / 5 ) ) ) * 205 ) + 50, 0, 0, 255 )
+		end
+		local time = string.FormattedTime( tostring( _time ) )
+		time.m = tostring( time.m )
+		time.s = tostring( time.s )
+		if #time.m == 1 then
+			time.m = "0" .. time.m
+		end
+		if #time.s == 1 then
+			time.s = "0" .. time.s
+		end
+	
+		surface.SetDrawColor( 0, 0, 0, 100 )
+		surface.DrawRect( 32, 64, 70, 27 )
+		surface.DrawRect( 32, 64, num + 32 + 70, 27 )
+		surface.SetDrawColor( 0, 0, 0, 200 )
+		surface.SetTexture( gradient )
+		surface.DrawTexturedRect( 32 + 70, 64, 4, 27 )
+	
+		draw.SimpleText( time.m .. ":" .. time.s, "Time", 68, 90, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		surface.SetFont( "Info" )
+		surface.SetTextColor( 255, 255, 255, 200 )
+		surface.SetTextPos( 102 + 10, 64 )
+		surface.DrawText( info )
+	
+		surface.SetTextColor( 255, 255, 255, 80 )
+		surface.SetTextPos( 32, 32 )
+		surface.DrawText( "CTDM 2.0 | WIP" )  --build 073015a
+	
+		if LP():Alive() then
+	
+			for k, v in next, hitpos do
 			surface.SetMaterial( damage )
-			surface.SetDrawColor( 255, 0, 0, 255 * v[ 2 ] )
-			surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() / 2, 288, 288, v[ 1 ] - 180 )
-			v[ 2 ] = v[ 2 ] - 0.1
-			if v[ 2 ] <= 0 then
-				table.remove( hitpos, k )
+				surface.SetDrawColor( 0, 0, 0, 255 * v[ 2 ] )
+				surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() / 2, 288, 288, v[ 1 ] - 180 )
+				v[ 2 ] = v[ 2 ] - 0.1
+				if v[ 2 ] <= 0 then
+					table.remove( hitpos, k )
+				end
 			end
+			
 		end
-		
-	end
-
 	
-	if LP():Alive() then
 		
-		local hp = LP():Health()
-		if hpdrain > hp then
-			hpdrain = Lerp( FrameTime() * 2, hpdrain, hp )
-		else
-			hpdrain = hp
-		end
-
-		hp = math.Clamp( hp, 0, 100 )
-		hpdrain = math.Clamp( hpdrain, 0, 100 )
-
-		surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
-		surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 106 + hl.y, 231, 10 )
-		
-		surface.SetDrawColor( Color( 255, 0, 0, 200 ) )
-		surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hpdrain / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hpdrain / 100 ) ) ), 10 )
-		
-		surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
-		surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hp / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hp / 100 ) ) ), 10 )
-		
-		surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
-		surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 96 + hl.y, 232, 2 )
-
-		for i = 0, 4 do
-			draw.SimpleText( hp .. " HEALTH", "LevelBG", ScrW() - 74 + hl.x, ScrH() - 94 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-		end
-		draw.SimpleText( hp .. " HEALTH", "Level", ScrW() - 74 + hl.x, ScrH() - 94 + hl.y, Color( 255, 255, 255, 200 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-
-		-- left side
-		local infooffset = 0
-		local teamcolor = team.GetColor( LP():Team() )
-		local n = 11
-		teamcolor = Color( math.Clamp( teamcolor.r, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.g, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.b, 255 / n * ( n - 1 ), 255 ) )
-
-		if GetGlobalBool( "ticketmode" ) == true then infooffset = 235 end
-
-		local exp = currentexp
-		local nextexp = nextlvlexp
-		local lvl = currentlvl
-		
-		local percent = exp / nextexp
-		local loading
-
-		if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
-			if CurTime() % 2 >= 0 and CurTime() % 2 <= 2 / 3 then
-				loading = "."
-			elseif CurTime() % 2 >= 2 / 3 and CurTime() % 2 <= 2 / 3 * 2 then
-				loading = ".."
-			elseif CurTime() % 2 >= 2 / 3 * 2 and CurTime() % 2 <= 2 then
-				loading = "..."
+		if LP():Alive() then
+			
+			local hp = LP():Health()
+			if hpdrain > hp then
+				hpdrain = Lerp( FrameTime() * 2, hpdrain, hp )
+			else
+				hpdrain = hp
 			end
-		else
-			levelpercent = Lerp( FrameTime() * 8, levelpercent, percent )
-		end
-
-		surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
-		surface.DrawRect( 44 + hl.x + infooffset, ScrH() - 106 + hl.y, 231, 10 )
-		
-		surface.SetDrawColor( teamcolor )
-		surface.DrawRect( 44 + hl.x + infooffset, ScrH() - 106 + hl.y, 1 + ( 231 * levelpercent ), 10 )
-		surface.DrawRect( 44 + hl.x + infooffset, ScrH() - 96 + hl.y, 231, 2 )
-
-		for i = 0, 4 do 
-			draw.SimpleText( LP():GetName(), "NameBG", 48 + hl.x + infooffset, ScrH() - 135 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+	
+			hp = math.Clamp( hp, 0, 100 )
+			hpdrain = math.Clamp( hpdrain, 0, 100 )
+	
+			surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
+			surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 106 + hl.y, 231, 10 )
+			
+			surface.SetDrawColor( Color( 255, 0, 0, 200 ) )
+			surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hpdrain / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hpdrain / 100 ) ) ), 10 )
+				
+		if (hp <= 25) then
+			surface.SetDrawColor( Color( 240, 0, 0, 255 ) )
+			surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hp / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hp / 100 ) ) ), 10 )
+				draw.SimpleText( "HEALTH LOW", "Killfeed", ScrW() - 290 + hl.x, ScrH() - 105 + hl.y, Color( 255, 0, 0, 200 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "HEALTH LOW", "LevelBG", ScrW() - 290 + hl.x, ScrH() - 105 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			else
+			surface.SetDrawColor( Color( 0, 255, 255, 255 ) )
+			surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hp / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hp / 100 ) ) ), 10 )
+			
+			end
+			
+			surface.SetDrawColor( Color( 0, 255, 255, 255 ) )
+			surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 96 + hl.y, 232, 2 )
+	
+			for i = 0, 4 do
+				draw.SimpleText( hp .. " HEALTH", "LevelBG", ScrW() - 74 + hl.x, ScrH() - 105 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+			end
+			draw.SimpleText( hp .. " HEALTH", "Level", ScrW() - 74 + hl.x, ScrH() - 105 + hl.y, Color( 255, 255, 255, 200 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	
+			-- left side
+			local infooffset = 0
+			local teamcolor = team.GetColor( LP():Team() )
+			local n = 11
+			teamcolor = Color( math.Clamp( teamcolor.r, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.g, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.b, 255 / n * ( n - 1 ), 255 ) )
+	
+			if GetGlobalBool( "ticketmode" ) == true then infooffset = 235 end
+	
+			local exp = currentexp
+			local nextexp = nextlvlexp
+			local lvl = currentlvl
+			
+			local percent = exp / nextexp
+			local loading
+	
 			if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
-				draw.SimpleText( "Receiving game data" .. loading, "LevelBG", 48 + hl.x + infooffset, ScrH() - 94 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				if CurTime() % 2 >= 0 and CurTime() % 2 <= 2 / 3 then
+					loading = "."
+				elseif CurTime() % 2 >= 2 / 3 and CurTime() % 2 <= 2 / 3 * 2 then
+					loading = ".."
+				elseif CurTime() % 2 >= 2 / 3 * 2 and CurTime() % 2 <= 2 then
+					loading = "..."
+				end
 			else
-				if GetConVarNumber( "hud_showexp" ) == 0 then
-					draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "LevelBG", 48 + hl.x + infooffset, ScrH() - 94 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				levelpercent = Lerp( FrameTime() * 8, levelpercent, percent )
+			end
+	
+			surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
+			surface.DrawRect( 44 + hl.x + infooffset, ScrH() - 106 + hl.y, 231, 10 )
+			
+			surface.SetDrawColor( teamcolor )
+			surface.DrawRect( 44 + hl.x + infooffset, ScrH() - 106 + hl.y, 1 + ( 231 * levelpercent ), 10 )
+			surface.DrawRect( 44 + hl.x + infooffset, ScrH() - 96 + hl.y, 231, 2 )
+	
+			for i = 0, 4 do 
+				draw.SimpleText( LP():GetName(), "NameBG", 48 + hl.x + infooffset, ScrH() - 135 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
+					draw.SimpleText( "Receiving game data" .. loading, "LevelBG", 50 + hl.x + infooffset, ScrH() - 110 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 				else
-					draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "LevelBG", 48 + hl.x + infooffset, ScrH() - 94 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-				end
-			end
-		end
-		draw.SimpleText( LP():GetName(), "Name", 48 + hl.x + infooffset, ScrH() - 135 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-		if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
-			draw.SimpleText( "Receiving game data" .. loading, "Level", 48 + hl.x + infooffset, ScrH() - 94 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-		else
-			if GetConVarNumber( "hud_showexp" ) == 0 then
-				draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "Level", 48 + hl.x + infooffset, ScrH() - 94 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-			else
-				draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "Level", 48 + hl.x + infooffset, ScrH() - 94 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-			end
-		end
-
-		curmoney = Lerp( FrameTime() * 12, curmoney, math.Clamp( curAmt, 0, curAmt ) )
-
-		for i = 0, 4 do
-			draw.SimpleText( "$" .. comma_value( math.Round( curmoney ) ), "LevelBG", 48 + hl.x + infooffset, ScrH() - 76 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-		end
-		draw.SimpleText( "$" .. comma_value( math.Round( curmoney ) ), "Level", 48 + hl.x + infooffset, ScrH() - 76 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-
-		local wep = LP():GetActiveWeapon()
-		
-		if wep and wep ~= NULL then 
-
-			wep = wep:GetClass()
-			
-			local num
-			for k, v in next, CurrentLifeWeps do
-				if v[ 1 ] == wep then
-					num = tostring( v[ 2 ] )
-				end
-			end
-			if not num then 
-				num = "0"
-			end
-			
-			local cnum = 0
-			local curnum = 0
-			for k, v in next, weps do
-				if wep == k then
-					curnum = table.Count( weps[ k ] )
-					for k, v in next, weps[ k ] do
-						if tonumber( num ) >= v[ 2 ] then
-							cnum = cnum + 1
-						end
+					if GetConVarNumber( "hud_showexp" ) == 0 then
+						draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "LevelBG", 50 + hl.x + infooffset, ScrH() - 110 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					else
+						draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "LevelBG", 50 + hl.x + infooffset, ScrH() - 110 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 					end
 				end
 			end
-
-			if cnum >= curnum then
-				cnum = 0
-				curnum = 0 
-			end
-
-			if cnum != 0 or curnum != 0 then
-				for i = 0, 4 do
-					draw.SimpleText( num .. " / " .. tostring( weps[ wep ][ cnum + 1 ][ 2 ] ) .. " KILLS", "LevelBG", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-				end
-				draw.SimpleText( num .. " / " .. tostring( weps[ wep ][ cnum + 1 ][ 2 ] ) .. " KILLS", "Level", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( LP():GetName(), "Name", 48 + hl.x + infooffset, ScrH() - 135 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
+				draw.SimpleText( "Receiving game data" .. loading, "Level", 50 + hl.x + infooffset, ScrH() - 110 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 			else
-				for i = 0, 4 do
-					draw.SimpleText( num .. " KILLS", "LevelBG", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				if GetConVarNumber( "hud_showexp" ) == 0 then
+					draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "Level", 50 + hl.x + infooffset, ScrH() - 110 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				else
+					draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "Level", 50 + hl.x + infooffset, ScrH() - 110 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 				end
-				draw.SimpleText( num .. " KILLS", "Level", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 			end
+	
+			curmoney = Lerp( FrameTime() * 12, curmoney, math.Clamp( curAmt, 0, curAmt ) )
+	
+			for i = 0, 4 do
+				draw.SimpleText( "$" .. comma_value( math.Round( curmoney ) ), "LevelBG", 48 + hl.x + infooffset, ScrH() - 76 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			end
+			draw.SimpleText( "$" .. comma_value( math.Round( curmoney ) ), "Level", 48 + hl.x + infooffset, ScrH() - 76 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+	
+			local wep = LP():GetActiveWeapon()
 			
+			if wep and wep ~= NULL then 
+	
+				wep = wep:GetClass()
+				
+				local num
+				for k, v in next, CurrentLifeWeps do
+					if v[ 1 ] == wep then
+						num = tostring( v[ 2 ] )
+					end
+				end
+				if not num then 
+					num = "0"
+				end
+				
+				local cnum = 0
+				local curnum = 0
+				for k, v in next, weps do
+					if wep == k then
+						curnum = table.Count( weps[ k ] )
+						for k, v in next, weps[ k ] do
+							if tonumber( num ) >= v[ 2 ] then
+								cnum = cnum + 1
+							end
+						end
+					end
+				end
+	
+				if cnum >= curnum then
+					cnum = 0
+					curnum = 0 
+				end
+	
+				if cnum != 0 or curnum != 0 then
+					for i = 0, 4 do
+						draw.SimpleText( num .. " / " .. tostring( weps[ wep ][ cnum + 1 ][ 2 ] ) .. " KILLS", "LevelBG", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					end
+					draw.SimpleText( num .. " / " .. tostring( weps[ wep ][ cnum + 1 ][ 2 ] ) .. " KILLS", "Level", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				else
+					for i = 0, 4 do
+						draw.SimpleText( num .. " KILLS", "LevelBG", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					end
+					draw.SimpleText( num .. " KILLS", "Level", 48 + hl.x + infooffset, ScrH() - 58 + hl.y, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				end
+				
+			end
+	
+	
 		end
-
-
-	end
-	if GetGlobalBool( "ticketmode" ) == true then
-
-		-- holy fuck im lazy
-		local offsetx = 30
-		local offsety = -31
-
-		for k, v in next, flags do
-			local col
-			if status[ v[ 1 ] ] == 1 then
-				col = Color( 255, 0, 0 )
-			elseif status[ v[ 1 ] ] == -1 then
-				col = Color( 0, 0, 255 )
-			elseif status[ v[ 1 ] ] == 0 then
-				col = Color( 255, 255, 255 )
+		
+		if LP():Alive() and LP() ~= NULL and LP():GetActiveWeapon() ~= NULL then
+			local activewep = LP():GetActiveWeapon()
+			local primaryammo = activewep:GetPrimaryAmmoType()
+			local ammocount = LP():GetAmmoCount( primaryammo )
+			local c1 = activewep:Clip1()
+			local _c1, _ammocount
+	
+			if( activewep ~= NULL and primaryammo ~= NULL and ammocount > -1 ) then
+				if( c1 < 0 ) then
+					c1 = "---"
+				end
+				if( ammocount <= 0 ) then
+					ammocount = "---"
+				end
+				
+			--	draw.SimpleText( c1, "PrimaryAmmoBG", ScrW() - 160 + hl.x, ScrH() - 130 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				if string.len( tostring( c1 ) ) == 2 then
+					_c1 = "0" .. c1
+				elseif string.len( tostring( c1 ) ) == 1 then
+					_c1 = "00" .. c1
+				else
+					_c1 = ""
+				end
+				draw.SimpleText( _c1, "PrimaryAmmo", ScrW() - 160 + hl.x, ScrH() - 130 + hl.y, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( c1, "PrimaryAmmo", ScrW() - 160 + hl.x, ScrH() - 130 + hl.y, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	
+				draw.SimpleText( ammocount, "SecondaryAmmoBG", ScrW() - 80 + hl.x, ScrH() - 130 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				if string.len( tostring( ammocount ) ) == 2 then
+					_ammocount = "0" .. ammocount
+				elseif string.len( tostring( ammocount ) ) == 1 then
+					_ammocount = "00" .. ammocount
+				else
+					_ammocount = ""
+				end
+				draw.SimpleText( _ammocount, "SecondaryAmmo", ScrW() - 80 + hl.x, ScrH() - 130 + hl.y, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( ammocount, "SecondaryAmmo", ScrW() - 80 + hl.x, ScrH() - 130 + hl.y, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	
+				surface.SetFont( "ammo2" )
+				surface.SetTextColor( Color( 255, 255, 255, 200 ) )
+				surface.SetTextPos( ScrW() - 150 + hl.x, ScrH() - 165 + hl.y )
+				surface.DrawText( "/" )
+				
 			end
-			local pos = ( v[ 2 ] + Vector( 0, 0, 150 ) ):ToScreen()
-			local xx = v[ 2 ]
-			local dist = xx:Distance( LP():GetPos() ) / 39
-			if pos.x > ScrW() then	
-				pos.x = ScrW() - 40
-			end
-			if pos.x <= 0 then
-				pos.x = 20
-			end
-			if pos.y > ScrH() then
-				pos.y = ScrH() - 20
-			end
-			if pos.y < 0 then
-				pos.y = 20
-			end
-			
-			surface.SetFont( "flags" )
-			surface.SetTextPos( pos.x, pos.y )
-			surface.SetTextColor( col )
-			if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
-				surface.DrawFadingText( col, v[ 1 ] )
-			else
-				surface.DrawText( v[ 1 ] )
-			end		
-			surface.SetFont( "DermaDefault" )
-			surface.DrawText( " " .. tostring( math.Round( dist ) ) .. "m" )
 		end
-
-		if LP():Alive() then -- tickets stuff
-
-			surface.SetDrawColor( Color( 0, 0, 0, 166 ) )
-			--draw.RoundedBoxEx( 8, 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 227 / 2, 70, Color( 0, 0, 0, 166 ), false, false, true )
-			surface.DrawRect( 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 227 / 2, 70 )
-			--draw.RoundedBoxEx( 8, 230 / 2 + 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 223 / 2, 70, Color( 0, 0, 0, 166 ), false, false, false, true )
-			surface.DrawRect( 228 / 2 + 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 227 / 2, 70 )
-
-			--draw.RoundedBoxEx( 8, 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35, Color( 0, 0, 0, 166 ), true, true )
-			surface.DrawRect( 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35 )
-			
-			local red = GetGlobalInt( "RedTickets" )
-			local blue = GetGlobalInt( "BlueTickets" )
-
-			if red ~= globalred then
-				globalred = red
-				redalpha = 1
-			end
-
-			if blue ~= globalblue then
-				globalblue = blue
-				bluealpha = 1
-			end
-
-			draw.SimpleText( tostring( red ), "TicketsBG", 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 132 + hl.y - offsety, Color( 255, 125, 125, 255 * redalpha ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( tostring( red ), "Tickets", 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 132 + hl.y - offsety, Color( 255, 125, 125 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-
-			draw.SimpleText( tostring( blue ), "TicketsBG", 228 / 2 + 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 132 + hl.y - offsety, Color( 125, 125, 255, 255 * bluealpha ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( tostring( blue ), "Tickets", 228 / 2 + 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 132 + hl.y - offsety, Color( 125, 125, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-
-			redalpha = Lerp( FrameTime() * 6.4, redalpha, 0 )
-			bluealpha = Lerp( FrameTime() * 6.4, bluealpha, 0 )
-
-			local flagnum = 0
-			local position = 228 / 2 + 78
-			position = position - 22 * ( #flags / 2 )
+		
+		if GetGlobalBool( "ticketmode" ) == true then
+	
+			-- holy fuck im lazy
+			local offsetx = 30
+			local offsety = -31
+	
 			for k, v in next, flags do
-				surface.SetFont( "flags" )
 				local col
 				if status[ v[ 1 ] ] == 1 then
-					surface.SetTextColor( 255, 0, 0 )
 					col = Color( 255, 0, 0 )
 				elseif status[ v[ 1 ] ] == -1 then
-					surface.SetTextColor( 0, 0, 255 )
 					col = Color( 0, 0, 255 )
 				elseif status[ v[ 1 ] ] == 0 then
-					surface.SetTextColor( 255, 255, 255 )
 					col = Color( 255, 255, 255 )
 				end
-				surface.SetTextPos( position + ( 22 * flagnum ) + hl.x - offsetx, ScrH() - 175 + hl.y - offsety )
+				local pos = ( v[ 2 ] + Vector( 0, 0, 150 ) ):ToScreen()
+				local xx = v[ 2 ]
+				local dist = xx:Distance( LP():GetPos() ) / 39
+				if pos.x > ScrW() then	
+					pos.x = ScrW() - 40
+				end
+				if pos.x <= 0 then
+					pos.x = 20
+				end
+				if pos.y > ScrH() then
+					pos.y = ScrH() - 20
+				end
+				if pos.y < 0 then
+					pos.y = 20
+				end
+				
+				surface.SetFont( "flags" )
+				surface.SetTextPos( pos.x, pos.y )
+				surface.SetTextColor( col )
 				if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
-					surface.DrawFadingText( col, tostring( v[ 1 ] ) )
+					surface.DrawFadingText( col, v[ 1 ] )
 				else
-					surface.DrawText( tostring( v[ 1 ] ) )
-				end				
-				flagnum = flagnum + 1
+					surface.DrawText( v[ 1 ] )
+				end		
+				surface.SetFont( "DermaDefault" )
+				surface.DrawText( " " .. tostring( math.Round( dist ) ) .. "m" )
 			end
-			/*
-			w1 = ( GetGlobalInt( "RedTickets" ) / GetGlobalInt( "MaxTickets" ) ) * w1
-			surface.SetDrawColor( Color( 255, 0, 0, 170 ) )
-			surface.DrawRect( x1 + hl.x, y1 + hl.y, w1, h1 )
-			
-			w2 = ( GetGlobalInt( "BlueTickets" ) / GetGlobalInt( "MaxTickets" ) ) * w2
-			surface.SetDrawColor( Color( 0, 0, 255, 170 ) )
-			local offset = ( GetGlobalInt( "MaxTickets" ) - GetGlobalInt( "BlueTickets" ) ) / 2
-			if GetGlobalInt( "BlueTickets" ) < 67 then
-				offset = offset - 1
+	
+			if LP():Alive() then -- tickets stuff
+	
+				surface.SetDrawColor( Color( 0, 0, 0, 166 ) )
+				--draw.RoundedBoxEx( 8, 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 227 / 2, 70, Color( 0, 0, 0, 166 ), false, false, true )
+				surface.DrawRect( 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 227 / 2, 70 )
+				--draw.RoundedBoxEx( 8, 230 / 2 + 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 223 / 2, 70, Color( 0, 0, 0, 166 ), false, false, false, true )
+				surface.DrawRect( 228 / 2 + 74 + hl.x - offsetx, ScrH() - 142 + hl.y - offsety, 227 / 2, 70 )
+	
+				--draw.RoundedBoxEx( 8, 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35, Color( 0, 0, 0, 166 ), true, true )
+				surface.DrawRect( 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35 )
+				
+				local red = GetGlobalInt( "RedTickets" )
+				local blue = GetGlobalInt( "BlueTickets" )
+	
+				if red ~= globalred then
+					globalred = red
+					redalpha = 1
+				end
+	
+				if blue ~= globalblue then
+					globalblue = blue
+					bluealpha = 1
+				end
+	
+				draw.SimpleText( tostring( red ), "TicketsBG", 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 90 + hl.y - offsety, Color( 255, 70, 70, 255 * redalpha ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( tostring( red ), "Tickets", 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 90 + hl.y - offsety, Color( 255, 70, 70 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	
+				draw.SimpleText( tostring( blue ), "TicketsBG", 228 / 2 + 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 90 + hl.y - offsety, Color( 70, 70, 255, 255 * bluealpha ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( tostring( blue ), "Tickets", 228 / 2 + 74 / 4 + 227 / 2 + hl.x - offsetx, ScrH() - 90 + hl.y - offsety, Color( 70, 70, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+	
+				redalpha = Lerp( FrameTime() * 6.4, redalpha, 0 )
+				bluealpha = Lerp( FrameTime() * 6.4, bluealpha, 0 )
+	
+				local flagnum = 0
+				local position = 228 / 2 + 78
+				position = position - 22 * ( #flags / 2 )
+				for k, v in next, flags do
+					surface.SetFont( "flags" )
+					local col
+					if status[ v[ 1 ] ] == 1 then
+						surface.SetTextColor( 255, 0, 0 )
+						col = Color( 255, 0, 0 )
+					elseif status[ v[ 1 ] ] == -1 then
+						surface.SetTextColor( 0, 0, 255 )
+						col = Color( 0, 0, 255 )
+					elseif status[ v[ 1 ] ] == 0 then
+						surface.SetTextColor( 255, 255, 255 )
+						col = Color( 255, 255, 255 )
+					end
+					surface.SetTextPos( position + ( 22 * flagnum ) + hl.x - offsetx, ScrH() - 175 + hl.y - offsety )
+					if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
+						surface.DrawFadingText( col, tostring( v[ 1 ] ) )
+					else
+						surface.DrawText( tostring( v[ 1 ] ) )
+					end				
+					flagnum = flagnum + 1
+				end
+				/*
+				w1 = ( GetGlobalInt( "RedTickets" ) / GetGlobalInt( "MaxTickets" ) ) * w1
+				surface.SetDrawColor( Color( 255, 0, 0, 170 ) )
+				surface.DrawRect( x1 + hl.x, y1 + hl.y, w1, h1 )
+				
+				w2 = ( GetGlobalInt( "BlueTickets" ) / GetGlobalInt( "MaxTickets" ) ) * w2
+				surface.SetDrawColor( Color( 0, 0, 255, 170 ) )
+				local offset = ( GetGlobalInt( "MaxTickets" ) - GetGlobalInt( "BlueTickets" ) ) / 2
+				if GetGlobalInt( "BlueTickets" ) < 67 then
+					offset = offset - 1
+				end
+				surface.DrawRect( x2 + offset + hl.x, y2 + hl.y, w2 - 1, h2 )
+				
+				draw.SimpleText( tostring( GetGlobalInt( "RedTickets" ) ), "stattrak", 35 + hl.x, ScrH() - 118 + hl.y, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+				draw.SimpleText( tostring( GetGlobalInt( "BlueTickets" ) ), "stattrak", 20 + 210 + hl.x, ScrH() - 118 + hl.y, Color( 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+	
+				surface.SetDrawColor( 255, 255, 255 )
+				surface.DrawOutlinedRect( x + hl.x, y + hl.y, w, h )
+				surface.DrawLine( 134 + hl.x, y + hl.y, 134 + hl.x, y + 19 + hl.y )
+				*/
 			end
-			surface.DrawRect( x2 + offset + hl.x, y2 + hl.y, w2 - 1, h2 )
-			
-			draw.SimpleText( tostring( GetGlobalInt( "RedTickets" ) ), "stattrak", 35 + hl.x, ScrH() - 118 + hl.y, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-			draw.SimpleText( tostring( GetGlobalInt( "BlueTickets" ) ), "stattrak", 20 + 210 + hl.x, ScrH() - 118 + hl.y, Color( 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+		end
+	else
+		local teamscheme
+		local getteam
+		--draw.DrawText( "DOUBLE KILL", "UT3-Back", ScrW() * 0.5, ScrH() * 0.25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+		--draw.DrawText( "DOUBLE KILL", "UT3", ScrW() * 0.5, ScrH() * 0.25, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER )
 
-			surface.SetDrawColor( 255, 255, 255 )
-			surface.DrawOutlinedRect( x + hl.x, y + hl.y, w, h )
-			surface.DrawLine( 134 + hl.x, y + hl.y, 134 + hl.x, y + 19 + hl.y )
-			*/
+		if GetGlobalBool( "RoundFinished" ) == true or GetConVarNumber( "hud_disable" ) != 0 or LocalPlayer().disablehud == true then
+			return
+		end
+
+		teamscheme = Color( 0, 0, 0, 200)
+		if LocalPlayer():Team() == 0 then
+			teamscheme = Color( 255, 255, 255, 200)
+			if LocalPlayer():GetObserverTarget() and LocalPlayer():GetObserverTarget():IsValid() then
+				n = LP():GetObserverTarget():Name() or ""
+				nhp = LP():GetObserverTarget():Health() or 0
+			else
+				n = "Nobody"
+				nhp = 100
+			end
+			if LocalPlayer():GetObserverMode() == OBS_MODE_ROAMING then
+				draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			elseif LocalPlayer():GetObserverMode() == OBS_MODE_CHASE then
+				draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			elseif LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE then
+				draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			end
+				
+		elseif LocalPlayer():Team() == 1 then
+			teamscheme = Color( 175, 0, 0, 150)
+		elseif LocalPlayer():Team() == 2 then
+			teamscheme = Color( 0, 0, 255, 150)
+		end
+		
+			if LP():Alive() then
+				for k, v in next, hitpos do
+					surface.SetMaterial( damage )
+					surface.SetDrawColor( 0, 0, 0, 255 * v[ 2 ] )
+					surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() / 2, 288, 288, v[ 1 ] - 180 )
+					v[ 2 ] = v[ 2 ] - 0.1
+					if v[ 2 ] <= 0 then
+						table.remove( hitpos, k )
+					end
+				end
+				
+				local fade = (math.Clamp(LocalPlayer():Health()/LocalPlayer():GetMaxHealth(), 0.2, 0.5)-0.2)/0.3
+				local fade2 = 1 - math.Clamp(LocalPlayer():Health()/LocalPlayer():GetMaxHealth(), 0, 0.5)/0.5
+			
+				surface.SetMaterial(blood_overlay)
+				surface.SetDrawColor(255,255,255,255-fade*255)
+				surface.DrawTexturedRect( -10, -10, ScrW()+20, ScrH()+20)
+			
+				if fade2 > 0 then
+					if bloodpulse then
+						pulse = math.Approach(pulse, 255, math.Clamp(pulse, 1, 50)*FrameTime()*100)
+						if pulse >= 255 then bloodpulse = false end
+					else
+						if pulse <= 0 then bloodpulse = true end
+						pulse = math.Approach(pulse, 0, -255*FrameTime())
+					end
+					surface.SetDrawColor(255,255,255,pulse*fade2)
+					surface.DrawTexturedRect( -10, -10, ScrW()+20, ScrH()+20)
+				end
+				
+				if LP():Alive() and LP():Team() ~= 0 then
+					if LP():Health() < (LP():GetMaxHealth() * 0.3) and LP():Health() > (LP():GetMaxHealth() * 0.2) then
+						surface.PlaySound( "hud/heartbeat.ogg")
+					elseif LP():Health() <= (LP():GetMaxHealth() * 0.2) and LP():Health() > (LP():GetMaxHealth() * 0.1) then
+						surface.PlaySound( "hud/heartbeatfaster.ogg")
+					elseif LP():Health() <= (LP():GetMaxHealth() * 0.1) then
+						surface.PlaySound( "hud/heartbeatfastest.ogg")
+					end
+				end
+			end
+		
+		--Draws the center-top polygons and writes the time and red/blue team's tickets, stolen from spectator mode
+		draw.NoTexture()
+			surface.SetDrawColor( 0, 0, 0, 200 )
+			surface.DrawPoly( drawtime )
+			surface.DrawPoly( drawtime_fix )
+			surface.SetDrawColor( 0, 0, 0, 200 )
+			surface.DrawPoly( drawscore )
+			local num = GetGlobalInt( "RoundTime" )
+			local col
+			--Sets time red with 1 minute remaining
+			if num <= 60 then
+				col = Color( 255, 0, 0, 255 )
+			elseif num > 60 then
+				col = Color( 255, 255, 255, 200 )
+			end
+			local t = string.FormattedTime( tostring( num ) )
+			t.m = tostring( t.m )
+			t.s = tostring( t.s )
+			if #t.m == 1 then
+				t.m = "0" .. t.m
+			end
+			if #t.s == 1 then
+				t.s = "0" .. t.s
+			end
+			draw.SimpleText( t.m .. ":" .. t.s, "spectime", ScrW() / 2, 11, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			
+			if GetGlobalBool( "ticketmode" ) == true then
+				redtix = GetGlobalInt( "RedTickets" )
+				draw.SimpleText( redtix, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+				
+				bluetix = GetGlobalInt( "BlueTickets" )
+				draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			else
+				draw.SimpleText( "TDM", "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "TDM", "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			end
+
+		surface.SetFont( "Info" )
+		local info = "[F1] Choose Team | [F2] Choose Loadout"
+		local infowidth, infoheight = surface.GetTextSize( info )
+
+		--Round timer
+		local _time = GetGlobalInt( "RoundTime" )
+		local col = Color( 255, 255, 255, 255 )
+		if _time <= 60 then
+			col = Color( math.abs( math.sin( RealTime() * ( 13 - ( _time / 5 ) ) ) * 205 ) + 50, 0, 0, 255 )
+		end
+		local time = string.FormattedTime( tostring( _time ) )
+		time.m = tostring( time.m )
+		time.s = tostring( time.s )
+		if #time.m == 1 then
+			time.m = "0" .. time.m
+		end
+		if #time.s == 1 then
+			time.s = "0" .. time.s
+		end
+		
+		--Creates the boxes in the top left hand corner for F1 and F2 commands
+		surface.SetDrawColor( teamscheme ) 
+		surface.SetTexture( gradient )
+		surface.DrawRect( 32, 32, infowidth + 9, infoheight + 5 ) --Align it with gamemode name/version text set below
+		surface.SetDrawColor( Color( 0, 0, 0, 50) )
+		surface.DrawRect( 32, 32, infowidth + 11, infoheight + 7 )
+
+		--Writes the text in string "info" set above
+		surface.SetFont( "Info" )
+		surface.SetTextColor( 255, 255, 255, 200 )
+		surface.SetTextPos( 36, 33 )
+		surface.DrawText( info )
+
+		--Gamemode name & version number
+		surface.SetTextColor( 255, 255, 255, 135 )
+		surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
+		surface.DrawText( "Conquest Team Deathmatch V. 052416" )
+
+		
+		if LP():Alive() and LocalPlayer():Team() ~= 0 then
+			
+			local hp = LocalPlayer():Health()
+			local maxhp = LocalPlayer():GetMaxHealth()
+			if hpdrain > hp then
+				hpdrain = Lerp( FrameTime() * 2, hpdrain, hp )
+			else
+				hpdrain = hp
+			end
+
+			--Clamp: "Clamps a number between a minimum and maximum value"
+			hp = math.Clamp( hp, 0, maxhp )
+			hpdrain = math.Clamp( hpdrain, 0, maxhp )
+			
+			surface.SetTextColor( 255, 255, 255, 255 )
+			if LocalPlayer():Team() == 1 then
+				--Draw Icon
+				surface.SetMaterial( redicon2 )
+				surface.SetDrawColor( 0, 0, 0, 200 )
+				surface.DrawTexturedRect( ScrW() - 231, ScrH() - 246, (ScrW() / 9.6), (ScrH() / 5.4) )
+				surface.SetDrawColor( 255, 50, 50, 255 )
+				surface.DrawTexturedRect( ScrW() - 235, ScrH() - 250, (ScrW() / 9.6), (ScrH() / 5.4) )
+				--draw.NoTexture()
+				--Draw Icon Background
+				--surface.DrawRect( ScrW() - 250, ScrH() - 265, 250, 300 )
+			elseif LocalPlayer():Team() == 2 then
+				draw.NoTexture()
+				surface.SetDrawColor( 200, 200, 255, 255 )
+				surface.SetMaterial( blueicon2 )
+				surface.DrawTexturedRect( ScrW() - 235, ScrH() - 255, (ScrW() / 9.6), (ScrH() / 5.4) )
+				draw.NoTexture()
+			end
+			
+			--Old Health bar code, keeping just in case its ever needed
+			--[[Health bar background
+			surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
+			surface.DrawRect( ScrW() - 225, ScrH() - 50, 180, 10 )
+			
+			--Red health bar on damage taken
+			surface.SetDrawColor( Color( 255, 0, 0, 200 ) )
+			surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hpdrain / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hpdrain / 100 ) ) ), 10 )
+				
+		if (hp <= 25) then
+			--Turns health bar red when below 25
+			surface.SetDrawColor( Color( 240, 0, 0, 255 ) )
+			surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hp / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hp / 100 ) ) ), 10 )
+				draw.SimpleText( "HEALTH LOW", "Killfeed", ScrW() - 290 + hl.x, ScrH() - 105 + hl.y, Color( 255, 0, 0, 200 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "HEALTH LOW", "LevelBG", ScrW() - 290 + hl.x, ScrH() - 105 + hl.y, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+		else
+			--Standard health bar
+			surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
+			surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hp / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hp / 100 ) ) ), 10 )
+			
+		end
+			--White accent line beneath health bar
+			surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
+			surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 96 + hl.y, 232, 2 )]]
+
+			--Health #
+			draw.SimpleText( hp, "HealthBG", ScrW() - 110, ScrH() - 255, teamscheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "/ " .. maxhp .. " HP", "Health", ScrW() - 44, ScrH() - 265, Color( 0, 0, 0, 200), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "/ " .. maxhp .. " HP", "Health", ScrW() - 45, ScrH() - 266, Color( 255, 255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+
+			-- left side
+			local teamcolor = team.GetColor( LP():Team() )
+			local n = 11
+			teamcolor = Color( math.Clamp( teamcolor.r, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.g, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.b, 255 / n * ( n - 1 ), 255 ) )
+
+			local exp = currentexp
+			local nextexp = nextlvlexp
+			local lvl = currentlvl
+			
+			local percent = exp / nextexp
+			local loading
+
+			if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
+				if CurTime() % 2 >= 0 and CurTime() % 2 <= 2 / 3 then
+					loading = "."
+				elseif CurTime() % 2 >= 2 / 3 and CurTime() % 2 <= 2 / 3 * 2 then
+					loading = ".."
+				elseif CurTime() % 2 >= 2 / 3 * 2 and CurTime() % 2 <= 2 then
+					loading = "..."
+				end
+			else
+				levelpercent = Lerp( FrameTime() * 8, levelpercent, percent )
+			end
+
+			--Experience Bar & Level shite
+			surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
+			surface.DrawRect( 44, ScrH() - 106, 231, 10 )
+			
+			surface.SetDrawColor( teamscheme )
+			surface.DrawRect( 44, ScrH() - 106, 1 + ( 231 * levelpercent ), 10 )
+			surface.SetDrawColor( teamcolor )
+			surface.DrawRect( 44, ScrH() - 96, 231, 2 )
+
+			for i = 0, 4 do 
+				draw.SimpleText( LP():GetName(), "NameBG", 48, ScrH() - 135, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
+					draw.SimpleText( "Receiving game data" .. loading, "LevelBG", 50, ScrH() - 110, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				else
+					if GetConVarNumber( "hud_showexp" ) == 0 then
+						draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "LevelBG", 50, ScrH() - 110, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					else
+						draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "LevelBG", 50, ScrH() - 110, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					end
+				end
+			end
+			draw.SimpleText( LP():GetName(), "Name", 48, ScrH() - 135, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
+				draw.SimpleText( "Receiving game data" .. loading, "Level", 50, ScrH() - 110, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			else
+				if GetConVarNumber( "hud_showexp" ) == 0 then
+					draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "Level", 50, ScrH() - 110, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				else
+					draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "Level", 50, ScrH() - 110, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				end
+			end
+
+			curmoney = Lerp( FrameTime() * 12, curmoney, math.Clamp( curAmt, 0, curAmt ) )
+
+			for i = 0, 4 do
+				draw.SimpleText( "$" .. comma_value( math.Round( curmoney ) ), "LevelBG", 48, ScrH() - 76, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			end
+			draw.SimpleText( "$" .. comma_value( math.Round( curmoney ) ), "Level", 48, ScrH() - 76, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+
+			local wep = LP():GetActiveWeapon()
+			
+			if wep and wep ~= NULL then 
+
+				wep = wep:GetClass()
+				
+				local num
+				for k, v in next, CurrentLifeWeps do
+					if v[ 1 ] == wep then
+						num = tostring( v[ 2 ] )
+					end
+				end
+				if not num then 
+					num = "0"
+				end
+				
+				local cnum = 0
+				local curnum = 0
+				for k, v in next, weps do
+					if wep == k then
+						curnum = table.Count( weps[ k ] )
+						for k, v in next, weps[ k ] do
+							if tonumber( num ) >= v[ 2 ] then
+								cnum = cnum + 1
+							end
+						end
+					end
+				end
+
+				if cnum >= curnum then
+					cnum = 0
+					curnum = 0 
+				end
+
+				if cnum != 0 or curnum != 0 then
+					for i = 0, 4 do
+						draw.SimpleText( num .. " / " .. tostring( weps[ wep ][ cnum + 1 ][ 2 ] ) .. " KILLS", "LevelBG", 48, ScrH() - 58, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					end
+					draw.SimpleText( num .. " / " .. tostring( weps[ wep ][ cnum + 1 ][ 2 ] ) .. " KILLS", "Level", 48, ScrH() - 58, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				else
+					for i = 0, 4 do
+						draw.SimpleText( num .. " KILLS", "LevelBG", 48, ScrH() - 58, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+					end
+					draw.SimpleText( num .. " KILLS", "Level", 48, ScrH() - 58, teamcolor, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				end
+				
+			end
+
+
+		end
+		
+		if LP():Alive() and LP() ~= NULL and LP():GetActiveWeapon() ~= NULL then
+			local activewep = LP():GetActiveWeapon()
+			local primaryammo = activewep:GetPrimaryAmmoType()
+			local ammocount = LP():GetAmmoCount( primaryammo )
+			local c1 = activewep:Clip1()
+			local _c1, _ammocount
+
+			if( activewep ~= NULL and primaryammo ~= NULL and ammocount > -1 ) then
+				if( c1 < 0 ) then
+					c1 = "---"
+				end
+				if( ammocount <= 0 ) then
+					ammocount = "---"
+				end
+				
+				if string.len( tostring( c1 ) ) == 2 then
+					_c1 = "0" .. c1
+				elseif string.len( tostring( c1 ) ) == 1 then
+					_c1 = "00" .. c1
+				else
+					_c1 = ""
+				end
+				--[[Ammo count on right side of screen, keeping just in case we ever need it
+				draw.SimpleText( _c1, "PrimaryAmmo", ScrW() - 290, ScrH() - 110, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( c1, "PrimaryAmmo", ScrW() - 290, ScrH() - 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+
+				draw.SimpleText( ammocount, "SecondaryAmmoBG", ScrW() - 80, ScrH() - 130, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				if string.len( tostring( ammocount ) ) == 2 then
+					_ammocount = "0" .. ammocount
+				elseif string.len( tostring( ammocount ) ) == 1 then
+					_ammocount = "00" .. ammocount
+				else
+					_ammocount = ""
+				end
+				draw.SimpleText( _ammocount, "SecondaryAmmo", ScrW() - 220, ScrH() - 100, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( ammocount, "SecondaryAmmo", ScrW() - 220, ScrH() - 100, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+
+				surface.SetFont( "ammo2" )
+				surface.SetTextColor( Color( 255, 255, 255, 200 ) )
+				surface.SetTextPos( ScrW() - 285, ScrH() - 155 )
+				surface.DrawText( "/" )]]
+				
+			end
+		end
+		
+		if GetGlobalBool( "ticketmode" ) == true then
+
+			-- holy fuck im lazy
+			local offsetx = 30
+			local offsety = -31
+
+			--Moving flag notice code (the stuff that floats around your HUD)
+			for k, v in next, flags do
+				local col
+				if status[ v[ 1 ] ] == 1 then
+					col = Color( 255, 0, 0 )
+				elseif status[ v[ 1 ] ] == -1 then
+					col = Color( 0, 0, 255 )
+				elseif status[ v[ 1 ] ] == 0 then
+					col = Color( 255, 255, 255 )
+				end
+				local pos = ( v[ 2 ] + Vector( 0, 0, 150 ) ):ToScreen()
+				local xx = v[ 2 ]
+				local dist = xx:Distance( LP():GetPos() ) / 39
+				if pos.x > ScrW() then	
+					pos.x = ScrW() - 40
+				end
+				if pos.x <= 0 then
+					pos.x = 20
+				end
+				if pos.y > ScrH() then
+					pos.y = ScrH() - 20
+				end
+				if pos.y < 0 then
+					pos.y = 20
+				end
+				
+				surface.SetFont( "flags" )
+				surface.SetTextPos( pos.x, pos.y )
+				surface.SetTextColor( col )
+				if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
+					surface.DrawFadingText( col, v[ 1 ] )
+				else
+					surface.DrawText( v[ 1 ] )
+				end		
+				surface.SetFont( "DermaDefault" )
+				surface.DrawText( " " .. tostring( math.Round( dist ) ) .. "m" )
+			end
+
+			if LP():Alive() then -- tickets stuff
+
+				--Grey box used to surreound the flags, keeping just in case its ever needed
+				--[[surface.SetDrawColor( Color( 0, 0, 0, 166 ) )
+				draw.RoundedBoxEx( 8, 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35, Color( 0, 0, 0, 166 ), true, true )
+				surface.DrawRect( 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35 )]]
+				
+				local red = GetGlobalInt( "RedTickets" )
+				local blue = GetGlobalInt( "BlueTickets" )
+
+				if red ~= globalred then
+					globalred = red
+					redalpha = 1
+				end
+
+				if blue ~= globalblue then
+					globalblue = blue
+					bluealpha = 1
+				end
+
+				redalpha = Lerp( FrameTime() * 6.4, redalpha, 0 )
+				bluealpha = Lerp( FrameTime() * 6.4, bluealpha, 0 )
+
+				local flagnum = 0
+				local position = 5--228 / 2 + 78 --192?
+				position = position - 22 * ( #flags / 2 )
+				for k, v in next, flags do
+					surface.SetFont( "flags" )
+					local col
+					if status[ v[ 1 ] ] == 1 then
+						surface.SetTextColor( 255, 0, 0 )
+						col = Color( 255, 0, 0 )
+					elseif status[ v[ 1 ] ] == -1 then
+						surface.SetTextColor( 0, 0, 255 )
+						col = Color( 0, 0, 255 )
+					elseif status[ v[ 1 ] ] == 0 then
+						surface.SetTextColor( 255, 255, 255 )
+						col = Color( 255, 255, 255 )
+					end
+					surface.SetTextPos( --[[position + ( 22 * flagnum ) + 774 ScrW() / 2 position +]] ( ScrW() / 2 ) + ( 22 * flagnum ) + position, 33 )
+					--surface.SetTextPos( position + ( 22 * flagnum ) + hl.x - offsetx, ScrH() - 175 + hl.y - offsety )
+					if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
+						surface.DrawFadingText( col, tostring( v[ 1 ] ) )
+					else
+						surface.DrawText( tostring( v[ 1 ] ) )
+					end				
+					flagnum = flagnum + 1
+				end
+			end
 		end
 	end
-
 end )
 
 local function GetPrintName( wep )
-    if wep == nil || wep == NULL then return end -- fixed by cobalt 1/30/16
-    if weapons.Get(wep) == nil then return "" end -- fixed by cobalt 1/30/16
+    if wep == nil || wep == NULL then return end
+    if weapons.Get(wep) == nil then return "" end 
 	if weapons.Get( wep ).PrintName ~= nil then
 		return weapons.Get( wep ).PrintName
 	elseif weapons.Get( wep ).ClassName ~= nil then
@@ -625,6 +1170,8 @@ net.Receive( "tdm_deathnotice", function()
 	end
 end )
 
+
+
 net.Receive( "tdm_killcountnotice", function()
 	local attacker = net.ReadEntity()
 	local killcount = tonumber( net.ReadString() )
@@ -637,15 +1184,19 @@ net.Receive( "tdm_killcountnotice", function()
 		if killcount == 2 then
 			kcname = "DOUBLE KILL"
 		elseif killcount == 3 then
-			kcname = "TRIPLE KILL"
+			kcname = "MULTI KILL"
 		elseif killcount == 4 then
-			kcname = "QUAD KILL"
-		elseif killcount >= 5 then
-			kcname = tostring( killcount ) .. "-KILL"
+			kcname = "MEGA KILL"
+		elseif killcount == 5 then
+			kcname = "ULTRA KILL"
+		elseif killcount >= 6 then
+			kcname = "UNREAL"
 		end
 		
 		if not table.HasValue( killtables, kcname ) then
 			killicon.AddFont( kcname, "perky", "[ " .. kcname .. " ]", Color( 255, 64, 64, 255 ) )
+			draw.DrawText( kcname, "default", ScrW() * 0.5, ScrH() * 0.25, Color( 255, 0, 0, 255), TEXT_ALIGN_CENTER)
+			--print( kcname, "SHOULD BE DRAWING TEXT")
 		end
 		
 		if aname == LocalPlayer():Nick() then
@@ -671,7 +1222,7 @@ usermessage.Hook( "tdm_tie", function()
 	EndScreen()
 end )
 
-// nade indicator
+--nade indicator
 surface.CreateFont( "nade", { font = "Arial", size = 30, weight = 4000 } )
 local function nade()
 	if not LP() then LP = LocalPlayer end
@@ -706,8 +1257,8 @@ net.Receive( "tdm_spawnoverlay", function( len, ply )
 		
 		surface.SetFont( "test" )
 		surface.SetTextColor( 255, 255, 255, alpha > 100 and alpha or 100 )
-		surface.SetTextPos( ( ScrW() / 2 ) - 150, ScrH() - ( ScrH() / 3 ) )
-		surface.DrawText( "[ Spawning ]" )
+		surface.SetTextPos( ( ScrW() / 2 ) - 150, ScrH() - ( ScrH() / 1.1 ) )
+		surface.DrawText( "[Spawn Protection Enabled]" )
 		if CurTime() - time >= 0.0162 then
 			if alpha - 1 >= 0 then
 				alpha = alpha - 1
@@ -1025,3 +1576,11 @@ hook.Add( "PostDrawOpaqueRenderables", "DrawWeaponHints", function()
 		end
 	end
 end )
+
+--First person death
+ hook.Add( "CalcView", "CalcView:GmodDeathView", function( player, origin, angles, fov )
+    if( IsValid(player:GetRagdollEntity()) ) then 
+		local CameraPos = player:GetRagdollEntity():GetAttachment( player:GetRagdollEntity():LookupAttachment( "eyes" ) )  
+		return { origin = CameraPos.Pos, angles = CameraPos.Ang, fov = 90 }
+	end
+end)

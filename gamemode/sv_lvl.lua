@@ -25,7 +25,7 @@ for i = 1, 100 do
 end
 
 -- "prestige"
-for i = 101, 115 do
+for i = 101, 200 do
 	lvl.levels[ i ] = 30000 * ( ( i - 100 ) ^ 2 )
 end
 

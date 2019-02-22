@@ -37,11 +37,16 @@ surface.CreateFont("FeedCountBlur", {
     antialias = 1 
 })
 
+print("Attempting creation of UT3 fonts")
+surface.CreateFont( "UT3", { font = "Unreal Tournament", size = 125, antialias = false, shadow = false, outline = true } )
+surface.CreateFont( "UT3-Back", { font = "Unreal Tournament", size = 128, antialias = false, shadow = false, outline = true } )
+
 NOTICETYPES = {
     KILL = 1,
     FLAG = 2,
     EXTRA = 4,
-    ROUND = 8
+    ROUND = 8,
+    SPECIAL = 16
 }
 
 Feed = {}
@@ -71,6 +76,7 @@ net.Receive("KillFeed", function()
     Score = Score + nScore
     timer.Start("ScoreTimer")
 end)
+
 hook.Add("Think", "Feed", function()
     for k, v in next, Feed do
         if CurTime() - v.time > 4 then
@@ -90,7 +96,13 @@ hook.Add("Think", "Feed", function()
 end)
 
 hook.Add("HUDPaint", "DrawCenterFeed", function()
+local test = false
     for k, v in next, Feed do
+        --[[if v.type == NOTICETYPES.SPECIAL then
+            draw.NoTexture()
+            draw.DrawText( v.dispText, "UT3-Back", ScrW() * 0.5, ScrH() * 0.25, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+	        draw.DrawText( v.dispText, "UT3", ScrW() * 0.5, ScrH() * 0.25, Color( 255, 0, 0, 255 ), TEXT_ALIGN_CENTER )
+        end]]
         local y = defaultY + ((k - 1) * 20)
         if v.yPos ~= y then
             local num = table.getn(Feed)
@@ -110,6 +122,7 @@ hook.Add("HUDPaint", "DrawCenterFeed", function()
             font = "FeedSm"
             fontbg = "FeedSmBlur"
         end
+        
         draw.SimpleText(v.dispText, fontbg, ScrW() / 2 - 40, v.yPos, colbg, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         draw.SimpleText(v.dispText, font, ScrW() / 2 - 40, v.yPos, col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         

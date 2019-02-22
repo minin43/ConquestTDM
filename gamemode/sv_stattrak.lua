@@ -22,6 +22,7 @@ specialAttachmentRules = {
 	[ "cw_m14" ] = { [ "md_nightforce_nxs" ] = 0 }
 }
 
+--//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
 function ConstructAttachmentLists()
 	print( "(Re)constructing attachment lists..." )
 	
@@ -56,9 +57,17 @@ function ConstructAttachmentLists()
 					end
 				end
 
+				if fixedAttachmentTable[ "+reload" ] then
+					for k2, v2 in pairs( fixedAttachmentTable[ "+reload" ].atts ) do
+						wep_att[ v.ClassName ][ #wep_att[ v.ClassName ] + 1 ] = { v2, #wep_att[ v.ClassName ] * 10 + 10 }
+					end
+				end
+
 				if specialAttachmentRules[ v.ClassName ] then
 					for attachmentName, uniqueStatus in pairs( specialAttachmentRules[ v.ClassName ] ) do
-						if uniqueStatus == 0 or uniqueStatus > 0 then
+						if uniqueStatus == 0 then
+							table.insert( wep_att[ v.ClassName ], 1, { attachmentName, 0 } )							
+						elseif uniqueStatus > 0 then
 							wep_att[ v.ClassName ][ #wep_att[ v.ClassName ] + 1 ] = { attachmentName, uniqueStatus }
 						elseif uniqueStatus < 0 then 
 							wep_att[ v.ClassName ][ #wep_att[ v.ClassName ] + 1 ] = { attachmentName, math.abs(uniqueStatus) + ( #wep_att[ v.ClassName ] * 10 + 10 ) }
@@ -70,7 +79,7 @@ function ConstructAttachmentLists()
 		end
 	end
 end
-hook.Add( "InitPostEntity", "ST_ConstructAttachmentLists", ConstructAttachmentLists() )
+hook.Add( "InitPostEntity", "ST_ConstructAttachmentLists", ConstructAttachmentLists )
 
 function GetStatTrak( ply, wep )
 	if not ply:GetPData( wep ) then

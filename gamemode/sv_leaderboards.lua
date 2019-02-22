@@ -48,7 +48,7 @@ timer.Create( "tdm_timerecord", 60, 0, function()
 end )
 
 hook.Add( "PlayerDeath", "GlobalKills", function( vic, _, att )
-	if vic and att and IsValid( vic ) and IsValid( att ) and vic ~= NULL and att ~= NULL then
+	if vic and att and IsValid( vic ) and IsValid( att ) and vic ~= NULL and att ~= NULL and att:IsPlayer() then
 		if vic and vic ~= NULL then
 			if not vic:GetPData( "g_deaths" ) then
 				vic:SetPData( "g_deaths", "1" )

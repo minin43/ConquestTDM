@@ -11,10 +11,11 @@ include( "cl_deathscreen.lua" )
 include( "cl_customspawns.lua" )
 include( "cl_leaderboards.lua" )
 include( "cl_playercards.lua" )
+include( "sh_weaponbalancing.lua" )
 
 local groups = {
 	{ "vip", Color( 0, 200, 0 ), "VIP" },
-	{ "betatester", Color( 180, 180, 180 ), "Beta Tester" },
+	{ "operator", Color( 180, 180, 180 ), "Operator" },
 	{ "vip+", Color( 0, 255, 0 ), "VIP+" },
 	{ "owner", Color( 255, 0, 0 ), "Owner" },
 	{ "creator", Color( 200, 0, 0 ), "Creator" },
@@ -42,12 +43,14 @@ local Color = Color
 local unpack = unpack
 local white = color_white
 /*
+
+
 function GM:OnPlayerChat( ply, text, teamonly, dead )
 	local tab = {}
 	if IsValid( ply ) then
 		if dead then
 			ti( tab, Color( 255, 30, 40 ) )		
-			ti( tab, "*DEAD* " )
+			ti( tab, "*At a beter place* " )
 		end
 		if teamonly then
 			ti( tab, Color( 30, 160, 40 ) )		
@@ -101,3 +104,19 @@ function GM:OnPlayerChat( ply, text, teamonly, dead )
 		return true
 	end
 end*/
+
+net.Receive( "SetMagician", function()
+	local bool = net.ReadBool()
+	local wep = net.ReadEntity()
+	local num = net.ReadInt( 32 )
+	local tbl = {}
+	
+	if bool and tbl[num] == nil then
+		wep["ReloadSpeed"] = ( wep["ReloadSpeed"] * 1.5 )
+		--wep["DelpoyTime"] = ( wep["DelpoyTime"] / 2 )
+		tbl[num] = wep
+	elseif !bool and tbl[num] == wep then
+		savedwep["ReloadSpeed"] = ( savedwep["ReloadSpeed"] / 1.5 )
+		--savedwep["DelpoyTime"] = ( savedwep["DelpoyTime"] * 2 )
+	end
+end)

@@ -6,12 +6,6 @@ if CheckPerk( ply ) == "brainstorm" then
 	ply:SetRunSpeed ( 290 ) --default is 300
     ply:SetJumpPower( 170 ) --default is 170
     
-    --[[if (ply:Team() == 1) then
-		ply:SetModel( "models/csgoanarchist4pm.mdl" )
-	elseif (ply:Team() == 2) then
-		ply:SetModel( "models/csgopmswat3.mdl" )
-	end]]
-    
     ply:SetMaxHealth( 85 )
     ply:SetHealth( 85 )
     end

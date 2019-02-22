@@ -1,3 +1,5 @@
+GAMEMODE.PerkTracking = { }
+
 AddCSLuaFile( "cl_init.lua" ) -- Test comment
 AddCSLuaFile( "hud.lua" )
 AddCSLuaFile( "shared.lua" )
@@ -394,6 +396,8 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
 	ply:ConCommand( "tdm_spawnmenu" )
+
+	GAMEMODE.PerkTracking[ id( ply ) ] = {}
 end
 
 function GM:PlayerDeathSound()

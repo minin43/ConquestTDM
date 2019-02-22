@@ -7,4 +7,4 @@ hook.Add( "PlayerSpawn", "Hunter", function( ply )
 	end )
 end )
 
-RegisterPerk( "Hunter", "hunt", 22, "Reduced walking speed, increased sprinting speed" )
+RegisterPerk( "Hunter", "hunt", 7, "Reduced walking speed, highly boosted sprinting speed" )

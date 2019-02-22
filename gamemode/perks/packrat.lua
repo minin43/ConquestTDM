@@ -28,4 +28,4 @@ hook.Add( "PlayerSpawn", "Packrat", function( ply )
 	end )
 end )
 
-RegisterPerk( "Packrat", "packrat", 17, "Spawn with 3 times as much ammo as usual." )
+RegisterPerk( "Packrat", "packrat", 0, "Spawn with 3 times as much ammo as usual." )

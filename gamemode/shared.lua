@@ -14,6 +14,7 @@ if SERVER then
 	resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
 	resource.AddWorkshop( "1386774614" ) --CTDM Files
 	resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises
+	resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
 	
 end
 

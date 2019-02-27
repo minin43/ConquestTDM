@@ -23,26 +23,29 @@ end
 --// { "name", "class", level unlock, "world model", price, { damage, accuracy, firerate }
 
 primaries = {
-	{ "AR-15", 		"cw_ar15", 		0, 	"models/weapons/w_rif_m4a1.mdl", 		0, 		{ 0, 0, 0 } },
-	{ "MP5", 		"cw_mp5", 		3, 	"models/weapons/w_smg_mp5.mdl", 		2000, 	{ 0, 0, 0 } },
-	{ "M3 Super 90","cw_m3super90", 4, 	"models/weapons/w_cstm_m3super90.mdl", 	2000, 	{ 0, 0, 0 } },
-	{ "G36C", 		"cw_g36c", 		10, "models/weapons/cw20_g36c.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "G3A3", 		"cw_g3a3", 		16, "models/weapons/w_snip_g3sg1.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "L115", 		"cw_l115", 		24, "models/weapons/w_cstm_l96.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "UMP .45", 	"cw_ump45", 	30, "models/weapons/w_smg_ump45.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "AK-74", 		"cw_ak74", 		36, "models/weapons/w_rif_ak47.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "M14", 		"cw_m14", 		42, "models/weapons/w_cstm_m14.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "VSS", 		"cw_vss", 		48, "models/cw2/rifles/w_vss.mdl", 			5000, 	{ 0, 0, 0 } },
-	{ "SCAR-H", 	"cw_scarh", 	50, "models/cw2/rifles/w_scarh.mdl", 		5000, 	{ 0, 0, 0 } }
+	{ "AR-15", 		"cw_ar15", 			0, 	"models/weapons/w_rif_m4a1.mdl", 		0, 		{ 0, 0, 0 } },
+	{ "MP5", 		"cw_mp5", 			3, 	"models/weapons/w_smg_mp5.mdl", 		2000, 	{ 0, 0, 0 } },
+	{ "M3 Super 90","cw_m3super90", 	4, 	"models/weapons/w_cstm_m3super90.mdl", 	2000, 	{ 0, 0, 0 } },
+	{ "G36C", 		"cw_g36c", 			8, "models/weapons/cw20_g36c.mdl", 			5000, 	{ 0, 0, 0 } },
+	{ "L115", 		"cw_l115", 			13, "models/weapons/w_cstm_l96.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "G3A3", 		"cw_g3a3", 			17, "models/weapons/w_snip_g3sg1.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "UMP .45", 	"cw_ump45", 		22, "models/weapons/w_smg_ump45.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "M249", 		"cw_m249_official", 26, "models/weapons/cw2_0_mach_para.mdl",	5000, 	{ 0, 0, 0 } },
+	{ "AK-74", 		"cw_ak74", 			31, "models/weapons/w_rif_ak47.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "M14", 		"cw_m14", 			35, "models/weapons/w_cstm_m14.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "VSS", 		"cw_vss", 			40, "models/cw2/rifles/w_vss.mdl", 			5000, 	{ 0, 0, 0 } },
+	{ "L85A2", 		"cw_l85a2",			44, "models/weapons/w_cw20_l85a2.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "SCAR-H", 	"cw_scarh", 		50, "models/cw2/rifles/w_scarh.mdl", 		5000, 	{ 0, 0, 0 } }
 }
 
 secondaries = {
 	{ "P99",			"cw_p99",		0,	"models/weapons/w_pist_p228.mdl",		0,   	{ 0, 0, 0 } },
 	{ "M1911",			"cw_m1911",		5,	"models/weapons/cw_pist_m1911.mdl",		3000,  	{ 0, 0, 0 } },
-	{ "MR96",			"cw_mr96",		10,	"models/weapons/w_357.mdl",				3000, 	{ 0, 0, 0 } },
-	{ "Five Seven",		"cw_fiveseven",	20,	"models/weapons/w_pist_fiveseven.mdl",	3000, 	{ 0, 0, 0 } },
-	{ "MAC-11",			"cw_mac11",		30,	"models/weapons/w_cst_mac11.mdl",		3000, 	{ 0, 0, 0 } },
-	{ "Makarov",		"cw_makarov",	40,	"models/cw2/pistols/w_makarov.mdl",		3000, 	{ 0, 0, 0 } },
+	{ "MR96",			"cw_mr96",		13,	"models/weapons/w_357.mdl",				3000, 	{ 0, 0, 0 } },
+	{ "Five Seven",		"cw_fiveseven",	21,	"models/weapons/w_pist_fiveseven.mdl",	3000, 	{ 0, 0, 0 } },
+	{ "MAC-11",			"cw_mac11",		29,	"models/weapons/w_cst_mac11.mdl",		3000, 	{ 0, 0, 0 } },
+	{ "Super Shorty",	"cw_shorty",	37,	"models/weapons/cw2_super_shorty.mdl",	3000, 	{ 0, 0, 0 } },
+	{ "Makarov",		"cw_makarov",	45,	"models/cw2/pistols/w_makarov.mdl",		3000, 	{ 0, 0, 0 } },
 	{ "Deagle",			"cw_deagle",	50,	"models/weapons/w_pist_deagle.mdl",		3000, 	{ 0, 0, 0 } },
 }
 
@@ -53,28 +56,6 @@ extras = {
 	{ "Frag Grenade x2",	"grenades", 		17, "models/weapons/w_cw_fraggrenade_thrown.mdl",	2000 },
 	{ "Medkit", 			"weapon_medkit", 	26, "models/weapons/w_medkit.mdl", 					2000 }
 }
-
-function FixSlot( weapons, slot )
-	if istable( weapons ) then
-		for k, v in pairs( weapons ) do
-			if weapons.GetStored( v[2] ) then
-				weapons.GetStored( v[2] ).Slot = slot
-				weapons.GetStored( v[2] ).SlotPos = 0
-			end
-		end
-	elseif isstring( weapons ) then
-		if weapons.GetStored( weapons ) then
-			weapons.GetStored( weapons ).Slot = slot
-			weapons.GetStored( weapons ).SlotPos = 0
-		end
-	end
-end
-
-hook.Add( "PostInitEntity", "FixWeaponSlots", function()
-	FixSlot( primaries, 1 )
-	FixSlot( secondaries, 2 )
-	FixSlot( extras, 3 )
-end )
 
 perks = {}
 
@@ -197,7 +178,8 @@ end
 end]]
 
 --//I fail to see the purpose of this, and it's being ran in a think hook, so disabling
---[[function CheckWeapons()
+--To remove when I rework weapon pickup
+function CheckWeapons()
 	for k, v in next, player.GetAll() do
 		if v and v ~= NULL and IsValid( v ) and v:Alive() then
 			if v:GetWeapons() then
@@ -241,10 +223,11 @@ end]]
 		end
 	end
 end
-hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )]]
+hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )
 
 --//Disabling because we only want players dropping their weapons when they pick up a different one
---[[hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind ) 
+--To remove when I rework weapon pickup
+hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind ) 
 	if bind == KEY_Q then
 		if not ply.spawning then
 			if ply and IsValid( ply ) and ply:IsPlayer() and ply:Team() ~= nil and ply:Team() ~= 0 then
@@ -264,7 +247,7 @@ hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )]]
 						toSpawn.rspawn = nil
 					end )
 					timer.Simple( 15, function()
-                        if toSpawn == nil || toSpawn:GetOwner() == nil then 
+                        if toSpawn == nil or !toSpawn:IsValid() or toSpawn:GetOwner() == nil then 
                             return 
                         end -- fixed by cobalt 1/30/16
 						if toSpawn:GetOwner():IsValid() and toSpawn:GetOwner():IsPlayer() then 
@@ -280,7 +263,7 @@ hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )]]
 			end
 		end
 	end
-end )]]
+end )
 
 --//The point of this is to remove one magazine's worth of ammo from the player's ammo pool - was written extremely poorly
 function GM:WeaponEquip( wep )
@@ -288,25 +271,13 @@ function GM:WeaponEquip( wep )
 		if wep and wep:IsValid() and wep:GetOwner() then
 			wep:GetOwner():RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
 		end
-        --[[if wep == nil || wep:GetOwner() == nil then
-            return;
-        end -- fixed by cobalt 1/30/16
-		if not IsValid( wep:GetOwner() ) then
-			return
-		end
-		local ply = wep:GetOwner()
-		if not ply or ply == NULL or ( not ply:IsValid() ) then
-			return
-		end
-		if not ply.spawning then
-			ply:RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
-		end]]
 	end )
 end
 
+--To remove when I rework weapon pickup
 hook.Add( "PlayerCanPickupWeapon", "NoAutoPickup", function( ply, wep )
-	return --This will be done with a button prompt
-	--[[if isPrimary( wep:GetClass() ) then
+	--return --This will be done with a button prompt
+	if isPrimary( wep:GetClass() ) then
 		if ply.curprimary == nil then
 			if wep.rspawn then
 				return false
@@ -336,7 +307,7 @@ hook.Add( "PlayerCanPickupWeapon", "NoAutoPickup", function( ply, wep )
 		else
 			return false
 		end
-	end]]
+	end
 end )
 
 --//Used to remove dropped weapons to prevent entity buildup
@@ -350,15 +321,11 @@ hook.Add( "PlayerDeath", "ClearDroppedWeapons", function( ply )
 				if ent and ent:IsValid() then
 					ent:Remove()
 				end
-                --[[if ent == nil || ent:GetOwner() == nil then return end -- fixed by cobalt 1/30/16
-				if ent:GetOwner():IsValid() and ent:GetOwner():IsPlayer() then 
-				else
-					ent:Remove()
-				end]]
 			end )
 		end
 	end
-	--[[ply.curprimary = nil
+	--To remove when I rework weapon pickup
+	ply.curprimary = nil
 	ply.cursecondary = nil
-	ply.curextra = nil]]
+	ply.curextra = nil
 end )

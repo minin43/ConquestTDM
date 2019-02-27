@@ -1,4 +1,9 @@
-GAMEMODE.PerkTracking = { }
+GM.PerkTracking = { }
+GM.PerkTracking.LifelineList = { }
+GM.KillInfoTracking = GM.KillInfoTracking or { }
+GM.DefaultWalkSpeed = 180
+GM.DefaultRunSpeed = 300
+GM.DefaultJumpPower = 170
 
 AddCSLuaFile( "cl_init.lua" ) -- Test comment
 AddCSLuaFile( "hud.lua" )
@@ -14,6 +19,8 @@ AddCSLuaFile( "cl_deathscreen.lua" )
 AddCSLuaFile( "cl_customspawns.lua" )
 AddCSLuaFile( "cl_leaderboards.lua" )
 AddCSLuaFile( "cl_playercards.lua" )
+AddCSLuaFile( "cl_mapvote.lua" )
+AddCSLuaFile( "cl_mapvote_setup.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -30,76 +37,14 @@ include( "sv_leaderboards.lua" )
 include( "sv_teambalance.lua" )
 include( "sv_api.lua" )
 include( "sv_playercards.lua" )
-include( "sv_killstreaks.lua" )
-include( "sv_backgroundgunfire.lua")
+include( "sv_mapvote.lua" )
+--include( "sv_killstreaks.lua" )
+--include( "sv_backgroundgunfire.lua")
 include( "sh_weaponbalancing.lua" )
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
 end
-
---[[resource.AddFile( "resource/fonts/Purista Numbers.ttf" )
-resource.AddFile( "sound/ui/HUD_Capping_Flag_01_Wave.mp3" )
-resource.AddFile( "sound/ui/Logic_Objective_Completed_01_Wave.mp3" )
-resource.AddFile( "sound/ui/HUD_CTF_FriendlyCapturesFlag_XP0_Wave.mp3" )
-resource.AddFile( "sound/ui/HUD_CTF_EnemyCapturesFlag_XP0_Wave.mp3" )
-resource.AddFile( "sound/ui/UI_Awards_Basic_wav.mp3" )
-resource.AddFile( "sound/ui/UI_HUD_OutOfBounds_Count_Wave.mp3" )
-resource.AddFile( "sound/ui/UX_InGame_Unlock_Promotion_Wave.mp3" )
-resource.AddFile( "sound/ui/UX_Deploy_DeployReady_Wave.mp3" )
-resource.AddFile( "sound/ui/UX_Deploy_DeployTimer_Wave.mp3" )
-resource.AddFile( "sound/ui/MP_Music_Losing_End_01_Wave.mp3" )
-resource.AddFile( "sound/ui/MP_Music_Winning_End_01_Wave3.mp3" )
-
---shiny new prestige :)
-resource.AddFile( "materials/ranks/Reach-General.png" )
-resource.AddFile( "materials/ranks/Reach-GeneralG1.png" )
-resource.AddFile( "materials/ranks/Reach-GeneralG2.png" )
-resource.AddFile( "materials/ranks/Reach-GeneralG3.png" )
-resource.AddFile( "materials/ranks/Reach-GeneralG4.png" )
-resource.AddFile( "materials/ranks/Reach-FieldMarshall.png" )
-resource.AddFile( "materials/ranks/Reach-Hero.png" )
-resource.AddFile( "materials/ranks/Reach-Legend.png" )
-resource.AddFile( "materials/ranks/Reach-Mythic.png" )
-resource.AddFile( "materials/ranks/Reach-Noble.png" )
-resource.AddFile( "materials/ranks/Reach-Eclipse.png" )
-resource.AddFile( "materials/ranks/Reach-Nova.png" )
-resource.AddFile( "materials/ranks/Reach-Forerunner.png" )
-resource.AddFile( "materials/ranks/Reach-Reclaimer.png" )
-resource.AddFile( "materials/ranks/Reach-Inheritor.png" )
-resource.AddFile( "materials/ranks/Reach-New.png" )
-resource.AddFile( "materials/ranks/200.png" )
-resource.AddFile( "materials/ranks/101.png" )
-resource.AddFile( "materials/ranks/102.png" )
-resource.AddFile( "materials/ranks/103.png" )
-resource.AddFile( "materials/ranks/104.png" )
-resource.AddFile( "materials/ranks/105.png" )
-resource.AddFile( "materials/ranks/106.png" )
-resource.AddFile( "materials/ranks/107.png" )
-resource.AddFile( "materials/ranks/108.png" )
-resource.AddFile( "materials/ranks/109.png" )
-resource.AddFile( "materials/ranks/110.png" )
-resource.AddFile( "materials/ranks/111.png" )
-resource.AddFile( "materials/ranks/112.png" )
-resource.AddFile( "materials/ranks/113.png" )
-resource.AddFile( "materials/ranks/114.png" )
-resource.AddFile( "materials/ranks/115.png" )
-resource.AddFile( "materials/ranks/116.png" )
-resource.AddFile( "materials/ranks/117.png" )
-resource.AddFile( "materials/ranks/118.png" )
-resource.AddFile( "materials/ranks/119.png" )
-resource.AddFile( "materials/ranks/120.png" )
-resource.AddFile( "materials/ranks/121.png" )
-resource.AddFile( "materials/ranks/122.png" )
-resource.AddFile( "materials/ranks/123.png" )
-resource.AddFile( "materials/ranks/124.png" )
-resource.AddFile( "materials/ranks/125.png" )
-resource.AddFile( "materials/ranks/126.png" )
-resource.AddFile( "materials/ranks/127.png" )
-resource.AddFile( "materials/ranks/128.png" )
-resource.AddFile( "materials/ranks/129.png" )
-resource.AddFile( "materials/ranks/130.png" )
-resource.AddFile( "materials/ranks/150.png" )]]
 
 local _Ply = FindMetaTable( "Player" )
 function _Ply:AddScore( score )
@@ -152,7 +97,7 @@ local color_blue = Color( 0, 0, 255 )
 local color_green = Color( 102, 255, 51 )
 local color_white = Color( 255, 255, 255 )
 
-function EndRound( win, lose )
+function GM:EndRound( win, lose )
 	timer.Destroy( "RoundTimer" )
 	timer.Destroy( "Tickets" )
 	hook.Run( "MatchHistory_MatchComplete" )
@@ -221,13 +166,15 @@ function EndRound( win, lose )
                 ULib.tsayColor( nil, true, color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
             end
         end )
-        timer.Simple( 30, function()
+		timer.Simple( 30, function()
+			hook.Call( "StartMapvote", nil, win, lose )
             if MAPVOTE then
                 MAPVOTE:StartMapVote()
             end
         end )
     end
 end
+EndRound = GM.EndRound
 
 local function CheckVIP( ply )
 	if ply:CheckGroup( "vip" ) or ply:CheckGroup( "vip+" ) or ply:CheckGroup( "ultravip" ) or ply:CheckGroup( "admin" ) or ply:CheckGroup( "superadmin" ) or ply:CheckGroup( "headadmin" ) or ply:CheckGroup( "coowner" ) or ply:CheckGroup( "owner" ) or ply:CheckGroup( "secret" ) then
@@ -356,8 +303,6 @@ function GM:ShowSpare2( ply )
 	if IsValid( tr.Entity ) then ply:PrintMessage( HUD_PRINTCONSOLE, "ent: " .. tr.Entity:GetClass() ) end
 end
 
-defaultWalkSpeed = 180
-defaultRunSpeed = 300
 
 function GM:PlayerInitialSpawn( ply )
 	if not file.Exists( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
@@ -388,16 +333,19 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:ConCommand( "cl_deathview 1" )
 
-	for i=1, 9 do
+	--//This has been disabled - and for awhile
+	--[[for i=1, 9 do
 		ply:ConCommand( "bind \"" .. i .. "\" \"slot" .. i .. "\"" )
 		print(" bind \"" .. i .. "\" \"slot" .. i .. "\"" )
-	end
+	end]]
 
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
 	ply:ConCommand( "tdm_spawnmenu" )
 
-	GAMEMODE.PerkTracking[ id( ply ) ] = {}
+	GAMEMODE.PerkTracking[ id( ply:SteamID() ) ] = {}
+	GAMEMODE.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
+	GAMEMODE.KillInfoTracking[ id( ply:SteamID() ) ].KillsThisLife = 0
 end
 
 function GM:PlayerDeathSound()
@@ -574,8 +522,12 @@ function giveLoadout( ply )
 		if l.perk then
 			local t = l.perk
 			ply[t] = true
+			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = t
+		else
+			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = "none"
 		end
 	end
+	hook.Call( "PostGiveLoadout", nil, ply )
 end
 
 function changeTeam( ply, cmd, args )
@@ -745,30 +697,23 @@ function GM:PlayerSpawn( ply )
 	end
 	
 	self.BaseClass:PlayerSpawn( ply )
-	
-		local redmodels = {
-			"models/player/group03/male_06.mdl",
-			"models/player/group03/male_07.mdl",
-			"models/player/group03/male_08.mdl",
-			"models/player/group03/male_09.mdl"
-        --[["models/characters/insurgent_standard.mdl",
-		"models/characters/insurgent_sapper.mdl",
-		"models/characters/insurgent_machinegunner.mdl",
-		"models/characters/insurgent_light.mdl",
-		"models/characters/insurgent_heavy.mdl",
-		"models/characters/insurgent_fighter.mdl"]]
-		}
+
+	ply:SetWalkSpeed( GAMEMODE.DefaultWalkSpeed )
+	ply:SetRunSpeed( GAMEMODE.DefaultRunSpeed )
+	ply:SetJumpPower( GAMEMODE.DefaultJumpPower )
+
+	local redmodels = {
+		"models/player/group03/male_06.mdl",
+		"models/player/group03/male_07.mdl",
+		"models/player/group03/male_08.mdl",
+		"models/player/group03/male_09.mdl"
+	}
     local bluemodels = {
 		"models/player/group03/male_01.mdl",
 		"models/player/group03/male_02.mdl",
 		"models/player/group03/male_03.mdl",
 		"models/player/group03/male_04.mdl",
 		"models/player/group03/male_05.mdl"
-        --[["models/characters/security_standard.mdl",
-		"models/characters/security_rifleman.mdl",
-		"models/characters/security_light.mdl",
-		"models/characters/security_heavy.mdl",
-		"models/characters/security_specialist.mdl"]]
 		}
 	timer.Simple(0, function()
 		if (ply:Team() == 1) then
@@ -781,14 +726,6 @@ function GM:PlayerSpawn( ply )
 		ply:SetPlayerColor( col[ply:Team()] )
 	end)
 	giveLoadout( ply )
-	
-	--default walk speed 180
-	--default run speed 300
-
-	ply:SetJumpPower( 170 ) -- Decreased Jump height due to jumping bastards.
-	
-	ply:SetWalkSpeed( defaultWalkSpeed )
-	ply:SetRunSpeed( defaultRunSpeed )
 
 	if GetGlobalBool( "RoundFinished" ) then
 		ply:SetWalkSpeed( 200 )

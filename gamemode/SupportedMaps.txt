@@ -39,6 +39,7 @@ Maps with Flag Points (not necessarily with spawn points)
 - de_star
 - sh_bloodniron_c1
 - sh_smalltown_c
+
 - sh_strongdale_2dark
 - sh_vespene_c1
 - sh_voxelgrounds_c1

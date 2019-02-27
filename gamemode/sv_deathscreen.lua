@@ -12,35 +12,75 @@ hook.Add( "Think", "GetWeps", function()
 end )
 
 hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
-	ply.NextSpawnTime = CurTime() + 6.5
+
+	ply.NextSpawnTime = CurTime() + 4.5
 	ply:SendLua( [[surface.PlaySound( "ui/UI_HUD_OutOfBounds_Count_Wave.mp3" )]] )
-	timer.Simple( 1.5, function()
-		if att and IsValid( att ) then
-			ply:SpectateEntity( att )
-			ply:Spectate( OBS_MODE_CHASE )
+	
+	if att:IsWorld() then att = ply end
+
+	--//Killer's perk
+	local perk = GAMEMODE.PerkTracking[ id( att:SteamID() ) ].ActivePerk or "none"
+	
+	--//Killer's entity
+	local attacker = att or ply
+
+	--//Killshot position
+	local hitgroup
+	if dmginfo:IsBulletDamage() then
+		local throwaway = ply:LastHitGroup()
+		if throwaway == HITGROUP_HEAD then
+			hitgroup = "head"
+		elseif throwaway == HITGROUP_CHEST then
+			hitgroup = "chest"
+		elseif throwaway == HITGROUP_STOMACH then
+			hitgroup = "stomach"
+		elseif throwaway == HITGROUP_LEFTARM then
+			hitgroup = "left arm"
+		elseif throwaway == HITGROUP_RIGHTARM then
+			hitgroup = "right arm"
+		elseif throwaway == HITGROUP_LEFTLEG then
+			hitgroup = "left leg"
+		elseif throwaway == HITGROUP_RIGHTLEG then
+			hitgroup = "right leg"
+		else 
+			hitgroup = "unknown" 
 		end
-		ply.num = 5
+	elseif dmginfo:IsExplosionDamage() then
+		hitgroup = "internal"
+	elseif dmginfo:IsFallDamage() then
+		hitgroup = "ground"
+	end
+	
+	--//Weapon used
+	local wepused
+	if att and att:IsValid() and att:IsPlayer() and dmginfo:IsBulletDamage() then
+		if att:Alive() and att:GetActiveWeapon() and att != ply then
+			wepused = att:GetActiveWeapon():GetClass()
+		else
+			wepused = att.LastUsedWep or "unknown" 
+		end
+	else
+		wepused = "none"
+	end
+	
+	--//Flavor timer
+	timer.Simple( 1.5, function()
+		ply.num = 3
+		
 		umsg.Start( "DeathScreen", ply )
-			if att and IsValid( att ) then
-				umsg.Entity( att )
-			else
-				umsg.Entity( ply )
-			end
-			umsg.Bool( ply:LastHitGroup() == HITGROUP_HEAD )
-			if att and IsValid( att ) and att ~= NULL and att:IsPlayer() then
-				if att:Alive() and att:GetActiveWeapon() and att:GetActiveWeapon() ~= NULL then
-					umsg.String( att:GetActiveWeapon():GetClass() )
-				else
-					umsg.String( att.LastUsedWep and att.LastUsedWep or "" )
-				end
-			else
-				umsg.String( "" )
-			end
 			umsg.Short( ply.num )
+			umsg.Entity( attacker )
+			umsg.Entity( ply )
+			umsg.String( perk )
+			umsg.String( hitgroup )
+			umsg.String( wepused )
+			umsg.String( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
 		umsg.End()
+		
 		local stid = ply:SteamID()
-		timer.Create( "SendUpdates_" .. stid, 1, 5, function()
+		timer.Create( "SendUpdates_" .. stid, 1, 3, function()
 			if ply:IsValid() and ply:IsPlayer() then
+			
 				umsg.Start( "UpdateDeathScreen", ply )
 					ply.num = ply.num - 1
 					if ply.num < 0 then
@@ -48,6 +88,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 					end
 					umsg.Short( ply.num )
 				umsg.End()
+				
 			end
 		end )
 	end )

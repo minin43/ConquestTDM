@@ -155,6 +155,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	local perk = um:ReadString() --attacker's perk
 	local hitgroup = um:ReadString() --where the last bullet landed
 	local wep = um:ReadString() --weapon used
+	local killstreak = um:ReadString()
 	
 	if wep and weapons.Get( wep ) then
 		wep = weapons.Get( wep ).PrintName
@@ -245,7 +246,11 @@ usermessage.Hook( "DeathScreen", function( um )
 	title4:SetFont( "ds_spawn" )
 	title4:SetTextColor( Color( 255, 255, 255, 200) )
 	local reason
-	if wep != "unknown" and wep != NULL and wep != NIL and hitgroup != "unknown" then
+	if hitgroup == "internal" then
+		reason = "an explosion"
+	elseif hitgroup == "ground" then
+		reason = "a large fall"
+	elseif wep != "unknown" and hitgroup != "unknown" then
 		reason = "a bullet to the " .. hitgroup
 	else
 		reason = "blunt force trauma"
@@ -258,37 +263,17 @@ usermessage.Hook( "DeathScreen", function( um )
 	title5:SetPos( Main:GetWide() / 2, Main:GetTall() / 2 + 5)
 	title5:SetFont( "ds_spawn" )
 	title5:SetTextColor( Color( 255, 255, 255, 200) )
-	local killstreak = att.killsThisLife
-	if att.killsThisLife == nil then killstreak = 0 end
+	killstreak = tonumber( killstreak ) or 0
 	title5:SetText( "Their killstreak: " .. killstreak )
 	title5:SizeToContents() 
 	
 	--Beta
-	local beta = vgui.Create( "DLabel", Main)
+	--[[local beta = vgui.Create( "DLabel", Main)
 	beta:SetPos( Main:GetWide() - 50, 2 )
 	beta:SetFont( "ds_spawn" )
 	beta:SetTextColor( Color( 255, 255, 255, 100) )
 	beta:SetText( "BETA" )
-	beta:SizeToContents() 
-	
-	--[[local wepn = vgui.Create( "DLabel", Main )
-	wepn:SetPos( 6 + AttAvatar:GetWide() + 5, ( Main:GetTall() - 30 ) / 3 + ( Main:GetTall() - 30 ) / 3 )
-	wepn:SetFont( "ds_wep" )
-	wepn:SetTextColor( Color( 255, 255, 255, 200 ) )
-	if not att or att == NULL then
-		wepn:SetText( "The world has killed you!" )
-	else
-		if LocalPlayer() == att then
-			wepn:SetText( "You commited suicide!" )
-		else
-			if att and att:IsPlayer() then
-					wepn:SetText( "Killed you with their " .. wep )
-			else
-				wepn:SetText( "U have no skillz m8" )
-			end
-		end
-	end
-	wepn:SizeToContents()]]
+	beta:SizeToContents()]]
 	
 	local spawnin = vgui.Create( "DLabel", Main )
 	spawnin:SetPos( 6, Main:GetTall() - 27 )
@@ -296,10 +281,12 @@ usermessage.Hook( "DeathScreen", function( um )
 	spawnin:SetTextColor( Color( 255, 255, 255 ) )
 	spawnin:SetText( "" )
 	spawnin.Think = function()
-		if time > 0 then
-			spawnin:SetText( "Spawning in " .. tostring( time ) )
-		else
+		if time == 0 then
 			spawnin:SetText( "Press [space] to spawn" )
+		elseif time > 0 and time < 6 then
+			spawnin:SetText( "Spawning in " .. tostring( time ) .. "..." )
+		else
+			spawnin:SetText( "Spawning in 5..." )
 		end	
 		spawnin:SizeToContents()
 	end

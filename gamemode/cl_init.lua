@@ -11,6 +11,8 @@ include( "cl_deathscreen.lua" )
 include( "cl_customspawns.lua" )
 include( "cl_leaderboards.lua" )
 include( "cl_playercards.lua" )
+include( "cl_mapvote.lua" )
+include(  "cl_mapvote_setup.lua" )
 include( "sh_weaponbalancing.lua" )
 
 local groups = {
@@ -120,3 +122,13 @@ net.Receive( "SetMagician", function()
 		--savedwep["DelpoyTime"] = ( savedwep["DelpoyTime"] * 2 )
 	end
 end)
+
+function id( steamid )
+	local x = string.gsub( steamid, ":", "x" )
+	return x
+end
+
+function unid( steamid )
+	local x = string.gsub( steamid, "x", ":" )
+	return string.upper( x )
+end

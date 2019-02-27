@@ -1,10 +1,10 @@
-hook.Add( "PlayerSpawn", "LifelineSpawn", function( ply )
+hook.Add( "PostGiveLoadout", "LifelineSpawn", function( ply )
 	if CheckPerk( ply ) == "lifeline" then
-		GAMEMODE.PerkTracking[ id( ply ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( ply ) ].LifelineBonus or 0
+		GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus or 0
 		GAMEMODE.PerkTracking.LifelineList[ ply ] = true
 		timer.Simple( 0.1, function()			
-			ply:SetMaxHealth( 100 + GAMEMODE.PerkTracking[ id( ply ) ].LifelineBonus ) 
-			ply:SetHealth( 100 + GAMEMODE.PerkTracking[ id( ply ) ].LifelineBonus )
+			ply:SetMaxHealth( 100 + GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus ) 
+			ply:SetHealth( 100 + GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus )
 		end )
 	else
 		if GAMEMODE.PerkTracking.LifelineList[ ply ] then
@@ -16,9 +16,9 @@ end )
 hook.Add( "PlayerDeath", "LifelineKill", function( ply, wep, att )
 	if CheckPerk( att ) == "lifeline" and ply != att then
 		if att:Health() <= 20 or ply:LastHitGroup() == HITGROUP_HEAD then
-			GAMEMODE.PerkTracking[ id( ply ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( ply ) ].LifelineBonus + 10
-			att:SetMaxHealth( att:GetMaxHealth() + 10 )
-			att:SetHealth( att:Health() + 50 )
+			GAMEMODE.PerkTracking[ id( att:SteamID() ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( att:SteamID() ) ].LifelineBonus + 10
+			--att:SetMaxHealth( att:GetMaxHealth() + 10 ) --If this ends up being too strong, we can set the max health to be temporary
+			att:SetHealth( math.Clamp( att:Health() + 50, 0, att:GetMaxHealth() ) )
 		end
 	end
 end )
@@ -26,10 +26,15 @@ end )
 --//A bit expensive
 hook.Add( "Think", "LifelineChecks", function()
 	for k, v in pairs( GAMEMODE.PerkTracking.LifelineList ) do
-		k:SetWalkSpeed( 150 * (1 + ( ( k:GetMaxHealth() - k:Health() ) / 100 ) ) )
-		k:SetRunSpeed ( 250 * (1 + ( ( k:GetMaxHealth() - k:Health() ) / 100 ) ) )
-		k:SetJumpPower( 150 * (1 + ( ( k:GetMaxHealth() - k:Health() ) / 70 ) ) )
+		if k:IsValid() then
+			k:SetWalkSpeed( math.Round( ( GAMEMODE.DefaultWalkSpeed - 30 ) + ( GAMEMODE.DefaultWalkSpeed - 30 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) )
+			k:SetRunSpeed ( math.Round( ( GAMEMODE.DefaultRunSpeed - 50 ) + ( GAMEMODE.DefaultRunSpeed - 50 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) )
+			k:SetJumpPower( math.Round( ( GAMEMODE.DefaultJumpPower - 30 ) + ( GAMEMODE.DefaultJumpPower - 30 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) )
+		else
+			k = nil
+		end
 	end
 end )
 
-RegisterPerk( "Lifeline", "lifeline", 42, "Walk speed, sprint speed, & jump height are based on missing health. Headshots and kills while damage low revitalizes you, increasing your health by 50 and max health by 10." )
+RegisterPerk( "Lifeline", "lifeline", 42, "Walk speed, sprint speed, & jump height are based on missing health. Headshots and kills while low revitalize you,"
+	.. " increasing your health by 50 and max health by 10." )

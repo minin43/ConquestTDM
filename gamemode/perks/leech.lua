@@ -1,8 +1,7 @@
 hook.Add( "PlayerDeath", "Leech", function( vic, inf, att )
 	if CheckPerk( att ) == "leech" then
 		if att:Alive() then
-			att:SetHealth( att:Health() + ( ( 100 - att:Health() ) / 3 ) )
-			--ply.victimstaken = ply.victimstaken + 1
+			att:SetHealth( att:Health() + ( ( att:GetMaxHealth() - att:Health() ) / 3 ) )
 		end
 	end
 end )

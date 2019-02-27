@@ -1,7 +1,7 @@
 util.AddNetworkString( "UpdateStatTrak" )
 util.AddNetworkString( "SendInitialStatTrak" )
 
---[[st = {}
+st = {}
 
 st.attachments = {}
 
@@ -9,7 +9,7 @@ if ( CustomizableWeaponry.registeredAttachments ) then
 	for k, v in ipairs( CustomizableWeaponry.registeredAttachments ) do
 		table.insert( st.attachments, v.name )
 	end
-end]]
+end
 
 wep_att = {}
 
@@ -92,41 +92,46 @@ end
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 	if ply and ply:IsValid() and att and att:IsValid() and att ~= ply then
 
-		local wep
+		local wepclass
 		if dmginfo:IsBulletDamage() then
-			wep = att:GetActiveWeapon() or dmginfo:GetInflictor()
+			local wep = att:GetActiveWeapon() or dmginfo:GetInflictor()
 			if !wep then return end
+			wepclass = wep:GetClass()
+		elseif dmginfo:IsExplosionDamage() then
+			if dmginfo:GetInflictor():GetClass() == "cw_grenade_thrown" then
+				wepclass = "cw_frag_grenade"
+			elseif dmginfo:GetInflictor():GetClass() == "cw_40mm_explosive" then
+				wepclass = att:GetActiveWeapon():GetClass()
+			end
 		end
 		
-		wep = wep:GetClass()
-		
 		--What's the point to this? st seems like an extremely redundant table
-		--[[if st[ att ] then
+		if st[ att ] then
 			for k, v in next, st[ att ] do
 				if wep == v:GetClass() then
 					cantrack = true
 				end
 			end
-		end]]
+		end
 	
-		if not att:GetPData( wep ) then
-			att:SetPData( wep, 1 )
+		if not att:GetPData( wepclass ) then
+			att:SetPData( wepclass, 1 )
 		else
-			local num = att:GetPData( wep )
-			att:SetPData( wep, num + 1 )
+			local num = att:GetPData( wepclass )
+			att:SetPData( wepclass, num + 1 )
 		end
 		
 		net.Start( "UpdateStatTrak" )
-			net.WriteString( wep )
-			net.WriteString( tostring( att:GetPData( wep ) ) )
+			net.WriteString( wepclass )
+			net.WriteString( tostring( att:GetPData( wepclass ) ) )
 		net.Send( att )
 			
-		local num = GetStatTrak( att, wep )
+		local num = GetStatTrak( att, wepclass )
 		local togive = {}
 		
 		--for k, v in pairs( wep_att ) do
 		for q, w in next, wep_att do
-			if q == wep then
+			if q == wepclass then
 				for a, s in next, w do
 					if num == s[ 2 ] then
 						table.insert( togive, s[ 1 ] )
@@ -143,7 +148,7 @@ hook.Add( "PlayerSpawn", "ST_PlayerSpawn", function( ply )
 	timer.Simple( 0.5, function()
         if ply == nil then return end
 		local weps = ply:GetWeapons()
-		--st[ ply ] = weps
+		st[ ply ] = weps
 		
 		local tab = {}
 		
@@ -181,10 +186,10 @@ hook.Add( "PlayerSpawn", "ST_PlayerSpawn", function( ply )
 	end )
 end )
 
---[[hook.Add( "Think", "UpdateSTWeps", function()
+hook.Add( "Think", "UpdateSTWeps", function()
 	for k, v in next, player.GetAll() do
 		if st[ v ] ~= v:GetWeapons() then
 			st[ v ] = v:GetWeapons()
 		end
 	end
-end )]]
+end )

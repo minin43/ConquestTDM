@@ -77,6 +77,49 @@ net.Receive("KillFeed", function()
     timer.Start("ScoreTimer")
 end)
 
+net.Receive( "Announcer", function()
+    local SoundTable = {
+        [ "firstblood" ] = "ut3sounds/firstblood.mp3",
+        [ "payback" ] = "ut3sounds/payback.mp3",
+        [ "headshot" ] = "ut3sounds/headshot.mp3",
+        [ "bullseye" ] = "ut3sounds/bullseye.mp3",
+        [ "eagleeye" ] = "ut3sounds/eagleeye.mp3",
+        [ "headhunter" ] = "ut3sounds/headhunter.mp3",
+        [ "denied" ] = "ut3sounds/denied.mp3",
+        [ "rejected" ] = "ut3sounds/rejected.mp3",
+        [ "doublekill" ] = "ut3sounds/doublekill.mp3",
+        [ "multikill" ] = "ut3sounds/multikill.mp3",
+        [ "megakill" ] = "ut3sounds/megakill.mp3",
+        [ "ultrakill" ] = "ut3sounds/ultrakill.mp3",
+        [ "unreal" ] = "ut3sounds/unreal.mp3",
+        [ "DOMINATING" ] = "ut3sounds/dominating.mp3",
+        [ "RAMPAGE" ] = "ut3sounds/rampage.mp3",
+        [ "IMPRESSIVE" ] = "ut3sounds/impressive.mp3",
+        [ "GUNSLINGER" ] = "ut3sounds/gunslinger.mp3",
+        [ "BLOODBATH" ] = "ut3sounds/bloodbath.mp3",
+        [ "BLAZE OF GLORY" ] = "ut3sounds/blazeofglory.mp3",
+        [ "OUTSTANDING" ] = "ut3sounds/outstanding.mp3",
+        [ "TOP GUN" ] = "ut3sounds/topgun.mp3",
+        [ "SHAFT-MASTER" ] = "ut3sounds/shaftmaster.mp3"
+        --[ "roadkill" ] = "ut3sounds/roadkill.mp3"
+    }
+
+    local sound = net.ReadString()
+
+    GAMEMODE.AnnouncerSounds = GAMEMODE.AnnouncerSounds or { }
+
+    if GAMEMODE.AnnouncerSounds.ActiveSound and GAMEMODE.AnnouncerSounds.ActiveSound:IsPlaying() then
+        GAMEMODE.AnnouncerSounds.ActiveSound:Stop()
+    end
+
+    if !GAMEMODE.AnnouncerSounds[ sound ] then
+        GAMEMODE.AnnouncerSounds[ sound ] = CreateSound( LocalPlayer(), SoundTable[ sound ] )
+    end
+    
+    GAMEMODE.AnnouncerSounds[ sound ]:Play()
+    GAMEMODE.AnnouncerSounds.ActiveSound = GAMEMODE.AnnouncerSounds[ sound ]
+end )
+
 hook.Add("Think", "Feed", function()
     for k, v in next, Feed do
         if CurTime() - v.time > 4 then

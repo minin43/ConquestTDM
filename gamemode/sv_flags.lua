@@ -21,8 +21,8 @@ flags[ "sh_lockdown" ] = {
 	{ "D", Vector( 1722, 85, -527 ), 400, 0 },
 	{ "E", Vector( 404, 286, -1564 ), 400, 0 }
 }
-flags[ "sh_lockdown_two" ] = {
-	{ "A", Vector( -1498, -275, -1551 ), 400, 0 },
+flags[ "sh_lockdown_v2" ] = {
+	{ "A", Vector( -1498, -275, -1551 ), 300, 0 },
 	{ "B", Vector( -1309, -1662, -1551 ), 100, 0 },
 	{ "C", Vector( 818, -1675, -1039 ), 300, 0 },
 	{ "D", Vector( 1722, 85, -527 ), 400, 0 },
@@ -69,13 +69,13 @@ flags[ "cs_office" ] = {
 	{ "D", Vector( -517, 171, -160 ), 500, 0 },
 	{ "E", Vector( -681, -792, -334 ), 500, 0 }
 }
-flags[ "gm_mw2_terminal" ] = {
+--[[flags[ "ttt_mw2_terminal" ] = { --Flags are in the wrong position
 	{ "A", Vector( -1637, -1434, 16 ), 400, 0 },
 	{ "B", Vector( -420, 52, 16 ), 400, 0 },
 	{ "C", Vector( -292, 824, 144 ), 400, 0 },
 	{ "D", Vector( -1914, 912, 144 ), 400, 0 },
 	{ "E", Vector( 933, 577, 144 ), 400, 0 }
-}
+}]]
 flags[ "de_nuke" ] = {
 	{ "A", Vector( 647, -1684, -301 ), 200, 0 },
 	{ "B", Vector( 83, -1660, -33 ), 200, 0 },
@@ -109,7 +109,7 @@ flags[ "dm_nuketown" ] = {
 flags[ "dm_canals" ] = {
 	{ "A", Vector( -2871, -1187, 144 ), 400, 0 },
 	{ "B", Vector( -1477, -1213, 96 ), 400, 0 },
-	{ "C", Vector( -800, -562, 400 ), 400, 0 },
+	{ "C", Vector( -800, -562, 400 ), 350, 0 },
 	{ "D", Vector( -159, -1968, -112 ), 400, 0 },
 	{ "E", Vector( -1804, -1179, -336 ), 400, 0 }
 }
@@ -179,7 +179,7 @@ flags[ "de_vegas_css" ] ={
 
 flags[ "de_star" ] ={
 	{ "A", Vector( 698, -661, 96 ), 300, 0 },
-	{ "B", Vector( 472, -93, -340 ), 300, 0 }
+	{ "B", Vector( 1326, -67, -340 ), 300, 0 }
 }
 
 flags[ "sh_bloodniron_c1" ] ={
@@ -510,6 +510,18 @@ flags[ "gm_floatingworlds_3" ] = {
 	{ "D", Vector( 3583, -3867, 0 ), 200, 0 },
 	{ "E", Vector( 2368, -8077, 20 ), 200, 0 }
 }
+flags[ "ttt_riverside_b3 " ] = {
+	{ "A", Vector( -2015, 237, -1 ), 200, 0 },
+	{ "B", Vector( -1047, -606, 42 ), 200, 0 },
+	{ "C", Vector( -298.5, -1448, -52 ), 200, 0 }
+}
+flags[ "ttt_lazertag" ] = {
+	{ "A", Vector( 1050, 28, 64 ), 300, 0 },
+	{ "B", Vector( -46.5, 35.5, 400 ), 100, 0 },
+	{ "C", Vector( -1267.5, -219.5, 64), 300, 0 },
+	{ "D", Vector( 424, 1348.5, 192 ), 200, 0 },
+	{ "E", Vector( 132 -1155.5, 256 ), 100, 0 }
+}
 
 --[[
 lua_run_cl local pos = LocalPlayer():GetEyeTrace().HitPos print( "{ \"A\", Vector( " .. math.Round( pos.x ) .. ", " .. math.Round( pos.y ) .. ", " .. math.Round( pos.z ) .. " ), 400, 0 }" )
@@ -711,51 +723,6 @@ hook.Add( "tdm_FlagCaptured", "tdm_flagcapped", function( t, flag, plys )
 		net.WriteTable( status )
 	net.Broadcast()
 	for k, v in next, plys do --If friendlies capture a point
-		if (v:Team() == 1) then
-		if (flag[ 1 ] == "A") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedalpha"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "B") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedbravo"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "C") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedcharlie"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "D") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/captureddelta"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "E") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedecho"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "F") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedfoxtrot"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "G") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedgolf"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "H") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedhotel"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "I") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedindia"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "J") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/capturedjuliet"..math.random(1, 3)..".ogg" )]])
-			end
-		elseif (v:Team() == 2) then
-		if (flag[ 1 ] == "A") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedalpha"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "B") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedbravo"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "C") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedcharlie"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "D") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/captureddelta"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "E") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedecho"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "F") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedfoxtrot"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "G") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedgolf"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "H") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedhotel"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "I") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedindia"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "J") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/capturedjuliet"..math.random(1, 3)..".ogg" )]])
-			end
-		end
 		AddNotice(v, "FLAG CAPTURED", SCORECOUNTS.FLAG_CAPTURED, NOTICETYPES.FLAG)
 		AddRewards(v, SCORECOUNTS.FLAG_CAPTURED)
 		hook.Run( "MatchHistory_Capture", v )
@@ -765,51 +732,6 @@ hook.Add( "tdm_FlagCaptured", "tdm_flagcapped", function( t, flag, plys )
 	end
 	for k, v in next, player.GetAll() do
 		if v:Team() ~= t and v:Team() ~= 0 then
-			if (v:Team() == 1) then
-			if (flag[ 1 ] == "A") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostalpha"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "B") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostbravo"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "C") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostcharlie"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "D") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostdelta"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "E") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostecho"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "F") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostfoxtrot"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "G") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostgolf"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "H") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/losthotel"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "I") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostindia"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "J") then
-				v:SendLua([[surface.PlaySound( "pointscaptured2/lostjuliet"..math.random(1, 3)..".ogg" )]])
-			end
-		elseif (v:Team() == 2) then
-			if (flag[ 1 ] == "A") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostalpha"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "B") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostbravo"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "C") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostcharlie"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "D") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostdelta"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "E") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostecho"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "F") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostfoxtrot"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "G") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostgolf"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "H") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/losthotel"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "I") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostindia"..math.random(1, 3)..".ogg" )]])
-			elseif (flag[ 1 ] == "J") then
-				v:SendLua([[surface.PlaySound( "pointscaptured/lostjuliet"..math.random(1, 3)..".ogg" )]])
-			end
-		end
 			umsg.Start( "enemyflagcaptured", v )
 				umsg.String( flag[ 1 ] )
 			umsg.End()		

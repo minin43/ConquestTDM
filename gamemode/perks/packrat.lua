@@ -5,7 +5,7 @@ local dontgive = {
 	"seal6-claymore"
 }
 
-hook.Add( "PlayerSpawn", "Packrat", function( ply )
+hook.Add( "PostGiveLoadout", "Packrat", function( ply )
 	timer.Simple( 1.5, function()
 		if CheckPerk( ply ) == "packrat" then
 			for k, v in next, ply:GetWeapons() do

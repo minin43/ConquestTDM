@@ -20,12 +20,12 @@ lvl.VIPGroups = {
 	{ "creator", .5 }
 }
 	
-for i = 1, 100 do
+for i = 1, 50 do
 	lvl.levels[ i ] = i * lvl.expmul
 end
 
 -- "prestige"
-for i = 101, 200 do
+for i = 51, 100 do
 	lvl.levels[ i ] = 30000 * ( ( i - 100 ) ^ 2 )
 end
 

@@ -178,7 +178,7 @@ flags[ "de_vegas_css" ] ={
 }
 
 flags[ "de_star" ] ={
-	{ "A", Vector( 698, -661, 96 ), 300, 0 },
+	{ "A", Vector( -36 -36 -8 ), 300, 0 },
 	{ "B", Vector( 1326, -67, -340 ), 300, 0 }
 }
 

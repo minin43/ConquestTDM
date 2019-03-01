@@ -41,7 +41,7 @@ function weapons.OnLoaded()
 
     if weapons.Get( "cw_l115" ) then
         local wep = weapons.GetStored( "cw_l115" )
-        wep.Damage = 110
+        wep.Damage = 100
         wep.Slot = 0
     end
 

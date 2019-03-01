@@ -23,8 +23,8 @@ surface.CreateFont( "PrimaryAmmo", { font = "Exo 2", size = 80 } )
 surface.CreateFont( "PrimaryAmmoBG", { font = "Exo 2", size = 80, blursize = 6 } )
 surface.CreateFont( "SecondaryAmmo", { font = "Exo 2", size = 40 } )
 surface.CreateFont( "SecondaryAmmoBG", { font = "Exo 2", size = 40, blursize = 6 } )
-surface.CreateFont( "Health", { font = "Exo 2", size = 20, weight = 500, antialias = true } )
-surface.CreateFont( "HealthBG", { font = "Exo 2", size = 80, weight = 600, antialias = true } )
+surface.CreateFont( "Health", { font = "Exo 2", size = 40, weight = 500, antialias = true } )
+surface.CreateFont( "HealthBG", { font = "Exo 2", size = 100, weight = 600, antialias = true } )
 surface.CreateFont( "Info", { font = "Exo 2", size = 24, weight = 1 } )
 surface.CreateFont( "Killfeed", { font = "BF4 Numbers", size = 20, weight = 1 } )
 surface.CreateFont( "Name", { font = "Exo 2", size = 24 } )
@@ -176,11 +176,87 @@ end )
 
 local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
 
+--//Draws spectator information text
+hook.Add( "HUDPaint", "HUD_Spectator", function()
+	if LocalPlayer():Team() == 0 then
+		if LocalPlayer():GetObserverTarget() and LocalPlayer():GetObserverTarget():IsValid() then
+			n = LocalPlayer():GetObserverTarget():Name() or ""
+			nhp = LocalPlayer():GetObserverTarget():Health() or 0
+		else
+			n = "Nobody"
+			nhp = 100
+		end
+
+		if LocalPlayer():GetObserverMode() == OBS_MODE_ROAMING then
+			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		elseif LocalPlayer():GetObserverMode() == OBS_MODE_CHASE then
+			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		elseif LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE then
+			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		end
+	end
+end )
+
 --//Disables the rest of the HUD components if the round's finished, or the HUD's been disabled
 hook.Add( "HUDPaint", "HUD_DisableChecks", function()
-	if GetGlobalBool( "RoundFinished" ) == true or GetConVarNumber( "hud_disable" ) != 0 or LocalPlayer().disablehud == true then
+	if GetGlobalBool( "RoundFinished" ) == true or GetConVarNumber( "hud_disable" ) != 0 or LocalPlayer().disablehud == true or !LocalPlayer():Alive() then
 		return true
 	end
+end )
+
+--Newly improved low-health HUD effect - should be less intrusive and more immersive
+hook.Add( "HUDPaint", "HUD_LowHealth", function()
+	if !LocalPlayer():Alive() then LocalPlayer():SetDSP( 0, false ) return end
+	local EffectDecay = 200 --Time before effect begins to grayscale
+	local EffectStart = 30 --HP requirement before effects play
+	GAMEMODE.LastHP = GAMEMODE.LastHP or LocalPlayer():Health()
+	local CurrentHP = LocalPlayer():Health()
+	GAMEMODE.GrayScale = GAMEMODE.GrayScale or 1
+	local WaitTimer = WaitTimer or 0
+
+	if CurrentHP > EffectStart then GAMEMODE.LastHP = LocalPlayer():Health() return end
+
+	surface.SetMaterial( blood_overlay )
+	surface.SetDrawColor( 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), (EffectStart - CurrentHP) / EffectStart * 255 )
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) --These values were -10 and + 20, for some reason
+	
+	if LastHP != CurrentHP then --Only runs if we've taken some amount of damage the last tick
+		if CurrentHP <= 0 then LocalPlayer():SetDSP( 0, false ) return end
+		LastHP = CurrentHP
+		LocalPlayer():SetDSP( 34, true )
+		--[[timer.Simple( 0.1, function()
+			LocalPlayer():SetDSP( 15, false )
+			timer.Simple( 0, function()
+				LocalPlayer():SetDSP( 34, false ) --3, 15, 16 is muffled and echoed, 24 with heavy echo, 31 heavy muffle, 32 extreme muffle, 33 muffle on treble sounds, 38 muffle bass sounds
+			--46 prevents sounds shorter than 1 second from playing
+			end )
+		end )]]
+		GAMEMODE.GrayScale = 1
+		WaitTimer = CurTime() + EffectDecay
+	else
+		if WaitTimer < CurTime() then
+			GAMEMODE.GrayScale = GAMEMODE.GrayScale - 0.001
+		end
+	end
+
+	--//Not sure what this does
+	local maxhp = LocalPlayer():GetMaxHealth()
+	if hpdrain > CurrentHP then
+		hpdrain = Lerp( FrameTime() * 2, hpdrain, CurrentHP )
+	else
+		hpdrain = CurrentHP
+	end
+
+	CurrentHP = math.Clamp( CurrentHP, 0, maxhp )
+	hpdrain = math.Clamp( hpdrain, 0, maxhp )
+	
 end )
 
 --//Draws the round information: time, score, flag status, as well as the "change team/loadout" keys
@@ -261,34 +337,6 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	surface.DrawText( "Conquest Team Deathmatch V. 022619" )
 end )
 
---//Draws spectator information text
-hook.Add( "HUDPaint", "HUD_Spectator", function()
-	if LocalPlayer():Team() == 0 then
-		if LocalPlayer():GetObserverTarget() and LocalPlayer():GetObserverTarget():IsValid() then
-			n = LocalPlayer():GetObserverTarget():Name() or ""
-			nhp = LocalPlayer():GetObserverTarget():Health() or 0
-		else
-			n = "Nobody"
-			nhp = 100
-		end
-
-		if LocalPlayer():GetObserverMode() == OBS_MODE_ROAMING then
-			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		elseif LocalPlayer():GetObserverMode() == OBS_MODE_CHASE then
-			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		elseif LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE then
-			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		end
-	end
-end )
-
 --//Draws the damage indicator 
 hook.Add( "HUDPaint", "HUD_NearMiss", function()
 	if LocalPlayer():Alive() then
@@ -309,9 +357,10 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	if !LocalPlayer():Alive() and LocalPlayer():Team() != 0 then return end
 
 	--//Health
-	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() ), "HealthBG", ScrW() - 110, ScrH() - 255, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " HP", "Health", ScrW() - 44, ScrH() - 265, Color( 0, 0, 0, 200), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " HP", "Health", ScrW() - 45, ScrH() - 266, Color( 255, 255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( "HP", "Health", ScrW() - 160, ScrH() - 105, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 54, ScrH() - 65, Color( 0, 0, 0, 200), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 56, ScrH() - 65, Color( 255, 255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 
 	--//Ammo information, currently disabled in favor of CW2.0's floating text information
 	if LocalPlayer():GetActiveWeapon() ~= NULL then
@@ -360,7 +409,7 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	end
 
 	--//Icon below the health
-	surface.SetTextColor( 255, 255, 255, 255 )
+	--[[surface.SetTextColor( 255, 255, 255, 255 )
 	if LocalPlayer():Team() == 1 then
 		surface.SetMaterial( redicon2 )
 		surface.SetDrawColor( 0, 0, 0, 200 )
@@ -373,7 +422,7 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 		surface.SetMaterial( blueicon2 )
 		surface.DrawTexturedRect( ScrW() - 235, ScrH() - 255, (ScrW() / 9.6), (ScrH() / 5.4) )
 		draw.NoTexture()
-	end
+	end]]
 end )
 
 --Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
@@ -585,65 +634,6 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 			end
 		end
 	end
-end )
-
---Newly improved low-health HUD effect - should be less intrusive and more immersive
-hook.Add( "HUDPaint", "HUD_LowHealth", function()
-	if !LocalPlayer():Alive() then return end
-	local EffectDecay = 200 --Time before effect begins to grayscale
-	local EffectStart = 30 --HP requirement before effects play
-	GAMEMODE.LastHP = GAMEMODE.LastHP or LocalPlayer():Health()
-	local CurrentHP = LocalPlayer():Health()
-	GAMEMODE.GrayScale = GAMEMODE.GrayScale or 1
-	local WaitTimer = WaitTimer or 0
-
-	if CurrentHP > EffectStart then GAMEMODE.LastHP = LocalPlayer():Health() return end
-
-	surface.SetMaterial(blood_overlay)
-	surface.SetDrawColor( 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), (EffectStart - CurrentHP) / EffectStart * 255 )
-	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) --These values were -10 and + 20, for some reason
-	
-	if LastHP != CurrentHP then --Only runs if we've taken some amount of damage the last tick
-		if CurrentHP <= 0 then LocalPlayer():SetDSP( 0, false ) return end
-		LastHP = CurrentHP
-		timer.Simple( 0.1, function()
-			LocalPlayer():SetDSP( 15, false )
-			timer.Simple( 0, function()
-				LocalPlayer():SetDSP( 34, false ) --3, 15, 16 is muffled and echoed, 24 with heavy echo, 31 heavy muffle, 32 extreme muffle, 33 muffle on treble sounds, 38 muffle bass sounds
-			--46 prevents sounds shorter than 1 second from playing
-			end )
-		end )
-		GAMEMODE.GrayScale = 1
-		WaitTimer = CurTime() + EffectDecay
-	else
-		if WaitTimer < CurTime() then
-			GAMEMODE.GrayScale = GAMEMODE.GrayScale - 0.001
-		end
-	end
-
-	--//Not sure what this does
-	local maxhp = LocalPlayer():GetMaxHealth()
-	if hpdrain > CurrentHP then
-		hpdrain = Lerp( FrameTime() * 2, hpdrain, CurrentHP )
-	else
-		hpdrain = CurrentHP
-	end
-
-	CurrentHP = math.Clamp( CurrentHP, 0, maxhp )
-	hpdrain = math.Clamp( hpdrain, 0, maxhp )
-
-	--[[surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
-	surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 106 + hl.y, 231, 10 )
-	
-	surface.SetDrawColor( Color( 255, 0, 0, 200 ) )
-	surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( hpdrain / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( hpdrain / 100 ) ) ), 10 )
-	
-	surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
-	surface.DrawRect( ScrW() - 303 + ( 231 - ( 231 * ( CurrentHP / 100 ) ) ) + hl.x, ScrH() - 106 + hl.y, 232 - ( 231 - ( 231 * ( CurrentHP / 100 ) ) ), 10 )
-	
-	surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
-	surface.DrawRect( ScrW() - 303 + hl.x, ScrH() - 96 + hl.y, 232, 2 )]]
-	
 end )
 
 local function GetPrintName( wep )

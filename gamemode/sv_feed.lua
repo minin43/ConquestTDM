@@ -71,6 +71,9 @@ end
 hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --Include checks for bots
     if vic:IsWorld() or inf:IsWorld() or att:IsWorld() then return end
+    if att == "entityflame" or att:GetClass() == "entityflame" then
+        att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
+    end
     
     local vicID = id( vic:SteamID() )
     local attID = id( att:SteamID() )

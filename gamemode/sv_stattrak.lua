@@ -1,6 +1,8 @@
 util.AddNetworkString( "UpdateStatTrak" )
 util.AddNetworkString( "SendInitialStatTrak" )
 
+GM.PyroChecks = { }
+
 st = {}
 
 st.attachments = {}
@@ -92,7 +94,7 @@ end
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 	if ply and ply:IsValid() and att and att:IsValid() and att ~= ply then
 
-		local wepclass
+		local wepclass = dmginfo:GetInflictor():GetClass()
 		if dmginfo:IsBulletDamage() then
 			local wep = att:GetActiveWeapon() or dmginfo:GetInflictor()
 			if !wep then return end
@@ -103,8 +105,13 @@ hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 			elseif dmginfo:GetInflictor():GetClass() == "cw_40mm_explosive" then
 				wepclass = att:GetActiveWeapon():GetClass()
 			end
+		elseif dmginfo:IsDamageType( DMG_BURN ) then
+			GAMEMODE.PyroChecks[ id( ply ) ]:GetActiveWeapon():GetClass()
+		elseif dmginfo:GetInflictor() == "env_explosion" or dmginfo:GetInflictor():GetClass() == "env_explosion" then
+			wepclass = att:GetActiveWeapon():GetClass()
 		end
-		
+
+		print( ply, att, dmginfo:GetAttacker(), dmginfo:GetInflictor(), wepclass )
 		--What's the point to this? st seems like an extremely redundant table
 		if st[ att ] then
 			for k, v in next, st[ att ] do

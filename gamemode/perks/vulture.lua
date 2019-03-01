@@ -2,8 +2,8 @@ hook.Add( "EntityTakeDamage", "VultureDamage", function( ply, dmginfo )
 	local att = dmginfo:GetAttacker()
 	if CheckPerk( att ) == "vulture" then
 		if ply and ply:IsPlayer() and att and att:IsPlayer() then
-			if (ply:Health() - dmginfo:GetDamage()) < 21 then
-				dmginfo:AddDamage(20)
+			if (ply:Health() - dmginfo:GetDamage()) < 11 then
+				dmginfo:AddDamage(10)
 			end
 		end
 	end

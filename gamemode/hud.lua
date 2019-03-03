@@ -31,6 +31,7 @@ surface.CreateFont( "Name", { font = "Exo 2", size = 24 } )
 surface.CreateFont( "NameBG", { font = "Exo 2", size = 24, blursize = 2 } )
 surface.CreateFont( "Level", { font = "Exo 2", size = 18 } )
 surface.CreateFont( "LevelBG", { font = "Exo 2", size = 18, blursize = 2 } )
+surface.CreateFont( "perky", { font = "BF4 Numbers", size = 20, weight = 1, antialias = true } )
 
 --[[surface.CreateFont( "UT3", { font = "Unreal Tournament", size = 125, antialias = false, shadow = false, outline = true } )
 surface.CreateFont( "UT3-Back", { font = "Unreal Tournament", size = 128, antialias = false, shadow = false, outline = true } )

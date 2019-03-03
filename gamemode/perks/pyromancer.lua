@@ -58,4 +58,4 @@ hook.Add("PlayerFireDamageDeath", "fireDeath", function(victim)
     end
 end)]]
 
-RegisterPerk( "Pyromancer", "pyro", 35, "Small chance to ignite enemies you shoot at. Small chance to explode enemies who are ignited." )
+RegisterPerk( "Pyromancer", "pyro", 35, "Set enemies aflame! Ignited enemies have a small chance to explode when shot." )

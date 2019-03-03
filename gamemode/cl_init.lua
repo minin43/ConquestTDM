@@ -12,7 +12,9 @@ include( "cl_customspawns.lua" )
 include( "cl_leaderboards.lua" )
 include( "cl_playercards.lua" )
 include( "cl_mapvote.lua" )
-include(  "cl_mapvote_setup.lua" )
+include( "cl_mapvote_setup.lua" )
+include( "cl_stattrack.lua" )
+include( "cl_vendetta.lua" )
 include( "sh_weaponbalancing.lua" )
 
 local groups = {

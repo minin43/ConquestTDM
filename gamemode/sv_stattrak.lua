@@ -1,5 +1,7 @@
 util.AddNetworkString( "UpdateStatTrak" )
 util.AddNetworkString( "SendInitialStatTrak" )
+util.AddNetworkString( "GetCurrentAttachments" )
+util.AddNetworkString( "GetCurrentAttachmentsCallback" )
 
 GM.PyroChecks = { }
 
@@ -92,7 +94,7 @@ function GetStatTrak( ply, wep )
 end
 
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
-	if ply and ply:IsValid() and att and att:IsValid() and att ~= ply then
+	if ply and ply:IsValid() and att and att:IsValid() and att:IsPlayer() and att ~= ply then
 
 		local wepclass = dmginfo:GetInflictor():GetClass()
 		if dmginfo:IsBulletDamage() then
@@ -105,13 +107,19 @@ hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 			elseif dmginfo:GetInflictor():GetClass() == "cw_40mm_explosive" then
 				wepclass = att:GetActiveWeapon():GetClass()
 			end
-		elseif dmginfo:IsDamageType( DMG_BURN ) then
+		elseif dmginfo:GetInflictor():GetClass() == "weapon_fists" then
+			wepclass = dmginfo:GetInflictor():GetClass()
+		elseif dmginfo:IsDamageType( DMG_BURN ) then --Necessary for Pyromancer perk
 			GAMEMODE.PyroChecks[ id( ply ) ]:GetActiveWeapon():GetClass()
-		elseif dmginfo:GetInflictor() == "env_explosion" or dmginfo:GetInflictor():GetClass() == "env_explosion" then
+		elseif dmginfo:GetInflictor() == "env_explosion" or dmginfo:GetInflictor():GetClass() == "env_explosion" then --For Pyromancer Perk
 			wepclass = att:GetActiveWeapon():GetClass()
 		end
 
-		print( ply, att, dmginfo:GetAttacker(), dmginfo:GetInflictor(), wepclass )
+		GAMEMODE:UpdateVendetta( ply, att )
+
+		net.Start( "GetCurrentAttachments" )
+		net.Send( ply )
+
 		--What's the point to this? st seems like an extremely redundant table
 		if st[ att ] then
 			for k, v in next, st[ att ] do
@@ -198,5 +206,14 @@ hook.Add( "Think", "UpdateSTWeps", function()
 		if st[ v ] ~= v:GetWeapons() then
 			st[ v ] = v:GetWeapons()
 		end
+	end
+end )
+
+net.Receive( "GetCurrentAttachmentsCallback", function( len, ply )
+	local tabel = net.ReadTable()
+	GAMEMODE.SavedAttachmentLists[ id( ply ) ] = GAMEMODE.SavedAttachmentLists[ id( ply ) ] or { }
+
+	for wepClass, attTable in pairs( tabel ) do
+		GAMEMODE.SavedAttachmentLists[ id( ply ) ][ wepClass ] = attTable
 	end
 end )

@@ -9,7 +9,7 @@ lvl = {}
 
 lvl.levels = {}
 	
-lvl.expmul = 300
+lvl.expmul = 400
 
 lvl.VIPGroups = {
 	{ "vip", .10 },

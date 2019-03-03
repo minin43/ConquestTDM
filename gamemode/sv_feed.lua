@@ -255,6 +255,9 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     if KillstreakNotices[ throwaway ] then
         AddNotice( att, KillstreakNotices[ throwaway ], SCORECOUNTS["KILLSTREAK".. throwaway ], NOTICETYPES.SPECIAL, Color( 200, 0, 0 ) )
         SoundToSend = KillstreakNotices[ throwaway ]
+        for k, v in pairs( player.GetAll() ) do
+            v:ChatPrint( att:Nick() .. " is on a " .. throwaway .. " killstreak!" )
+        end
     end
 
     if SoundToSend then

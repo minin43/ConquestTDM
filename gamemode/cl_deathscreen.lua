@@ -1,119 +1,3 @@
---[[surface.CreateFont( "ds_name", { 
-	font = "BF4 Numbers", 
-	size = 45, 
-	weight = 600, 
-	antialias = true 
-} )
-
-surface.CreateFont( "ds_wep", { 
-	font = "BF4 Numbers", 
-	size = 20, 
-	weight = 600, 
-	antialias = true 
-} )
-
-surface.CreateFont( "ds_spawn", { 
-	font = "BF4 Numbers", 
-	size = 21,
-	weight = 100, 
-	antialias = true 
-} )	
-
-local time
-local Main
-usermessage.Hook( "DeathScreen", function( um )
-
-	local att = um:ReadEntity()
-	local hs = um:ReadBool()
-	local wep = um:ReadString()
-	time = um:ReadShort()
-	
-	if wep and weapons.Get( wep ) then
-		wep = weapons.Get( wep ).PrintName
-	end
-	
-	Main = vgui.Create( "DPanel" )
-	Main:SetSize( 600, 100 )
-	Main:Center()
-	Main.Paint = function()
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawRect( 0, 0, Main:GetWide(), Main:GetTall() - 30 )
-		surface.SetDrawColor( 0, 0, 0, 150 )
-		surface.DrawRect( 0, Main:GetTall() - 30, Main:GetWide(), 30 )
-	end
-	
-	local AttAvatar = vgui.Create( "AvatarImage", Main )
-	AttAvatar:SetPos( 3, 3 )
-	AttAvatar:SetSize( Main:GetTall() - 36, Main:GetTall() - 36 )
-	AttAvatar:SetPlayer( att, 64 )
-	
-	local name = vgui.Create( "DLabel", Main )
-	name:SetPos( 6 + AttAvatar:GetWide() + 5, ( Main:GetTall() - 30 ) / 3 - 20 )
-	name:SetFont( "ds_name" )
-	name:SetTextColor( Color( 255, 255, 255 ) )
-	if not att or att == NULL then
-		name:SetText( "World" )
-	else
-		if att and att:IsPlayer() and att:Name() then
-			name:SetText( att:Name() )
-		else
-			name:SetText( "World" )
-		end
-	end
-	name:SizeToContents()
-	
-	local wepn = vgui.Create( "DLabel", Main )
-	wepn:SetPos( 6 + AttAvatar:GetWide() + 5, ( Main:GetTall() - 30 ) / 3 + ( Main:GetTall() - 30 ) / 3 )
-	wepn:SetFont( "ds_wep" )
-	wepn:SetTextColor( Color( 255, 255, 255, 200 ) )
-	if not att or att == NULL then
-		wepn:SetText( "The world has killed you!" )
-	else
-		if LocalPlayer() == att then
-			wepn:SetText( "You commited suicide!" )
-		else
-			if att and att:IsPlayer() then
-				if hs then
-					wepn:SetText( "Killed you with their " .. wep .. " [headshot]" )
-				else
-					wepn:SetText( "Killed you with their " .. wep )
-				end
-			else
-				wepn:SetText( "U have no skillz m8" )
-			end
-		end
-	end
-	wepn:SizeToContents()
-	
-	local spawnin = vgui.Create( "DLabel", Main )
-	spawnin:SetPos( 6, Main:GetTall() - 27 )
-	spawnin:SetFont( "ds_spawn" )
-	spawnin:SetTextColor( Color( 255, 255, 255 ) )
-	spawnin:SetText( "" )
-	spawnin.Think = function()
-		if time > 0 then
-			spawnin:SetText( "Spawning in " .. tostring( time ) )
-		else
-			spawnin:SetText( "Press [space] to spawn" )
-		end	
-		spawnin:SizeToContents()
-	end
-	
-	usermessage.Hook( "CloseDeathScreen", function()
-		Main:Remove()
-	end )
-end )
-
-usermessage.Hook( "UpdateDeathScreen", function( um )
-	local t = um:ReadShort()
-	time = t
-	if time > 0 then
-		surface.PlaySound( "ui/UX_Deploy_DeployTImer_Wave.mp3" )
-	elseif time == 0 then
-		surface.PlaySound( "ui/UX_Deploy_DeployReady_Wave.mp3" )
-	end
-end )]]
-
 surface.CreateFont( "ds_name", { 
 	font = "BF4 Numbers", 
 	size = 45, 
@@ -156,11 +40,16 @@ usermessage.Hook( "DeathScreen", function( um )
 	local hitgroup = um:ReadString() --where the last bullet landed
 	local wep = um:ReadString() --weapon used
 	local killstreak = um:ReadString()
+	local Vendetta = false
 	
 	if wep and weapons.Get( wep ) then
 		wep = weapons.Get( wep ).PrintName
 	else
 		wep = "unknown"
+	end
+
+	if !perk or perk == NULL then
+		perk = "none"
 	end
 	
 	Main = vgui.Create( "DFrame" )
@@ -174,7 +63,13 @@ usermessage.Hook( "DeathScreen", function( um )
 		surface.SetDrawColor( 0, 0, 0, 150 )
 		surface.DrawRect( 0, Main:GetTall() - 30, Main:GetWide(), 30 )
 	end
-	
+	local attID, vicID = id( att:SteamID() ), id( vic:SteamID() )
+	Main.Think = function()
+		if GAMEMODE.VendettaList[ vicID ][ attID ] > 2 then
+			Vendetta = true
+		end
+	end
+
 	--Draws killer's image
 	local AttAvatar = vgui.Create( "AvatarImage", Main )
 	AttAvatar:SetPos( 3, 3 )
@@ -289,6 +184,18 @@ usermessage.Hook( "DeathScreen", function( um )
 			spawnin:SetText( "Spawning in 5..." )
 		end	
 		spawnin:SizeToContents()
+	end
+
+	local vendettaNotice = vgui.Create( "DLabel", Main ) --Can also change to DPanel if SizeToContents doesn't work
+	vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
+	vendettaNotice:SetFont( "ds_spawn" )
+	vendettaNotice:SetTextColor( Color( 200, 50, 50 ) )
+	vendettaNotice:SetText( "" )
+	vendettaNotice.Think = function()
+		if Vendetta then
+			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!") --Might be too long of text
+		end
+		vendettaNotice:SizeToContents()
 	end
 	
 	usermessage.Hook( "CloseDeathScreen", function()

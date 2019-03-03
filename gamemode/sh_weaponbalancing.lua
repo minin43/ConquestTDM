@@ -43,6 +43,10 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_l115" )
         wep.Damage = 100
         wep.Slot = 0
+        wep.Recoil = 3.5
+        wep.VelocitySensitivity = 3.5
+        wep.MaxSpreadInc = 0.3
+        wep.ReloadSpeed = 1.3
     end
 
     if weapons.Get( "cw_mp5" ) then
@@ -66,8 +70,9 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_m3super90" )
         wep.Slot = 0
         wep.ClumpSpread = 0.025
-        wep.Shots = 14
         wep.HipSpread = 0.04
+        wep.Shots = 14
+        wel.Damage = 8
     end
 
     if weapons.Get( "cw_m14" ) then
@@ -130,6 +135,8 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_shorty" )
         wep.Slot = 1
         wep.ClumpSpread = 0.03
+        wep.Shots = 14
+        wel.Damage = 7
     end
 
     if weapons.Get( "cw_fiveseven" ) then

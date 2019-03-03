@@ -228,7 +228,7 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	surface.SetDrawColor( 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), (EffectStart - CurrentHP) / EffectStart * 255 )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) --These values were -10 and + 20, for some reason
 	
-	if LastHP != CurrentHP then --Only runs if we've taken some amount of damage the last tick
+	if LastHP > CurrentHP then --Only runs if we've taken some amount of damage the last tick
 		if CurrentHP <= 0 then LocalPlayer():SetDSP( 0, false ) return end
 		LastHP = CurrentHP
 		LocalPlayer():SetDSP( 34, true )
@@ -353,7 +353,7 @@ hook.Add( "HUDPaint", "HUD_NearMiss", function()
 	end
 end )
 
---//Draws Health, Ammo, and the icon (for now)
+--//Draws Health, Ammo
 hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	if !LocalPlayer():Alive() and LocalPlayer():Team() != 0 then return end
 

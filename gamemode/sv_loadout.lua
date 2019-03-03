@@ -19,42 +19,58 @@ function unid( steamid )
 	return string.upper( x )
 end
 
+function SetStats( wepTable )
+	for k, v in pairs( wepTable ) do
+		local damage, accuracy, firerate
+
+		local wep = weapons.GetStored( v[2] )
+		damage = math.Clamp( wep.Damage * wep.Shots, 0, 100 )
+		accuracy = math.Clamp( 0.01 - (wep.AimSpread - 0.001) / 0.0001, 0, 100 )
+		firerate = math.Clamp( 6 / wep.FireDelay, 0, 100)
+
+		v[6][1] = damage
+		v[6][2] = accuracy
+		v[6][3] = firerate
+	end
+end
+
 --// WEAPON FORMATING:
 --// { "name", "class", level unlock, "world model", price, { damage, accuracy, firerate }
-
 primaries = {
 	{ "AR-15", 		"cw_ar15", 			0, 	"models/weapons/w_rif_m4a1.mdl", 		0, 		{ 0, 0, 0 } },
-	{ "MP5", 		"cw_mp5", 			3, 	"models/weapons/w_smg_mp5.mdl", 		2000, 	{ 0, 0, 0 } },
-	{ "M3 Super 90","cw_m3super90", 	4, 	"models/weapons/w_cstm_m3super90.mdl", 	2000, 	{ 0, 0, 0 } },
-	{ "G36C", 		"cw_g36c", 			8, "models/weapons/cw20_g36c.mdl", 			5000, 	{ 0, 0, 0 } },
-	{ "L115", 		"cw_l115", 			13, "models/weapons/w_cstm_l96.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "G3A3", 		"cw_g3a3", 			17, "models/weapons/w_snip_g3sg1.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "UMP .45", 	"cw_ump45", 		22, "models/weapons/w_smg_ump45.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "M249", 		"cw_m249_official", 26, "models/weapons/cw2_0_mach_para.mdl",	5000, 	{ 0, 0, 0 } },
-	{ "AK-74", 		"cw_ak74", 			31, "models/weapons/w_rif_ak47.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "M14", 		"cw_m14", 			35, "models/weapons/w_cstm_m14.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "VSS", 		"cw_vss", 			40, "models/cw2/rifles/w_vss.mdl", 			5000, 	{ 0, 0, 0 } },
-	{ "L85A2", 		"cw_l85a2",			44, "models/weapons/w_cw20_l85a2.mdl", 		5000, 	{ 0, 0, 0 } },
-	{ "SCAR-H", 	"cw_scarh", 		50, "models/cw2/rifles/w_scarh.mdl", 		5000, 	{ 0, 0, 0 } }
+	{ "MP5", 		"cw_mp5", 			3, 	"models/weapons/w_smg_mp5.mdl", 		5000, 	{ 0, 0, 0 } },
+	{ "M3 Super 90","cw_m3super90", 	4, 	"models/weapons/w_cstm_m3super90.mdl", 	5000, 	{ 0, 0, 0 } },
+	{ "G36C", 		"cw_g36c", 			8, "models/weapons/cw20_g36c.mdl", 			15000, 	{ 0, 0, 0 } },
+	{ "L115", 		"cw_l115", 			13, "models/weapons/w_cstm_l96.mdl", 		15000, 	{ 0, 0, 0 } },
+	{ "G3A3", 		"cw_g3a3", 			17, "models/weapons/w_snip_g3sg1.mdl", 		15000, 	{ 0, 0, 0 } },
+	{ "UMP .45", 	"cw_ump45", 		22, "models/weapons/w_smg_ump45.mdl", 		15000, 	{ 0, 0, 0 } },
+	{ "M249", 		"cw_m249_official", 26, "models/weapons/cw2_0_mach_para.mdl",	20000, 	{ 0, 0, 0 } },
+	{ "AK-74", 		"cw_ak74", 			31, "models/weapons/w_rif_ak47.mdl", 		20000, 	{ 0, 0, 0 } },
+	{ "M14", 		"cw_m14", 			35, "models/weapons/w_cstm_m14.mdl", 		20000, 	{ 0, 0, 0 } },
+	{ "VSS", 		"cw_vss", 			40, "models/cw2/rifles/w_vss.mdl", 			25000, 	{ 0, 0, 0 } },
+	{ "L85A2", 		"cw_l85a2",			44, "models/weapons/w_cw20_l85a2.mdl", 		25000, 	{ 0, 0, 0 } },
+	{ "SCAR-H", 	"cw_scarh", 		50, "models/cw2/rifles/w_scarh.mdl", 		25000, 	{ 0, 0, 0 } }
 }
+SetStats( primaries )
 
 secondaries = {
 	{ "P99",			"cw_p99",		0,	"models/weapons/w_pist_p228.mdl",		0,   	{ 0, 0, 0 } },
 	{ "M1911",			"cw_m1911",		5,	"models/weapons/cw_pist_m1911.mdl",		3000,  	{ 0, 0, 0 } },
 	{ "MR96",			"cw_mr96",		13,	"models/weapons/w_357.mdl",				3000, 	{ 0, 0, 0 } },
-	{ "Five Seven",		"cw_fiveseven",	21,	"models/weapons/w_pist_fiveseven.mdl",	3000, 	{ 0, 0, 0 } },
-	{ "MAC-11",			"cw_mac11",		29,	"models/weapons/w_cst_mac11.mdl",		3000, 	{ 0, 0, 0 } },
-	{ "Super Shorty",	"cw_shorty",	37,	"models/weapons/cw2_super_shorty.mdl",	3000, 	{ 0, 0, 0 } },
-	{ "Makarov",		"cw_makarov",	45,	"models/cw2/pistols/w_makarov.mdl",		3000, 	{ 0, 0, 0 } },
-	{ "Deagle",			"cw_deagle",	50,	"models/weapons/w_pist_deagle.mdl",		3000, 	{ 0, 0, 0 } },
+	{ "Five Seven",		"cw_fiveseven",	21,	"models/weapons/w_pist_fiveseven.mdl",	5000, 	{ 0, 0, 0 } },
+	{ "MAC-11",			"cw_mac11",		29,	"models/weapons/w_cst_mac11.mdl",		10000, 	{ 0, 0, 0 } },
+	{ "Super Shorty",	"cw_shorty",	37,	"models/weapons/cw2_super_shorty.mdl",	15000, 	{ 0, 0, 0 } },
+	{ "Makarov",		"cw_makarov",	45,	"models/cw2/pistols/w_makarov.mdl",		15000, 	{ 0, 0, 0 } },
+	{ "Deagle",			"cw_deagle",	50,	"models/weapons/w_pist_deagle.mdl",		15000, 	{ 0, 0, 0 } },
 }
+SetStats( secondaries )
 
 extras = {
 	{ "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0	 },
 	{ "Flash Grenades", 	"cw_flash_grenade",	6, "models/weapons/w_eq_flashbang.mdl", 			2000 },
-	{ "Smoke Grenades", 	"cw_smoke_grenade", 11, "models/weapons/w_eq_smokegrenade.mdl", 		2000 },
-	{ "Frag Grenade x2",	"grenades", 		17, "models/weapons/w_cw_fraggrenade_thrown.mdl",	2000 },
-	{ "Medkit", 			"weapon_medkit", 	26, "models/weapons/w_medkit.mdl", 					2000 }
+	{ "Smoke Grenades", 	"cw_smoke_grenade", 11, "models/weapons/w_eq_smokegrenade.mdl", 		5000 },
+	{ "Frag Grenade x2",	"grenades", 		17, "models/weapons/w_cw_fraggrenade_thrown.mdl",	5000 },
+	{ "Medkit", 			"weapon_medkit", 	26, "models/weapons/w_medkit.mdl", 					10000 }
 }
 
 perks = {}
@@ -265,7 +281,7 @@ hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind )
 	end
 end )
 
---//The point of this is to remove one magazine's worth of ammo from the player's ammo pool - was written extremely poorly
+--//The point of this is to remove one magazine's worth of ammo from the player's ammo pool - WAS written extremely poorly
 function GM:WeaponEquip( wep )
 	timer.Simple( 0, function() -- this will call the following on the next frame
 		if wep and wep:IsValid() and wep:GetOwner() then

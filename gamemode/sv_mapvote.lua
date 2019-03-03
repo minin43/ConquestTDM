@@ -44,7 +44,6 @@ end
 
 function EndMapvote()
     local winningMap, winningTotal = "", 0
-    PrintTable( GAMEMODE.Votes )
     for k, v in pairs( GAMEMODE.Votes ) do
         if isnumber( v ) then --Since we record the individual votes as strings in this table, don't run them through this loop
             if v > winningTotal then --If new count is higher than old
@@ -73,14 +72,14 @@ function EndMapvote()
 end
 
 hook.Add( "StartMapvote", "RunMapvote", function( winner, loser )
-    print( "Hook StartMapvote called" )
+    file.Write( "tdm/lastmap.txt", game.GetMap() )
+
     local lastmap = ""
     if file.Exists( "tdm/lastmap.txt", "DATA" ) then
         lastmap = file.Read( "tdm/lastmap.txt", "DATA" )
         GAMEMODE.MapTable[ lastmap ] = nil
         print( "Lastmap detected", lastmap, GAMEMODE.MapTable[ lastmap ] )
     end
-    file.Write( "tdm/lastmap.txt", game.GetMap() )
     
     local key
     for counter = 1, 6 do

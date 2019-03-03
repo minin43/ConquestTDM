@@ -21,6 +21,8 @@ AddCSLuaFile( "cl_leaderboards.lua" )
 AddCSLuaFile( "cl_playercards.lua" )
 AddCSLuaFile( "cl_mapvote.lua" )
 AddCSLuaFile( "cl_mapvote_setup.lua" )
+AddCSLuaFile( "cl_stattrack.lua" )
+AddCSLuaFile( "cl_vendetta.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -38,6 +40,7 @@ include( "sv_teambalance.lua" )
 include( "sv_api.lua" )
 include( "sv_playercards.lua" )
 include( "sv_mapvote.lua" )
+include( "sv_vendetta.lua" )
 --include( "sv_killstreaks.lua" )
 --include( "sv_backgroundgunfire.lua")
 include( "sh_weaponbalancing.lua" )
@@ -507,6 +510,22 @@ function giveLoadout( ply )
 	if( l ) then
 		ply:Give( l.primary )
 		ply:Give( l.secondary )
+
+		--//This sets previous attachments up for the guns
+		if GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.primary ] then
+			timer.Simple( 0, function()
+				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.primary ] ) do
+					ply:GetWeapon( l.primary ):attach( k, v )
+				end
+			end )
+		end
+		if GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.secondary ] then
+			timer.Simple( 0, function()
+				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.secondary ] ) do
+					ply:GetWeapon( l.secondary ):attach( k, v )
+				end
+			end )
+		end
 		
 		if l.extra then
 			if l.extra == "grenades" then
@@ -819,23 +838,23 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 		end
 	elseif hitgroup == HITGROUP_STOMACH then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 1 )
+			dmginfo:ScaleDamage( 0.9 )
 		end
 	elseif hitgroup == HITGROUP_LEFTARM then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 0.9 )
+			dmginfo:ScaleDamage( 0.8 )
 		end
 	elseif hitgroup == HITGROUP_RIGHTARM then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 0.9 )
+			dmginfo:ScaleDamage( 0.8 )
 		end
 	elseif hitgroup == HITGROUP_LEFTLEG then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 0.8 )
+			dmginfo:ScaleDamage( 0.7 )
 		end
 	elseif hitgroup == HITGROUP_RIGHTLEG then
 		if IsValid( ply ) then
-			dmginfo:ScaleDamage( 0.8 )
+			dmginfo:ScaleDamage( 0.7 )
 		end
 	else
 		if IsValid( ply ) then

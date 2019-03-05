@@ -48,9 +48,11 @@ usermessage.Hook( "DeathScreen", function( um )
 		wep = "unknown"
 	end
 
-	if !perk or perk == NULL then
+	if !perk or perk == "[NULL Entity]" then
 		perk = "none"
 	end
+
+	GAMEMODE.VendettaList = GAMEMODE.VendettaList or { }
 	
 	Main = vgui.Create( "DFrame" )
 	Main:SetSize( 600, 125 )
@@ -65,7 +67,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	end
 	local attID, vicID = id( att:SteamID() ), id( vic:SteamID() )
 	Main.Think = function()
-		if GAMEMODE.VendettaList[ vicID ][ attID ] > 2 then
+		if GAMEMODE.VendettaPlayers[ attID ] == att then
 			Vendetta = true
 		end
 	end
@@ -117,7 +119,6 @@ usermessage.Hook( "DeathScreen", function( um )
 	kperk:SetTextColor( Color( 255, 255, 255, 200) )
 	kperk:SetText( perk )
 	kperk:SizeToContents() 
-	--print( "Perk: ", perk )
 	
 	--Draws "Weapon:" 
 	local title3 = vgui.Create( "DLabel", Main)
@@ -187,16 +188,20 @@ usermessage.Hook( "DeathScreen", function( um )
 	end
 
 	local vendettaNotice = vgui.Create( "DLabel", Main ) --Can also change to DPanel if SizeToContents doesn't work
-	vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
 	vendettaNotice:SetFont( "ds_spawn" )
-	vendettaNotice:SetTextColor( Color( 200, 50, 50 ) )
+	vendettaNotice:SetTextColor( Color( 250, 100, 100 ) )
 	vendettaNotice:SetText( "" )
 	vendettaNotice.Think = function()
+		if not Main and Main:IsValid() then return end
 		if Vendetta then
 			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!") --Might be too long of text
 		end
 		vendettaNotice:SizeToContents()
+		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
 	end
+	--[[vendettaNotice.Think = function()
+		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
+	end]]
 	
 	usermessage.Hook( "CloseDeathScreen", function()
 		Main:Remove()

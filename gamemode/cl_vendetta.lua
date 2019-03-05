@@ -6,17 +6,18 @@ GM.VendettaPlayers = { }
 net.Receive( "UpdateVendetta", function()
     local ply = net.ReadString() --Comes in as: id( ply:SteamID() )
     local toAdd = net.ReadBool()
+    if ply == id( LocalPlayer():SteamID() ) then return end
 
     if toAdd then
         for k, v in pairs( player.GetAll() ) do
             if ply == id( v:SteamID() ) then
-                GAMEMODE.VendettaPlayers[ #GAMEMODE.VendettaPlayers + 1 ] = v
+                GAMEMODE.VendettaPlayers[ ply ] = v
             end
         end
     else
         for k, v in pairs( GAMEMODE.VendettaPlayers ) do
-            if ply == id( v:SteamID() ) then
-                table.remove( GAMEMODE.VendettaPlayers, k )
+            if ply == k then
+                GAMEMODE.VendettaPlayers[ k ] = nil
             end
         end
     end

@@ -27,4 +27,4 @@ hook.Add( "PlayerDeath", "VultureDrop", function( ply, inf, att )
 	end
 end )
 
-RegisterPerk( "Vulture", "vulture", 21, "Execute enemies low on life! Enemies will also drop ammo packs when killed." )
+RegisterPerk( "Vulture", "vulture", 46, "Execute enemies low on life! Enemies will also drop ammo packs when killed." )

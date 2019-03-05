@@ -217,8 +217,8 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	if !LocalPlayer():Alive() then LocalPlayer():SetDSP( 0, false ) return end
 	local EffectDecay = 200 --Time before effect begins to grayscale
 	local EffectStart = 30 --HP requirement before effects play
-	GAMEMODE.LastHP = GAMEMODE.LastHP or LocalPlayer():Health()
-	local CurrentHP = LocalPlayer():Health()
+	GAMEMODE.LastHP = GAMEMODE.LastHP or LocalPlayer():Health() or 0
+	local CurrentHP = LocalPlayer():Health() or 0
 	GAMEMODE.GrayScale = GAMEMODE.GrayScale or 1
 	local WaitTimer = WaitTimer or 0
 
@@ -227,10 +227,10 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	surface.SetMaterial( blood_overlay )
 	surface.SetDrawColor( 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), (EffectStart - CurrentHP) / EffectStart * 255 )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) --These values were -10 and + 20, for some reason
-	
-	if LastHP > CurrentHP then --Only runs if we've taken some amount of damage the last tick
+
+	if GAMEMODE.LastHP > CurrentHP then --Only runs if we've taken some amount of damage the last tick
 		if CurrentHP <= 0 then LocalPlayer():SetDSP( 0, false ) return end
-		LastHP = CurrentHP
+		GAMEMODE.LastHP = CurrentHP
 		LocalPlayer():SetDSP( 34, true )
 		--[[timer.Simple( 0.1, function()
 			LocalPlayer():SetDSP( 15, false )
@@ -335,7 +335,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( 255, 255, 255, 135 )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( "Conquest Team Deathmatch V. 022619" )
+	surface.DrawText( "Conquest Team Deathmatch V. 030419" )
 end )
 
 --//Draws the damage indicator 

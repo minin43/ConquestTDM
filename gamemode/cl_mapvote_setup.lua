@@ -81,7 +81,7 @@ function MapOptionButton:Paint()
 
     surface.SetDrawColor( 255, 255, 255 )
     surface.SetMaterial( self.img )
-    surface.DrawTexturedRect( 0, 0, w, h - 20 )
+    surface.DrawTexturedRect( 0, 0, w, h - self.infospace )
     draw.NoTexture()
 
     if self.hasflags then

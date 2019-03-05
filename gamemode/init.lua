@@ -1,5 +1,6 @@
 GM.PerkTracking = { }
 GM.PerkTracking.LifelineList = { }
+GM.SavedAttachmentLists = { }
 GM.KillInfoTracking = GM.KillInfoTracking or { }
 GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
@@ -505,6 +506,7 @@ hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )
 end )
 
 function giveLoadout( ply )
+	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
 	ply:StripWeapons()
 	local l = load[ply]
 	if( l ) then
@@ -512,17 +514,17 @@ function giveLoadout( ply )
 		ply:Give( l.secondary )
 
 		--//This sets previous attachments up for the guns
-		if GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.primary ] then
-			timer.Simple( 0, function()
-				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.primary ] ) do
-					ply:GetWeapon( l.primary ):attach( k, v )
+		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] then
+			timer.Simple( 0.5, function()
+				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] ) do --bad loop
+					ply:GetWeapon( l.primary ):attach( k, v - 1 )
 				end
 			end )
 		end
-		if GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.secondary ] then
-			timer.Simple( 0, function()
-				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply ) ][ l.secondary ] ) do
-					ply:GetWeapon( l.secondary ):attach( k, v )
+		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] then
+			timer.Simple( 0.5, function()
+				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] ) do
+					ply:GetWeapon( l.secondary ):attach( k, v - 1 )
 				end
 			end )
 		end
@@ -914,4 +916,27 @@ end )
 hook.Add( "PlayerDeath", "DamageIndicatorClear", function( vic )
 	umsg.Start( "damage_death", vic )
 	umsg.End()
+end )
+
+hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
+	local wepbase = weapons.GetStored( "cw_base" )
+    function wepbase:unloadWeapon()
+        return
+    end
+
+	--[[function CustomizableWeaponry:hasAttachment(ply, att, lookIn) --This really oughta be given to Spy
+        if not self.useAttachmentPossessionSystem then
+            return true
+        end
+        
+        lookIn = lookIn or ply.CWAttachments
+        
+        local has = hook.Call("CW20HasAttachment", nil, ply, att, lookIn)
+        
+        if (lookin and lookIn[att]) or has then
+            return true
+        end
+        
+        return false
+    end]]
 end )

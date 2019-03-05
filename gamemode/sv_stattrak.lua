@@ -94,6 +94,7 @@ function GetStatTrak( ply, wep )
 end
 
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
+	print( ply, att, dmginfo:GetInflictor() )
 	if ply and ply:IsValid() and att and att:IsValid() and att:IsPlayer() and att ~= ply then
 
 		local wepclass = dmginfo:GetInflictor():GetClass()
@@ -117,6 +118,7 @@ hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 
 		GAMEMODE:UpdateVendetta( ply, att )
 
+		print("Sending client GetCurrentAttachments", ply )
 		net.Start( "GetCurrentAttachments" )
 		net.Send( ply )
 
@@ -155,7 +157,9 @@ hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 			end
 		end
 		if next(togive) ~= nil then CustomizableWeaponry.giveAttachments( att, togive ) end
-
+	else
+		net.Start( "GetCurrentAttachments" )
+		net.Send( ply )
 	end
 end )
 
@@ -211,9 +215,10 @@ end )
 
 net.Receive( "GetCurrentAttachmentsCallback", function( len, ply )
 	local tabel = net.ReadTable()
-	GAMEMODE.SavedAttachmentLists[ id( ply ) ] = GAMEMODE.SavedAttachmentLists[ id( ply ) ] or { }
-
+	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
+	print( "Server received GetCurrentAttachmentCallback", tabel )
+	PrintTable( tabel )
 	for wepClass, attTable in pairs( tabel ) do
-		GAMEMODE.SavedAttachmentLists[ id( ply ) ][ wepClass ] = attTable
+		GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ wepClass ] = attTable
 	end
 end )

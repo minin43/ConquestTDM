@@ -72,7 +72,7 @@ function weapons.OnLoaded()
         wep.ClumpSpread = 0.025
         wep.HipSpread = 0.04
         wep.Shots = 14
-        wel.Damage = 8
+        wep.Damage = 8
     end
 
     if weapons.Get( "cw_m14" ) then
@@ -136,7 +136,7 @@ function weapons.OnLoaded()
         wep.Slot = 1
         wep.ClumpSpread = 0.03
         wep.Shots = 14
-        wel.Damage = 7
+        wep.Damage = 7
     end
 
     if weapons.Get( "cw_fiveseven" ) then

@@ -6,8 +6,6 @@ net.Receive( "BeginMapvote", function()
     GAMEMODE.MapvoteTimeLeft = 10
     GAMEMODE.PlayerVotes = { } --Used to record each player's vote
     GAMEMODE.MapvoteOptions = { } --Contains the custom button vgui elements
-    print( "Client received Net Message BeginMapvote " )
-    PrintTable( GAMEMODE.MapList )
 
     GAMEMODE:DrawMapvote()
 end )
@@ -28,10 +26,7 @@ net.Receive( "PlayerVotedUpdate", function()
     if not isentity( ply ) and ply:IsPlayer() then 
         ErrorNoHalt( "Client received non-existant player's vote!\n", ply )
     else
-        --hook.Call( "VoteUpdate", nil, ply, choice )
         if GAMEMODE.PlayerVotes[ ply ] then
-            print( GAMEMODE.PlayerVotes[ ply ] )
-            PrintTable( GAMEMODE.MapvoteOptions )
             GAMEMODE.MapvoteOptions[ GAMEMODE.PlayerVotes[ ply ] ]:AddVotes( -1 )
         end
         GAMEMODE.PlayerVotes[ ply ] = choice
@@ -111,7 +106,6 @@ function GM:DrawMapvote()
         dumby:SetFlags( v.flags )
         dumby:SetSize( ScrW() / 4, ScrH() / 4 ) --1/4 the size of 1080p
         dumby:SetPos( positions[ counter ].x - ( dumby:GetWide() / 2 ), positions[ counter ].y - ( dumby:GetTall() / 2 ) )
-        print( "MapOption Position Debug: ", dumby:GetPos() )
 
         self.MapvoteOptions[ k ] = dumby
     end

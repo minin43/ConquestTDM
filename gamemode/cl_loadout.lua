@@ -1686,7 +1686,6 @@ function LoadoutMenu()
                 button.DoClick = function()
                     if #v == 1 then
                         if primaryequip != NULL and secondaryequip != NULL and equipmentequip != NULL and perkequip[1] != NULL and perkequip[2] != NULL then
-                            print(primaryequip,secondaryequip,equipmentequip,perkequip[1], perkequip[2])
                             Derma_StringRequest("New Preset", "Choose Name", "New Preset", function(text)
                                 SavePreset(text, tostring(primaryequip), tostring(secondaryequip), tostring(equipmentequip), perkequip);
                             end)

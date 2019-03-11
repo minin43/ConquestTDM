@@ -23,16 +23,34 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png" },
     [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png" },
     [ "sh_smalltown_c" ] = { id = 865967849, size = "Midsize", img = "vgui/maps/smalltown.png" },
-    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" }
+    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" },
+    [ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png" },
+    [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png" },
+    [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png" },
+    [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbble.png" },
+    [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png" },
+    [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
+    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }
 }
 
-print( "Checking for map download validity..." )
+print( "Checking the validity for current map: " .. game.GetMap() .. "..." )
 if GM.MapTable[ game.GetMap() ] then
-	print( game.GetMap() .. " is set up to auto-download on player join, addon ID: " .. GM.MapTable[ game.GetMap() ].id )
-	resource.AddWorkshop( tostring( GM.MapTable[ game.GetMap() ].id ) )
+    print( "    Map is registered to work with the gamemode" )
+    if GM.MapTable[ game.GetMap() ].id then
+	    print( "    Map is set up to auto-download on player join, addon ID: " .. GM.MapTable[ game.GetMap() ].id )
+        resource.AddWorkshop( tostring( GM.MapTable[ game.GetMap() ].id ) )
+    else
+        local prefix = string.sub( game.GetMap(), 1, 2 )
+        print("DEBUG PREFIX: ", prefix )
+        if prefix == "de" or prefix == "cs" or prefix == "dm" then
+            print( "    Map is counter-strike or HL2:DM map, separate download not necessary" )
+        end
+        print( "    " .. game.GetMap() .. " is NOT set up to auto-download on player join" )
+    end
 else
-	print( game.GetMap() .. " is NOT set up to auto-download on player join" )
+	print( "    Map IS NOT registered to work with the mapvote, this may be due to lack of spawn/flag placements" )
 end
+print( "End map checking" )
 
 for k, v in pairs( GM.MapTable ) do
     if flags[ k ] then --found in sv_flags

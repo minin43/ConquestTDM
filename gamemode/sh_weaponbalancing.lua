@@ -32,6 +32,7 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_ar15" ) then
         local wep = weapons.GetStored( "cw_ar15" )
         wep.Slot = 0
+        wep.ReloadSpeed = 1.2
     end
 
     if weapons.Get( "cw_g3a3" ) then
@@ -97,6 +98,8 @@ function weapons.OnLoaded()
 
     if weapons.Get( "cw_vss" ) then
         local wep = weapons.GetStored( "cw_vss" )
+        wep.Primary.ClipSize = 15
+        wep.Primary.DefaultClip	= 15
         wep.Slot = 0
     end
 

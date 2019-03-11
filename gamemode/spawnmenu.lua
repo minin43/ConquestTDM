@@ -254,40 +254,44 @@ function SpawnMenu()
 		surface.DrawTexturedRectRotated( hover3:GetWide() / 2, 3 + 8, 8, hover3:GetWide(), 270 )
 	end
 
-	local close = vgui.Create( "DButton", main )
-	close.Hover = false
-	close.Click = false
-	close:SetSize( 64, 36 )
-	close:SetPos( main:GetWide() - close:GetWide() - 16, main:GetTall() - close:GetTall() - 8 )
-	
-	function PaintClose()
-		if not main then return end
-		if close.Hover then
-			draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
-		end
-		if close.Click then
-			draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
-		end
-		draw.SimpleText( "CLOSE", "Exo 2 Button", close:GetWide() / 2, close:GetTall() / 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		return true
-	end
-	close.Paint = PaintClose
-
-	close.OnCursorEntered = function()
-		close.Hover = true
-	end
-	close.OnCursorExited = function()
+	GAMEMODE.FirstLoad = GAMEMODE.FirstLoad or false
+	if GAMEMODE.FirstLoad then
+		local close = vgui.Create( "DButton", main )
 		close.Hover = false
-	end
-
-	close.OnMousePressed = function()
-		LocalPlayer():EmitSound( "buttons/button22.wav" )
-		close.Click = true
-	end
-	close.OnMouseReleased = function()
 		close.Click = false
-		main:Close()
+		close:SetSize( 64, 36 )
+		close:SetPos( main:GetWide() - close:GetWide() - 16, main:GetTall() - close:GetTall() - 8 )
+		
+		function PaintClose()
+			if not main then return end
+			if close.Hover then
+				draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+			end
+			if close.Click then
+				draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+			end
+			draw.SimpleText( "CLOSE", "Exo 2 Button", close:GetWide() / 2, close:GetTall() / 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			return true
+		end
+		close.Paint = PaintClose
+
+		close.OnCursorEntered = function()
+			close.Hover = true
+		end
+		close.OnCursorExited = function()
+			close.Hover = false
+		end
+
+		close.OnMousePressed = function()
+			LocalPlayer():EmitSound( "buttons/button22.wav" )
+			close.Click = true
+		end
+		close.OnMouseReleased = function()
+			close.Click = false
+			main:Close()
+		end
 	end
+	GAMEMODE.FirstLoad = true
 	
 	main.OnClose = function()
 		main:Remove()

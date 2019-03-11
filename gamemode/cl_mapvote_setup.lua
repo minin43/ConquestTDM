@@ -8,7 +8,7 @@ MapOptionButton.mapsize = "Uknown Size"
 MapOptionButton.hasflags = false
 MapOptionButton.votes = 0
 MapOptionButton.infospace = 25
-MapOptionButton.img = Material( "vgui/maps/noimage2.png", "smooth" ) --Should be a default "no image selected" image
+MapOptionButton.img = Material( "vgui/maps/noimage.png", "smooth" ) --Should be a default "no image selected" image
 MapOptionButton.flagimg = Material( "vgui/flag.png", "smooth" )
 --MapOptionButton.w, MapOptionButton.h = 480, 270 + MapOptionButton.infospace --Add a 20 pixel buffer along the bottom of the image for text
 

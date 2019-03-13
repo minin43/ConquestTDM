@@ -9,7 +9,7 @@ GM.VoteOptions = { } --The table we send to clients, contains the 6 map options
 GM.MapvoteTime = 20
 GM.MapTable = { --Controls both the map autodownload and the mapvote information
     --[ "" ] = { id = , size = "", img = "" }
-    [ "gm_lasertag" ] = { id = 473594402, size = "Small", img = "vgui/maps/lasertag.png" },
+    [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png" },
     [ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png" },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png" },
     [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png" },
@@ -27,7 +27,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png" },
     [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png" },
     [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png" },
-    [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbble.png" },
+    [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png" },
     [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png" },
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
     [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }

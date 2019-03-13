@@ -5,6 +5,9 @@ GM.KillInfoTracking = GM.KillInfoTracking or { }
 GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
 GM.DefaultJumpPower = 170
+GM.PostGameCountdown = 20 --Amount of time after the game has ended players can whack each other with crowbars, before the mapvote starts
+GM.Tickets = 200 --Number of tickets on conquest maps
+GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
 AddCSLuaFile( "cl_init.lua" ) -- Test comment
 AddCSLuaFile( "hud.lua" )
@@ -65,6 +68,10 @@ util.AddNetworkString( "tdm_loadout" )
 util.AddNetworkString( "tdm_spawnoverlay" )
 util.AddNetworkString( "tdm_deathnotice" )
 util.AddNetworkString( "tdm_killcountnotice" )
+util.AddNetworkString( "DoWin" )
+util.AddNetworkString( "DoLose" )
+util.AddNetworkString( "DoTie" )
+util.AddNetworkString( "StartAttTrack" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
@@ -101,84 +108,103 @@ local color_blue = Color( 0, 0, 255 )
 local color_green = Color( 102, 255, 51 )
 local color_white = Color( 255, 255, 255 )
 
-function GM:EndRound( win, lose )
+function GM:DoRedWin()
+	for k, v in pairs( team.GetPlayers( 1 ) ) do
+		AddNotice(v, "WON THE ROUND", SCORECOUNTS.ROUND_WON, NOTICETYPES.ROUND)
+		AddRewards(v, SCORECOUNTS.ROUND_WON)
+
+		net.Start( "DoWin" )
+		net.Send( v )
+	end
+	for k, v in pairs( team.GetPlayers( 2 ) ) do
+		AddNotice(v, "LOST THE ROUND", SCORECOUNTS.ROUND_LOST, NOTICETYPES.ROUND)
+		AddRewards(v, SCORECOUNTS.ROUND_LOST)
+
+		net.Start( "DoLose" )
+		net.Send( v )
+	end
+
+	ULib.tsayColor( nil, true, color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+end
+
+function GM:DoBlueWin()
+	for k, v in pairs( team.GetPlayers( 1 ) ) do
+		AddNotice(v, "LOST THE ROUND", SCORECOUNTS.ROUND_LOST, NOTICETYPES.ROUND)
+		AddRewards(v, SCORECOUNTS.ROUND_LOST)
+
+		net.Start( "DoLose" )
+		net.Send( v )
+	end
+	for k, v in pairs( team.GetPlayers( 2 ) ) do
+		AddNotice(v, "WON THE ROUND", SCORECOUNTS.ROUND_WON, NOTICETYPES.ROUND)
+		AddRewards(v, SCORECOUNTS.ROUND_WON)
+
+		net.Start( "DoWin" )
+		net.Send( v )
+	end
+
+	ULib.tsayColor( nil, true, color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+end
+
+function GM:DoTie()
+	for k, v in next, player.GetAll() do
+		AddNotice(v, "TIED", SCORECOUNTS.ROUND_TIED, NOTICETYPES.ROUND)
+		AddRewards(v, SCORECOUNTS.ROUND_TIED)
+
+		net.Start( "DoTie" )
+		net.Send( v )
+	end
+
+	ULib.tsayColor( nil, true, color_green, "Tie! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+end
+
+function GM:EndRound( win )
 	timer.Destroy( "RoundTimer" )
 	timer.Destroy( "Tickets" )
-	hook.Run( "MatchHistory_MatchComplete" )
-	if not GetGlobalBool( "RoundFinished" ) == true then
-		SetGlobalBool( "RoundFinished", true )
-		if win == 1 and lose == 2 then
-			for k, v in next, team.GetPlayers( 1 ) do
-				umsg.Start( "tdm_win", v )
-				umsg.End()
-                AddNotice(v, "WON THE ROUND", SCORECOUNTS.ROUND_WON, NOTICETYPES.ROUND)
-                AddRewards(v, SCORECOUNTS.ROUND_WON)
-			end
-			for k, v in next, team.GetPlayers( 2 ) do
-				umsg.Start( "tdm_lose", v )
-				umsg.End()
-                AddNotice(v, "LOST THE ROUND", SCORECOUNTS.ROUND_LOST, NOTICETYPES.ROUND)
-                AddRewards(v, SCORECOUNTS.ROUND_LOST)
-			end
-		elseif win == 2 and lose == 1 then
-			for k, v in next, team.GetPlayers( 2 ) do
-				umsg.Start( "tdm_win", v )
-				umsg.End()
-                AddNotice(v, "WON THE ROUND", SCORECOUNTS.ROUND_WON, NOTICETYPES.ROUND)
-                AddRewards(v, SCORECOUNTS.ROUND_WON)
-			end
-			for k, v in next, team.GetPlayers( 1 ) do
-				umsg.Start( "tdm_lose", v )
-				umsg.End()
-                AddNotice(v, "LOST THE ROUND", SCORECOUNTS.ROUND_LOST, NOTICETYPES.ROUND)
-                AddRewards(v, SCORECOUNTS.ROUND_LOST)
-			end	
-		elseif win == 0 and lose == 0 then
-			for k, v in next, player.GetAll() do
-				umsg.Start( "tdm_tie", v )
-				umsg.End()
-                AddNotice(v, "TIED", SCORECOUNTS.ROUND_TIED, NOTICETYPES.ROUND)
-                AddRewards(v, SCORECOUNTS.ROUND_TIED)
+	SetGlobalBool( "RoundFinished", true )
+
+	if win == 1 then
+		self:DoRedWin()
+	elseif win == 2 then
+		self:DoBlueWin()
+	elseif win == 0 then
+		self:DoTie()
+	end
+
+	for k, v in pairs( ents.FindByClass( "cw_*" ) ) do
+		SafeRemoveEntity( v )
+	end
+
+	timer.Create( "StopRespawningWithWeapons", 5, 5, function() 
+		for k, v in next, player.GetAll() do
+			if v:Team() ~= 0 then
+				v:StripWeapons()
+				v:Give( "weapon_crowbar" )
+				v:SetWalkSpeed( 200 )
+				v:SetRunSpeed( 360 )
 			end
 		end
-        for k, v in pairs( ents.FindByClass( "cw_*" ) ) do
-            SafeRemoveEntity( v )
-        end
-        hook.Call( "Pointshop2GmIntegration_RoundEnded" )
-		timer.Create( "StopRespawningWithWeapons", 5, 5, function() 
-        for k, v in next, player.GetAll() do
-            if v:Team() ~= 0 then
-                v:StripWeapons()
-                v:Give( "weapon_crowbar" )
-                v:SetWalkSpeed( 200 )
-                v:SetRunSpeed( 360 )
-            end
+	end )
 
-        end
-		end )
-        if win == 1 then
-            ULib.tsayColor( nil, true, color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, "30 seconds", color_white, "." )
-        elseif win == 2 then
-            ULib.tsayColor( nil, true, color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, "30 seconds", color_white, "." )
-        elseif win == 0 then
-            ULib.tsayColor( nil, true, color_green, "Tie! ", color_white, "Mapvote will start in ", color_green, "30 seconds", color_white, "." )
-        else
-            ULib.tsayColor( nil, true, color_green, "Unknown Win Condition, something broke! ", color_white, "Mapvote will start in ", color_green, "30 seconds", color_white, "." )
-        end
-        timer.Create( "notify_players", 1, 30, function()
-            if timer.RepsLeft( "notify_players" ) % 5 == 0 then
-                ULib.tsayColor( nil, true, color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
-            end
-        end )
-		timer.Simple( 30, function()
-			hook.Call( "StartMapvote", nil, win, lose )
-            if MAPVOTE then
-                MAPVOTE:StartMapVote()
-            end
-        end )
-    end
+	if win != 1 and win != 2 and win != 0 then
+		ULib.tsayColor( nil, true, color_green, "Unknown Win Condition, something broke! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	end
+
+	timer.Create( "notify_players", 1, self.PostGameCountdown, function()
+		if timer.RepsLeft( "notify_players" ) % 5 == 0 then
+			ULib.tsayColor( nil, true, color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
+		end
+	end )
+	timer.Simple( self.PostGameCountdown, function()
+		hook.Call( "StartMapvote", nil, win, lose )
+		if MAPVOTE then
+			MAPVOTE:StartMapVote()
+		end
+	end )
+
+	hook.Call( "Pointshop2GmIntegration_RoundEnded" )
+	hook.Run( "MatchHistory_MatchComplete" )
 end
-EndRound = GM.EndRound
 
 local function CheckVIP( ply )
 	if ply:CheckGroup( "vip" ) or ply:CheckGroup( "vip+" ) or ply:CheckGroup( "ultravip" ) or ply:CheckGroup( "admin" ) or ply:CheckGroup( "superadmin" ) or ply:CheckGroup( "headadmin" ) or ply:CheckGroup( "coowner" ) or ply:CheckGroup( "owner" ) or ply:CheckGroup( "secret" ) then
@@ -190,12 +216,15 @@ end
 
 function GM:Initialize()
 
-	SetGlobalInt( "RoundTime", 1800 ) -- 30 mins
+	SetGlobalInt( "RoundTime", self.GameTime )
 	SetGlobalBool( "RoundFinished", false )
 	
-	SetGlobalInt( "RedTickets", 300 )	--
-	SetGlobalInt( "BlueTickets", 300 )	-- all of these should be the same number
-	SetGlobalInt( "MaxTickets", 300 ) 	--
+	SetGlobalInt( "RedTickets", self.Tickets )
+	SetGlobalInt( "BlueTickets", self.Tickets )
+	SetGlobalInt( "MaxTickets", self.Tickets )
+
+	SetGlobalInt( "RedKills", 0 )
+	SetGlobalInt( "BlueKills", 0 )
 	
 	game.ConsoleCommand( "cw_keep_attachments_post_death 0\n" )
 	
@@ -228,22 +257,31 @@ function GM:Initialize()
 				local bl = GetGlobalInt( "BlueTickets" )
 				local re = GetGlobalInt( "RedTickets" )
 				if bl > re then
-					EndRound( 2, 1 )
+					GAMEMODE:EndRound( 2 )
 				elseif re > bl then
-					EndRound( 1, 2 )
+					GAMEMODE:EndRound( 1 )
 				elseif re == bl then
-					EndRound( 0, 0 )
+					GAMEMODE:EndRound( 0 )
 				end
 			else
-				if GetGlobalInt( "control" ) == 1 then
-					EndRound( 1, 2 )
-				elseif GetGlobalInt( "control" ) == 2 then
-					EndRound( 2, 1 )
-				elseif GetGlobalInt( "control" ) == 0 then
-					EndRound( 0, 0 )
+				if GetGlobalInt( "RedKills" ) > GetGlobalInt( "BlueKills" ) then
+					GAMEMODE:EndRound( 1 )
+				elseif GetGlobalInt( "RedKills" ) < GetGlobalInt( "BlueKills" ) then
+					GAMEMODE:EndRound( 2 )
 				else
-					EndRound( 0, 0 )
+					GAMEMODE:EndRound( 0 )
 				end
+				--[[
+				if GetGlobalInt( "control" ) == 1 then
+					GAMEMODE:EndRound( 1 )
+				elseif GetGlobalInt( "control" ) == 2 then
+					GAMEMODE:EndRound( 2 )
+				elseif GetGlobalInt( "control" ) == 0 then
+					GAMEMODE:EndRound( 0 )
+				else
+					GAMEMODE:EndRound( 0 )
+				end
+				]]
 			end
 		end
 	end )
@@ -374,24 +412,24 @@ timer.Create( "Tickets", 5, 0, function()
 			if GetGlobalInt( "allcontrol" ) == 1 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 2 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					EndRound( 1, 2 )
+					GAMEMODE:EndRound( 2 )
 				end
 			else
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					EndRound( 1, 2 )
+					GAMEMODE:EndRound( 2 )
 				end
 			end
 		elseif GetGlobalInt( "control" ) == 2 then
 			if GetGlobalInt( "allcontrol" ) == 2 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 2 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					EndRound( 2, 1 )
+					GAMEMODE:EndRound( 1 )
 				end			
 			else
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					EndRound( 2, 1 )
+					GAMEMODE:EndRound( 1 )
 				end					
 			end
 		end
@@ -459,8 +497,6 @@ hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
 	end	
 	return
 end )
-
-
 
 local col = {}
 col[0] = Vector( 0, 0, 0 )
@@ -577,7 +613,6 @@ function changeTeam( ply, cmd, args )
 		ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "blue team" )
 	end
 end
-
 
 concommand.Add( "tdm_setteam", changeTeam )
 
@@ -796,6 +831,10 @@ function GM:PlayerSpawn( ply )
 			ply:Give( "weapon_crowbar" )
 		end )
 	end
+
+	net.Start( "StartAttTrack" )
+	net.Send( ply )
+
 	return false
 end
 
@@ -816,13 +855,19 @@ function GM:PlayerDeath( vic, inf, att )
 			if t == 1 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					EndRound( 1, 2 )
+					GAMEMODE:EndRound( 1 )
 				end
 			elseif t == 2 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					EndRound( 2, 1 )
+					GAMEMODE:EndRound( 2 )
 				end
+			end
+		else
+			if att:Team() == 1 then
+				SetGlobalInt( "RedKills", GetGlobalInt( "RedKills" ) + 1 )
+			else
+				SetGlobalInt( "BlueKills", GetGlobalInt( "BlueKills" ) + 1 )
 			end
 		end
 	end			
@@ -924,7 +969,7 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
         return
     end
 
-	--[[function CustomizableWeaponry:hasAttachment(ply, att, lookIn) --This really oughta be given to Spy
+	function CustomizableWeaponry:hasAttachment(ply, att, lookIn) --This really oughta be given to Spy
         if not self.useAttachmentPossessionSystem then
             return true
         end
@@ -933,10 +978,10 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
         
         local has = hook.Call("CW20HasAttachment", nil, ply, att, lookIn)
         
-        if (lookin and lookIn[att]) or has then
+        if (lookIn and lookIn[att]) or has then
             return true
         end
         
         return false
-    end]]
+    end
 end )

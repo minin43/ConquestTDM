@@ -295,8 +295,13 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 		bluetix = GetGlobalInt( "BlueTickets" )
 		draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	else
-		draw.SimpleText( "TDM", "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "TDM", "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		redkills = GetGlobalInt( "RedKills" )
+		draw.SimpleText( "kills", "lvl", ScrW() / 2 - 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( redkills, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+
+		bluekills = GetGlobalInt( "BlueKills" )
+		draw.SimpleText( "kills", "lvl", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( bluekills, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
 	surface.SetFont( "Info" )
@@ -719,7 +724,7 @@ net.Receive( "tdm_killcountnotice", function()
 	end
 end )
 
-usermessage.Hook( "tdm_win", function()
+--[[usermessage.Hook( "tdm_win", function()
 	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
 	--EndScreen()
 end )
@@ -732,6 +737,18 @@ end )
 usermessage.Hook( "tdm_tie", function()
 	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
 	--EndScreen()
+end )]]
+
+net.Receive( "DoWin", function()
+	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
+end )
+
+net.Receive( "DoLose", function()
+	surface.PlaySound( "ui/MP_Music_Losing_End_01_Wave.mp3" )
+end )
+
+net.Receive( "DoTie", function()
+	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
 end )
 
 --Grenade indicator

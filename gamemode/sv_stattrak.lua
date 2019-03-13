@@ -216,8 +216,6 @@ end )
 net.Receive( "GetCurrentAttachmentsCallback", function( len, ply )
 	local tabel = net.ReadTable()
 	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
-	print( "Server received GetCurrentAttachmentCallback", tabel )
-	PrintTable( tabel )
 	for wepClass, attTable in pairs( tabel ) do
 		GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ wepClass ] = attTable
 	end

@@ -63,8 +63,13 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 		wepused = "none"
 	end
 
-	local damagedone --To do
-	
+	local damagedone
+	if ply != att and att:IsPlayer() then
+		damagedone = GAMEMODE.DamageSaving[ id( ply:SteamID() ) ][ GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount ][ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ]
+	else
+		damagedone = 0
+	end
+
 	--//Flavor timer
 	timer.Simple( 1.5, function()
 		ply.num = 3
@@ -100,4 +105,42 @@ end )
 hook.Add( "PlayerSpawn", "closeds", function( ply )
 	umsg.Start( "CloseDeathScreen", ply )
 	umsg.End()
+	GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount = GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount + 1
 end )
+
+hook.Add( "EntityTakeDamage", "TrackDamage", function( vic, dmginfo )
+	local att = dmginfo:GetAttacker()
+	if vic and vic:IsPlayer() and att and att:IsPlayer() then
+		local vicID = id( vic:SteamID() )
+		local attID = id( att:SteamID() )
+		local Lives = GAMEMODE.DamageSaving[ vicID ].lifeCount
+
+		--//Messy and difficult to read, but necessary to track damage done per life
+		GAMEMODE.DamageSaving[ vicID ][ Lives ] = GAMEMODE.DamageSaving[ vicID ][ Lives ] or { }
+		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] = GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] or { }
+		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] = ( GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] or 0 ) + dmginfo:GetDamage()
+	end
+end )
+
+--[[
+	Above table should look something like this:
+
+	GAMEMODE.DamageSaving = {
+		Steamx0x1x123456 = { 			- Victim's SteamID
+			1 = { 						- This victim's # of lives up to this point
+				Steamx1x1x24683 = {		- Their attacker's SteamID
+					1 = 45,				- The attacker's current # of lives = the damage they've done so far in it
+					2 = 67,
+					3 = 11,
+					4 = 90
+				}
+			}
+			2 = {
+				Steamx1x1x24683 = {
+					4 = 20,
+					6 = 30
+				}
+			}
+		}
+	}
+]]

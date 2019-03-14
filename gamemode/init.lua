@@ -1,7 +1,8 @@
 GM.PerkTracking = { }
 GM.PerkTracking.LifelineList = { }
 GM.SavedAttachmentLists = { }
-GM.KillInfoTracking = GM.KillInfoTracking or { }
+GM.KillInfoTracking = { }
+GM.DamageSaving = { }
 GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
 GM.DefaultJumpPower = 170
@@ -375,7 +376,7 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:ConCommand( "cl_deathview 1" )
 
-	--//This has been disabled - and for awhile
+	--//This has been disabled - and has been for years
 	--[[for i=1, 9 do
 		ply:ConCommand( "bind \"" .. i .. "\" \"slot" .. i .. "\"" )
 		print(" bind \"" .. i .. "\" \"slot" .. i .. "\"" )
@@ -385,9 +386,10 @@ function GM:PlayerInitialSpawn( ply )
 	ply:Spectate( OBS_MODE_CHASE )
 	ply:ConCommand( "tdm_spawnmenu" )
 
-	GAMEMODE.PerkTracking[ id( ply:SteamID() ) ] = {}
-	GAMEMODE.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
-	GAMEMODE.KillInfoTracking[ id( ply:SteamID() ) ].KillsThisLife = 0
+	self.PerkTracking[ id( ply:SteamID() ) ] = {}
+	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
+	self.KillInfoTracking[ id( ply:SteamID() ) ].KillsThisLife = 0
+	self.DamageSaving[ id( ply:SteamID() ) ] = { lifeCount = 0 }
 end
 
 function GM:PlayerDeathSound()
@@ -983,5 +985,17 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
         end
         
         return false
-    end
+	end
+	
+	function CustomizableWeaponry:decodeAttachmentString(str)
+		self.CWAttachments = self.CWAttachments or {}
+		
+		local result = string.Explode(space, str)
+		
+		for k, v in pairs(result) do
+			if v then
+				self.CWAttachments[v] = true
+			end
+		end
+	end
 end )

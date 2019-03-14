@@ -26,17 +26,33 @@ specialAttachmentRules = { --This didn't work like I wanted it to, so we'll just
 	--[ "cw_m14" ] = { [ "md_nightforce_nxs" ] = 0 }
 }
 
-wep_att[ "cw_ar15" ] = {
-	[ "bg_foldsight" ] = 0
+--[[wep_att[ "cw_ar15" ] = {
+SWEP.Attachments = {[1] = {header = "Sight", offset = {800, -500}, atts = {"bg_foldsight", "md_microt1", "md_eotech", "md_aimpoint", "md_schmidt_shortdot", "md_acog"}},
+	[2] = {header = "Barrel", offset = {300, -500}, atts = {"md_saker"}},
+	[3] = {header = "Receiver", offset = {-400, -500}, atts = {"bg_magpulhandguard", "bg_longbarrel", "bg_ris", "bg_longris"}},
+	[4] = {header = "Handguard", offset = {-400, 0}, atts = {"md_foregrip", "md_m203"}},
+	[5] = {header = "Magazine", offset = {-400, 400}, atts = {"bg_ar1560rndmag"}},
+	[6] = {header = "Stock", offset = {1000, 400}, atts = {"bg_ar15sturdystock", "bg_ar15heavystock"}},
+	[7] = {header = "Rail", offset = {250, 400}, atts = {"md_anpeq15"}, dependencies = {bg_ris = true, bg_longris = true}},
+	["+reload"] = {header = "Ammo", offset = {800, 0}, atts = {"am_magnum", "am_matchgrade"}}}
 }
 
 wep_att[ "cw_m14" ] = {
-	[ "md_nightforce_nxs" ] = 0
+SWEP.Attachments = {[1] = {header = "Sight", offset = {800, -300},  atts = {"md_microt1", "md_eotech", "md_aimpoint", "md_schmidt_shortdot", "md_acog", "md_nightforce_nxs"}},
+	[2] = {header = "Barrel", offset = {-450, -300},  atts = {"md_saker"}},
+	[3] = {header = "Rail", offset = {800, 100}, atts = {"md_anpeq15"}, dependencies = {md_microt1 = true, md_eotech = true, md_aimpoint = true, md_schmidt_shortdot = true, md_acog = true, md_nightforce_nxs = true}},
+	["+reload"] = {header = "Ammo", offset = {-450, 100}, atts = {"am_magnum", "am_matchgrade"}}}
 }
 
 wep_att[ "cw_vss" ] = {
-
-}
+SWEP.Attachments = {[1] = {header = "Sight", offset = {800, -450},  atts = {"md_kobra", "md_eotech", "md_aimpoint", "md_schmidt_shortdot", "md_pso1"}},
+	[2] = {header = "Magazine", offset = {0, 350},  atts = {"bg_asval_20rnd", "bg_asval_30rnd"}},
+	[3] = {header = "Variant", offset = {0, -450},  atts = {"bg_asval", "bg_sr3m"}},
+	[4] = {header = "Stock", offset = {1400, -50}, atts = {"bg_vss_foldable_stock"}},
+	[5] = {header = "Barrel", offset = {0, -50}, atts = {"md_pbs1"}, dependencies = {bg_sr3m = true}},
+	[6] = {header = "Front", offset = {800, -50}, atts = {"md_foregrip"}, dependencies = {bg_sr3m = true}},
+	["+reload"] = {header = "Ammo", offset = {1400, 350}, atts = {"am_magnum", "am_matchgrade"}}}
+}]]
 
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
 function ConstructAttachmentLists()

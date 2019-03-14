@@ -28,6 +28,8 @@ net.Receive( "StartAttTrack", function()
 end )
 
 net.Receive( "GetCurrentAttachments", function()
+    SaveCurrentAttachments()
+    
     net.Start( "GetCurrentAttachmentsCallback" )
         net.WriteTable( GAMEMODE.AttachmentList )
     net.SendToServer()

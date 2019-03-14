@@ -56,7 +56,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	GAMEMODE.VendettaList = GAMEMODE.VendettaList or { }
 	
 	Main = vgui.Create( "DFrame" )
-	Main:SetSize( 600, 125 )
+	Main:SetSize( 600, 145 )
 	Main:Center()
 	Main:SetTitle( "" )
 	Main:ShowCloseButton( false )
@@ -72,6 +72,10 @@ usermessage.Hook( "DeathScreen", function( um )
 			Vendetta = true
 		end
 	end
+
+	local row1 = Main:GetTall() / 3 - 10
+	local row2 = Main:GetTall() / 2 - 9
+	local row3 = Main:GetTall() / 2 + 15
 
 	--Draws killer's image
 	local AttAvatar = vgui.Create( "AvatarImage", Main )
@@ -107,7 +111,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draws "Perk:"
 	local title2 = vgui.Create( "DLabel", Main )
-	title2:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 3 - 3)
+	title2:SetPos( AttAvatar:GetWide() + 5, row1 )
 	title2:SetFont( "ds_spawn" )
 	title2:SetTextColor( Color( 255, 255, 255, 200) )
 	title2:SetText( "Perk:" )
@@ -115,7 +119,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draws killer's perk name
 	local kperk = vgui.Create( "DLabel", Main )
-	kperk:SetPos( title2:GetWide() + AttAvatar:GetWide() + 11, Main:GetTall() / 3 - 3)
+	kperk:SetPos( title2:GetWide() + AttAvatar:GetWide() + 11, row1 )
 	kperk:SetFont( "ds_spawn" )
 	kperk:SetTextColor( Color( 255, 255, 255, 200) )
 	kperk:SetText( perk )
@@ -123,7 +127,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draws "Weapon:" 
 	local title3 = vgui.Create( "DLabel", Main)
-	title3:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5)
+	title3:SetPos( AttAvatar:GetWide() + 5, row2 )
 	title3:SetFont( "ds_spawn" )
 	title3:SetTextColor( Color( 255, 255, 255, 200) )
 	title3:SetText( "Weapon:" )
@@ -131,7 +135,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draws killer's weapon name
 	local weapon = vgui.Create( "DLabel", Main )
-	weapon:SetPos( title3:GetWide() + AttAvatar:GetWide() + 11, Main:GetTall() / 2 + 5)
+	weapon:SetPos( title3:GetWide() + AttAvatar:GetWide() + 11, row2 )
 	weapon:SetFont( "ds_spawn" )
 	weapon:SetTextColor( Color( 255, 255, 255, 200) )
 	weapon:SetText( wep )
@@ -139,7 +143,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draw hitgroup information (killed by: bullet to stomach)
 	local title4 = vgui.Create( "DLabel", Main)
-	title4:SetPos( Main:GetWide() / 2, Main:GetTall() / 3 - 3)
+	title4:SetPos( Main:GetWide() / 2, row1 )
 	title4:SetFont( "ds_spawn" )
 	title4:SetTextColor( Color( 255, 255, 255, 200) )
 	local reason
@@ -157,7 +161,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draw killer's killstreak
 	local title5 = vgui.Create( "DLabel", Main)
-	title5:SetPos( Main:GetWide() / 2, Main:GetTall() / 2 + 5)
+	title5:SetPos( Main:GetWide() / 2, row2 )
 	title5:SetFont( "ds_spawn" )
 	title5:SetTextColor( Color( 255, 255, 255, 200) )
 	killstreak = tonumber( killstreak ) or 0
@@ -166,7 +170,7 @@ usermessage.Hook( "DeathScreen", function( um )
 
 	--Damage done
 	local done = vgui.Create( "DLabel", Main )
-	done:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5) --To do
+	done:SetPos( AttAvatar:GetWide() + 5, row3 )
 	done:SetFont( "ds_spawn" )
 	done:SetTextColor( Color( 255, 255, 255, 200) )
 	done:SetText( "Damage done: " .. damagedone )
@@ -174,10 +178,10 @@ usermessage.Hook( "DeathScreen", function( um )
 
 	--Health remaining
 	local left = vgui.Create( "DLabel", Main )
-	left:SetPos( Main:GetWide() / 2, Main:GetTall() / 2 + 5) --To do
+	left:SetPos( Main:GetWide() / 2, row3 )
 	left:SetFont( "ds_spawn" )
 	left:SetTextColor( Color( 255, 255, 255, 200) )
-	left:SetText( "Remaining health: " .. math.Clamp( att:Health(), 0, att:MaxHealth() ) )
+	left:SetText( "Health remaining: " .. math.Clamp( att:Health(), 0, att:GetMaxHealth() ) )
 	left:SizeToContents()
 	
 	--Bottom bar

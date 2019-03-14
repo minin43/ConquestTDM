@@ -39,7 +39,8 @@ usermessage.Hook( "DeathScreen", function( um )
 	local perk = um:ReadString() --attacker's perk
 	local hitgroup = um:ReadString() --where the last bullet landed
 	local wep = um:ReadString() --weapon used
-	local killstreak = um:ReadString()
+	local killstreak = um:ReadString() --Killstreak
+	local damagedone = um:ReadString() --Damage you did to attacker their & your life
 	local Vendetta = false
 	
 	if wep and weapons.Get( wep ) then
@@ -161,16 +162,25 @@ usermessage.Hook( "DeathScreen", function( um )
 	title5:SetTextColor( Color( 255, 255, 255, 200) )
 	killstreak = tonumber( killstreak ) or 0
 	title5:SetText( "Their killstreak: " .. killstreak )
-	title5:SizeToContents() 
+	title5:SizeToContents()
+
+	--Damage done
+	local done = vgui.Create( "DLabel", Main )
+	done:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5) --To do
+	done:SetFont( "ds_spawn" )
+	done:SetTextColor( Color( 255, 255, 255, 200) )
+	done:SetText( "Damage done: " .. damagedone )
+	done:SizeToContents()
+
+	--Health remaining
+	local left = vgui.Create( "DLabel", Main )
+	left:SetPos( Main:GetWide() / 2, Main:GetTall() / 2 + 5) --To do
+	left:SetFont( "ds_spawn" )
+	left:SetTextColor( Color( 255, 255, 255, 200) )
+	left:SetText( "Remaining health: " .. math.Clamp( att:Health(), 0, att:MaxHealth() ) )
+	left:SizeToContents()
 	
-	--Beta
-	--[[local beta = vgui.Create( "DLabel", Main)
-	beta:SetPos( Main:GetWide() - 50, 2 )
-	beta:SetFont( "ds_spawn" )
-	beta:SetTextColor( Color( 255, 255, 255, 100) )
-	beta:SetText( "BETA" )
-	beta:SizeToContents()]]
-	
+	--Bottom bar
 	local spawnin = vgui.Create( "DLabel", Main )
 	spawnin:SetPos( 6, Main:GetTall() - 27 )
 	spawnin:SetFont( "ds_spawn" )
@@ -199,9 +209,6 @@ usermessage.Hook( "DeathScreen", function( um )
 		vendettaNotice:SizeToContents()
 		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
 	end
-	--[[vendettaNotice.Think = function()
-		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
-	end]]
 	
 	usermessage.Hook( "CloseDeathScreen", function()
 		Main:Remove()

@@ -1,4 +1,4 @@
-hook.Add( "Think", "GetWeps", function()
+--[[hook.Add( "Think", "GetWeps", function()
 	for k, v in next, player.GetAll() do
 		if IsValid( v ) and v:Alive() then
 			local wep = v:GetActiveWeapon()
@@ -9,7 +9,7 @@ hook.Add( "Think", "GetWeps", function()
 			end
 		end
 	end
-end )
+end )]]
 
 hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 
@@ -62,6 +62,8 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	else
 		wepused = "none"
 	end
+
+	local damagedone --To do
 	
 	--//Flavor timer
 	timer.Simple( 1.5, function()
@@ -75,6 +77,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 			umsg.String( hitgroup )
 			umsg.String( wepused )
 			umsg.String( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
+			umsg.String( damagedone )
 		umsg.End()
 		
 		local stid = ply:SteamID()

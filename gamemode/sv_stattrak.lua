@@ -21,9 +21,21 @@ wep_att = {}
 --(so -50 would be 120 + 50, whereas 170 would just be 170), or nil to remove the attachment from being unlockable - done in order of appearance in this table
 --so add the negative values (kill requirements adding on the previous) first and the 0's and absolutes after
 -- [ "cw_ar15" ] = { [ "bg_foldsight" ] = -20, [ "md_microt1" ] = -30 }, [ "md_saker" ] = 200 }		-	 as an example
-specialAttachmentRules = { 
-	[ "cw_ar15" ] = { [ "bg_foldsight" ] = 0 },
-	[ "cw_m14" ] = { [ "md_nightforce_nxs" ] = 0 }
+specialAttachmentRules = { --This didn't work like I wanted it to, so we'll just do these manually when necessary
+	--[ "cw_ar15" ] = { [ "bg_foldsight" ] = 0 },
+	--[ "cw_m14" ] = { [ "md_nightforce_nxs" ] = 0 }
+}
+
+wep_att[ "cw_ar15" ] = {
+	[ "bg_foldsight" ] = 0
+}
+
+wep_att[ "cw_m14" ] = {
+	[ "md_nightforce_nxs" ] = 0
+}
+
+wep_att[ "cw_vss" ] = {
+
 }
 
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
@@ -31,7 +43,7 @@ function ConstructAttachmentLists()
 	print( "(Re)constructing attachment lists..." )
 	
 	for k, v in pairs( weapons.GetList() ) do
-		if v.Base == "cw_base" then --If cw2.0 weapon
+		if v.Base == "cw_base" and !wep_att[ v.ClassName ] then --If cw2.0 weapon and not pre-done
 			if v.Attachments and #v.Attachments > 0 then --if it has attachments (looking at you, L115)
 				wep_att[ v.ClassName ] = {}
 

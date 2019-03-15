@@ -128,7 +128,7 @@ end )
 	GAMEMODE.DamageSaving = {
 		Steamx0x1x123456 = { 			- Victim's SteamID
 			1 = { 						- This victim's # of lives up to this point
-				Steamx1x1x24683 = {		- Their attacker's SteamID
+				Steamx1x1x246832 = {		- Their attacker's SteamID
 					1 = 45,				- The attacker's current # of lives = the damage they've done so far in it
 					2 = 67,
 					3 = 11,
@@ -136,7 +136,7 @@ end )
 				}
 			}
 			2 = {
-				Steamx1x1x24683 = {
+				Steamx1x1x246832 = {
 					4 = 20,
 					6 = 30
 				}

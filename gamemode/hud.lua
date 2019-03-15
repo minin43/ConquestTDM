@@ -295,13 +295,17 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 		bluetix = GetGlobalInt( "BlueTickets" )
 		draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	else
-		redkills = GetGlobalInt( "RedKills" )
+		local redkills, redExtra = GetGlobalInt( "RedKills" )
+		if redkills < 10 then redExtra = "00 " elseif redkills < 100 then redExtra = "0  " else redExtra = "" end
 		draw.SimpleText( "kills", "lvl", ScrW() / 2 - 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( redkills, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( redExtra, "time", ScrW() / 2 - 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 
-		bluekills = GetGlobalInt( "BlueKills" )
+		local bluekills, blueExtra = GetGlobalInt( "BlueKills" )
+		if bluekills < 10 then blueExtra = "00 " elseif bluekills < 100 then blueExtra = "0  " else blueExtra = "" end
 		draw.SimpleText( "kills", "lvl", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( bluekills, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( blueExtra, "time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
 	surface.SetFont( "Info" )

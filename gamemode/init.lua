@@ -848,7 +848,7 @@ function GM:PlayerDeath( vic, inf, att )
 		vic:SetFOV( 0, 0 )
 		net.Start( "tdm_deathnotice" )
 			net.WriteEntity( vic )
-			net.WriteString( att.LastUsedWep )
+			net.WriteString( att.LastUsedWep ) --What does this do?
 			net.WriteEntity( att )
 			net.WriteString( tostring( vic:LastHitGroup() == HITGROUP_HEAD ) )
 		net.Broadcast()

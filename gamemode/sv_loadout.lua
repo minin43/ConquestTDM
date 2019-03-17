@@ -204,12 +204,12 @@ function isExtra( class )
 	return false
 end
 
---[[function FixExploit( ply, wep )
+function FixExploit( ply, wep )
 	ply:StripWeapon( wep )
 	local ent = ents.Create( wep )
 	ent:SetPos( ply:GetPos() )
 	ent:Spawn()
-end]]
+end
 
 --//I fail to see the purpose of this, and it's being ran in a think hook, so disabling
 --To remove when I rework weapon pickup

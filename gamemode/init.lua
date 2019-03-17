@@ -17,7 +17,6 @@ AddCSLuaFile( "spawnmenu.lua" )
 AddCSLuaFile( "cl_scoreboard.lua" )
 AddCSLuaFile( "cl_lvl.lua" )
 AddCSLuaFile( "cl_loadout.lua" )
-AddCSLuaFile( "cl_loadout_setup.lua" )
 AddCSLuaFile( "cl_money.lua" )
 AddCSLuaFile( "cl_flags.lua" )
 AddCSLuaFile( "cl_feed.lua" )
@@ -398,6 +397,7 @@ function GM:PlayerDeathSound()
 end
 
 timer.Create( "Tickets", 5, 0, function()
+	if GetGlobalBool( "RoundFinished" ) then return end
     local f = flags[game.GetMap()];
     if f != nil then
         local numFlags = #f;

@@ -12,25 +12,25 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png" },
     [ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png" },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png" },
-    [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png" },
+    [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png" }, --Fix flags
     [ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png" },
     [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png" },
     [ "ttt_riverside_b3" ] = { id = 312731430, size = "Midsize", img = "vgui/maps/riverside.png" },
     [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png" },
-    [ "de_star" ] = { id = 296000772, size = "Large", img = "vgui/maps/star.png" },
-    [ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png" },
+    [ "de_star" ] = { id = 296000772, size = "Large", img = "vgui/maps/star.png" }, --Fix flags & spawn
+    [ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png" }, --Fix spawn
     [ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png" },
     [ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png" },
     [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png" },
     [ "sh_smalltown_c" ] = { id = 865967849, size = "Midsize", img = "vgui/maps/smalltown.png" },
-    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" },
-    [ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png" },
+    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" } --Fix flags
+    --[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png" }, --Removed while player count remains low
     [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png" },
     [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png" },
     [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png" },
     [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png" },
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
-    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }
+    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }]]
 }
 
 print( "Checking the validity for current map: " .. game.GetMap() .. "..." )

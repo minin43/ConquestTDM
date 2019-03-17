@@ -160,7 +160,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	done:SetPos( Main:GetWide() / 3 + 30, Main:GetTall() / 2 + 5 )
 	done:SetFont( "ds_spawn" )
 	done:SetTextColor( Color( 255, 255, 255, 200) )
-	done:SetText( "Damage done: " .. math.Clamp( math.Truncate( damagedone ), 0, att:GetMaxHealth() ) )
+	done:SetText( "Damage done: " .. math.Truncate( math.Clamp( tonumber( damagedone ), 0, att:GetMaxHealth() ) ) )
 	done:SizeToContents()
 
 	--Health remaining

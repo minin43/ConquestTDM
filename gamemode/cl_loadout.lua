@@ -147,7 +147,7 @@ function LoadoutMenu()
 		ent:SetAngles( Angle( 0, 90, 0 ) )
 	end
 
-	net.Start( "RequestWeapons" )
+	net.Start( "RequestWeapons" ) --logan
 	net.SendToServer()
 	local received = false
 
@@ -281,7 +281,7 @@ function LoadoutMenu()
 			end					
 			if CurrentMoneyAmt >= tonumber( buy.price ) then
 				buying = true
-				net.Start( "BuyShit" )
+				net.Start( "BuyShit" ) --logan
 					net.WriteString( tostring( buy.selected ) )
 					net.WriteString( tostring( buy.price ) )
 				net.SendToServer()
@@ -538,7 +538,7 @@ function LoadoutMenu()
 		{ "Secret", 206 }
 	}
 
-	net.Receive( "RequestWeaponsCallback", function()
+	net.Receive( "RequestWeaponsCallback", function() --logan
 		local p = net.ReadTable()
 		local s = net.ReadTable()
 		local e = net.ReadTable()
@@ -1502,7 +1502,7 @@ function LoadoutMenu()
 		local s = secondaryequip and tostring( secondaryequip ) or nil
 		local e = equipmentequip and tostring( equipmentequip ) or nil
 		local pe = perkequip and tostring( perkequip[ 1 ] ) or nil
-		net.Start( "tdm_loadout" )
+		net.Start( "tdm_loadout" ) --logan
 			net.WriteString( p )
 			net.WriteString( s )
 			if e then
@@ -1756,7 +1756,213 @@ function LoadoutMenu()
 	end
 end
 
-concommand.Add( "tdm_loadout", LoadoutMenu )
+surface.CreateFont( "ExoTitleFont" , { font = "Exo 2", size = 12, weight = 400 } )
+surface.CreateFont( "ExoInfoFont", { font = "Exo 2", size = 16, weight = 400 } )
+
+GM.ShopIcon = Material( "" )
+GM.LoadoutIcon = Material( "" )
+GM.TeamChangeIcon = Material( "" )
+GM.CancelIcon = Material( "" )
+
+function GM:NewLoadout()
+	self.FirstLoadout = self.FirstLoadout or true --May result in a logic error
+	if self.FirstLoadout then
+		self.FirstLoadout = false
+		--self:SetLoadout()
+		LoadoutMenu()
+		return
+	elseif (self.ChooseMain and self.ChooseMain:IsValid()) or (main and main:IsValid() ) or (self.LoadoutMain and self.LoadoutMain:IsValid()) or (self.ShopMain and self.ShopMain:IsValid()) then
+		return
+	end
+
+	self.ChooseMain = vgui.Create( "DFrame" )
+	self.ChooseMain:SetSize( 500, 200 ) --Gonna need a new window size, 
+	self.ChooseMain:SetTitle( "" )
+	self.ChooseMain:SetVisible( true )
+	self.ChooseMain:SetDraggable( false )
+	self.ChooseMain:ShowCloseButton( false )
+	self.ChooseMain:MakePopup()
+	self.ChooseMain:Center()
+	self.ChooseMain.Paint = function()
+		draw.SimpleText( "Select An Option", "ExoTitleFont", self.LoadoutTitleBar:GetWide() / 2, self.LoadoutTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		surface.DrawLine( 4, 20, self.ChooseMain:GetWide() - 4, 20 )
+	end
+
+	self.ChooseLoadout = vgui.Create( "ChooseMainButton", self.ChooseMain )
+	self.ChooseLoadout:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
+	self.ChooseLoadout:SetPos( 0, 20 )
+	self.ChooseLoadout:SetText( "Loadout" )
+	self.ChooseLoadout:SetFont( "ExoInfoFont" )
+	self.ChooseLoadout:SetIcon( self.LoadoutIcon )
+	self.ChooseLoadout.DoClick = function()
+		surface.PlaySound( "" )
+		self.ChooseMain:Close() --Remove?
+		--self:SetLoadout()
+		LoadoutMenu()
+	end
+
+	self.ChooseShop = vgui.Create( "ChooseMainButton", self.ChooseMain )
+	self.ChooseShop:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
+	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 4, 20 )
+	self.ChooseShop:SetText( "Shop" )
+	self.ChooseShop:SetFont( "ExoInfoFont" )
+	self.ChooseShop:SetIcon( self.ShopIcon )
+	self.ChooseShop.DoClick = function()
+		surface.PlaySound( "" )
+		--self.ChooseMain:Close() --Remove?
+		--self:OpenShop()
+	end
+	self.ChooseShop.Paint = function()
+		--Will overwrite since shop's not in yet
+	end
+
+	self.ChooseTeam = vgui.Create( "ChooseMainButton", self.ChooseMain )
+	self.ChooseTeam:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
+	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 4 * 2, 20 )
+	self.ChooseTeam:SetText( "Change\nTeams" )
+	self.ChooseTeam:SetFont( "ExoInfoFont" )
+	self.ChooseTeam:SetIcon( self.TeamChangeIcon )
+	self.ChooseTeam.DoClick = function()
+		surface.PlaySound( "" )
+		self.ChooseMain:Close() --Remove?
+		LocalPlayer():ConCommand( "tdm_spawnmenu" )
+	end
+
+	self.ChooseCancel = vgui.Create( "ChooseMainButton", self.ChooseMain )
+	self.ChooseCancel:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
+	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 4 * 3, 20 )
+	self.ChooseCancel:SetText( "Cancel" )
+	self.ChooseCancel:SetFont( "ExoInfoFont" )
+	self.ChooseCancel:SetIcon( self.CancelIcon )
+	self.ChooseCancel.DoClick = function()
+		surface.PlaySound( "" )
+		self.ChooseMain:Close() --Remove?
+	end
+
+end
+--[[ --no end brackets to delete
+function GM:SetLoadout()
+	if self.LoadoutMain and self.LoadoutMain:IsValid() then return end
+
+	net.Start( "RequestWeapons" )
+	net.SendToServer()
+	net.Start( "GetRank" )
+	net.SendToServer()
+	net.Start( "GetMoney" )
+	net.SendToServer()
+	net.Start( "GetULXRank" )
+	net.SendToServer()
+
+	self.LoadoutMain = vgui.Create( "DFrame" )
+	self.LoadoutMain:SetSize( 750, 430 ) --Gonna need a new window size, 
+	self.LoadoutMain:SetTitle( "" )
+	self.LoadoutMain:SetVisible( true )
+	self.LoadoutMain:SetDraggable( false )
+	self.LoadoutMain:ShowCloseButton( false )
+	self.LoadoutMain:MakePopup()
+	self.LoadoutMain:Center()
+
+	self.LoadoutTitleBar = vgui.Create( "DPanel", self.LoadoutMain )
+	self.LoadoutTitleBar:SetPos( 0, 0 )
+	self.LoadoutTitleBar:SetSize( self.LoadoutMain:GetWide(), 16 ) --Font size + 2 pixel buffer above & below
+	if self.FirstLoadout then self.TitleBarText = "Set Your Loadout" else self.TitleBarText = "Change Your oadout" end
+	self.LoadoutTitleBar.Paint = function()
+		draw.SimpleText( self.TitleBarText, "ExoTitleFont", self.LoadoutTitleBar:GetWide() / 2, self.LoadoutTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
+	self.LoadoutOptionBar = vgui.Create( "DPanel", self.LoadoutMain )
+	self.LoadoutOptionBar:SetPos( 0, self.LoadoutTitleBar:GetTall() + 1 )
+	self.LoadoutOptionBar:SetSize( self.LoadoutMain:GetWide(), 16 ) --Font size + 2 pixel buffer above & below
+	self.LoadoutOptionBar.Paint = function()
+		surface.SetDrawColor( Color( 255, 255, 255 ) )
+		surface.DrawLine( self.LoadoutOptionBar:GetWide() / 4, 6, self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() - 6)
+		surface.DrawLine( self.LoadoutOptionBar:GetWide() / 4 * 2, 6, self.LoadoutOptionBar:GetWide() / 4 * 2, self.LoadoutOptionBar:GetTall() - 6)
+		surface.DrawLine( self.LoadoutOptionBar:GetWide() / 4 * 3, 6, self.LoadoutOptionBar:GetWide() / 4 * 3, self.LoadoutOptionBar:GetTall() - 6)
+		--Do the gradient effect
+	end
+
+	self.LoadoutPropertySheet = vgui.Create( "DPropertySheet", self.LoadoutMain )
+	self.LoadoutPropertySheet:SetSize( self.LoadoutMain:GetWide(), self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() - self.LoadoutOptionBar:GetTall() )
+	self.LoadoutPropertySheet:SetPos( 0, self.LoadoutTitleBar:GetTall() + self.LoadoutOptionBar:GetTall() )
+	self.LoadoutPropertySheet.Paint = function()
+	end
+
+	self.LoadoutPrimarySheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
+	self.LoadoutSecondarySheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
+	self.LoadoutEquipmentSheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
+	self.LoadoutPerkSheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
+
+	self.LoadoutPrimarySheetReference = self.LoadoutPropertySheet:AddSheet( "Primaries", self.LoadoutPrimarySheet )
+	self.LoadoutSecondarySheetReference = self.LoadoutPropertySheet:AddSheet( "Secondaries", self.LoadoutSecondarySheet )
+	self.LoadoutEquipmentSheetReference = self.LoadoutPropertySheet:AddSheet( "Equipment", self.LoadoutEquipmentSheet )
+	self.LoadoutPerkSheetReference = self.LoadoutPropertySheet:AddSheet( "Perks", self.LoadoutPerkSheet )
+
+	self.LoadoutPrimaryButton = vgui.Create( "LoadoutOptionButton", self.LoadoutOptionBar )
+	self.LoadoutPrimaryButton:SetPos( 0, 0 )
+	self.LoadoutPrimaryButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
+	self.LoadoutPrimaryButton:SetText( "Primaries" )
+	self.LoadoutPrimaryButton:SetFont( "" )
+	self.LoadoutPrimaryButton:SetSheet( self.LoadoutPrimarySheetReference )
+
+	self.LoadoutSecondaryButton = vgui.Create( "DButton", self.LoadoutOptionBar )
+	self.LoadoutSecondaryButton:SetPos( self.LoadoutOptionBar:GetWide() / 4, 0 )
+	self.LoadoutSecondaryButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
+	self.LoadoutSecondaryButton:SetText( "Secondaries" )
+	self.LoadoutSecondaryButton:SetFont( "" )
+	self.LoadoutSecondaryButton:SetSheet( self.LoadoutSecondarySheetReference )
+
+	self.LoadoutEquipmentButton = vgui.Create( "DButton", self.LoadoutOptionBar )
+	self.LoadoutEquipmentButton:SetPos( self.LoadoutOptionBar:GetWide() / 2, 0 )
+	self.LoadoutEquipmentButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
+	self.LoadoutEquipmentButton:SetText( "Equipment" )
+	self.LoadoutEquipmentButton:SetFont( "" )
+	self.LoadoutEquipmentButton:SetSheet( self.LoadoutEquipmentSheetReference )
+
+	self.LoadoutPerkButton = vgui.Create( "DButton", self.LoadoutOptionBar )
+	self.LoadoutPerkButton:SetPos( self.LoadoutOptionBar:GetWide() / 4 * 3, 0 )
+	self.LoadoutPerkButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
+	self.LoadoutPerkButton:SetText( "Perks" )
+	self.LoadoutPerkButton:SetFont( "" )
+	self.LoadoutPerkButton:SetSheet( self.LoadoutPerkSheetReference )
+
+	--[[self.PrimaryPanel = vgui.Create( "DPanel", self.LoadoutMain )
+	self.PrimaryPanel:SetPos( 0, self.LoadoutTitleBar:GetTall() )
+	self.PrimaryPanel:SetSize( self.LoadoutMain:GetWide(), ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
+	self.PrimaryPanel.Paint = function()
+		--Do the edge gradient shadow effect
+	end
+
+	self.PrimaryPanelScrollList = vgui.Create( "DScrollList", self.PrimaryPanel )
+	self.PrimaryPanelScrollList:SetPos( 0, 0 )
+	self.PrimaryPanelScrollList:SetSize( 100, self.PrimaryPanel:GetTall() )
+
+	self.SecondaryPanel = vgui.Create( "DPanel", self.LoadoutMain )
+	self.SecondaryPanel:SetPos( 0, self.LoadoutTitleBar:GetTall() + self.PrimaryPanel:GetTall() )
+	self.SecondaryPanel:SetSize( self.LoadoutMain:GetWide(), ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
+	self.SecondaryPanel.Paint = function()
+		--Do the edge gradient shadow effect
+	end
+
+	self.EquipmentPanel = vgui.Create( "DPanel", self.LoadoutMain )
+	self.EquipmentPanel:SetPos( 0, self.LoadoutTitleBar:GetTall() + self.PrimaryPanel:GetTall() + self.SecondaryPanel:GetTall() )
+	self.EquipmentPanel:SetSize( self.LoadoutMain:GetWide() / 2, ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
+	self.EquipmentPanel.Paint = function()
+		--Do the edge gradient shadow effect
+	end
+
+	self.PerkPanel = vgui.Create( "DPanel", self.LoadoutMain )
+	self.PerkPanel:SetPos( self:LoadoutMain:GetWide() / 2, self.LoadoutTitleBar:GetTall() + self.PrimaryPanel:GetTall() + self.SecondaryPanel:GetTall() )
+	self.PerkPanel:SetSize( self.LoadoutMain:GetWide() / 2, ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
+	self.PerkPanel.Paint = function()
+		--Do the edge gradient shadow effect
+	end]]
+end
+
+function GM:OpenShop()
+
+end
+
+concommand.Add( "tdm_loadout", GAMEMODE.NewLoadout ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
 
 usermessage.Hook( "ClearTable", function( um )
 	LocalPlayer().blue = nil

@@ -145,6 +145,36 @@ function GetStatTrak( ply, wep )
 	return tonumber( ply:GetPData( wep ) )
 end
 
+function UpdateAttKillTracking( ply, wepclass )
+	if !ply or !wepclass then return end
+	if not ply:GetPData( wepclass ) then
+		ply:SetPData( wepclass, 1 )
+	else
+		local num = ply:GetPData( wepclass )
+		ply:SetPData( wepclass, num + 1 )
+	end
+	
+	net.Start( "UpdateStatTrak" )
+		net.WriteString( wepclass )
+		net.WriteString( tostring( ply:GetPData( wepclass ) ) )
+	net.Send( ply )
+		
+	local num = GetStatTrak( ply, wepclass )
+	local togive = {}
+	
+	--for k, v in pairs( wep_att ) do
+	for q, w in next, wep_att do
+		if q == wepclass then
+			for a, s in next, w do
+				if num == s[ 2 ] then
+					table.insert( togive, s[ 1 ] )
+				end
+			end
+		end
+	end
+	if next(togive) ~= nil then CustomizableWeaponry.giveAttachments( ply, togive ) end
+end
+
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 	print( ply, att, dmginfo:GetInflictor() )
 	if ply and ply:IsValid() and att and att:IsValid() and att:IsPlayer() and att ~= ply then
@@ -183,32 +213,7 @@ hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 			end
 		end
 	
-		if not att:GetPData( wepclass ) then
-			att:SetPData( wepclass, 1 )
-		else
-			local num = att:GetPData( wepclass )
-			att:SetPData( wepclass, num + 1 )
-		end
-		
-		net.Start( "UpdateStatTrak" )
-			net.WriteString( wepclass )
-			net.WriteString( tostring( att:GetPData( wepclass ) ) )
-		net.Send( att )
-			
-		local num = GetStatTrak( att, wepclass )
-		local togive = {}
-		
-		--for k, v in pairs( wep_att ) do
-		for q, w in next, wep_att do
-			if q == wepclass then
-				for a, s in next, w do
-					if num == s[ 2 ] then
-						table.insert( togive, s[ 1 ] )
-					end
-				end
-			end
-		end
-		if next(togive) ~= nil then CustomizableWeaponry.giveAttachments( att, togive ) end
+		UpdateAttKillTracking( att, wepclass )
 	else
 		net.Start( "GetCurrentAttachments" )
 		net.Send( ply )

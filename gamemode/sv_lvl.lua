@@ -147,7 +147,7 @@ hook.Add( "PlayerInitialSpawn", "lvl.SendInitialLevel", function( ply )
 end )
 	
 hook.Add( "lvl.OnLevelUp", "lvl.OnLevelUp", function( ply, newlv )
-	if lvl.GetLevel( ply ) >= 100 then
+	if lvl.GetLevel( ply ) >= 50 then
 		ULib.tsayColor( nil, true, color_green, ply:Nick(), color_white, " leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
 		for k, v in next, player.GetAll() do
 			--v:ChatPrint( tostring( ply:Nick() ) .. " leveled up to level " .. tostring( newlv ) )

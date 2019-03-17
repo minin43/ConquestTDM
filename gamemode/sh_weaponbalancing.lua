@@ -32,7 +32,9 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_ar15" ) then
         local wep = weapons.GetStored( "cw_ar15" )
         wep.Slot = 0
-        wep.ReloadSpeed = 1.2
+        wep.ReloadSpeed = 1.1
+        wep.FireDelay = 0.070
+        wep.Recoil = 1.00
     end
 
     if weapons.Get( "cw_g3a3" ) then
@@ -48,6 +50,7 @@ function weapons.OnLoaded()
         wep.VelocitySensitivity = 3.5
         wep.MaxSpreadInc = 0.3
         wep.ReloadSpeed = 1.3
+        wep.AimSpread = 0.001
     end
 
     if weapons.Get( "cw_mp5" ) then
@@ -55,6 +58,8 @@ function weapons.OnLoaded()
         wep.Primary.ClipSize = 20
         wep.Primary.DefaultClip	= 20
         wep.Slot = 0
+        wep.FireDelay = 0.065
+        wep.Recoil = 0.73
     end
 
     if weapons.Get( "cw_g36c" ) then
@@ -94,6 +99,7 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_ump45" ) then
         local wep = weapons.GetStored( "cw_ump45" )
         wep.Slot = 0
+        wep.Damage = 29
     end
 
     if weapons.Get( "cw_vss" ) then

@@ -56,7 +56,11 @@ usermessage.Hook( "DeathScreen", function( um )
 	GAMEMODE.VendettaList = GAMEMODE.VendettaList or { }
 	
 	Main = vgui.Create( "DFrame" )
+<<<<<<< HEAD
 	Main:SetSize( 600, 165 )
+=======
+	Main:SetSize( 700, 125 )
+>>>>>>> origin/master
 	Main:Center()
 	Main:SetTitle( "" )
 	Main:ShowCloseButton( false )
@@ -72,10 +76,6 @@ usermessage.Hook( "DeathScreen", function( um )
 			Vendetta = true
 		end
 	end
-
-	local row1 = Main:GetTall() / 3 - 10
-	local row2 = Main:GetTall() / 2 - 9
-	local row3 = Main:GetTall() / 2 + 15
 
 	--Draws killer's image
 	local AttAvatar = vgui.Create( "AvatarImage", Main )
@@ -111,39 +111,25 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draws "Perk:"
 	local title2 = vgui.Create( "DLabel", Main )
-	title2:SetPos( AttAvatar:GetWide() + 5, row1 )
+	--title2:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 3 - 3) --Old position
+	title2:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5)
 	title2:SetFont( "ds_spawn" )
 	title2:SetTextColor( Color( 255, 255, 255, 200) )
-	title2:SetText( "Perk:" )
-	title2:SizeToContents() 
-	
-	--Draws killer's perk name
-	local kperk = vgui.Create( "DLabel", Main )
-	kperk:SetPos( title2:GetWide() + AttAvatar:GetWide() + 11, row1 )
-	kperk:SetFont( "ds_spawn" )
-	kperk:SetTextColor( Color( 255, 255, 255, 200) )
-	kperk:SetText( perk )
-	kperk:SizeToContents() 
+	title2:SetText( "Perk: " .. perk )
+	title2:SizeToContents()
 	
 	--Draws "Weapon:" 
 	local title3 = vgui.Create( "DLabel", Main)
-	title3:SetPos( AttAvatar:GetWide() + 5, row2 )
+	--title3:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5) --Old position
+	title3:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 3 - 3)
 	title3:SetFont( "ds_spawn" )
 	title3:SetTextColor( Color( 255, 255, 255, 200) )
-	title3:SetText( "Weapon:" )
+	title3:SetText( "Weapon: " .. wep )
 	title3:SizeToContents() 
-	
-	--Draws killer's weapon name
-	local weapon = vgui.Create( "DLabel", Main )
-	weapon:SetPos( title3:GetWide() + AttAvatar:GetWide() + 11, row2 )
-	weapon:SetFont( "ds_spawn" )
-	weapon:SetTextColor( Color( 255, 255, 255, 200) )
-	weapon:SetText( wep )
-	weapon:SizeToContents()
 	
 	--Draw hitgroup information (killed by: bullet to stomach)
 	local title4 = vgui.Create( "DLabel", Main)
-	title4:SetPos( Main:GetWide() / 2, row1 )
+	title4:SetPos( Main:GetWide() / 3 * 2, Main:GetTall() / 3 - 3)
 	title4:SetFont( "ds_spawn" )
 	title4:SetTextColor( Color( 255, 255, 255, 200) )
 	local reason
@@ -161,24 +147,26 @@ usermessage.Hook( "DeathScreen", function( um )
 	
 	--Draw killer's killstreak
 	local title5 = vgui.Create( "DLabel", Main)
-	title5:SetPos( Main:GetWide() / 2, row2 )
+	title5:SetPos( Main:GetWide() / 3 * 2, Main:GetTall() / 2 + 5)
 	title5:SetFont( "ds_spawn" )
 	title5:SetTextColor( Color( 255, 255, 255, 200) )
 	killstreak = tonumber( killstreak ) or 0
 	title5:SetText( "Their killstreak: " .. killstreak )
-	title5:SizeToContents()
+	title5:SizeToContents() 
 
 	--Damage done
 	local done = vgui.Create( "DLabel", Main )
-	done:SetPos( AttAvatar:GetWide() + 5, row3 )
+	--done:SetPos( Main:GetWide() / 3 + 10, Main:GetTall() / 3 - 3 ) --Old position
+	done:SetPos( Main:GetWide() / 3 + 30, Main:GetTall() / 2 + 5 )
 	done:SetFont( "ds_spawn" )
 	done:SetTextColor( Color( 255, 255, 255, 200) )
-	done:SetText( "Damage done: " .. damagedone )
+	done:SetText( "Damage done: " .. math.Clamp( math.Truncate( damagedone ), 0, att:GetMaxHealth() ) )
 	done:SizeToContents()
 
 	--Health remaining
 	local left = vgui.Create( "DLabel", Main )
-	left:SetPos( Main:GetWide() / 2, row3 )
+	--left:SetPos( Main:GetWide() / 3 + 10, Main:GetTall() / 2 + 5 ) --Old position
+	left:SetPos( Main:GetWide() / 3 + 30, Main:GetTall() / 3 - 3 )
 	left:SetFont( "ds_spawn" )
 	left:SetTextColor( Color( 255, 255, 255, 200) )
 	left:SetText( "Health remaining: " .. math.Clamp( att:Health(), 0, att:GetMaxHealth() ) )
@@ -201,14 +189,14 @@ usermessage.Hook( "DeathScreen", function( um )
 		spawnin:SizeToContents()
 	end
 
-	local vendettaNotice = vgui.Create( "DLabel", Main ) --Can also change to DPanel if SizeToContents doesn't work
+	local vendettaNotice = vgui.Create( "DLabel", Main )
 	vendettaNotice:SetFont( "ds_spawn" )
 	vendettaNotice:SetTextColor( Color( 250, 100, 100 ) )
 	vendettaNotice:SetText( "" )
 	vendettaNotice.Think = function()
 		if not Main and Main:IsValid() then return end
 		if Vendetta then
-			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!") --Might be too long of text
+			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!")
 		end
 		vendettaNotice:SizeToContents()
 		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )

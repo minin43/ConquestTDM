@@ -15,67 +15,60 @@ if ( CustomizableWeaponry.registeredAttachments ) then
 	end
 end
 
-wep_att = {}
+wep_att = { }
 
---Set the number to 0 to give for free, a specific number for custom killcount, a negative number for custom killcount but adds the previous highest killcount requirement
---(so -50 would be 120 + 50, whereas 170 would just be 170), or nil to remove the attachment from being unlockable - done in order of appearance in this table
---so add the negative values (kill requirements adding on the previous) first and the 0's and absolutes after
--- [ "cw_ar15" ] = { [ "bg_foldsight" ] = -20, [ "md_microt1" ] = -30 }, [ "md_saker" ] = 200 }		-	 as an example
-specialAttachmentRules = { --This didn't work like I wanted it to, so we'll just do these manually when necessary
-	--[ "cw_ar15" ] = { [ "bg_foldsight" ] = 0 },
-	--[ "cw_m14" ] = { [ "md_nightforce_nxs" ] = 0 }
-}
+specialAttachmentRules = { } --This didn't work like I wanted it to, so we'll just do these manually when necessary
 
 wep_att[ "cw_ar15" ] = {
-	[ "bg_foldsight" ] = 0,
-	[ "md_microt1" ] = 10,
-	[ "md_saker" ] = 20,
-	[ "bg_magpulhandguard" ] = 30,
-	[ "md_foregrip" ] = 40,
-	[ "bg_ar1560rndmag" ] = 50,
-	[ "bg_ar15sturdystock" ] = 60,
-	[ "md_eotech" ] = 70,
-	[ "bg_longbarrel" ] = 80,
-	[ "bg_ar15heavystock" ] = 90,
-	[ "md_aimpoint" ] = 100,
-	[ "bg_ris" ] = 110,
-	[ "md_anpeq15" ] = 120,
-	[ "md_schmidt_shortdot" ] = 130,
-	[ "bg_longris" ] = 140,
-	[ "md_m203" ] = 150,
-	[ "md_acog" ] = 160,
-	[ "am_magnum" ] = 170,
-	[ "am_matchgrade" ] = 180
+	{ "bg_foldsight", 0 },
+	{ "md_microt1", 10 },
+	{ "md_saker", 20 },
+	{ "bg_magpulhandguard", 30 },
+	{ "md_foregrip", 40 },
+	{ "bg_ar1560rndmag", 50 },
+	{ "bg_ar15sturdystock", 60 },
+	{ "md_eotech", 70 },
+	{ "bg_longbarrel", 80 },
+	{ "bg_ar15heavystock", 90 },
+	{ "md_aimpoint", 100 },
+	{ "bg_ris", 110 },
+	{ "md_anpeq15", 120 },
+	{ "md_schmidt_shortdot", 130 },
+	{ "bg_longris", 140 },
+	{ "md_m203", 150 },
+	{ "md_acog", 160 },
+	{ "am_magnum", 170 },
+	{ "am_matchgrade", 180 }
 }
 
 wep_att[ "cw_m14" ] = {
-	[ "md_nightforce_nxs" ] = 0,
-	[ "md_microt1" ] = 10,
-	[ "md_saker" ] = 20,
-	[ "md_anpeq15" ] = 30,
-	[ "md_eotech" ] = 40,
-	[ "md_aimpoint" ] = 50,
-	[ "md_schmidt_shortdot" ] = 60,
-	[ "md_acog" ] = 70,
-	[ "am_magnum" ] = 80,
-	[ "am_matchgrade" ] = 90
+	{ "md_nightforce_nxs", 0 },
+	{ "md_microt1", 10 },
+	{ "md_saker", 20 },
+	{ "md_anpeq15", 30 },
+	{ "md_eotech", 40 },
+	{ "md_aimpoint", 50 },
+	{ "md_schmidt_shortdot", 60 },
+	{ "md_acog", 70 },
+	{ "am_magnum", 80 },
+	{ "am_matchgrade", 90 }
 }
 
 wep_att[ "cw_vss" ] = {
-	[ "md_kobra" ] = 10,
-	[ "bg_asval_20rnd" ] = 20,
-	[ "bg_asval" ] = 30,
-	[ "bg_vss_foldable_stock" ] = 40,
-	[ "md_eotech" ] = 50,
-	[ "bg_asval_30rnd" ] = 60,
-	[ "bg_sr3m" ] = 70,
-	[ "md_pbs1" ] = 80,
-	[ "md_foregrip" ] = 90,
-	[ "md_aimpoint" ] = 100,
-	[ "md_schmidt_shortdot" ] = 110,
-	[ "md_pso1" ] = 120,
-	[ "am_magnum" ] = 130,
-	[ "am_matchgrade" ] = 140
+	{ "md_kobra", 10 },
+	{ "bg_asval_20rnd", 20 },
+	{ "bg_asval", 30 },
+	{ "bg_vss_foldable_stock", 40 },
+	{ "md_eotech", 50 },
+	{ "bg_asval_30rnd", 60 },
+	{ "bg_sr3m", 70 },
+	{ "md_pbs1", 80 },
+	{ "md_foregrip", 90 },
+	{ "md_aimpoint", 100 },
+	{ "md_schmidt_shortdot", 110 },
+	{ "md_pso1", 120 },
+	{ "am_magnum", 130 },
+	{ "am_matchgrade", 140 }
 }
 
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
@@ -88,7 +81,7 @@ function ConstructAttachmentLists()
 				wep_att[ v.ClassName ] = {}
 
 				local fixedAttachmentTable = v.Attachments
-				if specialAttachmentRules[ v.ClassName ] then --if the gun has an attachment we need to treat differently (free, perma-locked, or has a unique kill requirement )
+				--[[if specialAttachmentRules[ v.ClassName ] then --if the gun has an attachment we need to treat differently (free, perma-locked, or has a unique kill requirement )
 					for attachmentName, _uniqueStatus in pairs( specialAttachmentRules[ v.ClassName ] ) do --for each attachment
 						for attachmentTypeTableKey, attachmentTypeTable in pairs( v.Attachments ) do --find it in the atts table, ran through v.Attachments to change fixedAttTable
 							for attachmentLocation, actualAttachment in pairs( attachmentTypeTable.atts ) do
@@ -98,7 +91,7 @@ function ConstructAttachmentLists()
 							end
 						end
 					end
-				end
+				end]]
 
 				local maxAtt = 1
 				for k2, v2 in ipairs( fixedAttachmentTable ) do
@@ -119,7 +112,7 @@ function ConstructAttachmentLists()
 					end
 				end
 
-				if specialAttachmentRules[ v.ClassName ] then
+				--[[if specialAttachmentRules[ v.ClassName ] then
 					for attachmentName, uniqueStatus in pairs( specialAttachmentRules[ v.ClassName ] ) do
 						if uniqueStatus == 0 then
 							table.insert( wep_att[ v.ClassName ], 1, { attachmentName, 0 } )							
@@ -129,7 +122,7 @@ function ConstructAttachmentLists()
 							wep_att[ v.ClassName ][ #wep_att[ v.ClassName ] + 1 ] = { attachmentName, math.abs(uniqueStatus) + ( #wep_att[ v.ClassName ] * 10 + 10 ) }
 						end
 					end
-				end
+				end]]
 				
 			end
 		end

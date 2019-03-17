@@ -113,6 +113,7 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_m1911" ) then
         local wep = weapons.GetStored( "cw_m1911" )
         wep.Slot = 1
+        wep.Damage = 32
     end
 
     if weapons.Get( "cw_deagle" ) then
@@ -128,6 +129,7 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_makarov" ) then
         local wep = weapons.GetStored( "cw_makarov" )
         wep.Slot = 1
+        wep.Damage = 35
     end
 
     if weapons.Get( "cw_p99" ) then
@@ -151,7 +153,9 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_fiveseven" ) then
         local wep = weapons.GetStored( "cw_fiveseven" )
         wep.Slot = 1
+        wep.FireDelay = 0.11
     end
+
 
     --//Tertiary Weapons
     if weapons.Get( "weapon_fists" ) then

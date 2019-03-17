@@ -1,4 +1,4 @@
---[[hook.Add( "Think", "GetWeps", function()
+hook.Add( "Think", "GetWeps", function()
 	for k, v in next, player.GetAll() do
 		if IsValid( v ) and v:Alive() then
 			local wep = v:GetActiveWeapon()
@@ -9,7 +9,7 @@
 			end
 		end
 	end
-end )]]
+end )
 
 hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 
@@ -65,7 +65,8 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 
 	local damagedone
 	if ply != att and att:IsPlayer() then
-		damagedone = GAMEMODE.DamageSaving[ id( ply:SteamID() ) ][ GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount ][ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ]
+		damagedone = GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ][ id( ply:SteamID() ) ][ GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount ] or 0
+		print( damagedone )
 	else
 		damagedone = 0
 	end
@@ -115,10 +116,13 @@ hook.Add( "EntityTakeDamage", "TrackDamage", function( vic, dmginfo )
 		local attID = id( att:SteamID() )
 		local Lives = GAMEMODE.DamageSaving[ vicID ].lifeCount
 
-		--//Messy and difficult to read, but necessary to track damage done per life
+		--//Messy and difficult to read, but necessary to track damage done per life - set up the tables for both the victim and the attacker
 		GAMEMODE.DamageSaving[ vicID ][ Lives ] = GAMEMODE.DamageSaving[ vicID ][ Lives ] or { }
+		GAMEMODE.DamageSaving[ attID ][ Lives ] = GAMEMODE.DamageSaving[ attID ][ Lives ] or { }
 		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] = GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] or { }
+		GAMEMODE.DamageSaving[ attID ][ Lives ][ vicID ] = GAMEMODE.DamageSaving[ attID ][ Lives ][ vicID ] or { }
 		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] = ( GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] or 0 ) + dmginfo:GetDamage()
+		--print( Lives, GAMEMODE.DamageSaving[ vicID ], GAMEMODE.DamageSaving[ vicID ][ Lives ], GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ], dmginfo:GetDamage(), GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] )
 	end
 end )
 

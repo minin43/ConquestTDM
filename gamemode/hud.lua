@@ -295,17 +295,32 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 		bluetix = GetGlobalInt( "BlueTickets" )
 		draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	else
+		--//I know it's messy, but I don't care enough about something this small to rewrite it in a more appropriate fashion
 		local redkills, redExtra = GetGlobalInt( "RedKills" )
-		if redkills < 10 then redExtra = "00 " elseif redkills < 100 then redExtra = "0  " else redExtra = "" end
-		draw.SimpleText( "kills", "lvl", ScrW() / 2 - 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		if redkills < 10 then
+			draw.SimpleText( "00", "time", ScrW() / 2 - 85, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		elseif redkills < 100 then
+			draw.SimpleText( "0", "time", ScrW() / 2 - 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		elseif redkills > 999 then
+			draw.SimpleText( ">1k", "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			redkills = ""
+		end
+		draw.SimpleText( "kills", "lvl", ScrW() / 2 - 73, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( redkills, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( redExtra, "time", ScrW() / 2 - 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		--draw.SimpleText( redExtra, "time", ScrW() / 2 - 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 
 		local bluekills, blueExtra = GetGlobalInt( "BlueKills" )
-		if bluekills < 10 then blueExtra = "00 " elseif bluekills < 100 then blueExtra = "0  " else blueExtra = "" end
+		if bluekills < 10 then
+			draw.SimpleText( "00", "time", ScrW() / 2 + 85, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		elseif bluekills < 100 then
+			draw.SimpleText( "0", "time", ScrW() / 2 + 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		elseif bluekills > 999 then
+			draw.SimpleText( ">1k", "time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			bluekills = ""
+		end
 		draw.SimpleText( "kills", "lvl", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( bluekills, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( blueExtra, "time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		--draw.SimpleText( blueExtra, "time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
 	surface.SetFont( "Info" )
@@ -344,7 +359,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( 255, 255, 255, 135 )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( "Conquest Team Deathmatch V. 030419" )
+	surface.DrawText( "Conquest Team Deathmatch V. 1.2 Release 031519" )
 end )
 
 --//Draws the damage indicator 

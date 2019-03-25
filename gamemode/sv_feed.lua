@@ -186,6 +186,10 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
                     local num = tonumber(data)
                     ply:SetPData("g_assists", tostring(num + 1))
                 end
+                
+                ply.AttFromAssist = ( ply.AttFromAssist or 0 ) + assist[2]
+                if ply.AttFromAssist >= 200 then UpdateAttKillTracking( ply, ply:GetActiveWeapon() ) end
+                ply.AttFromAssist = ply.AttFromAssist - 200
             end
         end
     end
@@ -272,7 +276,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     end]]
 end)
 
-hook.Add("PlayerHurt", "CalculateAssists", function(victim, attacker, x, dmg)
+--[[hook.Add("PlayerHurt", "CalculateAssists", function(victim, attacker, x, dmg)
 	if victim and attacker and victim:IsPlayer() and attacker:IsPlayer() and victim ~= NULL and attacker ~= NULL then
 		if not victim.dmg then
 			victim.dmg = {}
@@ -283,7 +287,23 @@ hook.Add("PlayerHurt", "CalculateAssists", function(victim, attacker, x, dmg)
 			victim.dmg[attacker] = victim.dmg[attacker] + dmg
 		end
 		if not victim.PotentialAssist then
-			if victim.dmg[attacker] >= 50 then
+			if victim.dmg[attacker] >= 1 then
+				victim.PotentialAssist = { attacker, math.Round(victim.dmg[attacker]) }
+			end
+		end
+	end
+end)]]
+
+hook.Add("PlayerHurt", "CalculateAssists", function(victim, attacker, x, dmg)
+	if victim and attacker and victim:IsPlayer() and attacker:IsPlayer() and victim ~= NULL and attacker ~= NULL then
+		if not victim.dmg then
+			victim.dmg = {}
+        end
+        
+        victim.dmg[attacker] = ( victim.dmg[attacker] or 0 ) + dmg
+
+		if not victim.PotentialAssist then
+			if victim.dmg[attacker] >= 1 then
 				victim.PotentialAssist = { attacker, math.Round(victim.dmg[attacker]) }
 			end
 		end

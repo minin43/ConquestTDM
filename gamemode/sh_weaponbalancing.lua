@@ -1,45 +1,35 @@
 function weapons.OnLoaded()
-    --[[if weapons.Get( "cw_kk_ins2_ak74" ) then
-        local wep = weapons.GetStored( "cw_kk_ins2_ak74" )
-        --wep.PrintName = ""
-        wep.SpeedDec = 0 --Gun Weight
-        wep.Slot = 2 --The weapon slot to be used
-        --wep.FireModes = {"auto", "semi"} --Available firing types
-        wep.Primary.ClipSize = 30 --Weapon clip size
-        wep.Primary.DefaultClip	= 30 --Initial clip clip size
-        --wep.Primary.Ammo = "" --The ammo type the weapon uses
-        wep.FireDelay = 0 --Fire rate
-        wep.Recoil = 0 --Recoil
-        wep.HipSpread = 0 --Starting spread when firing from the hip
-        wep.AimSpread = 0 --Starting spread when firing while aiming
-        wep.VelocitySensitivity = 0 --spread increase when whipping your gun around
-        wep.MaxSpreadInc = 0 --Maximum spread your weapon can achieve
-        wep.SpreadPerShot = 0 --spread increase per bullet
-        wep.SpeadCooldown = wep.FireDelay + 0.05 --Length in seconds before the spread reset
-        wep.Shots = 1 --How many shots come out of the gun when fired (not ammo consumption)
-        wep.Damage = 0 --Damage
-        wep.ReloadTimes[ base_reload ] = { 0, 0 } --Time acceleration, time in seconds when ammo is in the clip
-        wep.ReloadTimes[ base_reloadempty ] = { 0, 0 } --Time acceleration, time in seconds with an empty magazine
-    end]]
-    --Above is a template
+    --[[
+        Weapon balancing notes:
+
+        No Assault rifle should 
+            have a hipspread under 0.1
+            have a speeddec under 70
+    ]]
 
     --//Primary Weapons
     if weapons.Get( "cw_ak74" ) then
         local wep = weapons.GetStored( "cw_ak74" )
         wep.Slot = 0
+        wep.SpeedDec = 50
+        wep.HipSpread = 0.1
     end
 
     if weapons.Get( "cw_ar15" ) then
         local wep = weapons.GetStored( "cw_ar15" )
         wep.Slot = 0
         wep.ReloadSpeed = 1.1
-        wep.FireDelay = 0.070
+        wep.FireDelay = 0.079
         wep.Recoil = 1.00
+        wep.SpeedDec = 50
+        wep.HipSpread = 0.1
     end
 
     if weapons.Get( "cw_g3a3" ) then
         local wep = weapons.GetStored( "cw_g3a3" )
         wep.Slot = 0
+        wep.SpeedDec = 50
+        wep.HipSpread = 0.1
     end
 
     if weapons.Get( "cw_l115" ) then
@@ -51,6 +41,7 @@ function weapons.OnLoaded()
         wep.MaxSpreadInc = 0.3
         wep.ReloadSpeed = 1.3
         wep.AimSpread = 0.001
+        wep.SpeedDec = 70
     end
 
     if weapons.Get( "cw_mp5" ) then
@@ -60,46 +51,57 @@ function weapons.OnLoaded()
         wep.Slot = 0
         wep.FireDelay = 0.065
         wep.Recoil = 0.73
+        wep.SpeedDec = 30
     end
 
     if weapons.Get( "cw_g36c" ) then
         local wep = weapons.GetStored( "cw_g36c" )
         wep.Slot = 0
+        wep.SpeedDec = 50
+        wep.HipSpread = 0.1
     end
 
     if weapons.Get( "cw_l85a2" ) then
         local wep = weapons.GetStored( "cw_l85a2" )
         wep.Slot = 0
+        wep.SpeedDec = 50
+        wep.HipSpread = 0.1
     end
 
-    if weapons.Get( "cw_m3super90" ) then
-        local wep = weapons.GetStored( "cw_m3super90" )
+    if weapons.Get( "cw_m3super70" ) then
+        local wep = weapons.GetStored( "cw_m3super70" )
         wep.Slot = 0
         wep.ClumpSpread = 0.025
         wep.HipSpread = 0.04
         wep.Shots = 14
         wep.Damage = 8
+        wep.SpeedDec = 40
     end
 
     if weapons.Get( "cw_m14" ) then
         local wep = weapons.GetStored( "cw_m14" )
         wep.Slot = 0
+        wep.SpeedDec = 70
     end
 
     if weapons.Get( "cw_m249_official" ) then
         local wep = weapons.GetStored( "cw_m249_official" )
         wep.Slot = 0
+        wep.SpeedDec = 90
     end
 
     if weapons.Get( "cw_scarh" ) then
         local wep = weapons.GetStored( "cw_scarh" )
         wep.Slot = 0
+        wep.SpeedDec = 50
+        wep.HipSpread = 0.1
     end
 
     if weapons.Get( "cw_ump45" ) then
         local wep = weapons.GetStored( "cw_ump45" )
         wep.Slot = 0
         wep.Damage = 29
+        wep.SpeedDec = 30
     end
 
     if weapons.Get( "cw_vss" ) then
@@ -107,6 +109,7 @@ function weapons.OnLoaded()
         wep.Primary.ClipSize = 15
         wep.Primary.DefaultClip	= 15
         wep.Slot = 0
+        wep.SpeedDec = 30
     end
 
     --//Secondary Weapons
@@ -114,32 +117,38 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_m1911" )
         wep.Slot = 1
         wep.Damage = 32
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_deagle" ) then
         local wep = weapons.GetStored( "cw_deagle" )
         wep.Slot = 1
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_mac11" ) then
         local wep = weapons.GetStored( "cw_mac11" )
         wep.Slot = 1
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_makarov" ) then
         local wep = weapons.GetStored( "cw_makarov" )
         wep.Slot = 1
         wep.Damage = 35
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_p99" ) then
         local wep = weapons.GetStored( "cw_p99" )
         wep.Slot = 1
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_mr96" ) then
         local wep = weapons.GetStored( "cw_mr96" )
         wep.Slot = 1
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_shorty" ) then
@@ -148,12 +157,14 @@ function weapons.OnLoaded()
         wep.ClumpSpread = 0.03
         wep.Shots = 14
         wep.Damage = 7
+        wep.SpeedDec = 20
     end
 
     if weapons.Get( "cw_fiveseven" ) then
         local wep = weapons.GetStored( "cw_fiveseven" )
         wep.Slot = 1
         wep.FireDelay = 0.11
+        wep.SpeedDec = 20
     end
 
 

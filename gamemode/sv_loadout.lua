@@ -38,6 +38,8 @@ end
 --// WEAPON FORMATING:
 --// { "name", "class", level unlock, "world model", price, { leave this alone, this is set automatically }
 primaries = {
+	--{ "AUG", 		"cw_ber_auga1-2",	0, 	"models/weapons/w_rif_m4a1.mdl", 		0, { 0, 0, 0 } },
+	--{ "Scout", 		"cw_ber_scoot",		0, 	"models/weapons/w_rif_m4a1.mdl", 		0, { 0, 0, 0 } },
 	{ "AR-15", 		"cw_ar15", 			0, 	"models/weapons/w_rif_m4a1.mdl", 		0, { 0, 0, 0 } },
 	{ "MP5", 		"cw_mp5", 			3, 	"models/weapons/w_smg_mp5.mdl", 		5000, { 0, 0, 0 } },
 	{ "M3 Super 90","cw_m3super90", 	4, 	"models/weapons/w_cstm_m3super90.mdl", 	5000, { 0, 0, 0 } },

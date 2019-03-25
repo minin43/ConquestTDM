@@ -3,27 +3,32 @@ util.AddNetworkString( "MapvoteFinished" )
 util.AddNetworkString( "PlayerVotedUpdate" )
 util.AddNetworkString( "UpdateCountdown" )
 util.AddNetworkString( "PlayerSelectedMap" )
+--[[util.AddNetworkString( "StartRTV" )
+util.AddNetworkString( "ReceivedRTVVote" )
+util.AddNetworkString( "UpdateRTVVotes" )]]
 
 GM.Votes = { } --The table that records the total tallies as well as all individual votes
 GM.VoteOptions = { } --The table we send to clients, contains the 6 map options
 GM.MapvoteTime = 20
+GM.RTVCooldown = 120
+GM.RTVTime = 40
 GM.MapTable = { --Controls both the map autodownload and the mapvote information
     --[ "" ] = { id = , size = "", img = "" }
     [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png" },
     [ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png" },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png" },
-    [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png" }, --Fix flags
+    [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png" },
     [ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png" },
     [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png" },
-    [ "ttt_riverside_b3" ] = { id = 312731430, size = "Midsize", img = "vgui/maps/riverside.png" },
+    [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png" },
     [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png" },
-    [ "de_star" ] = { id = 296000772, size = "Large", img = "vgui/maps/star.png" }, --Fix flags & spawn
-    [ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png" }, --Fix spawn
+    [ "de_star" ] = { id = 296000772, size = "Large", img = "vgui/maps/star.png" },
+    --[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png" }, --Fix spawns
     [ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png" },
     [ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png" },
     [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png" },
     [ "sh_smalltown_c" ] = { id = 865967849, size = "Midsize", img = "vgui/maps/smalltown.png" },
-    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" } --Fix flags
+    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" },
     --[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png" }, --Removed while player count remains low
     [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png" },
     [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png" },
@@ -31,6 +36,15 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png" },
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
     [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }]]
+    [ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png" },
+    [ "dm_basebunker" ] = { id = 975289333, size = "Small", img = "vgui/maps/bunker.png" },
+    [ "dm_laststop" ] = { id = 975289333, size = "Midsize", img = "vgui/maps/laststop.png" },
+    [ "dm_powerstation" ] = { id = 975289333, size = "Midsize", img = "vgui/maps/powerstation.png" },
+    [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png" },
+    [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png" },
+    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" },
+    [ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" }
+    --[ "" ] = { id = 0, size = "", img = "vgui/maps/.png" },
 }
 
 print( "Checking the validity for current map: " .. game.GetMap() .. "..." )
@@ -41,7 +55,6 @@ if GM.MapTable[ game.GetMap() ] then
         resource.AddWorkshop( tostring( GM.MapTable[ game.GetMap() ].id ) )
     else
         local prefix = string.sub( game.GetMap(), 1, 2 )
-        print("DEBUG PREFIX: ", prefix )
         if prefix == "de" or prefix == "cs" or prefix == "dm" then
             print( "    Map is counter-strike or HL2:DM map, separate download not necessary" )
         end
@@ -89,7 +102,20 @@ function EndMapvote()
     end )
 end
 
-hook.Add( "StartMapvote", "RunMapvote", function( winner, loser )
+function StartRTV( starter )
+    GAMEMODE.NecessaryRTVVotes = math.Round( #player.GetAll() / 2 )
+    GAMEMODE.TotalRTVVotes = 1
+
+    timer.Create( "RTVTimer", 1, GAMEMODE.RTVTime, function()
+        if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
+            hook.Run( "StartMapvote" )
+        end
+    end )
+end
+
+hook.Add( "StartMapvote", "RunMapvote", function( winner )
+    if timer.Exists( "MapvoteCountdown" ) then return end
+
     file.Write( "tdm/lastmap.txt", game.GetMap() )
 
     local lastmap = ""
@@ -135,11 +161,62 @@ net.Receive( "PlayerSelectedMap", function( len, ply )
         GAMEMODE.Votes[ GAMEMODE.Votes[ id( ply:SteamID() ) ] ] = GAMEMODE.Votes[ GAMEMODE.Votes[ id( ply:SteamID() ) ] ] - 1
     end
     GAMEMODE.Votes[ id( ply:SteamID() ) ] = playerVote
-    GAMEMODE.Votes[ playerVote ] = GAMEMODE.Votes[ playerVote ] or 0
-    GAMEMODE.Votes[ playerVote ] = GAMEMODE.Votes[ playerVote ] + 1
+    GAMEMODE.Votes[ playerVote ] = ( GAMEMODE.Votes[ playerVote ] or 0 ) + 1
 
     net.Start( "PlayerVotedUpdate" )
         net.WriteString( id( ply:SteamID() ) )
         net.WriteString( playerVote )
     net.Broadcast()
+end )
+
+--//RockTheVote shit
+hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
+    if #player.GetAll() == 1 then return end
+    local stringCheck = string.lower( msg )
+    if string.StartWith( stringCheck, "rtv" ) or string.StartWith( stringCheck, "!rtv" ) then
+        if not timer.Exists( "RTVCooldownTimer" ) then --If the RTV isn't on cooldown (because it didn't pass)
+            if not timer.Exists( "RTVTimer" ) then --If an RTV hasn't been started yet
+                GAMEMODE.NecessaryRTVVotes = math.Round( #player.GetAll() / 2 ) or 1
+                GAMEMODE.RTVVotes = { [ id( ply:SteamID() ) ] = true }
+                GAMEMODE.TotalRTVVotes = 1
+
+                timer.Create( "RTVTimer", GAMEMODE.RTVTime, 1, function()
+                    for k, v in pairs( player.GetAll() ) do
+                        v:ChatPrint( "Not enough votes placed to Rock The Vote" )
+                    end
+                    timer.Create( "RTVCooldownTimer", GAMEMODE.RTVCooldown, 1, function() end )
+                    GAMEMODE.TotalRTVVotes = 0
+                end )
+
+                for k, v in pairs( player.GetAll() ) do
+                    v:ChatPrint( "Rock The Vote has been called, total votes necessary: " .. GAMEMODE.NecessaryRTVVotes )
+                    v:ChatPrint( "Time to cast your vote: " .. GAMEMODE.GAMEMODE.RTVTime .. " seconds" )
+                    v:ChatPrint( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
+                end
+            else
+                if !GAMEMODE.RTVVotes[ id( ply:SteamID() ) ] then
+                    GAMEMODE.RTVVotes[ id( ply:SteamID() ) ] = true
+                    GAMEMODE.TotalRTVVotes = GAMEMODE.TotalRTVVotes + 1
+                    
+                    for k, v in pairs( player.GetAll() ) do
+                        v:ChatPrint( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
+                    end
+
+                    if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
+                        for k, v in pairs( player.GetAll() ) do
+                            v:ChatPrint( "Enough votes have been cast, rocking the vote..." )
+                        end
+                        timer.Simple( 3, function()
+                            hook.Run( "StartMapvote" )
+                        end )
+                        timer.Remove( "RTVTimer" )
+                        timer.Create( "RTVCooldownTimer", GAMEMODE.RTVCooldown, 1, function() end ) --Just so we don't get a second RTV called while in mapvote
+                    end
+                end
+            end
+        else
+            ply:ChatPrint( "RockTheVote is on cooldown for " .. math.Round( timer.TimeLeft( "RTVCooldownTimer" ) ) .. " more second(s)" )
+        end
+        return ""
+    end
 end )

@@ -155,7 +155,8 @@ function SpawnMenu()
 		LocalPlayer().blue = false
 		LocalPlayer().red = true
 		main:Close()
-		LocalPlayer():ConCommand( "tdm_loadout" )
+		--LocalPlayer():ConCommand( "tdm_loadout" )
+		LoadoutMenu()
 	end
 	red.OnCursorEntered = function()
 		red.CursorHover = true
@@ -208,7 +209,8 @@ function SpawnMenu()
 		LocalPlayer().blue = true
 		LocalPlayer().red = false
 		main:Close()
-		LocalPlayer():ConCommand( "tdm_loadout" )
+		--LocalPlayer():ConCommand( "tdm_loadout" )
+		LoadoutMenu()
 	end
 	blue.OnCursorEntered = function()
 		blue.CursorHover = true

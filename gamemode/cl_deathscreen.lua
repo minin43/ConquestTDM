@@ -56,11 +56,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	GAMEMODE.VendettaList = GAMEMODE.VendettaList or { }
 	
 	Main = vgui.Create( "DFrame" )
-<<<<<<< HEAD
-	Main:SetSize( 600, 165 )
-=======
-	Main:SetSize( 700, 125 )
->>>>>>> origin/master
+	Main:SetSize( 750, 125 )
 	Main:Center()
 	Main:SetTitle( "" )
 	Main:ShowCloseButton( false )

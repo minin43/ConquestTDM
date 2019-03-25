@@ -55,6 +55,8 @@ function LoadoutMenu()
 		TeamColor = Color( 33, 150, 243 )
 		FontColor = Color( 255, 255, 255 )
 	end
+	GAMEMODE.TeamColor = TeamColor
+	GAMEMODE.FontColor = FontColor
 
 	if LocalPlayer().red == true then
 		TeamColor = Color( 244, 67, 54 )
@@ -1756,18 +1758,19 @@ function LoadoutMenu()
 	end
 end
 
-surface.CreateFont( "ExoTitleFont" , { font = "Exo 2", size = 12, weight = 400 } )
-surface.CreateFont( "ExoInfoFont", { font = "Exo 2", size = 16, weight = 400 } )
+surface.CreateFont( "ExoTitleFont" , { font = "Exo 2", size = 20, weight = 400 } )
+surface.CreateFont( "ExoInfoFont", { font = "Exo 2", size = 24, weight = 400 } )
 
-GM.ShopIcon = Material( "" )
-GM.LoadoutIcon = Material( "" )
-GM.TeamChangeIcon = Material( "" )
-GM.CancelIcon = Material( "" )
+GM.ShopIcon = Material( "vgui/shopIcon.png", "noclamp smooth" )
+GM.LoadoutIcon = Material( "vgui/backpackIcon.png", "noclamp smooth" )
+GM.TeamChangeIcon = Material( "vgui/two-shadowsIcon.png", "noclamp smooth" )
+GM.CancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" )
 
+GM.FirstLoadout = true
 function GM:NewLoadout()
-	self.FirstLoadout = self.FirstLoadout or true --May result in a logic error
-	if self.FirstLoadout then
-		self.FirstLoadout = false
+	print( "NewLoadout called - ", self.FirstLoadout, GAMEMODE.FirstLoadout )
+	if GAMEMODE.FirstLoadout then
+		GAMEMODE.FirstLoadout = false
 		--self:SetLoadout()
 		LoadoutMenu()
 		return
@@ -1775,8 +1778,19 @@ function GM:NewLoadout()
 		return
 	end
 
+	if LocalPlayer():Team() == 0 then --Spectator
+		self.TeamColor = Color( 76, 175, 80 )
+		self.FontColor = Color( 255, 255, 255 )
+	elseif LocalPlayer():Team() == 1 then --Red team
+		self.TeamColor = Color( 244, 67, 54 )
+		self.FontColor = Color( 255, 255, 255 )
+	elseif LocalPlayer():Team() == 2 then --Blue team
+		self.TeamColor = Color( 33, 150, 243 )
+		self.FontColor = Color( 255, 255, 255 )
+	end
+
 	self.ChooseMain = vgui.Create( "DFrame" )
-	self.ChooseMain:SetSize( 500, 200 ) --Gonna need a new window size, 
+	self.ChooseMain:SetSize( 800, 250 )
 	self.ChooseMain:SetTitle( "" )
 	self.ChooseMain:SetVisible( true )
 	self.ChooseMain:SetDraggable( false )
@@ -1784,8 +1798,13 @@ function GM:NewLoadout()
 	self.ChooseMain:MakePopup()
 	self.ChooseMain:Center()
 	self.ChooseMain.Paint = function()
-		draw.SimpleText( "Select An Option", "ExoTitleFont", self.LoadoutTitleBar:GetWide() / 2, self.LoadoutTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		surface.DrawLine( 4, 20, self.ChooseMain:GetWide() - 4, 20 )
+		surface.SetDrawColor( self.TeamColor )
+		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), 20 )
+
+		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, 10, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+		surface.SetDrawColor( Color( 255, 255, 255 ) )
+		surface.DrawRect( 0, 20, self.ChooseMain:GetWide(), self.ChooseMain:GetTall() )
 	end
 
 	self.ChooseLoadout = vgui.Create( "ChooseMainButton", self.ChooseMain )
@@ -1793,9 +1812,9 @@ function GM:NewLoadout()
 	self.ChooseLoadout:SetPos( 0, 20 )
 	self.ChooseLoadout:SetText( "Loadout" )
 	self.ChooseLoadout:SetFont( "ExoInfoFont" )
-	self.ChooseLoadout:SetIcon( self.LoadoutIcon )
+	self.ChooseLoadout:SetIcon( GAMEMODE.LoadoutIcon )
 	self.ChooseLoadout.DoClick = function()
-		surface.PlaySound( "" )
+		surface.PlaySound( "ui/buttons/buttonclick1.wav" )
 		self.ChooseMain:Close() --Remove?
 		--self:SetLoadout()
 		LoadoutMenu()
@@ -1806,14 +1825,37 @@ function GM:NewLoadout()
 	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 4, 20 )
 	self.ChooseShop:SetText( "Shop" )
 	self.ChooseShop:SetFont( "ExoInfoFont" )
-	self.ChooseShop:SetIcon( self.ShopIcon )
+	self.ChooseShop:SetIcon( GAMEMODE.ShopIcon )
 	self.ChooseShop.DoClick = function()
-		surface.PlaySound( "" )
+		--surface.PlaySound( "ui/buttons/buttonclick1.wav" )
 		--self.ChooseMain:Close() --Remove?
 		--self:OpenShop()
 	end
 	self.ChooseShop.Paint = function()
-		--Will overwrite since shop's not in yet
+		surface.SetDrawColor( 0, 0, 0 )
+		surface.DrawOutlinedRect( 0, 0, self.ChooseShop:GetWide(), self.ChooseShop:GetTall() )
+
+		self.ChooseShop.MarkupObject:Draw( self.ChooseShop:GetWide() / 2, 24, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		surface.SetDrawColor( 0, 0, 0, 220 )
+		surface.SetMaterial( self.ChooseShop.Icon )
+		surface.DrawTexturedRect( self.ChooseShop:GetWide() / 2 - ( self.ChooseShop.IconSize / 2 ), self.ChooseShop:GetTall() / 2 - ( self.ChooseShop.IconSize / 2 ), self.ChooseShop.IconSize, self.ChooseShop.IconSize ) --To figure out
+
+		if !self.ChooseShop.Hover then
+			surface.SetTexture( gradient )
+			surface.SetDrawColor( 0, 0, 0, 164 )
+			surface.DrawTexturedRectRotated( self.ChooseShop:GetWide() - 10, self.ChooseShop:GetTall() / 2, 20, self.ChooseShop:GetTall(), 180 )
+			surface.DrawTexturedRectRotated( 10, self.ChooseShop:GetTall() / 2, 20, self.ChooseShop:GetTall(), 0 )
+		else
+
+		end
+
+		surface.SetDrawColor( Color( 0, 0, 0, 160 ) )
+		surface.DrawRect( 0, 0, self.ChooseShop:GetWide(), self.ChooseShop:GetTall() )
+		return true
+	end
+	self.ChooseShop.OnCursorEntered = function()
+	end
+	self.ChooseShop.OnCursorExited = function()
 	end
 
 	self.ChooseTeam = vgui.Create( "ChooseMainButton", self.ChooseMain )
@@ -1821,9 +1863,9 @@ function GM:NewLoadout()
 	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 4 * 2, 20 )
 	self.ChooseTeam:SetText( "Change\nTeams" )
 	self.ChooseTeam:SetFont( "ExoInfoFont" )
-	self.ChooseTeam:SetIcon( self.TeamChangeIcon )
+	self.ChooseTeam:SetIcon( GAMEMODE.TeamChangeIcon )
 	self.ChooseTeam.DoClick = function()
-		surface.PlaySound( "" )
+		surface.PlaySound( "ui/buttons/buttonclick1.wav" )
 		self.ChooseMain:Close() --Remove?
 		LocalPlayer():ConCommand( "tdm_spawnmenu" )
 	end
@@ -1833,9 +1875,9 @@ function GM:NewLoadout()
 	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 4 * 3, 20 )
 	self.ChooseCancel:SetText( "Cancel" )
 	self.ChooseCancel:SetFont( "ExoInfoFont" )
-	self.ChooseCancel:SetIcon( self.CancelIcon )
+	self.ChooseCancel:SetIcon( GAMEMODE.CancelIcon )
 	self.ChooseCancel.DoClick = function()
-		surface.PlaySound( "" )
+		surface.PlaySound( "ui/buttons/buttonclick1.wav" )
 		self.ChooseMain:Close() --Remove?
 	end
 
@@ -1955,14 +1997,14 @@ function GM:SetLoadout()
 	self.PerkPanel:SetSize( self.LoadoutMain:GetWide() / 2, ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
 	self.PerkPanel.Paint = function()
 		--Do the edge gradient shadow effect
-	end]]
-end
+	end
+end]]
 
 function GM:OpenShop()
 
 end
 
-concommand.Add( "tdm_loadout", GAMEMODE.NewLoadout ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
+concommand.Add( "tdm_loadout", GM.NewLoadout ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
 
 usermessage.Hook( "ClearTable", function( um )
 	LocalPlayer().blue = nil

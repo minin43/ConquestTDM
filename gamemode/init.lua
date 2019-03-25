@@ -17,6 +17,7 @@ AddCSLuaFile( "spawnmenu.lua" )
 AddCSLuaFile( "cl_scoreboard.lua" )
 AddCSLuaFile( "cl_lvl.lua" )
 AddCSLuaFile( "cl_loadout.lua" )
+AddCSLuaFile( "cl_loadout_setup.lua" )
 AddCSLuaFile( "cl_money.lua" )
 AddCSLuaFile( "cl_flags.lua" )
 AddCSLuaFile( "cl_feed.lua" )
@@ -197,7 +198,7 @@ function GM:EndRound( win )
 		end
 	end )
 	timer.Simple( self.PostGameCountdown, function()
-		hook.Call( "StartMapvote", nil, win, lose )
+		hook.Call( "StartMapvote", nil, win )
 		if MAPVOTE then
 			MAPVOTE:StartMapVote()
 		end

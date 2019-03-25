@@ -33,15 +33,6 @@ surface.CreateFont( "Level", { font = "Exo 2", size = 18 } )
 surface.CreateFont( "LevelBG", { font = "Exo 2", size = 18, blursize = 2 } )
 surface.CreateFont( "perky", { font = "BF4 Numbers", size = 20, weight = 1, antialias = true } )
 
---[[surface.CreateFont( "UT3", { font = "Unreal Tournament", size = 125, antialias = false, shadow = false, outline = true } )
-surface.CreateFont( "UT3-Back", { font = "Unreal Tournament", size = 128, antialias = false, shadow = false, outline = true } )
-surface.CreateFont( "UT3-Small", { font = "Unreal Tournament", size = 79, antialias = true } )]]
-
-local redicon = Material( "hud/redicon.png" )
-local redicon2 = Material( "hud/redicon2.png" )
-local blueicon = Material( "hud/blueicon.png" )
-local blueicon2 = Material( "hud/blueicon2.png" )
-
 CreateClientConVar( "hud_lag", 1, true, true )
 CreateClientConVar( "hud_halo", 1, true, true )
 CreateClientConVar( "hud_fade", 1, true, true )
@@ -111,10 +102,6 @@ function surface.DrawFadingText( col, text )
 	surface.DrawText( text )
 end
 
---[[function EndScreen()
-	local fade = math.Round( 0.5 * ( 1 + math.sin( 2 * math.pi * 0.6 * CurTime() ) ), 3 )
-end]]
-
 local hl = {}
 
 hitpos = {}
@@ -175,8 +162,6 @@ hook.Add( "Think", "TeamColors", function()
 	end
 end )
 
-local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
-
 --//Draws spectator information text
 hook.Add( "HUDPaint", "HUD_Spectator", function()
 	if LocalPlayer():Team() == 0 then
@@ -212,6 +197,23 @@ hook.Add( "HUDPaint", "HUD_DisableChecks", function()
 	end
 end )
 
+local ice_overlay, rate = Material( "vgui/frosted.png" ), 0
+--//Runs the ice overlay when a player gets chilled by Slaw
+hook.Add( "HUDPaint", "HUD_IceEffects", function()
+	if GAMEMODE.ShouldDrawIce then
+		print( "Rate = 1" )
+		rate = 1
+	else
+		if rate != 0 then print( rate ) end
+		rate = rate - 0.01
+	end
+
+	surface.SetMaterial( ice_overlay )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * rate, 0, 120 ) )
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+end )
+
+local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
 --Newly improved low-health HUD effect - should be less intrusive and more immersive
 hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	if !LocalPlayer():Alive() then LocalPlayer():SetDSP( 0, false ) return end
@@ -311,15 +313,15 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 
 		local bluekills, blueExtra = GetGlobalInt( "BlueKills" )
 		if bluekills < 10 then
-			draw.SimpleText( "00", "time", ScrW() / 2 + 85, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "00", "time", ScrW() / 2 + 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills < 100 then
-			draw.SimpleText( "0", "time", ScrW() / 2 + 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "0", "time", ScrW() / 2 + 115, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills > 999 then
-			draw.SimpleText( ">1k", "time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( ">1k", "time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			bluekills = ""
 		end
 		draw.SimpleText( "kills", "lvl", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( bluekills, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( bluekills, "time", ScrW() / 2 + 115, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		--draw.SimpleText( blueExtra, "time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
@@ -359,7 +361,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( 255, 255, 255, 135 )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( "Conquest Team Deathmatch V. 1.2 Release 031519" )
+	surface.DrawText( "Conquest Team Deathmatch V. 1.2 Release 032419" )
 end )
 
 --//Draws the damage indicator 
@@ -432,22 +434,6 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 			
 		end
 	end
-
-	--//Icon below the health
-	--[[surface.SetTextColor( 255, 255, 255, 255 )
-	if LocalPlayer():Team() == 1 then
-		surface.SetMaterial( redicon2 )
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawTexturedRect( ScrW() - 231, ScrH() - 246, (ScrW() / 9.6), (ScrH() / 5.4) )
-		surface.SetDrawColor( 255, 50, 50, 255 )
-		surface.DrawTexturedRect( ScrW() - 235, ScrH() - 250, (ScrW() / 9.6), (ScrH() / 5.4) )
-	elseif LocalPlayer():Team() == 2 then
-		draw.NoTexture()
-		surface.SetDrawColor( 200, 200, 255, 255 )
-		surface.SetMaterial( blueicon2 )
-		surface.DrawTexturedRect( ScrW() - 235, ScrH() - 255, (ScrW() / 9.6), (ScrH() / 5.4) )
-		draw.NoTexture()
-	end]]
 end )
 
 --Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
@@ -743,21 +729,6 @@ net.Receive( "tdm_killcountnotice", function()
 	end
 end )
 
---[[usermessage.Hook( "tdm_win", function()
-	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
-	--EndScreen()
-end )
-
-usermessage.Hook( "tdm_lose", function()
-	surface.PlaySound( "ui/MP_Music_Losing_End_01_Wave.mp3" )
-	--EndScreen()
-end )
-
-usermessage.Hook( "tdm_tie", function()
-	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
-	--EndScreen()
-end )]]
-
 net.Receive( "DoWin", function()
 	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
 end )
@@ -768,6 +739,14 @@ end )
 
 net.Receive( "DoTie", function()
 	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
+end )
+
+net.Receive( "IceScreen", function()
+	GAMEMODE.ShouldDrawIce = true
+end )
+
+net.Receive( "EndIceScreen", function()
+	GAMEMODE.ShouldDrawIce = false
 end )
 
 --Grenade indicator

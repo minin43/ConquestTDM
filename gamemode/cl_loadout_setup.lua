@@ -5,11 +5,11 @@ ChooseMainButton.PlainText = ""
 ChooseMainButton.MarkupObject = markup.Parse( "" )
 ChooseMainButton.Font = "DermaDefault"
 ChooseMainButton.Icon = Material( "" )
-ChooseMainButton.IconBuffer = 10 --in pixels, this will double since it applies to both sides
+ChooseMainButton.IconBuffer = 40 --in pixels, this will double since it applies to both sides
 local gradient = surface.GetTextureID( "gui/gradient" )
 
 function ChooseMainButton:RunMarkupSetup()
-    self.MarkupObject = markup.Parse( "<font = " .. self.Font .. ">" .. self.PlainText .. "</font>" )
+    self.MarkupObject = markup.Parse( "<font=" .. self.Font .. "><colour=0,0,0>" .. self.PlainText .. "</colour></font>" )
 end
 
 function ChooseMainButton:Init()
@@ -35,7 +35,7 @@ function ChooseMainButton:SetIcon( icon )
 end
 
 function ChooseMainButton:OnCursorEntered()
-    --surface.PlaySound( "" )
+    surface.PlaySound( "ui/buttons/buttonrollover3.wav" )
     self.Hover = true
 end
 
@@ -48,18 +48,25 @@ function ChooseMainButton:Think()
 end
 
 function ChooseMainButton:Paint()
-    self.MarkupObject:Draw( self:GetWide() / 2, self:GetTall() / 3, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    surface.SetDrawColor( 0, 0, 0 )
+    surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
+
+    self.MarkupObject:Draw( self:GetWide() / 2, 24, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    surface.SetDrawColor( 0, 0, 0, 220 )
     surface.SetMaterial( self.Icon )
-    surface.DrawTexturedRect( self.IconSize, self.IconSize, self:GetWide() / 2 - self.IconSize / 2, self:GetTall() / 2 ) --To figure out
+    surface.DrawTexturedRect( self:GetWide() / 2 - ( self.IconSize / 2 ), self:GetTall() / 2 - ( self.IconSize / 2 ), self.IconSize, self.IconSize ) --To figure out
 
     if !self.Hover then
         surface.SetTexture( gradient )
         surface.SetDrawColor( 0, 0, 0, 164 )
-        surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() / 2, self:GetWide(), self:GetTall(), 90 )
-        surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() / 2, self:GetWide(), self:GetTall(), 270 )
+        surface.DrawTexturedRectRotated( self:GetWide() - 10, self:GetTall() / 2, 20, self:GetTall(), 180 )
+        surface.DrawTexturedRectRotated( 10, self:GetTall() / 2, 20, self:GetTall(), 0 )
+        surface.DrawTexturedRectRotated( self:GetWide() / 2, 10, 20, self:GetWide(), 270 )
     else
 
     end
+
+    return true
 end
 
 vgui.Register( "ChooseMainButton", ChooseMainButton, "DButton" )

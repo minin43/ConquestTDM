@@ -64,7 +64,7 @@ end )
 
 function GM:DrawMapvote()
     if not self.MapList then return end
-    local flagimg = Material( "vgui/flag.png", "smooth" )
+    local flagimg = Material( "vgui/flagIcon.png", "smooth" )
 
     self.MapvoteMain = vgui.Create( "DFrame" )
     self.MapvoteMain:SetPos( 0, 0 )
@@ -78,10 +78,12 @@ function GM:DrawMapvote()
         surface.DrawRect( 0, 0, self.MapvoteMain:GetWide(), self.MapvoteMain:GetTall() )
 
         local txt
-        if self.MapvoteTimeLeft != 1 then
+        if self.MapvoteTimeLeft > 1 then
             txt = "Map Vote - Time Remaining: " .. self.MapvoteTimeLeft .. " seconds"
+        elseif self.MapvoteTimeLeft == 1 then
+            txt = "Map Vote - Time Remaining: " .. self.MapvoteTimeLeft .. " second"
         else
-            txt = "Map Vote - Time Remaining: " .. self.MapvoteTimeLeft .. " second "
+            txt = "Map Vote - No Time Remaining"
         end
         draw.SimpleText( txt, "HeaderFont", self.MapvoteMain:GetWide() / 2, 10, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
     end
@@ -120,3 +122,15 @@ function GM:DrawMapvote()
         draw.SimpleText( "means the map has Conquest flags", "MapFont", 54, self.MapvoteInfo:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
     end
 end
+
+--[[net.Receive( "StartRTV", function()
+
+end )
+
+net.Receive( "ReceivedRTVVote", function()
+
+end )
+
+net.Receive( "UpdateRTVVotes", function()
+
+end )]]

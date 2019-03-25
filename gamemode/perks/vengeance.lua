@@ -56,4 +56,4 @@ hook.Add( "PlayerDeath", "RemoveVengeanceRegen", function( ply )
 	end
 end )
 
-RegisterPerk( "Vengeance", "vengeance", 11, "Deal bonus damage to your previous killer, & heal back a small % of damage done by them to you.")
+RegisterPerk( "Vengeance", "vengeance", 10, "Deal bonus damage to your previous killer, & heal back a small % of damage done by them to you.")

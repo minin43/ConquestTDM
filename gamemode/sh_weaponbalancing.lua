@@ -4,7 +4,7 @@ function weapons.OnLoaded()
 
         No Assault rifle should 
             have a hipspread under 0.1
-            have a speeddec under 70
+            have a speeddec under 50
     ]]
 
     --//Primary Weapons

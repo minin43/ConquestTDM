@@ -11,4 +11,4 @@ hook.Add( "EntityTakeDamage", "Thornmail", function( ply, dmginfo )
 	end
 end )
 
-RegisterPerk( "Thornmail", "thornmail", 26, "Absorb 15% of incoming damage and deflects it back to the attacker." )
+RegisterPerk( "Thornmail", "thornmail", 28, "Absorb 15% of incoming damage and deflects it back to the attacker." )

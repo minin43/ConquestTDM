@@ -56,4 +56,4 @@ hook.Add( "DoPlayerDeath", "TurnOffIceOverlay", function( ply, att, dmginfo )
     net.Send( ply )
 end )
 
-RegisterPerk( "Slaw", "slaw", 0, "Enemies you shoot are slowed down 10-30% for 1 second, depending on damage done" )
+RegisterPerk( "Slaw", "slaw", 19, "Enemies you shoot are slowed down 10-30% for 1 second, depending on damage done" )

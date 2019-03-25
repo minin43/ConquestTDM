@@ -25,4 +25,4 @@ hook.Add( "EntityTakeDamage", "ExtraHeadshotDamage", function( ply, dmginfo )
     end
 end )
 
-RegisterPerk( "Headpopper", "headpopper", 21, "Increased headshot damage, killing an enemy with a headshot blows them up.")
+RegisterPerk( "Headpopper", "headpopper", 23, "Increased headshot damage, killing an enemy with a headshot blows them up.")

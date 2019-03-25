@@ -5,7 +5,16 @@ ChooseMainButton.PlainText = ""
 ChooseMainButton.MarkupObject = markup.Parse( "" )
 ChooseMainButton.Font = "DermaDefault"
 ChooseMainButton.Icon = Material( "" )
-ChooseMainButton.IconBuffer = 40 --in pixels, this will double since it applies to both sides
+ChooseMainButton.IconBuffer = 45 --in pixels, this will double since it applies to both sides
+ChooseMainButton.SoundTable = {
+    "ambient/machines/keyboard2_clicks.wav",
+    "ambient/machines/keyboard3_clicks.wav",
+    "ambient/machines/keyboard1_clicks.wav",
+    "ambient/machines/keyboard4_clicks.wav",
+    "ambient/machines/keyboard5_clicks.wav",
+    "ambient/machines/keyboard6_clicks.wav",
+    "ambient/machines/keyboard7_clicks_enter.wav"
+}
 local gradient = surface.GetTextureID( "gui/gradient" )
 
 function ChooseMainButton:RunMarkupSetup()
@@ -35,7 +44,7 @@ function ChooseMainButton:SetIcon( icon )
 end
 
 function ChooseMainButton:OnCursorEntered()
-    surface.PlaySound( "ui/buttons/buttonrollover3.wav" )
+    --surface.PlaySound( self.SoundTable[ math.random( #self.SoundTable ) ] )
     self.Hover = true
 end
 

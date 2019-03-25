@@ -1797,14 +1797,15 @@ function GM:NewLoadout()
 	self.ChooseMain:ShowCloseButton( false )
 	self.ChooseMain:MakePopup()
 	self.ChooseMain:Center()
+	self.ChooseMainTitleBar = 30
 	self.ChooseMain.Paint = function()
 		surface.SetDrawColor( self.TeamColor )
-		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), 20 )
+		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
 
 		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, 10, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
 		surface.SetDrawColor( Color( 255, 255, 255 ) )
-		surface.DrawRect( 0, 20, self.ChooseMain:GetWide(), self.ChooseMain:GetTall() )
+		surface.DrawRect( 0, self.ChooseMainTitleBar, self.ChooseMain:GetWide(), self.ChooseMain:GetTall() )
 	end
 
 	self.ChooseLoadout = vgui.Create( "ChooseMainButton", self.ChooseMain )
@@ -1814,20 +1815,20 @@ function GM:NewLoadout()
 	self.ChooseLoadout:SetFont( "ExoInfoFont" )
 	self.ChooseLoadout:SetIcon( GAMEMODE.LoadoutIcon )
 	self.ChooseLoadout.DoClick = function()
-		surface.PlaySound( "ui/buttons/buttonclick1.wav" )
+		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
 		--self:SetLoadout()
 		LoadoutMenu()
 	end
 
 	self.ChooseShop = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseShop:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
-	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 4, 20 )
+	self.ChooseShop:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
+	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 4, self.ChooseMainTitleBar )
 	self.ChooseShop:SetText( "Shop" )
 	self.ChooseShop:SetFont( "ExoInfoFont" )
 	self.ChooseShop:SetIcon( GAMEMODE.ShopIcon )
 	self.ChooseShop.DoClick = function()
-		--surface.PlaySound( "ui/buttons/buttonclick1.wav" )
+		--surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		--self.ChooseMain:Close() --Remove?
 		--self:OpenShop()
 	end
@@ -1843,8 +1844,8 @@ function GM:NewLoadout()
 		if !self.ChooseShop.Hover then
 			surface.SetTexture( gradient )
 			surface.SetDrawColor( 0, 0, 0, 164 )
-			surface.DrawTexturedRectRotated( self.ChooseShop:GetWide() - 10, self.ChooseShop:GetTall() / 2, 20, self.ChooseShop:GetTall(), 180 )
-			surface.DrawTexturedRectRotated( 10, self.ChooseShop:GetTall() / 2, 20, self.ChooseShop:GetTall(), 0 )
+			surface.DrawTexturedRectRotated( self.ChooseShop:GetWide() - 10, self.ChooseShop:GetTall() / 2, self.ChooseMainTitleBar, self.ChooseShop:GetTall(), 180 )
+			surface.DrawTexturedRectRotated( 10, self.ChooseShop:GetTall() / 2, self.ChooseMainTitleBar, self.ChooseShop:GetTall(), 0 )
 		else
 
 		end
@@ -1859,25 +1860,25 @@ function GM:NewLoadout()
 	end
 
 	self.ChooseTeam = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseTeam:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
-	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 4 * 2, 20 )
+	self.ChooseTeam:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
+	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 4 * 2, self.ChooseMainTitleBar )
 	self.ChooseTeam:SetText( "Change\nTeams" )
 	self.ChooseTeam:SetFont( "ExoInfoFont" )
 	self.ChooseTeam:SetIcon( GAMEMODE.TeamChangeIcon )
 	self.ChooseTeam.DoClick = function()
-		surface.PlaySound( "ui/buttons/buttonclick1.wav" )
+		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
 		LocalPlayer():ConCommand( "tdm_spawnmenu" )
 	end
 
 	self.ChooseCancel = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseCancel:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
-	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 4 * 3, 20 )
+	self.ChooseCancel:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
+	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 4 * 3, self.ChooseMainTitleBar )
 	self.ChooseCancel:SetText( "Cancel" )
 	self.ChooseCancel:SetFont( "ExoInfoFont" )
 	self.ChooseCancel:SetIcon( GAMEMODE.CancelIcon )
 	self.ChooseCancel.DoClick = function()
-		surface.PlaySound( "ui/buttons/buttonclick1.wav" )
+		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
 	end
 

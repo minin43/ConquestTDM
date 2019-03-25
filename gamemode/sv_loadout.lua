@@ -76,13 +76,14 @@ extras = {
 
 --[[	Perk table - used for your reference only
 	Packrat -Ammo			- 1
-	Hunter -Movement		- 6
-	Vengeance -Misc			- 11
-	Regeneration -Life		- 16
-	Headpopper -Sniper		- 21
-	Thornmail -Misc			- 26
-	Excited -Movement		- 31
-	Leech -Life				- 36
+	Hunter -Movement		- 5
+	Vengeance -Misc			- 10
+	Regeneration -Life		- 14
+	Slaw					- 19
+	Headpopper -Sniper		- 23
+	Thornmail -Misc			- 28
+	Excited -Movement		- 32
+	Leech -Life				- 37
 	Pyromancer -Misc		- 41
 	Vulture -Sniper			- 46
 	Lifeline -Life/Movement	- 50

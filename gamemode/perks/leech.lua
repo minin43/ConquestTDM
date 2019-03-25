@@ -15,4 +15,4 @@ function VampirismAssist( ply, value )
 	end
 end
 
-RegisterPerk( "Leech", "leech", 36, "Killing an enemy will restore 1/3 of your missing health." )
+RegisterPerk( "Leech", "leech", 37, "Killing an enemy will restore 1/3 of your missing health." )

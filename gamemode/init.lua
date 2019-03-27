@@ -161,6 +161,7 @@ function GM:DoTie()
 end
 
 function GM:EndRound( win )
+	if !timer.Exists( "RoundTimer" ) then return end
 	timer.Destroy( "RoundTimer" )
 	timer.Destroy( "Tickets" )
 	SetGlobalBool( "RoundFinished", true )

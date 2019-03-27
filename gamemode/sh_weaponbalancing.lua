@@ -1,11 +1,4 @@
 function weapons.OnLoaded()
-    --[[
-        Weapon balancing notes:
-
-        No Assault rifle should 
-            have a hipspread under 0.1
-            have a speeddec under 50
-    ]]
 
     --//Primary Weapons
     if weapons.Get( "cw_ak74" ) then
@@ -68,8 +61,8 @@ function weapons.OnLoaded()
         wep.HipSpread = 0.1
     end
 
-    if weapons.Get( "cw_m3super70" ) then
-        local wep = weapons.GetStored( "cw_m3super70" )
+    if weapons.Get( "cw_m3super90" ) then
+        local wep = weapons.GetStored( "cw_m3super90" )
         wep.Slot = 0
         wep.ClumpSpread = 0.025
         wep.HipSpread = 0.04

@@ -37,9 +37,9 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
     [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }]]
     [ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png" },
-    [ "dm_basebunker" ] = { id = 975289333, size = "Small", img = "vgui/maps/bunker.png" },
-    [ "dm_laststop" ] = { id = 975289333, size = "Midsize", img = "vgui/maps/laststop.png" },
-    [ "dm_powerstation" ] = { id = 975289333, size = "Midsize", img = "vgui/maps/powerstation.png" },
+    [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png" },
+    [ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png" },
+    [ "dm_powerstation" ] = { id = 446026985, size = "Midsize", img = "vgui/maps/powerstation.png" },
     [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png" },
     [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png" },
     [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" },

@@ -121,7 +121,6 @@ usermessage.Hook( "damage", function( msg )
 	local vec = dmg - pos
 	local ang = vec:Angle()
 	local ttl = 4
-	--print( ang.y - png.y )
 	table.insert( hitpos, { ang.y - png.y, ttl } )
 end )
 
@@ -201,10 +200,8 @@ local ice_overlay, rate = Material( "vgui/frosted.png" ), 0
 --//Runs the ice overlay when a player gets chilled by Slaw
 hook.Add( "HUDPaint", "HUD_IceEffects", function()
 	if GAMEMODE.ShouldDrawIce then
-		print( "Rate = 1" )
 		rate = 1
 	else
-		if rate != 0 then print( rate ) end
 		rate = rate - 0.01
 	end
 
@@ -718,7 +715,6 @@ net.Receive( "tdm_killcountnotice", function()
 		if not table.HasValue( killtables, kcname ) then
 			killicon.AddFont( kcname, "perky", "[ " .. kcname .. " ]", Color( 255, 64, 64, 255 ) )
 			draw.DrawText( kcname, "default", ScrW() * 0.5, ScrH() * 0.25, Color( 255, 0, 0, 255), TEXT_ALIGN_CENTER)
-			--print( kcname, "SHOULD BE DRAWING TEXT")
 		end
 		
 		if aname == LocalPlayer():Nick() then

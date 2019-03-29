@@ -47,23 +47,19 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     --[ "" ] = { id = 0, size = "", img = "vgui/maps/.png" },
 }
 
-print( "Checking the validity for current map: " .. game.GetMap() .. "..." )
 if GM.MapTable[ game.GetMap() ] then
-    print( "    Map is registered to work with the gamemode" )
     if GM.MapTable[ game.GetMap() ].id then
-	    print( "    Map is set up to auto-download on player join, addon ID: " .. GM.MapTable[ game.GetMap() ].id )
         resource.AddWorkshop( tostring( GM.MapTable[ game.GetMap() ].id ) )
     else
         local prefix = string.sub( game.GetMap(), 1, 2 )
         if prefix == "de" or prefix == "cs" or prefix == "dm" then
-            print( "    Map is counter-strike or HL2:DM map, separate download not necessary" )
+			-- this check is very bad and wrong. shame on you. will fix in next commit
         end
-        print( "    " .. game.GetMap() .. " is NOT set up to auto-download on player join" )
+        print( "[WARNING:MAP]" .. game.GetMap() .. " is NOT set up to auto-download on player join" )
     end
 else
-	print( "    Map IS NOT registered to work with the mapvote, this may be due to lack of spawn/flag placements" )
+	print( "[WARNING:MAP] Map is NOT registered to work with the mapvote, this may be due to lack of spawn/flag placements" )
 end
-print( "End map checking" )
 
 for k, v in pairs( GM.MapTable ) do
     if flags[ k ] then --found in sv_flags

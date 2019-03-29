@@ -76,7 +76,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	end
 
 	local wasVendetta = false
-	if GAMEMODE.VendettaList[ id( ply:SteamID() ) ][ id( attacker:SteamID() ) ] > 2 then
+	if GAMEMODE.VendettaList[ id( ply:SteamID() ) ] and GAMEMODE.VendettaList[ id( ply:SteamID() ) ][ id( attacker:SteamID() ) ] and GAMEMODE.VendettaList[ id( ply:SteamID() ) ][ id( attacker:SteamID() ) ] > 2 then
 		wasVendetta = true
 	end
 

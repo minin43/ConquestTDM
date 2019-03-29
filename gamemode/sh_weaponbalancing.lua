@@ -21,6 +21,8 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.13
         wep.SpeedDec = 50
+
+        wep.ReloadSpeed = 1.1
     end
 
     if weapons.Get( "cw_g36c" ) then
@@ -61,8 +63,8 @@ function weapons.OnLoaded()
         wep.SpeedDec = 50
     end
 
-    if weapons.Get( "" ) then --FAMAS FELIN
-        local wep = weapons.GetStored( "" )
+    if weapons.Get( "cw_ber_famas_felin" ) then
+        local wep = weapons.GetStored( "cw_ber_famas_felin" )
         wep.Slot = 0
         wep.Damage = 26
         wep.FireDelay = 0.075
@@ -85,8 +87,8 @@ function weapons.OnLoaded()
         wep.Slot = 0
         wep.Damage = 33
         wep.FireDelay = 0.0923
-        wep.Recoil = 
-        wep.HipSpread = 1.2
+        wep.Recoil = 1.2
+        wep.HipSpread = 0.1
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.6
         wep.MaxSpreadInc = 0.07
@@ -103,7 +105,7 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_l85a2" )
         wep.Slot = 0
         wep.Damage = 30
-        wep.FireDelay = 0.92
+        wep.FireDelay = 0.092
         wep.Recoil = 1.05
         wep.HipSpread = 0.1
         wep.AimSpread = 0.01
@@ -139,8 +141,8 @@ function weapons.OnLoaded()
 
     --// Snipers //--
 
-    if weapons.Get( "" ) then --L96
-        local wep = weapons.GetStored( "" )
+    if weapons.Get( "cw_b196" ) then
+        local wep = weapons.GetStored( "cw_b196" )
         wep.Slot = 0
         wep.Damage = 100
         wep.FireDelay = 1.5
@@ -202,7 +204,7 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_ump45" )
         wep.Slot = 0
         wep.Damage = 29
-        wep.FireDelay = 0.95
+        wep.FireDelay = 0.095
         wep.Recoil = 1.1
         wep.HipSpread = 0.04
         wep.AimSpread = 0.015
@@ -215,10 +217,12 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.15
         wep.SpeedDec = 30
+
+        wep.ReloadSpeed = 1.1
     end
 
-    if weapons.Get( "" ) then --Scorpion EVO
-        local wep = weapons.GetStored( "" )
+    if weapons.Get( "cw_scorpin_evo3" ) then
+        local wep = weapons.GetStored( "cw_scorpin_evo3" )
         wep.Slot = 0
         wep.Damage = 20
         wep.FireDelay = 0.054
@@ -236,8 +240,8 @@ function weapons.OnLoaded()
         wep.SpeedDec = 30
     end
 
-    if weapons.Get( "" ) then --P90
-        local wep = weapons.GetStored( "" )
+    if weapons.Get( "cw_ber_p90" ) then
+        local wep = weapons.GetStored( "cw_ber_p90" )
         wep.Slot = 0
         wep.Damage = 26
         wep.FireDelay = 0.08
@@ -293,8 +297,8 @@ function weapons.OnLoaded()
         wep.SpeedDec = 30
     end
 
-    if weapons.Get( "cw_mac11" ) then
-        local wep = weapons.GetStored( "cw_mac11" )
+    if weapons.Get( "cw_ber_hkmp7" ) then
+        local wep = weapons.GetStored( "cw_ber_hkmp7" )
         wep.Slot = 0
         wep.Damage = 25
         wep.FireDelay = 0.075
@@ -354,8 +358,8 @@ function weapons.OnLoaded()
         wep.SpeedDec = 40
     end
 
-    if weapons.Get( "" ) then --spas12
-        local wep = weapons.GetStored( "" )
+    if weapons.Get( "cw_ber_spas12" ) then
+        local wep = weapons.GetStored( "cw_ber_spas12" )
         wep.Slot = 0
         wep.Damage = 9
         wep.FireDelay = 0.9

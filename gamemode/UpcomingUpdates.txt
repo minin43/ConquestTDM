@@ -30,3 +30,5 @@ Notify players who died to Vendetta'd enemies           DONE - NEEDS TESTING
 Rework weapon pickup & inventory system
 ----
 Restructure all gun balancing and leveling              DONE - NEEDS TESTING
+----
+Clean up colors on all client files

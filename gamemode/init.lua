@@ -10,7 +10,7 @@ GM.PostGameCountdown = 20 --Amount of time after the game has ended players can 
 GM.Tickets = 200 --Number of tickets on conquest maps
 GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
-AddCSLuaFile( "cl_init.lua" ) -- Test comment
+AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "hud.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "spawnmenu.lua" )
@@ -43,12 +43,10 @@ include( "sv_deathscreen.lua" )
 include( "sv_customspawns.lua" )
 include( "sv_leaderboards.lua" )
 include( "sv_teambalance.lua" )
-include( "sv_api.lua" )
 include( "sv_playercards.lua" )
 include( "sv_mapvote.lua" )
 include( "sv_vendetta.lua" )
---include( "sv_killstreaks.lua" )
---include( "sv_backgroundgunfire.lua")
+--include( "sv_backgroundgunfire.lua") -- TODO
 include( "sh_weaponbalancing.lua" )
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
@@ -206,7 +204,6 @@ function GM:EndRound( win )
 	end )
 
 	hook.Call( "Pointshop2GmIntegration_RoundEnded" )
-	hook.Run( "MatchHistory_MatchComplete" )
 end
 
 local function CheckVIP( ply )
@@ -378,12 +375,6 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:ConCommand( "cl_deathview 1" )
 
-	--//This has been disabled - and has been for years
-	--[[for i=1, 9 do
-		ply:ConCommand( "bind \"" .. i .. "\" \"slot" .. i .. "\"" )
-		print(" bind \"" .. i .. "\" \"slot" .. i .. "\"" )
-	end]]
-
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
 	ply:ConCommand( "tdm_spawnmenu" )
@@ -554,7 +545,7 @@ function giveLoadout( ply )
 		ply:Give( l.primary )
 		ply:Give( l.secondary )
 
-		--//This sets previous attachments up for the guns
+		--This sets previous attachments up for the guns
 		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] then
 			timer.Simple( 0.5, function()
 				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] ) do --bad loop
@@ -604,8 +595,6 @@ function changeTeam( ply, cmd, args )
 		ply:ChatPrint( "You are already on that team!" )
 		return
 	end
-
-	hook.Run( "MatchHistory_JoinTeam", ply, t )
 	
 	ply:Spectate( OBS_MODE_NONE )
 	ply:SetTeam( t )

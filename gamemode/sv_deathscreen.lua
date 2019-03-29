@@ -75,6 +75,11 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 		damagedone = 0
 	end
 
+	local wasVendetta = false
+	if GAMEMODE.VendettaList[ id( ply:SteamID() ) ][ id( attacker:SteamID() ) ] > 2 then
+		wasVendetta = true
+	end
+
 	--//Flavor timer
 	timer.Simple( 1.5, function()
 		ply.num = 3
@@ -88,6 +93,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 			umsg.String( wepused )
 			umsg.String( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
 			umsg.String( damagedone )
+			umsg.Bool( wasVendetta )
 		umsg.End()
 		
 		local stid = ply:SteamID()

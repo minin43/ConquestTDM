@@ -1,4 +1,3 @@
---//New system to implement:
 --If you have died to a player 3 times without killing them, they become your vendetta, and you see them through all walls
 
 GM.VendettaPlayers = { }

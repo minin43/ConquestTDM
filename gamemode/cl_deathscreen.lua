@@ -41,7 +41,8 @@ usermessage.Hook( "DeathScreen", function( um )
 	local wep = um:ReadString() --weapon used
 	local killstreak = um:ReadString() --Killstreak
 	local damagedone = um:ReadString() --Damage you did to attacker their & your life
-	local Vendetta = false
+	local wasVendetta = um:ReadBool() --If your killer was vendetta'd against you
+	local Vendetta = false --For when your killer becomes your vendetta
 	
 	if wep and weapons.Get( wep ) then
 		wep = weapons.Get( wep ).PrintName
@@ -196,6 +197,16 @@ usermessage.Hook( "DeathScreen", function( um )
 		end
 		vendettaNotice:SizeToContents()
 		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
+	end
+
+	local vendettaNotice2 = vgui.Create( "DLabel", Main )
+	vendettaNotice2:SetFont( "ds_spawn" )
+	vendettaNotice2:SetTextColor( Color( 250, 250, 100 ) )
+	if wasVendetta then vendettaNotice2:SetText( att:Nick() .. " was vendetta'd against you!" ) end
+	vendettaNotice2.Think = function()
+		if not Main and Main:IsValid() then return end
+		vendettaNotice2:SizeToContents()
+		vendettaNotice2:SetPos( Main:GetWide() - vendettaNotice2:GetWide() - 6, Main:GetTall() - 27 )
 	end
 	
 	usermessage.Hook( "CloseDeathScreen", function()

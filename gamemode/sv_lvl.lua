@@ -11,7 +11,7 @@ lvl.levels = {}
 	
 lvl.expmul = 400
 
-lvl.VIPGroups = {
+lvl.VIPGroups = { --To adjust
 	{ "vip", .10 },
 	{ "vip+", .25 },
 	{ "ultravip", .25 },
@@ -25,7 +25,7 @@ for i = 1, 50 do
 end
 
 -- "prestige"
-for i = 51, 100 do
+for i = 51, 100 do --To remove, we want to cap at 50, and force players to prestige
 	lvl.levels[ i ] = 30000 * ( ( i - 100 ) ^ 2 )
 end
 

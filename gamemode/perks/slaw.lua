@@ -46,7 +46,7 @@ hook.Add( "EntityTakeDamage", "SlawChecks", function( ent, dmginfo )
 
     if att:IsPlayer() and ply:IsPlayer() and att:Team() != ply:Team() then
         if CheckPerk( att ) == "slaw" then
-            SlowDown( ply, math.Clamp( math.Clamp( dmg, 0, 100 ) / 100, 0.3, 1 ) )
+            SlowDown( ply, math.Clamp( math.Clamp( dmg, 0, 100 ) / 333, 0.1, 0.3 ) )
         end
     end
 end )

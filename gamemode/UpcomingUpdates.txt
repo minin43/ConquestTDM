@@ -1,26 +1,32 @@
 Perks w/ special effects should notify the player when they're activated/used
     Applicable perks:
-    - Excited -on kill
-    - Headpopper -on headshot
-    - Leech -on kill
-    - Lifeline -on low HP kill
-    - Pyromancer -on fire & explosion
-    - Thornmail -on attacker when victim has it
-    - Vengeance -damage against & MAYBE damage from target
+    - Excited -on kill                  - Do an FOV change and play some sound effect
+    - Headpopper -on headshot           - Crosshair icon
+    - Leech -on kill                    - Crosshair icon
+    - Lifeline -on low HP kill          - Would like a screen effect & sound
+    - Pyromancer -on fire & explosion           - Crosshair icons
+    - Thornmail -on attacker when victim has it         - Would like screen effect, no sound
+    - Vengeance -damage against & MAYBE damage from target      - 
     - Vulture -on finish
-
+----
 Character Interaction Sounds
     - Combine (can maybe use my sounds from PTP)
     - Rebels (have both HL2 rebel sounds & INS2 security voices available)
-
+----
 New Loadout Menu
-    
+----
 Shop Menu
     - Will include a system for weapon skins
-
-Level Prestige System
-
+----
+Global Stats Counting for Level Prestige and Weapon Mastery
+    - Prestige by level
+    - Mastery by weapon
+----
 New Chat System
     - Can be HatsChat2
-
-Notify players who died to Vendetta'd enemies
+----
+Notify players who died to Vendetta'd enemies           DONE - NEEDS TESTING
+----
+Rework weapon pickup & inventory system
+----
+Restructure all gun balancing and leveling              DONE - NEEDS TESTING

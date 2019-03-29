@@ -4,7 +4,6 @@ GM.SlawBackups = GM.SlawBackups or {}
 
 function SlowDown( ply, percent )
     if not timer.Exists( "slaw_" .. ply:SteamID() ) then
-        print("SlawDEBUG - SlowDownCalled", ply, percent )
         GAMEMODE.SlawBackups[ id( ply:SteamID() ) ] = {}
         GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].walk = ply:GetWalkSpeed()
         GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].run = ply:GetRunSpeed()

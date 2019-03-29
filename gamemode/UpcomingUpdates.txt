@@ -14,15 +14,18 @@ Character Interaction Sounds
     - Rebels (have both HL2 rebel sounds & INS2 security voices available)
 ----
 New Loadout Menu
-----
-Shop Menu
-    - Will include a system for weapon skins
+        - Rewrite net messaging, exploitation exists in current functions
+    Shop Menu
+        - Will include a system for weapon skins
+    Team Selection
+        - Actively allows/disallows team join when there are too many players
+        - Team join is right on click, not on spawn    
 ----
 Global Stats Counting for Level Prestige and Weapon Mastery
     - Prestige by level
     - Mastery by weapon
 ----
-New Chat System
+New Chat System                                         MCFX DONE
     - Can be HatsChat2
 ----
 Notify players who died to Vendetta'd enemies           DONE - NEEDS TESTING
@@ -31,4 +34,9 @@ Rework weapon pickup & inventory system
 ----
 Restructure all gun balancing and leveling              DONE - NEEDS TESTING
 ----
-Clean up colors on all client files
+----
+MCFX Suggestions
+    - Clean up colors on all client files
+    - Team shuffle (command/vote)
+    - Rewrite autobalancing
+    

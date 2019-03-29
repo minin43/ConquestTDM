@@ -21,7 +21,6 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
 					ply:Kill()
 				end
 			elseif num < 200 then
-                ULib.tsay(nil, tostring(dmginfo:GetAttacker()))
                 GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = dmginfo:GetAttacker()
 				ply:Ignite( 2 )
                 timer.Simple( 2.5, function()

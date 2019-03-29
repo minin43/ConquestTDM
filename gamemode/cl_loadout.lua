@@ -1768,7 +1768,6 @@ GM.CancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" )
 
 GM.FirstLoadout = true
 function GM:NewLoadout()
-	print( "NewLoadout called - ", self.FirstLoadout, GAMEMODE.FirstLoadout )
 	if GAMEMODE.FirstLoadout then
 		GAMEMODE.FirstLoadout = false
 		--self:SetLoadout()

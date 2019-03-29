@@ -47,14 +47,31 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     --[ "" ] = { id = 0, size = "", img = "vgui/maps/.png" },
 }
 
+local CSSMaps = { 
+	["cs_assault"]=true,
+	["cs_compound"]=true,
+	["cs_havana"]=true,
+	["cs_italy"]=true,
+	["cs_militia"]=true,
+	["cs_office"]=true,
+	["de_aztec"]=true,
+	["de_cbble"]=true,
+	["de_chateau"]=true,
+	["de_dust"]=true,
+	["de_dust2"]=true,
+	["de_inferno"]=true,
+	["de_nuke"]=true,
+	["de_piranesi"]=true,
+	["de_port"]=true,
+	["de_prodigy"]=true,
+	["de_tides"]=true,
+	["de_train"]=true
+}
+
 if GM.MapTable[ game.GetMap() ] then
-    if GM.MapTable[ game.GetMap() ].id then
+    if GM.MapTable[ game.GetMap() ].id and not CSSMaps[ game.GetMap() ] then
         resource.AddWorkshop( tostring( GM.MapTable[ game.GetMap() ].id ) )
     else
-        local prefix = string.sub( game.GetMap(), 1, 2 )
-        if prefix == "de" or prefix == "cs" or prefix == "dm" then
-			-- this check is very bad and wrong. shame on you. will fix in next commit
-        end
         print( "[WARNING:MAP]" .. game.GetMap() .. " is NOT set up to auto-download on player join" )
     end
 else

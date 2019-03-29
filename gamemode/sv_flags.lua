@@ -764,7 +764,6 @@ hook.Add( "tdm_FlagCaptured", "tdm_flagcapped", function( t, flag, plys )
 	for k, v in next, plys do --If friendlies capture a point
 		AddNotice(v, "FLAG CAPTURED", SCORECOUNTS.FLAG_CAPTURED, NOTICETYPES.FLAG)
 		AddRewards(v, SCORECOUNTS.FLAG_CAPTURED)
-		hook.Run( "MatchHistory_Capture", v )
 		umsg.Start( "friendlyflagcaptured", v )
 			umsg.String( flag[ 1 ] )
 		umsg.End()

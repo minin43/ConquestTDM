@@ -358,7 +358,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( 255, 255, 255, 135 )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( "Conquest Team Deathmatch V. 1.2 Release 032419" )
+	surface.DrawText( versionString )
 end )
 
 --//Draws the damage indicator 

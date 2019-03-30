@@ -26,6 +26,9 @@ function GM:Initialize()
 end
 
 local _PLY = FindMetaTable( "Player" )
+
 function _PLY:Score()
 	return self:GetNWInt( "tdm_score" )
 end
+
+versionString = "Conquest Team Deathmatch v1.4.7"

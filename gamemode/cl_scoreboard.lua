@@ -65,9 +65,6 @@ local levelgroups = {
 }
 
 local icongroups = {
-	{ "STEAM_0:1:38888957", "whuppo", "icon16/bell_error.png" },
-	{ "STEAM_0:1:51344477", "Suggested \'Flopper\'", "icon16/plugin_add.png" },
-    { "STEAM_0:0:44144010", "cobalt", "icon16/award_star_gold_3.png"},
 	{ "operator", "Operator", "icon16/shield.png" }, 
 	{ "admin", "Admin", "icon16/shield.png" },
 	{ "superadmin", "Super Admin", "icon16/shield.png" },

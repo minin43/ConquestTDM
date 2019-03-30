@@ -7,12 +7,12 @@ util.AddNetworkString( "GetMoneyCallback" )
 util.AddNetworkString( "BuyShit" )
 util.AddNetworkString( "BuyShitCallback" )
 
-function id( steamid )
+function id( steamid ) --takes steamid like 0:0:123456 and returns 0x0x123456
 	local x = string.gsub( steamid, ":", "x" )
 	return x
 end
 
-function unid( steamid )
+function unid( steamid ) --takes steamid like 0:0:123456 and returns 0X0X123456 
 	local x = string.gsub( steamid, "x", ":" )
 	return string.upper( x )
 end
@@ -51,7 +51,7 @@ function SendUpdate( ply )
 	net.Send( ply )
 end
 
-hook.Add( "PlayerSpawn", "tdm_initialspawn", function( ply )
+hook.Add( "PlayerSpawn", "tdm_initialspawn", function( ply ) --updates the client on their money when they spawn
 	net.Start( "SendInitialMoney" )
 		net.WriteString( GetMoney( ply ) )
 	net.Send( ply )
@@ -97,14 +97,19 @@ hook.Add( "PlayerDeath", "tdm_playerdeath_money", function( ply, _, att )
 	end
 end )
 
-/*
+--[[
+
+debug commands for resetting money (for some reason?)
+
+Not permissioned! They will completely 
+
 local color_red = Color( 255, 0, 0 )
 local color_blue = Color( 0, 0, 255 )
 local color_green = Color( 102, 255, 51 )
 local color_white = Color( 255, 255, 255 )
 
 concommand.Add( "tdm_money_reset", function( ply, cmd, args )
-	if ply:IsValid() and not ply:SteamID() == "STEAM_0:1:38888957" then 
+	if ply:IsValid() then 
 		return 
 	end
 
@@ -133,11 +138,8 @@ concommand.Add( "tdm_money_reset", function( ply, cmd, args )
 end )
 
 concommand.Add( "tdm_money_reset_stop", function( ply )
-	if ply:IsValid() and not ply:SteamID() == "STEAM_0:1:38888957" then 
-		return 
-	end
 
 	ULib.tsayColor( nil, true, color_green, "Money Reset timer has been stopped." )
 	timer.Remove( "notify_players_money" )
 end )
-*/
+]]

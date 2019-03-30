@@ -11,7 +11,7 @@ GM.Tickets = 200 --Number of tickets on conquest maps
 GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
 AddCSLuaFile( "cl_init.lua" )
-AddCSLuaFile( "hud.lua" )
+AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "spawnmenu.lua" )
 AddCSLuaFile( "cl_scoreboard.lua" )

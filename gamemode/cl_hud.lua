@@ -12,13 +12,13 @@ local gradient = surface.GetTextureID( "gui/gradient" )
 local damage = Material( "tdm/damage.png" )
 
 --//This is a lot of fucking fonts, whuppo
-surface.CreateFont( "test", { font = "BF4 Numbers", size = 70, weight = 1, antialias = true } )
-surface.CreateFont( "ammo2", { font = "BF4 Numbers", size = 40, weight = 1, antialias = true } )
-surface.CreateFont( "time", { font = "BF4 Numbers", size = 30, weight = 1, antialias = true } )
-surface.CreateFont( "spectime", { font = "BF4 Numbers", size = 42, weight = 1, antialias = true } )
-surface.CreateFont( "hp", { font = "BF4 Numbers", size = 23, weight = 1, antialias = true } )
-surface.CreateFont( "lvl", { font = "BF4 Numbers", size = 15, weight = 600, antialias = true } )
-surface.CreateFont( "flags", { font = "BF4 Numbers", size = 25,	weight = 1, antialias = true } )
+surface.CreateFont( "BigNotify", { font = "BF4 Numbers", size = 70, weight = 1, antialias = true } )
+surface.CreateFont( "AltAmmo", { font = "BF4 Numbers", size = 40, weight = 1, antialias = true } )
+surface.CreateFont( "Time", { font = "BF4 Numbers", size = 30, weight = 1, antialias = true } )
+surface.CreateFont( "SpecTime", { font = "BF4 Numbers", size = 42, weight = 1, antialias = true } )
+surface.CreateFont( "HP", { font = "BF4 Numbers", size = 23, weight = 1, antialias = true } )
+surface.CreateFont( "LVL", { font = "BF4 Numbers", size = 15, weight = 600, antialias = true } ) --'lvl' == kills?
+surface.CreateFont( "Flags", { font = "BF4 Numbers", size = 25,	weight = 1, antialias = true } )
 surface.CreateFont( "PrimaryAmmo", { font = "Exo 2", size = 80 } )
 surface.CreateFont( "PrimaryAmmoBG", { font = "Exo 2", size = 80, blursize = 6 } )
 surface.CreateFont( "SecondaryAmmo", { font = "Exo 2", size = 40 } )
@@ -31,7 +31,7 @@ surface.CreateFont( "Name", { font = "Exo 2", size = 24 } )
 surface.CreateFont( "NameBG", { font = "Exo 2", size = 24, blursize = 2 } )
 surface.CreateFont( "Level", { font = "Exo 2", size = 18 } )
 surface.CreateFont( "LevelBG", { font = "Exo 2", size = 18, blursize = 2 } )
-surface.CreateFont( "perky", { font = "BF4 Numbers", size = 20, weight = 1, antialias = true } )
+surface.CreateFont( "KillStreak", { font = "BF4 Numbers", size = 20, weight = 1, antialias = true } )
 
 CreateClientConVar( "hud_lag", 1, true, true )
 CreateClientConVar( "hud_halo", 1, true, true )
@@ -273,41 +273,41 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	if #t.s == 1 then
 		t.s = "0" .. t.s
 	end
-	draw.SimpleText( t.m .. ":" .. t.s, "spectime", ScrW() / 2, 11, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	draw.SimpleText( t.m .. ":" .. t.s, "SpecTime", ScrW() / 2, 11, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	
 	if GetGlobalBool( "ticketmode" ) == true then
 		redtix = GetGlobalInt( "RedTickets" )
-		draw.SimpleText( redtix, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( redtix, "Time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		
 		bluetix = GetGlobalInt( "BlueTickets" )
-		draw.SimpleText( bluetix, "time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( bluetix, "Time", ScrW() / 2 + 70, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	else
 		--//I know it's messy, but I don't care enough about something this small to rewrite it in a more appropriate fashion
 		local redkills, redExtra = GetGlobalInt( "RedKills" )
 		if redkills < 10 then
-			draw.SimpleText( "00", "time", ScrW() / 2 - 85, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "00", "Time", ScrW() / 2 - 85, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif redkills < 100 then
-			draw.SimpleText( "0", "time", ScrW() / 2 - 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "0", "Time", ScrW() / 2 - 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif redkills > 999 then
-			draw.SimpleText( ">1k", "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( ">1k", "Time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			redkills = ""
 		end
-		draw.SimpleText( "kills", "lvl", ScrW() / 2 - 73, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( redkills, "time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		--draw.SimpleText( redExtra, "time", ScrW() / 2 - 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "kills", "LVL", ScrW() / 2 - 73, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( redkills, "Time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		--draw.SimpleText( redExtra, "Time", ScrW() / 2 - 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 
 		local bluekills, blueExtra = GetGlobalInt( "BlueKills" )
 		if bluekills < 10 then
-			draw.SimpleText( "00", "time", ScrW() / 2 + 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "00", "Time", ScrW() / 2 + 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills < 100 then
-			draw.SimpleText( "0", "time", ScrW() / 2 + 115, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "0", "Time", ScrW() / 2 + 115, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills > 999 then
-			draw.SimpleText( ">1k", "time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( ">1k", "Time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			bluekills = ""
 		end
-		draw.SimpleText( "kills", "lvl", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( bluekills, "time", ScrW() / 2 + 115, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-		--draw.SimpleText( blueExtra, "time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "kills", "LVL", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( bluekills, "Time", ScrW() / 2 + 115, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		--draw.SimpleText( blueExtra, "Time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
 	surface.SetFont( "Info" )
@@ -412,7 +412,7 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 			draw.SimpleText( _ammocount, "SecondaryAmmo", ScrW() - 220, ScrH() - 100, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 			draw.SimpleText( ammocount, "SecondaryAmmo", ScrW() - 220, ScrH() - 100, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 
-			surface.SetFont( "ammo2" )
+			surface.SetFont( "AltAmmo" )
 			surface.SetTextColor( Color( 255, 255, 255, 200 ) )
 			surface.SetTextPos( ScrW() - 285, ScrH() - 155 )
 			surface.DrawText( "/" )]]
@@ -568,7 +568,7 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 				pos.y = 20
 			end
 			
-			surface.SetFont( "flags" )
+			surface.SetFont( "Flags" )
 			surface.SetTextPos( pos.x, pos.y )
 			surface.SetTextColor( col )
 			if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
@@ -607,7 +607,7 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 			local position = 5--228 / 2 + 78 --192?
 			position = position - 22 * ( #flags / 2 )
 			for k, v in next, flags do
-				surface.SetFont( "flags" )
+				surface.SetFont( "Flags" )
 				local col
 				if status[ v[ 1 ] ] == 1 then
 					surface.SetTextColor( 255, 0, 0 )
@@ -701,7 +701,7 @@ net.Receive( "tdm_killcountnotice", function()
 		end
 		
 		if not table.HasValue( killtables, kcname ) then
-			killicon.AddFont( kcname, "perky", "[ " .. kcname .. " ]", Color( 255, 64, 64, 255 ) )
+			killicon.AddFont( kcname, "KillStreak", "[ " .. kcname .. " ]", Color( 255, 64, 64, 255 ) )
 			draw.DrawText( kcname, "default", ScrW() * 0.5, ScrH() * 0.25, Color( 255, 0, 0, 255), TEXT_ALIGN_CENTER)
 		end
 		
@@ -766,7 +766,7 @@ net.Receive( "tdm_spawnoverlay", function( len, ply )
 		surface.SetDrawColor( Color( 0, 0, 0, alpha ) )
 		surface.DrawRect( 0, 0, ScrW(), ScrH() )
 		
-		surface.SetFont( "test" )
+		surface.SetFont( "BigNotify" )
 		local tw, th = surface.GetTextSize( "[Spawn Protection Enabled]" )
 		surface.SetTextColor( 255, 255, 255, alpha > 100 and alpha or 100 )
 		surface.SetTextPos( ( ScrW() / 2 ) - ( tw / 2 ), ScrH() - ( ScrH() / 1.1 ) )
@@ -853,7 +853,7 @@ usermessage.Hook( "enemyflagcaptured", function( um )
 	local alpha = 1
 	local off = false
 	hook.Add( "HUDPaint", "efc", function()
-		surface.SetFont( "test" )
+		surface.SetFont( "BigNotify" )
 		surface.SetTextColor( 0, 0, 0, alpha )
 		local str = "FLAG " .. flag .. " LOST"
 		local strsize = surface.GetTextSize( str )
@@ -889,7 +889,7 @@ usermessage.Hook( "friendlyflagcaptured", function( um )
 	local alpha = 1
 	local off = false
 	hook.Add( "HUDPaint", "efc", function()
-		surface.SetFont( "test" )
+		surface.SetFont( "BigNotify" )
 		surface.SetTextColor( 0, 0, 0, alpha )
 		local str = "FLAG " .. flag .. " CAPTURED"
 		local strsize = surface.GetTextSize( str )

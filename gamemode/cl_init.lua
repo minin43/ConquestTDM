@@ -1,6 +1,6 @@
 include( "shared.lua" )
 include( "cl_hud.lua" )
-include( "spawnmenu.lua" )
+include( "cl_spawnmenu.lua" )
 include( "cl_scoreboard.lua" )
 include( "cl_lvl.lua" )
 include( "cl_loadout.lua" )

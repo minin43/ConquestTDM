@@ -23,18 +23,6 @@ local unlock = Material( "tdm/ic_lock_open_white_24dp.png", "noclamp smooth" )
 local buyicon = Material( "tdm/ic_add_shopping_cart_white_48dp.png", "noclamp smooth" )
 local gradient = surface.GetTextureID( "gui/gradient" )
 
--- http://lua-users.org/wiki/FormattingNumbers
-local function comma_value( amount )
-	local formatted = amount
-	while true do  
-		formatted, k = string.gsub( formatted, "^(-?%d+)(%d%d%d)", '%1,%2' )
-		if ( k == 0 ) then
-			break
-		end
-	end
-	return formatted
-end
-
 function LoadoutMenu()
 	if main then
 		return

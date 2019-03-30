@@ -40,18 +40,6 @@ CreateClientConVar( "hud_indicator", 1, true, true )
 CreateClientConVar( "hud_showexp", 0, true, true )
 CreateClientConVar( "hud_old", 1, true, true )
 
--- http://lua-users.org/wiki/FormattingNumbers
-local function comma_value( amount )
-	local formatted = amount
-	while true do  
-		formatted, k = string.gsub( formatted, "^(-?%d+)(%d%d%d)", '%1,%2' )
-		if ( k == 0 ) then
-			break
-		end
-	end
-	return formatted
-end
-
 weps = {}
 CurrentLifeWeps = {}
 capture = {}

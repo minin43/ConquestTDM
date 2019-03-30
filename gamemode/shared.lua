@@ -15,6 +15,7 @@ if SERVER then
 	resource.AddWorkshop( "1386774614" ) --CTDM Files
 	resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises
 	resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
+	resource.AddWorkshop( "1698026320" ) --The 6 new guns
 	--resource.AddWorkshop( "595631935" ) --BER's Kings of Austria pack (AUG and Scout)
 	--resource.AddWorkshop( "438373352" ) --BER's SMG pack (also includes base shit needed for his other addons)
 	

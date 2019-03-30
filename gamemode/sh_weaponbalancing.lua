@@ -257,6 +257,8 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.07
         wep.SpeedDec = 30
+
+        wep.Chamberable = false
     end
 
     if weapons.Get( "cw_mp5" ) then
@@ -388,7 +390,7 @@ function weapons.OnLoaded()
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.02
         wep.SpreadPerShot = 0.007
-        wep.ClumpSpread = 0.3
+        wep.ClumpSpread = 0.03
         wep.Shots = 16
         wep.Primary.ClipSize = 2
         wep.Primary.DefaultClip	= wep.Primary.ClipSize

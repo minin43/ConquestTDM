@@ -9,10 +9,10 @@ function GM:UpdateVendetta( vic, att )
 
     self.VendettaList[ vicID ] = self.VendettaList[ vicID ] or { }
     self.VendettaList[ attID ] = self.VendettaList[ attID ] or { }
-    self.VendettaList[ vicID ][ attID ] = self.VendettaList[ vicID ][ attID ] or 0
-    self.VendettaList[ vicID ][ attID ] = self.VendettaList[ vicID ][ attID ] + 1
+    self.VendettaList[ vicID ][ attID ] = ( self.VendettaList[ vicID ][ attID ] or 0 ) + 1
 
     if self.VendettaList[ vicID ][ attID ] > 2 then
+        self.VendettaList[ vicID ].LastVendetta = attID
         net.Start( "UpdateVendetta" )
             net.WriteString( attID )
             net.WriteBool( true )
@@ -26,6 +26,7 @@ function GM:UpdateVendetta( vic, att )
                 net.WriteBool( false )
             net.Send( att )
         end
+        --self.VendettaList[ vicID ].LastVendetta = nil -- set in sv_deathscreen
         self.VendettaList[ attID ][ vicID ] = 0
     end
 end

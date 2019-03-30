@@ -811,7 +811,7 @@ function GM:PlayerSpawn( ply )
 	net.Send( ply )
 	
 	timer.Simple( 5, function()
-		if ply and ply ~= NULL then
+		if ply and ply:IsValid() then
 			ply:SetMaterial( "" )
 			ply:SetColor( Color( 255, 255, 255, 255 ) )
 			ply.spawning = false

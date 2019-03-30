@@ -42,30 +42,30 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "dm_powerstation" ] = { id = 446026985, size = "Midsize", img = "vgui/maps/powerstation.png" },
     [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png" },
     [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png" },
-    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" },
-    [ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" }
+    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" }
+    --[ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" } --Seems to be crashing the server
     --[ "" ] = { id = 0, size = "", img = "vgui/maps/.png" },
 }
 
 local CSSMaps = { 
-	["cs_assault"]=true,
-	["cs_compound"]=true,
-	["cs_havana"]=true,
-	["cs_italy"]=true,
-	["cs_militia"]=true,
-	["cs_office"]=true,
-	["de_aztec"]=true,
-	["de_cbble"]=true,
-	["de_chateau"]=true,
-	["de_dust"]=true,
-	["de_dust2"]=true,
-	["de_inferno"]=true,
-	["de_nuke"]=true,
-	["de_piranesi"]=true,
-	["de_port"]=true,
-	["de_prodigy"]=true,
-	["de_tides"]=true,
-	["de_train"]=true
+	[ "cs_assault" ] = true,
+	[ "cs_compound" ] = true,
+	[ "cs_havana" ] = true,
+	[ "cs_italy" ] = true,
+	[ "cs_militia" ] = true,
+	[ "cs_office" ] = true,
+	[ "de_aztec" ] = true,
+	[ "de_cbble" ] = true,
+	[ "de_chateau" ] = true,
+	[ "de_dust" ] = true,
+	[ "de_dust2" ] = true,
+	[ "de_inferno" ] = true,
+	[ "de_nuke" ] = true,
+	[ "de_piranesi" ] = true,
+	[ "de_port" ] = true,
+	[ "de_prodigy" ] = true,
+	[ "de_tides" ] = true,
+	[ "de_train" ] = true
 }
 
 if GM.MapTable[ game.GetMap() ] then
@@ -169,12 +169,13 @@ end )
 
 net.Receive( "PlayerSelectedMap", function( len, ply )
     local playerVote = net.ReadString() --map name they voted for
+    if not GAMEMODE.Votes[ playerVote ] then return end
 
     if GAMEMODE.Votes[ id( ply:SteamID() ) ] then
         GAMEMODE.Votes[ GAMEMODE.Votes[ id( ply:SteamID() ) ] ] = GAMEMODE.Votes[ GAMEMODE.Votes[ id( ply:SteamID() ) ] ] - 1
     end
     GAMEMODE.Votes[ id( ply:SteamID() ) ] = playerVote
-    GAMEMODE.Votes[ playerVote ] = ( GAMEMODE.Votes[ playerVote ] or 0 ) + 1
+    GAMEMODE.Votes[ playerVote ] = GAMEMODE.Votes[ playerVote ] + 1
 
     net.Start( "PlayerVotedUpdate" )
         net.WriteString( id( ply:SteamID() ) )

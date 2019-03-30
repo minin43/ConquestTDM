@@ -202,7 +202,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	local vendettaNotice2 = vgui.Create( "DLabel", Main )
 	vendettaNotice2:SetFont( "ds_spawn" )
 	vendettaNotice2:SetTextColor( Color( 250, 250, 100 ) )
-	if wasVendetta then vendettaNotice2:SetText( att:Nick() .. " was vendetta'd against you!" ) else vendettaNotice2:SetText( "" ) end
+	if wasVendetta then vendettaNotice2:SetText( "You were " .. att:Nick() .. "'s' vendetta!" ) else vendettaNotice2:SetText( "" ) end
 	vendettaNotice2.Think = function()
 		if not Main and Main:IsValid() then return end
 		vendettaNotice2:SizeToContents()

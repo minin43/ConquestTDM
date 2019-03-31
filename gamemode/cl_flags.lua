@@ -7,11 +7,9 @@ local cs3d2d = cam.Start3D2D
 local ce3d2d = cam.End3D2D
 local sdc = surface.DrawCircle
 local sdl = surface.DrawLine
-local ssdc = surface.SetDrawColor
 local sstc = surface.SetTextColor
 local sstp = surface.SetTextPos
 local sdt = surface.DrawText
-local sdr = surface.DrawRect
 local drb = draw.RoundedBox
 local ssf = surface.SetFont
 local next = next
@@ -55,7 +53,7 @@ hook.Add( "PostDrawOpaqueRenderables", "DrawFlags", function()
 		
 		ang:RotateAroundAxis( ang:Forward(), 90 )
 		ang:RotateAroundAxis( ang:Right(), 90 )
-		ssdc( col )
+		surface.SetDrawColor( col )
 		cs3d2d( pos, Angle( 0, ang.y, 90 ), 0.25 )
 			sdl( 0, -100, 0, 375 )
 			sdl( 0, -100, 70, 20 )
@@ -76,17 +74,26 @@ end )
 local curFlagNumber = nil
 local progress = vgui.Create( "DPanel" )
 progress:SetSize( 600, 20 )
-progress.Paint = function()
+progress.Paint = function() --paint progress bar
 	if curFlagNumber then
-		local x = 0
-		local p = curFlagNumber
-		x = 5 * p + 50
-		ssdc( 0, 0, 255, 200 )
-		sdr( x * 3, 0, 300 - x * 3, progress:GetTall() )
+		local x = 0 --the point where the red progress meets blue progress (in... pixels?)
+		x = 15 * curFlagNumber + 150 --so, x is basically the red capture progress (relative to the center) (why is it offset by 150?)
+		
+		if(LocalPlayer():Team() == 1) then --red
+			surface.SetDrawColor( 0, 0, 255, 200 )
+			surface.DrawRect( x, 0, 300 - x, progress:GetTall() )
 
-		ssdc( 255, 0, 0, 200 )
-		sdr( 0, 0, x * 3, progress:GetTall() )
-		return true
+			surface.SetDrawColor( 255, 0, 0, 200 )
+			surface.DrawRect( 0, 0, x, progress:GetTall() )
+		else --not red
+			surface.SetDrawColor( 0, 0, 255, 200 )
+			surface.DrawRect( 0, 0, 300 - x, progress:GetTall() ) --this took me longer to figure than it should have
+
+			surface.SetDrawColor( 255, 0, 0, 200 )
+			surface.DrawRect( 300 - x, 0, 300, progress:GetTall() )
+		end
+
+		return true --prevents BG from being drawn
 	end
 end
 progress:SetVisible( false )

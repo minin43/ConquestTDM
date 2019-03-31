@@ -24,14 +24,16 @@ function SetStats( wepTable )
 		local damage, accuracy, firerate
 
 		local wep = weapons.GetStored( v[2] )
-		damage = math.Clamp( wep.Damage * wep.Shots, 0, 100 )
-		accuracy = math.Clamp( ( 0.01 - (wep.AimSpread - 0.001) ) / 0.0001, 0, 100 )
-		firerate = math.Clamp( 6 / wep.FireDelay, 0, 100)
+		if wep then
+			damage = math.Clamp( wep.Damage * wep.Shots, 0, 100 )
+			accuracy = math.Clamp( ( 0.01 - (wep.AimSpread - 0.001) ) / 0.0001, 0, 100 )
+			firerate = math.Clamp( 6 / wep.FireDelay, 0, 100)
 
-		v[6] = { }
-		v[6][1] = damage
-		v[6][2] = accuracy
-		v[6][3] = firerate
+			v[6] = { }
+			v[6][1] = damage
+			v[6][2] = accuracy
+			v[6][3] = firerate
+		end
 	end
 end
 

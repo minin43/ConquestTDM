@@ -1784,7 +1784,7 @@ function GM:NewLoadout()
 	self.ChooseMain:ShowCloseButton( false )
 	self.ChooseMain:MakePopup()
 	self.ChooseMain:Center()
-	self.ChooseMainTitleBar = 30
+	self.ChooseMainTitleBar = 56 --The originally-sized title bar height - to be kept consistent as an homage to the old menu
 	self.ChooseMain.Paint = function()
 		surface.SetDrawColor( self.TeamColor )
 		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
@@ -1796,8 +1796,8 @@ function GM:NewLoadout()
 	end
 
 	self.ChooseLoadout = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseLoadout:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - 20 )
-	self.ChooseLoadout:SetPos( 0, 20 )
+	self.ChooseLoadout:SetSize( self.ChooseMain:GetWide() / 4, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
+	self.ChooseLoadout:SetPos( 0, self.ChooseMainTitleBar )
 	self.ChooseLoadout:SetText( "Loadout" )
 	self.ChooseLoadout:SetFont( "ExoInfoFont" )
 	self.ChooseLoadout:SetIcon( GAMEMODE.LoadoutIcon )

@@ -16,6 +16,7 @@ include( "cl_mapvote.lua" )
 include( "cl_mapvote_setup.lua" )
 include( "cl_stattrack.lua" )
 include( "cl_vendetta.lua" )
+include( "cl_teamselect.lua" )
 include( "sh_weaponbalancing.lua" )
 
 local groups = {
@@ -47,9 +48,18 @@ local IsValid = IsValid
 local Color = Color
 local unpack = unpack
 local white = color_white
-/*
 
+hook.Add( "Think", "SetColors", function()
+	if LocalPlayer():Team() == 1 then
+		GAMEMODE.TeamColor = Color( 244, 67, 54 )
+	elseif LocalPlayer():Team() == 2 then
+		GAMEMODE.TeamColor = Color( 33, 150, 243 )
+	else
+		GAMEMODE.TeamColor = Color( 76, 175, 80 )
+	end
+end )
 
+--[[/*
 function GM:OnPlayerChat( ply, text, teamonly, dead )
 	local tab = {}
 	if IsValid( ply ) then
@@ -108,7 +118,7 @@ function GM:OnPlayerChat( ply, text, teamonly, dead )
 		chat.AddText( unpack( tab ) )
 		return true
 	end
-end*/
+end*/]]
 
 net.Receive( "SetMagician", function()
 	local bool = net.ReadBool()

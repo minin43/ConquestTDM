@@ -1789,7 +1789,7 @@ function GM:NewLoadout()
 		surface.SetDrawColor( self.TeamColor )
 		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
 
-		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, 10, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, self.ChooseMainTitleBar / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
 		surface.SetDrawColor( Color( 255, 255, 255 ) )
 		surface.DrawRect( 0, self.ChooseMainTitleBar, self.ChooseMain:GetWide(), self.ChooseMain:GetTall() )

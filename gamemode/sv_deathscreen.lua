@@ -115,6 +115,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 end )
 
 hook.Add( "PlayerSpawn", "closeds", function( ply )
+	if ply:IsBot() then return end
 	umsg.Start( "CloseDeathScreen", ply )
 	umsg.End()
 	GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount = GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount + 1

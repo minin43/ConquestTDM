@@ -19,7 +19,7 @@ surface.CreateFont( "Exo 2 Button", {
 local teamIcon = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
 local gradient = surface.GetTextureID( "gui/gradient" )
 
-function SpawnMenu()
+function GM:SpawnMenu()
 
 	if main then
 		return
@@ -303,4 +303,4 @@ function SpawnMenu()
 	end
 	
 end
-concommand.Add( "tdm_spawnmenu", SpawnMenu )
+--concommand.Add( "tdm_spawnmenu", SpawnMenu )

@@ -29,6 +29,7 @@ AddCSLuaFile( "cl_mapvote.lua" )
 AddCSLuaFile( "cl_mapvote_setup.lua" )
 AddCSLuaFile( "cl_stattrack.lua" )
 AddCSLuaFile( "cl_vendetta.lua" )
+AddCSLuaFile( "cl_teamselect.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -549,7 +550,7 @@ function giveLoadout( ply )
 		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] then
 			timer.Simple( 0.5, function()
 				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] ) do --bad loop
-					if ply:GetWeapon( l.primary ).Base = "cw_base" then
+					if ply:GetWeapon( l.primary ).Base == "cw_base" then
 						ply:GetWeapon( l.primary ):attach( k, v - 1 )
 					end
 				end
@@ -558,7 +559,7 @@ function giveLoadout( ply )
 		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] then
 			timer.Simple( 0.5, function()
 				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] ) do
-					if ply:GetWeapon( l.secondary ) then
+					if ply:GetWeapon( l.secondary ).Base == "cw_base" then
 						ply:GetWeapon( l.secondary ):attach( k, v - 1 )
 					end
 				end
@@ -602,10 +603,10 @@ function changeTeam( ply, cmd, args )
 		return
 	end
 
-	if #team.GetPlayers( 1 ) - #team.GetPlayers( 2 ) > 1 and t = 1 then
+	if #team.GetPlayers( 1 ) - #team.GetPlayers( 2 ) > 1 and t == 1 then
 		ply:ChatPrint( "Due to player count imbalance, you can't join this team!" )
 		return
-	elseif #team.GetPlayers( 2 ) - #team.GetPlayers( 1 ) > 1 and t = 2 then
+	elseif #team.GetPlayers( 2 ) - #team.GetPlayers( 1 ) > 1 and t == 2 then
 		ply:ChatPrint( "Due to player count imbalance, you can't join this team!" )
 		return
 	end

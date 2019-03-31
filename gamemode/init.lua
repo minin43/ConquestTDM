@@ -47,6 +47,7 @@ include( "sv_teambalance.lua" )
 include( "sv_playercards.lua" )
 include( "sv_mapvote.lua" )
 include( "sv_vendetta.lua" )
+include( "sv_teamselect.lua" )
 --include( "sv_backgroundgunfire.lua") -- TODO
 include( "sh_weaponbalancing.lua" )
 
@@ -125,7 +126,7 @@ function GM:DoRedWin()
 		net.Send( v )
 	end
 
-	ULib.tsayColor( nil, true, color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	--NewFunction( color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:DoBlueWin()
@@ -144,7 +145,7 @@ function GM:DoBlueWin()
 		net.Send( v )
 	end
 
-	ULib.tsayColor( nil, true, color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	--NewFunction( color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:DoTie()
@@ -156,7 +157,7 @@ function GM:DoTie()
 		net.Send( v )
 	end
 
-	ULib.tsayColor( nil, true, color_green, "Tie! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	--NewFunction( color_green, "Tie! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:EndRound( win )
@@ -189,12 +190,12 @@ function GM:EndRound( win )
 	end )
 
 	if win != 1 and win != 2 and win != 0 then
-		ULib.tsayColor( nil, true, color_green, "Unknown Win Condition, something broke! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+		--NewFunction( color_green, "Unknown Win Condition, something broke! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 	end
 
 	timer.Create( "notify_players", 1, self.PostGameCountdown, function()
 		if timer.RepsLeft( "notify_players" ) % 5 == 0 then
-			ULib.tsayColor( nil, true, color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
+			--NewFunction( color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
 		end
 	end )
 	timer.Simple( self.PostGameCountdown, function()
@@ -488,7 +489,7 @@ hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
 	end
 	for k, v in next, tab do
 		if string.find( text:lower(), v ) then
-			ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "To change your loadout, press F2." )
+			--NewFunction( Color( 255, 255, 255 ), "To change your loadout, press F2." )
 			break
 		end
 	end	
@@ -587,43 +588,6 @@ function giveLoadout( ply )
 	end
 	hook.Call( "PostGiveLoadout", nil, ply )
 end
-
-function changeTeam( ply, cmd, args )
-	local t = tonumber( args[1] )
-	
-	if( t ~= 0 and t ~= 1 and t ~= 2 ) then
-		ply:ChatPrint( "Error: no valid team selected." )
-		return
-	end
-		
-	if( t == ply:Team() ) then
-		if t != 0 then
-			ply:ChatPrint( "You are already on that team!" )
-		end
-		return
-	end
-
-	if #team.GetPlayers( 1 ) - #team.GetPlayers( 2 ) > 1 and t == 1 then
-		ply:ChatPrint( "Due to player count imbalance, you can't join this team!" )
-		return
-	elseif #team.GetPlayers( 2 ) - #team.GetPlayers( 1 ) > 1 and t == 2 then
-		ply:ChatPrint( "Due to player count imbalance, you can't join this team!" )
-		return
-	end
-	
-	ply:Spectate( OBS_MODE_NONE )
-	ply:SetTeam( t )
-	ply:Spawn()
-	if ply:Team() == 0 then
-		ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the spectators" )
-	elseif ply:Team() == 1 then
-		ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "red team" )
-	elseif ply:Team() == 2 then
-		ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "blue team" )
-	end
-end
-
-concommand.Add( "tdm_setteam", changeTeam )
 
 local function GetValid()
 	local validEnts = {}

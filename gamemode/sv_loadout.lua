@@ -6,8 +6,8 @@ util.AddNetworkString( "GetRank" )
 util.AddNetworkString( "GetRankCallback" )
 util.AddNetworkString( "GetCurWeapons" )
 util.AddNetworkString( "GetCurWeaponsCallback" )
-util.AddNetworkString( "GetULXRank" )
-util.AddNetworkString( "GetULXRankCallback" )
+util.AddNetworkString( "GetUserGroupRank" )
+util.AddNetworkString( "GetUserGroupRankCallback" )
 
 function id( steamid )
 	local x = string.gsub( steamid, ":", "x" )
@@ -171,14 +171,14 @@ vip = {
 	{ "Developer", 209 }
 }
 
-net.Receive( "GetULXRank", function( len, ply )
+net.Receive( "GetUserGroupRank", function( len, ply )
 	local rank = 0
 	for k, v in next, vip do
 		if ply:IsUserGroup( v[ 1 ] ) then
 			rank = v[ 2 ]
 		end
 	end
-	net.Start( "GetULXRankCallback" )
+	net.Start( "GetUserGroupRankCallback" )
 		net.WriteString( rank )
 	net.Send( ply )
 end)

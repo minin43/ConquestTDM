@@ -25,7 +25,7 @@ function GM:TeamMenu()
 	if ( main and main:IsValid() ) or ( self.main and self.main:IsValid() ) or ( self.TeamMain and self.TeamMain:IsValid() ) then return end
 	
 	self.TeamMain = vgui.Create( "DFrame" )
-	self.TeamMain:SetSize( 380, 320 )
+	self.TeamMain:SetSize( 400, 280 )
 	self.TeamMain:SetTitle( "" )
 	self.TeamMain:SetVisible( true )
 	self.TeamMain:SetDraggable( false )

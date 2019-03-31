@@ -48,6 +48,6 @@ timer.Create( "TeamBalance", 30, 0, function()
 			table.insert( temp, ply:Nick() )
 		end		
 		local exp = table.concat( temp, ", " )
-		ULib.tsayColor( nil, false, Color( 255, 255, 255 ), "Player(s) " .. exp .. " moved for team balance." )
+		--NewFunction( Color( 255, 255, 255 ), "Player(s) " .. exp .. " moved for team balance." )
 	end
 end )

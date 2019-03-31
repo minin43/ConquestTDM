@@ -28,13 +28,8 @@ Global Stats Counting for Level Prestige and Weapon Mastery
 Fix Net Messaging Exploits
     - Buy weapons
     - Loadout                   
-    - Mapvote                   DONE
-----
-Notify players who died to Vendetta'd enemies           DONE - NEEDS TESTING
 ----
 Rework weapon pickup & inventory system
-----
-Restructure all gun balancing and leveling              DONE - NEEDS TESTING
 ----
 ----
 MCFX Suggestions

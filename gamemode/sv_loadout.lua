@@ -314,7 +314,9 @@ end )
 function GM:WeaponEquip( wep )
 	timer.Simple( 0, function() -- this will call the following on the next frame
 		if wep and wep:IsValid() and wep:GetOwner() then
-			wep:GetOwner():RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
+			if wep.Base == "cw_base" then
+				wep:GetOwner():RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
+			end
 		end
 	end )
 end

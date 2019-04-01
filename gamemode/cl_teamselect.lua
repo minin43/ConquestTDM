@@ -64,6 +64,38 @@ function GM:TeamMenu()
 		draw.SimpleText( "Choose Team", "Exo 2", self.TeamMainTitle:GetWide() / 4, self.TeamMainTitle:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 
+	self.TeamMainClose = vgui.Create( "DButton", self.TeamMainTitle )
+	self.TeamMainClose:SetSize( self.TeamMainTitle:GetWide() / 4, self.TeamMainTitle:GetTall() )
+	self.TeamMainClose:SetPos( self.TeamMainTitle:GetWide() / 4 * 3, 0 )
+	
+	self.TeamMainClose.Paint = function()
+		if not self.TeamMain then return end
+		if self.TeamMainClose.Hover then
+			draw.RoundedBox( 4, 0, 0, self.TeamMainClose:GetWide(), self.TeamMainClose:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+		end
+		if self.TeamMainClose.Click then
+			draw.RoundedBox( 4, 0, 0, self.TeamMainClose:GetWide(), self.TeamMainClose:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+		end
+		draw.SimpleText( "CLOSE", "Exo 2 Button", self.TeamMainClose:GetWide() / 2, self.TeamMainClose:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		return true
+	end
+
+	self.TeamMainClose.OnCursorEntered = function()
+		self.TeamMainClose.Hover = true
+	end
+	self.TeamMainClose.OnCursorExited = function()
+		self.TeamMainClose.Hover = false
+	end
+
+	self.TeamMainClose.OnMousePressed = function()
+		LocalPlayer():EmitSound( "buttons/button22.wav" )
+		self.TeamMainClose.Click = true
+	end
+	self.TeamMainClose.OnMouseReleased = function()
+		self.TeamMainClose.Click = false
+		self.TeamMain:Close()
+	end
+
 	--//Onto the buttons: normally these would be custom vgui elements, however, since there are only 3, I'm taking the lazy route and just using DButton
 	self.TeamMainIconSize = 60
 	if LocalPlayer():Team() != 1 then --If the player isn't already on red team

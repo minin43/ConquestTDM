@@ -714,7 +714,6 @@ function GM:PlayerSpawn( ply )
 	end
 	
 	ply:AllowFlashlight( true )
-	
 	ply.spawning = true
 	
 	if ply:IsPlayer() and load[ ply ] ~= nil then
@@ -730,6 +729,8 @@ function GM:PlayerSpawn( ply )
 	ply:SetWalkSpeed( GAMEMODE.DefaultWalkSpeed )
 	ply:SetRunSpeed( GAMEMODE.DefaultRunSpeed )
 	ply:SetJumpPower( GAMEMODE.DefaultJumpPower )
+
+	ply:ConCommand( "cw_simple_telescopics 0" )
 
 	local redmodels = {
 		"models/player/group03/male_06.mdl",

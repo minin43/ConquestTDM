@@ -1,4 +1,5 @@
-function GM:ChangeTeam( ply, cmd, args )
+function GM:ChangeTeam( _, args, _ ) --This is a wonky return as the function is a part of the gamemode table
+	local ply = self
 	local t = tonumber( args[1] )
 	
 	if( t ~= 0 and t ~= 1 and t ~= 2 ) then
@@ -21,6 +22,7 @@ function GM:ChangeTeam( ply, cmd, args )
 		return
 	end
 	
+	hook.Run( "PlayerSwitchedTeams", ply, ply:Team(), t )
 	ply:Spectate( OBS_MODE_NONE )
 	ply:SetTeam( t )
 	ply:Spawn()
@@ -34,3 +36,8 @@ function GM:ChangeTeam( ply, cmd, args )
 end
 
 concommand.Add( "tdm_setteam", GM.ChangeTeam )
+
+--[[ If we ever change the table back from being a part of the GAMEMODE table:
+function GM:ChangeTeam( ply, cmd, args )
+	local t = tonumber( args[1] )
+]]

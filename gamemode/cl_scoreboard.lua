@@ -184,13 +184,22 @@ end
 
 local lvls = {}
 local function CreateScoreboard()
+	local heightCalc = 0
+	if #team.GetPlayers( 1 ) > #team.GetPlayers( 2 ) then 
+		heightCalc = math.Clamp( 32 * ( #team.GetPlayers( 1 ) ), 0, 10000 )
+	else
+		heightCalc = math.Clamp( 32 * ( #team.GetPlayers( 2 ) ), 0, 10000 )
+	end
 
+	local ScoreboardHeight = math.Clamp( 56 + heightCalc + 2, 56 + 34, ScrH() - ( ScrH() / 8 ) )
+	print( ScoreboardHeight )
 	red = vgui.Create( "DFrame" )
 	red:ShowCloseButton( false )
 	red:SetDraggable( false )
 	red:SetTitle( "" )
-	red:SetSize( 580, ScrH() - ( ScrH() / 8 ) )
-	red:Center()
+	red:SetSize( 580, ScoreboardHeight )
+	--red:Center()
+	red:SetPos( ScrW() / 2 - red:GetWide() - 4, 100 )
 	red.Paint = function()
 		surface.SetDrawColor( 255, 255, 255, 222 )
 		surface.DrawRect( 0, 0, red:GetWide(), red:GetTall() )
@@ -209,8 +218,8 @@ local function CreateScoreboard()
 	end
 
 	red:ParentToHUD()
-	local pos = Vector( red:GetPos() )
-	red:SetPos( pos.x - 295, pos.y )
+	--[[local pos = Vector( red:GetPos() )
+	red:SetPos( pos.x - 295, pos.y )]]
 
 	dlist = vgui.Create( "DPanelList", red )
 	dlist:SetPos( 1, 56 )
@@ -222,8 +231,9 @@ local function CreateScoreboard()
 	blue:ShowCloseButton( false )
 	blue:SetDraggable( false )
 	blue:SetTitle( "" )
-	blue:SetSize( 580, ScrH() - ( ScrH() / 8 ) )
-	blue:Center()
+	blue:SetSize( 580, ScoreboardHeight )
+	--blue:Center()
+	blue:SetPos( ScrW() / 2 + 4, 100 )
 	blue.Paint = function()
 		surface.SetDrawColor( 255, 255, 255, 222 )
 		surface.DrawRect( 0, 0, blue:GetWide(), blue:GetTall() )
@@ -241,8 +251,8 @@ local function CreateScoreboard()
 		surface.DrawTexturedRectRotated( blue:GetWide() / 2, 56 + 4, 8, blue:GetWide(), 270 )
 	end
 	blue:ParentToHUD()
-	local pos = Vector( blue:GetPos() )
-	blue:SetPos( pos.x + 295, pos.y )
+	--[[local pos = Vector( blue:GetPos() )
+	blue:SetPos( pos.x + 295, pos.y )]]
 	
 	blue.Think = function()
 		if input.IsMouseDown( MOUSE_RIGHT ) then
@@ -942,8 +952,8 @@ local function CreateScoreboard()
 	
 	local pos = Vector( red:GetPos() )
 	spec = vgui.Create( "DPanel" )
-	spec:SetPos( pos.x, pos.y + ScrH() - ( ScrH() / 8 ) + 3 )
-	spec:SetSize( 1170, 30 )
+	spec:SetPos( ScrW() / 2 - red:GetWide() - 4, 100 + red:GetTall() + 4 )
+	spec:SetSize( 1168, 30 )
 	spec.Paint = function()
 		surface.SetDrawColor( 255, 255, 255, 222 )
 		surface.DrawRect( 0, 0, spec:GetSize() )

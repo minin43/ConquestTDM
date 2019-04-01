@@ -123,7 +123,7 @@ end )
 
 hook.Add( "EntityTakeDamage", "TrackDamage", function( vic, dmginfo )
 	local att = dmginfo:GetAttacker()
-	if vic and vic:IsPlayer() and att and att:IsPlayer() then
+	if vic and vic:IsPlayer() and !vic:IsBot() and att and att:IsPlayer() then
 		local vicID = id( vic:SteamID() )
 		local attID = id( att:SteamID() )
 		local Lives = GAMEMODE.DamageSaving[ vicID ].lifeCount

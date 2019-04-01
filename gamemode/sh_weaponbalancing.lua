@@ -7,9 +7,9 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_ar15" ) then
         local wep = weapons.GetStored( "cw_ar15" )
         wep.Slot = 0
-        wep.Damage = 28
+        wep.Damage = 27
         wep.FireDelay = 0.078
-        wep.Recoil = 0.85
+        wep.Recoil = 0.90
         wep.HipSpread = 0.1
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.7
@@ -67,7 +67,7 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_ber_famas_felin" )
         wep.Slot = 0
         wep.Damage = 26
-        wep.FireDelay = 0.075
+        wep.FireDelay = 0.072
         wep.Recoil = 0.9
         wep.HipSpread = 0.1
         wep.AimSpread = 0.01
@@ -207,7 +207,7 @@ function weapons.OnLoaded()
         wep.FireDelay = 0.095
         wep.Recoil = 1.1
         wep.HipSpread = 0.04
-        wep.AimSpread = 0.015
+        wep.AimSpread = 0.02
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.035
         wep.SpreadPerShot = 0.002
@@ -228,7 +228,7 @@ function weapons.OnLoaded()
         wep.FireDelay = 0.054
         wep.Recoil = 0.8
         wep.HipSpread = 0.03
-        wep.AimSpread = 0.015
+        wep.AimSpread = 0.02
         wep.VelocitySensitivity = 1.1
         wep.MaxSpreadInc = 0.03
         wep.SpreadPerShot = 0.004
@@ -245,9 +245,9 @@ function weapons.OnLoaded()
         wep.Slot = 0
         wep.Damage = 26
         wep.FireDelay = 0.08
-        wep.Recoil = 0.85
+        wep.Recoil = 0.9
         wep.HipSpread = 0.04
-        wep.AimSpread = 0.015
+        wep.AimSpread = 0.02
         wep.VelocitySensitivity = 1.5
         wep.MaxSpreadInc = 0.06
         wep.SpreadPerShot = 0.003
@@ -268,7 +268,7 @@ function weapons.OnLoaded()
         wep.FireDelay = 0.07
         wep.Recoil = 0.73
         wep.HipSpread = 0.035
-        wep.AimSpread = 0.015
+        wep.AimSpread = 0.02
         wep.VelocitySensitivity = 1.2
         wep.MaxSpreadInc = 0.03
         wep.SpreadPerShot = 0.004
@@ -287,7 +287,7 @@ function weapons.OnLoaded()
         wep.FireDelay = 0.09
         wep.Recoil = 1.1
         wep.HipSpread = 0.045
-        wep.AimSpread = 0.015
+        wep.AimSpread = 0.02
         wep.VelocitySensitivity = 1.6
         wep.MaxSpreadInc = 0.045
         wep.SpreadPerShot = 0.003
@@ -304,9 +304,9 @@ function weapons.OnLoaded()
         wep.Slot = 0
         wep.Damage = 25
         wep.FireDelay = 0.075
-        wep.Recoil = 0.8
+        wep.Recoil = 0.9
         wep.HipSpread = 0.06
-        wep.AimSpread = 0.015
+        wep.AimSpread = 0.02
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.04
         wep.SpreadPerShot = 0.003

@@ -30,3 +30,7 @@ function GM:UpdateVendetta( vic, att )
         self.VendettaList[ attID ][ vicID ] = 0
     end
 end
+
+hook.Add( "PlayerSwitchedTeams", "RemoveVendetta", function( ply, oldTeamNum, newTeamNum )
+    GAMEMODE.VendettaList[ id( ply:SteamID() ) ] = { }
+end )

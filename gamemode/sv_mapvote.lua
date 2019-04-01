@@ -204,7 +204,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
 
                 for k, v in pairs( player.GetAll() ) do
                     v:ChatPrint( "Rock The Vote has been called, total votes necessary: " .. GAMEMODE.NecessaryRTVVotes )
-                    v:ChatPrint( "Time to cast your vote: " .. GAMEMODE.GAMEMODE.RTVTime .. " seconds" )
+                    v:ChatPrint( "Time to cast your vote: " .. GAMEMODE.RTVTime .. " seconds" )
                     v:ChatPrint( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
                 end
             else

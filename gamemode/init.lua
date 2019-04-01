@@ -410,7 +410,7 @@ timer.Create( "Tickets", 5, 0, function()
 			if GetGlobalInt( "allcontrol" ) == 1 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 2 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					GAMEMODE:EndRound( 2 )
+					GAMEMODE:EndRound( 1 )
 				end
 			else
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
@@ -422,12 +422,12 @@ timer.Create( "Tickets", 5, 0, function()
 			if GetGlobalInt( "allcontrol" ) == 2 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 2 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					GAMEMODE:EndRound( 1 )
+					GAMEMODE:EndRound( 2 )
 				end			
 			else
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					GAMEMODE:EndRound( 1 )
+					GAMEMODE:EndRound( 2 )
 				end					
 			end
 		end
@@ -828,12 +828,12 @@ function GM:PlayerDeath( vic, inf, att )
 			if t == 1 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					GAMEMODE:EndRound( 1 )
+					GAMEMODE:EndRound( 2 )
 				end
 			elseif t == 2 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					GAMEMODE:EndRound( 2 )
+					GAMEMODE:EndRound( 1 )
 				end
 			end
 		else

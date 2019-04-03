@@ -13,7 +13,6 @@ GM.MapvoteTime = 20
 GM.RTVCooldown = 120
 GM.RTVTime = 40
 GM.MapTable = { --Controls both the map autodownload and the mapvote information
-    --[ "" ] = { id = , size = "", img = "" }
     [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png" },
     [ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png" },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png" },
@@ -35,14 +34,20 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png" },
     [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png" },
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
-    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" }]]
+    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" },]]
     [ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png" },
     [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png" },
     [ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png" },
     [ "dm_powerstation" ] = { id = 446026985, size = "Midsize", img = "vgui/maps/powerstation.png" },
     [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png" },
     [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png" },
-    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" }
+    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" },
+    [ "dm_9rooms_b16" ] = { id = 1642035717, size = "Small", img = "vgui/maps/9rooms.png" },
+    [ "dm_avalon" ] = { id = 1669465120, size = "Midsize", img = "vgui/maps/avalon.png" },
+    [ "dm_bounce" ] = { id = 1645391828, size = "Small", img = "vgui/maps/bounce.png" },
+    [ "dm_resident" ] = { id = 1623087187, size = "Midsize", img = "vgui/maps/resident.png" },
+    [ "ttt_mw2_highrise" ] = { id = 290247692, size = "Large", img = "vgui/maps/highrise.png" },
+    [ "ttt_mw2_scrapyard" ] = { id = 294363438, size = "Large", img = "vgui/maps/scrapyard.png" }
     --[ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" } --Seems to be crashing the server
     --[ "" ] = { id = 0, size = "", img = "vgui/maps/.png" },
 }

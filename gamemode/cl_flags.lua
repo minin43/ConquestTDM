@@ -90,7 +90,7 @@ progress.Paint = function() --paint progress bar
 			surface.DrawRect( 0, 0, 300 - x, progress:GetTall() ) --this took me longer to figure than it should have
 
 			surface.SetDrawColor( 255, 0, 0, 200 )
-			surface.DrawRect( 300 - x, 0, 300, progress:GetTall() )
+			surface.DrawRect( 300 - x, 0, x, progress:GetTall() )
 		end
 
 		return true --prevents BG from being drawn

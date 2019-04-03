@@ -161,18 +161,18 @@ hook.Add( "HUDPaint", "HUD_Spectator", function()
 		end
 
 		if LocalPlayer():GetObserverMode() == OBS_MODE_ROAMING then
-			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, colorScheme[0]["SpectatorTextShadow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to First-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, colorScheme[0]["SpectatorText"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 		elseif LocalPlayer():GetObserverMode() == OBS_MODE_CHASE then
-			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, colorScheme[0]["SpectatorTextShadow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to Free Roam", "DermaDefault", ScrW() / 2, ScrH() - 50, colorScheme[0]["SpectatorText"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, colorScheme[0]["SpectatorTextShadow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, colorScheme[0]["SpectatorText"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 		elseif LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE then
-			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, Color( 0, 0, 0, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2 + 1, ScrH() - 50 + 1, colorScheme[0]["SpectatorTextShadow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Press [R] to change to Third-Person", "DermaDefault", ScrW() / 2, ScrH() - 50, colorScheme[0]["SpectatorText"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2 + 1, ScrH() - 32 + 1, colorScheme[0]["SpectatorTextShadow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Spectating: " .. n .. " (" .. nhp .. "%)", "DermaDefault", ScrW() / 2, ScrH() - 32, colorScheme[0]["SpectatorText"], TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 		end
 	end
 end )
@@ -194,7 +194,7 @@ hook.Add( "HUDPaint", "HUD_IceEffects", function()
 	end
 
 	surface.SetMaterial( ice_overlay )
-	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * rate, 0, 120 ) )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * rate, 0, 120 ) ) --TODO: rewrite to use alterColorRGB. much more elegant
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 
@@ -235,6 +235,7 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	end
 
 	--//Not sure what this does
+	--This LERPs the HP loss when you take damage, I think
 	local maxhp = LocalPlayer():GetMaxHealth()
 	if hpdrain > CurrentHP then
 		hpdrain = Lerp( FrameTime() * 2, hpdrain, CurrentHP )
@@ -251,19 +252,18 @@ end )
 hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 
 	draw.NoTexture()
-	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.SetDrawColor( colorScheme[0]["GameTimerBG"] )
 	surface.DrawPoly( drawtime )
 	surface.DrawPoly( drawtime_fix )
-	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.SetDrawColor( colorScheme[0]["GameScoreBG"] )
 	surface.DrawPoly( drawscore )
 	local num = GetGlobalInt( "RoundTime" )
-	local col
+	local col = colorScheme[0]["GameTimer"]
 	--Sets time red with 1 minute remaining
 	if num <= 60 then
-		col = Color( 255, 0, 0, 255 )
-	elseif num > 60 then
-		col = Color( 255, 255, 255, 200 )
+		col = colorScheme[0]["GameTimerLow"]
 	end
+	
 	local t = string.FormattedTime( tostring( num ) )
 	t.m = tostring( t.m )
 	t.s = tostring( t.s )
@@ -314,7 +314,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	local info = "[F1] Choose Team | [F2] Choose Loadout"
 	local infowidth, infoheight = surface.GetTextSize( info )
 
-	--Round timer
+	--[[Round timer (DEPRECATED 4/02, remove after next release)
 	local _time = GetGlobalInt( "RoundTime" )
 	local col = Color( 255, 255, 255, 255 )
 	if _time <= 60 then
@@ -329,17 +329,18 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	if #time.s == 1 then
 		time.s = "0" .. time.s
 	end
+	]]
 	
 	--Creates the boxes in the top left hand corner for F1 and F2 commands
 	surface.SetDrawColor( GAMEMODE.CurrentScheme ) 
 	surface.SetTexture( gradient )
 	surface.DrawRect( 32, 32, infowidth + 9, infoheight + 5 ) --Align it with gamemode name/version text set below
-	surface.SetDrawColor( Color( 0, 0, 0, 50) )
+	surface.SetDrawColor( colorScheme[0]["HelpMenuShade"] )
 	surface.DrawRect( 32, 32, infowidth + 11, infoheight + 7 )
 
 	--Writes the text in string "info" set above
 	surface.SetFont( "Info" )
-	surface.SetTextColor( 255, 255, 255, 200 )
+	surface.SetTextColor( colorScheme[0]["HelpMenuText"] )
 	surface.SetTextPos( 36, 33 )
 	surface.DrawText( info )
 

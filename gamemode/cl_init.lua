@@ -19,7 +19,28 @@ include( "cl_vendetta.lua" )
 include( "cl_teamselect.lua" )
 include( "sh_weaponbalancing.lua" )
 
-local groups = {
+colorScheme = {
+	[0] = { --spectator/misc colors
+		["SpectatorText"] = Color(255, 255, 255, 255), --the "Press R" spectator text
+		["SpectatorTextShadow"] = Color(0, 0, 0, 255),
+		["IceOverlay"] = Color(255, 255, 255, 120), --not implemented until cl_hud:197 TODO is complete
+		["GameTimerBG"] = Color(0, 0, 0, 200),
+		["GameScoreBG"] = Color(0, 0, 0, 200),
+		["GameTimerLow"] = Color(255, 0, 0, 255), --Timer text color when <60 seconds on clock
+		["GameTimer"] = Color(255, 255, 255, 200),
+		["HelpMenuShade"] = Color(0, 0, 0, 50), -- name might not be accurate, but i believe this is used to darken the "help menu" (F1/F2 tooltips in the corner).
+		["HelpMenuText"] = Color(255, 255, 255, 200)
+	} --[[,
+	--[1] = { --red
+
+	}
+	[2] = { --blue
+
+	}]]
+}
+
+
+local groups = { --TODO: when these are rewritten please use [keys] instead of this format.
 	{ "vip", Color( 0, 200, 0 ), "VIP" },
 	{ "operator", Color( 180, 180, 180 ), "Operator" },
 	{ "vip+", Color( 0, 255, 0 ), "VIP+" },
@@ -31,7 +52,7 @@ local groups = {
 	{ "admin", Color( 220, 180, 0 ), "Admin" }
 }
 
-local ccolors = {
+local ccolors = { --Same here.
 	{ "red", Color( 255, 0, 0 ) },
 	{ "blue", Color( 0, 0, 255 ) },
 	{ "yellow", Color( 255, 255, 0 ) },

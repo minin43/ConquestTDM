@@ -1,17 +1,23 @@
 Perks w/ special effects should notify the player when they're activated/used
     Applicable perks:
-    - Excited -on kill                  - Do an FOV change and play some sound effect
-    - Headpopper -on headshot           - Crosshair icon
-    - Leech -on kill                    - Crosshair icon
-    - Lifeline -on low HP kill          - Would like a screen effect & sound
-    - Pyromancer -on fire & explosion           - Crosshair icons
-    - Thornmail -on attacker when victim has it         - Would like screen effect, no sound
-    - Vengeance -damage against & MAYBE damage from target      - 
-    - Vulture -on finish
+        HUD/Screen effect:
+            - Excited -on kill                  - Do an FOV change and play some sound effect
+            - Lifeline -on low HP kill          - Would like a screen effect & sound
+            - Vengeance -damage against & MAYBE damage from target
+            - Thornmail -on attacker when victim has it         - Would like screen effect, no sound
+        Crosshair Icon
+            - Headpopper -on headshot
+            - Leech -on kill
+            - Pyromancer -on fire & explosion
+            - Vulture -on finish
 ----
 Character Interaction Sounds
-    - Combine (can maybe use my sounds from PTP)
-    - Rebels (have both HL2 rebel sounds & INS2 security voices available)
+    on HL2 maps (dm_, some gm_)
+        - Combine (can maybe use my sounds from PTP)
+        - HL2 Rebels
+    on MW2 maps (ttt_mw2_ mostly)
+        - SEALs, Rangers, TF141
+        - Spetsnaz, OpFor, Militia
 ----
 New Loadout Menu
     Shop Menu

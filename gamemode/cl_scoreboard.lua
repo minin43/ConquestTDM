@@ -429,7 +429,7 @@ local function CreateScoreboard()
 			surface.PlaySound( "garrysmod/ui_hover.wav" )
 		end
 		
-		btn.DoRightClick = function()
+		--[[btn.DoRightClick = function()
 			surface.PlaySound( "garrysmod/ui_click.wav" )
 			local menu = DermaMenu()
 			
@@ -589,7 +589,7 @@ local function CreateScoreboard()
 				
 			menu:Open()
 			
-		end
+		end]]
 		
 		local a = p:Add( "AvatarImage" )
 		a:SetPos( 2, 2 )
@@ -769,7 +769,7 @@ local function CreateScoreboard()
 			surface.PlaySound( "garrysmod/ui_hover.wav" )
 		end
 		
-		btn.DoRightClick = function()
+		--[[btn.DoRightClick = function()
 			surface.PlaySound( "garrysmod/ui_click.wav" )
 			local menu = DermaMenu()
 			
@@ -929,7 +929,7 @@ local function CreateScoreboard()
 				
 			menu:Open()
 			
-		end
+		end]]
 		
 		local a = p:Add( "AvatarImage" )
 		a:SetPos( 2, 2 )

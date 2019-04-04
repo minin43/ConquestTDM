@@ -74,6 +74,8 @@ util.AddNetworkString( "DoWin" )
 util.AddNetworkString( "DoLose" )
 util.AddNetworkString( "DoTie" )
 util.AddNetworkString( "StartAttTrack" )
+util.AddNetworkString( "GlobalChatColor" )
+util.AddNetworkString( "PlayerChatColor" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
@@ -110,6 +112,33 @@ local color_blue = Color( 0, 0, 255 )
 local color_green = Color( 102, 255, 51 )
 local color_white = Color( 255, 255, 255 )
 
+function GlobalChatPrintColor( ... )
+	local args = { ... }
+	local tab = {}
+
+	for k, v in pairs( args ) do
+		tab[ #tab + 1 ] = v
+	end
+
+	net.Start( "GlobalChatColor" )
+		net.WriteTable( tab )
+	net.Broadcast()
+end
+
+local PlayerClass = FindMetaTable( "Player" )
+function PlayerClass:ChatPrintColor( ... )
+	local args = { ... }
+	local tab = {}
+
+	for k, v in pairs( args ) do
+		tab[ #tab + 1 ] = v
+	end
+
+	net.Start( "PlayerChatColor" )
+		net.WriteTable( tab )
+	net.Send( self )
+end
+
 function GM:DoRedWin()
 	for k, v in pairs( team.GetPlayers( 1 ) ) do
 		AddNotice(v, "WON THE ROUND", SCORECOUNTS.ROUND_WON, NOTICETYPES.ROUND)
@@ -126,7 +155,7 @@ function GM:DoRedWin()
 		net.Send( v )
 	end
 
-	--NewFunction( color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	GlobalChatPrintColor( color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:DoBlueWin()
@@ -145,7 +174,7 @@ function GM:DoBlueWin()
 		net.Send( v )
 	end
 
-	--NewFunction( color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	GlobalChatPrintColor( color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:DoTie()
@@ -157,7 +186,7 @@ function GM:DoTie()
 		net.Send( v )
 	end
 
-	--NewFunction( color_green, "Tie! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	GlobalChatPrintColor( color_green, "Tie! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:EndRound( win )
@@ -190,12 +219,12 @@ function GM:EndRound( win )
 	end )
 
 	if win != 1 and win != 2 and win != 0 then
-		--NewFunction( color_green, "Unknown Win Condition, something broke! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+		GlobalChatPrintColor( color_green, "Unknown Win Condition, something broke! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 	end
 
 	timer.Create( "notify_players", 1, self.PostGameCountdown, function()
 		if timer.RepsLeft( "notify_players" ) % 5 == 0 then
-			--NewFunction( color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
+			GlobalChatPrintColor( color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
 		end
 	end )
 	timer.Simple( self.PostGameCountdown, function()
@@ -489,7 +518,7 @@ hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
 	end
 	for k, v in next, tab do
 		if string.find( text:lower(), v ) then
-			--NewFunction( Color( 255, 255, 255 ), "To change your loadout, press F2." )
+			GlobalChatPrintColor( Color( 255, 255, 255 ), "To change your loadout, press F2." )
 			break
 		end
 	end	

@@ -27,11 +27,11 @@ function GM:ChangeTeam( _, args, _ ) --This is a wonky return as the function is
 	ply:SetTeam( t )
 	ply:Spawn()
 	if ply:Team() == 0 then
-		--NewFunction( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the spectators" )
+		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the spectators" )
 	elseif ply:Team() == 1 then
-		--NewFunction( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "red team" )
+		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "red team" )
 	elseif ply:Team() == 2 then
-		--NewFunction( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "blue team" )
+		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "blue team" )
 	end
 end
 

@@ -148,14 +148,14 @@ end )
 	
 hook.Add( "lvl.OnLevelUp", "lvl.OnLevelUp", function( ply, newlv )
 	if lvl.GetLevel( ply ) >= 100 then
-		--NewFunction( color_green, ply:Nick(), color_white, " leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
+		GlobalChatPrintColor( color_green, ply:Nick(), color_white, " leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
 		for k, v in next, player.GetAll() do
 			--v:ChatPrint( tostring( ply:Nick() ) .. " leveled up to level " .. tostring( newlv ) )
 			v:SendLua([[surface.PlaySound( "ui/UX_InGame_Unlock_Promotion_Wave.mp3" )]])
 		end
 	else
 		--ply:ChatPrint( "You leveled up to level " .. tostring( newlv ) )
-		--NewFunction( color_green, "You ", color_white, "leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
+		ply:ChatPrintColor( color_green, "You ", color_white, "leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
 		ply:SendLua([[surface.PlaySound( "ui/UI_Awards_Basic_wav.mp3" )]])
 	end
 end )

@@ -18,6 +18,30 @@ Character Interaction Sounds
     on MW2 maps (ttt_mw2_ mostly)
         - SEALs, Rangers, TF141
         - Spetsnaz, OpFor, Militia
+    on CS maps (de_, cs_)
+        - Terrorists (INS2 insurgents)
+        - Counter-terrorists (INS2 security)
+    Events for voice:
+        HL2 availability:
+            - Self damaged
+            - Self death
+            - Reload
+        INS2 availability:
+            - Enemy killed
+            - Enemy spotted
+            - No ammo
+            - Self damaged
+            - Self death
+            - Point capture
+            - Reload
+            - Spawn
+        MW2 availability:
+            - Self damaged
+            - Self death
+            - Enemy killed
+            - Friendly killed
+            - Reloading
+            - Using tertiary weapon (c4, frag, flash, smoke, "grenade")
 ----
 New Loadout Menu
     Shop Menu

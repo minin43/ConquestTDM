@@ -39,7 +39,6 @@ colorScheme = {
 	}]]
 }
 
-
 local groups = { --TODO: when these are rewritten please use [keys] instead of this format.
 	{ "vip", Color( 0, 200, 0 ), "VIP" },
 	{ "operator", Color( 180, 180, 180 ), "Operator" },
@@ -70,6 +69,16 @@ local Color = Color
 local unpack = unpack
 local white = color_white
 
+function id( steamid )
+	local x = string.gsub( steamid, ":", "x" )
+	return x
+end
+
+function unid( steamid )
+	local x = string.gsub( steamid, "x", ":" )
+	return string.upper( x )
+end
+
 hook.Add( "Think", "SetColors", function()
 	if LocalPlayer():Team() == 1 then
 		GAMEMODE.TeamColor = Color( 244, 67, 54 )
@@ -80,66 +89,29 @@ hook.Add( "Think", "SetColors", function()
 	end
 end )
 
---[[/*
-function GM:OnPlayerChat( ply, text, teamonly, dead )
-	local tab = {}
-	if IsValid( ply ) then
-		if dead then
-			ti( tab, Color( 255, 30, 40 ) )		
-			ti( tab, "*At a beter place* " )
+net.Receive( "GlobalChatColor", function()
+	local tab = net.ReadTable()
+	local fixedtab = {}
+
+	for k, v in pairs( tab ) do
+		if isstring( v ) or IsColor( v ) then
+			fixedtab[ #fixedtab + 1 ] = v
 		end
-		if teamonly then
-			ti( tab, Color( 30, 160, 40 ) )		
-			ti( tab, "(TEAM) " )		
-		end	
-		
-		local strcol = white
-		local customfound = false
-		for k, v in next, ccolors do
-			if string.StartWith( text, "`" .. v[ 1 ] .. "`" ) then
-				local pos = string.find( text, "`" .. v[ 1 ] .. "`" ) + v[ 1 ]:len()
-				text = string.sub( text, pos + 3 )
-				strcol = v[ 2 ]
-				customfound = true
-			end
-		end
-		
-		if customfound == false and string.StartWith( text, "`" ) then
-			local exp = string.Explode( "`", text:sub( 2 ) )
-			local str = exp[ 1 ]
-			local str2 = string.Explode( " ", str )
-			if #str2 == 3 then
-				str2[ 4 ] = "255"
-			end
-			local col = string.ToColor( table.concat( str2, " " ) )
-			strcol = col or color_white
-			local pos = string.find( string.sub( text, 2 ), "`" )
-			text = string.sub( text, pos + 3 )
-		end
-		
-		if ply:GetNWString( "usergroup" ) == "user" then
-			ti( tab, ply )
-			ti( tab, white )
-			ti( tab, ": " )
-			ti( tab, strcol )
-			ti( tab, text )
-		else
-			for k, v in next, groups do
-				if ply:GetNWString( "usergroup" ) == v[ 1 ] then
-					ti( tab, v[ 2 ] )
-					ti( tab, "[" .. v[ 3 ] .. "] " )
-					ti( tab, ply )
-					ti( tab, white )
-					ti( tab, ": " )
-					ti( tab, strcol )
-					ti( tab, text )
-				end
-			end
-		end
-		chat.AddText( unpack( tab ) )
-		return true
 	end
-end*/]]
+	chat.AddText( unpack( fixedtab ) )
+end )
+
+net.Receive( "PlayerChatColor", function()
+	local tab = net.ReadTable()
+	local fixedtab = {}
+
+	for k, v in pairs( tab ) do
+		if isstring( v ) or IsColor( v ) then
+			fixedtab[ #fixedtab + 1 ] = v
+		end
+	end
+	chat.AddText( unpack( fixedtab ) )
+end )
 
 net.Receive( "SetMagician", function()
 	local bool = net.ReadBool()
@@ -156,16 +128,6 @@ net.Receive( "SetMagician", function()
 		--savedwep["DelpoyTime"] = ( savedwep["DelpoyTime"] * 2 )
 	end
 end)
-
-function id( steamid )
-	local x = string.gsub( steamid, ":", "x" )
-	return x
-end
-
-function unid( steamid )
-	local x = string.gsub( steamid, "x", ":" )
-	return string.upper( x )
-end
 
 net.Receive( "FixReloadSpeeds", function()
 	local wep = net.ReadString()

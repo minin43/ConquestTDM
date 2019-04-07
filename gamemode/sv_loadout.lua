@@ -9,16 +9,6 @@ util.AddNetworkString( "GetCurWeaponsCallback" )
 util.AddNetworkString( "GetUserGroupRank" )
 util.AddNetworkString( "GetUserGroupRankCallback" )
 
-function id( steamid )
-	local x = string.gsub( steamid, ":", "x" )
-	return x
-end
-
-function unid( steamid )
-	local x = string.gsub( steamid, "x", ":" )
-	return string.upper( x )
-end
-
 function SetStats( wepTable )
 	for k, v in pairs( wepTable ) do
 		local damage, accuracy, firerate

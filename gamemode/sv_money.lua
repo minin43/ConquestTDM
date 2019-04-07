@@ -7,16 +7,6 @@ util.AddNetworkString( "GetMoneyCallback" )
 util.AddNetworkString( "BuyShit" )
 util.AddNetworkString( "BuyShitCallback" )
 
-function id( steamid ) --takes steamid like 0:0:123456 and returns 0x0x123456
-	local x = string.gsub( steamid, ":", "x" )
-	return x
-end
-
-function unid( steamid ) --takes steamid like 0:0:123456 and returns 0X0X123456 
-	local x = string.gsub( steamid, "x", ":" )
-	return string.upper( x )
-end
-
 function GetMoney( ply )
 	if not ply:GetPData( "tdm_money" ) then
 		ply:SetPData( "tdm_money", "0" )

@@ -12,15 +12,7 @@ local sstp = surface.SetTextPos
 local sdt = surface.DrawText
 local drb = draw.RoundedBox
 local ssf = surface.SetFont
-local next = next
-local Color = Color
-local Vector = Vector
 local lp = LocalPlayer
-local Angle = Angle
-local ScrH = ScrH
-local ScrW = ScrW
-local tostring = tostring
-local tonumber = tonumber
 
 surface.CreateFont( "DrawFlagNames", {
 	font = "Arial",

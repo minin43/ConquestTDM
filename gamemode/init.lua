@@ -99,16 +99,6 @@ if not file.Exists( "tdm/class", "DATA" ) then
 	file.CreateDir( "tdm/class" )
 end
 
-function id( steamid )
-	local x = string.gsub( steamid, ":", "x" )
-	return x
-end
-
-function unid( steamid )
-	local x = string.gsub( steamid, "x", ":" )
-	return string.upper( x )
-end
-
 local color_red = Color( 255, 0, 0 )
 local color_blue = Color( 0, 0, 255 )
 local color_green = Color( 102, 255, 51 )

@@ -64,3 +64,7 @@ function alterColorHSV( col, hDelta, sDelta, vDelta, aDelta ) --takes a Color as
 					 math.Clamp(s, 0, 1),
 					 math.Clamp(v, 0, 1))
 end
+
+function id( steamid )
+	return string.gsub( steamid, ":", "x" )
+end

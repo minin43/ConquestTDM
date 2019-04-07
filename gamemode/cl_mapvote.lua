@@ -15,9 +15,8 @@ net.Receive( "UpdateCountdown", function()
 end )
 
 net.Receive( "PlayerVotedUpdate", function()
-    local ply = net.ReadString()
+    local ply = string.upper(id(net.ReadString()))
     local choice = net.ReadString()
-    ply = unid( ply )
     for k, v in pairs( player.GetAll() ) do
         if v:SteamID() == ply then
             ply = v

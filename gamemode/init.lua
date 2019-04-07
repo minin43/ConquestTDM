@@ -53,6 +53,7 @@ include( "sv_teamselect.lua" )
 include( "sv_character_interaction.lua" )
 include( "sh_weaponbalancing.lua" )
 
+print( "check first")
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
 end

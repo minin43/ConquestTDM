@@ -1,8 +1,9 @@
+print("check second")
 GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Cobalt, Whuppo, Logan"
 GM.Email = "lobsterlogan43@yahoo.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.4.7"
+GM.Version = "Conquest Team Deathmatch V. 1.5"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 

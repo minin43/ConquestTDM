@@ -193,9 +193,10 @@ end
 
 --//We're assuming this function gets good values every time
 function GM:DoPlayerSound( ply, sound )
+    local mandatoryPlays = { selfDamage = true, selfDeath = true, selfStep = true }
     --//Included randomness, better for the sounds to be used sparingly, but always allow damage & death sounds
     --//There will probably be double-ups with this timer, preventing sound playing when it otherwise would, but I'm okay with that
-    if ( timer.Exists( id( ply:SteamID() ) .. "_VoiceTimer" ) or math.random( 3 ) != 1 ) and sound != "selfDamage" and sound != "selfDeath" and sound != "selfStep" then return end
+    if ( timer.Exists( id( ply:SteamID() ) .. "_VoiceTimer" ) or math.random( 3 ) != 1 ) and !mandatoryPlays[ sound ] then return end
 
     local series = self.InteractionList[ id( ply:SteamID() ) ] --//"seals", "insurgent", etc
     if !series then return end
@@ -258,14 +259,16 @@ hook.Add( "DoPlayerDeath", "DoDeathSounds", function( ply, att, dmginfo )
     --//teamDeath
     local closestPlayer, closestDistance
     for k, v in pairs( team.GetPlayers( ply:Team() ) ) do
-        if v:GetAimVector():Dot( ( ply:GetPos() - v:EyePos() ):GetNormalized() ) > 0 and v:Visible( ply ) then
-            if !closestDistance or !closestPlayer then 
-                closestDistance = v:GetPos():Distance( ply:GetPos() )
-                closestPlayer = v
-            else
-                if v:GetPos():Distance( ply:GetPos() ) < closestDistance then
+        if v != ply then
+            if v:GetAimVector():Dot( ( ply:GetPos() - v:EyePos() ):GetNormalized() ) > 0 and v:Visible( ply ) then
+                if !closestDistance or !closestPlayer then 
                     closestDistance = v:GetPos():Distance( ply:GetPos() )
                     closestPlayer = v
+                else
+                    if v:GetPos():Distance( ply:GetPos() ) < closestDistance then
+                        closestDistance = v:GetPos():Distance( ply:GetPos() )
+                        closestPlayer = v
+                    end
                 end
             end
         end

@@ -1,24 +1,3 @@
-include( "shared.lua" )
-include( "cl_hud.lua" )
-include( "cl_spawnmenu.lua" )
-include( "cl_scoreboard.lua" )
-include( "cl_lvl.lua" )
-include( "cl_loadout.lua" )
-include( "cl_loadout_setup.lua" )
-include( "cl_money.lua" )
-include( "cl_flags.lua" )
-include( "cl_feed.lua" )
-include( "cl_deathscreen.lua" )
-include( "cl_customspawns.lua" )
-include( "cl_leaderboards.lua" )
-include( "cl_playercards.lua" )
-include( "cl_mapvote.lua" )
-include( "cl_mapvote_setup.lua" )
-include( "cl_stattrack.lua" )
-include( "cl_vendetta.lua" )
-include( "cl_teamselect.lua" )
-include( "sh_weaponbalancing.lua" )
-
 net.Start( "RequestTeams" )
 net.SendToServer()
 
@@ -32,7 +11,7 @@ net.Receive( "RequestTeamsCallback", function()
 	print( "Team names: ", GAMEMODE.redTeamName, GAMEMODE.blueTeamName )
 	print( "Team colors: " ,team.GetColor(1), team.GetColor(2) )
 end )
-
+print( "setting up colorScheme" )
 colorScheme = {
 	[0] = { --spectator/misc colors
 		--unique to spectator
@@ -66,6 +45,27 @@ colorScheme = {
 
 	}]]
 }
+
+include( "shared.lua" )
+include( "cl_hud.lua" )
+include( "cl_spawnmenu.lua" )
+include( "cl_scoreboard.lua" )
+include( "cl_lvl.lua" )
+include( "cl_loadout.lua" )
+include( "cl_loadout_setup.lua" )
+include( "cl_money.lua" )
+include( "cl_flags.lua" )
+include( "cl_feed.lua" )
+include( "cl_deathscreen.lua" )
+include( "cl_customspawns.lua" )
+include( "cl_leaderboards.lua" )
+include( "cl_playercards.lua" )
+include( "cl_mapvote.lua" )
+include( "cl_mapvote_setup.lua" )
+include( "cl_stattrack.lua" )
+include( "cl_vendetta.lua" )
+include( "cl_teamselect.lua" )
+include( "sh_weaponbalancing.lua" )
 
 hook.Add( "Think", "SetColors", function()
 	if LocalPlayer():Team() == 1 then

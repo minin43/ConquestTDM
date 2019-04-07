@@ -16,7 +16,8 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	ply.NextSpawnTime = CurTime() + 4.5
 	ply:SendLua( [[surface.PlaySound( "ui/UI_HUD_OutOfBounds_Count_Wave.mp3" )]] )
 	
-	if att:IsWorld() or att:GetClass() == "" then att = ply end
+	--//If what you died to wasn't a player, defaulting to your own fault (this includes trigger_hurt, trigger_kill, worldspawn, and more)
+	if !att:IsPlayer() then att = ply end
 
 	--//Killer's perk
 	local perk = GAMEMODE.PerkTracking[ id( att:SteamID() ) ].ActivePerk or "none"
@@ -68,7 +69,6 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 		if !GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ] or !GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ][ id( ply:SteamID() ) ] then
 			damagedone = dmginfo:GetDamage()
 		else
-			print( GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ], GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ][ id( ply:SteamID() ) ] )
 			damagedone = GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ][ id( ply:SteamID() ) ][ GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount ] or 0
 		end
 	else
@@ -134,7 +134,6 @@ hook.Add( "EntityTakeDamage", "TrackDamage", function( vic, dmginfo )
 		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] = GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] or { }
 		GAMEMODE.DamageSaving[ attID ][ Lives ][ vicID ] = GAMEMODE.DamageSaving[ attID ][ Lives ][ vicID ] or { }
 		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] = ( GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] or 0 ) + dmginfo:GetDamage()
-		--print( Lives, GAMEMODE.DamageSaving[ vicID ], GAMEMODE.DamageSaving[ vicID ][ Lives ], GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ], dmginfo:GetDamage(), GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] )
 	end
 end )
 

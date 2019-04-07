@@ -184,17 +184,20 @@ hook.Add( "HUDPaint", "HUD_DisableChecks", function()
 	end
 end )
 
-local ice_overlay, rate = Material( "vgui/frosted.png" ), 0
+local ice_overlay = Material( "vgui/frosted.png" )
+local slawAlphaMask = colorScheme[0]["IceOverlay"].a
+local slawDecay = 1.2
 --//Runs the ice overlay when a player gets chilled by Slaw
 hook.Add( "HUDPaint", "HUD_IceEffects", function()
 	if GAMEMODE.ShouldDrawIce then
-		rate = 1
+		slawAlphaMask = 0
 	else
-		rate = rate - 0.01
+		alphaMask = alphaMask - slawDecay
 	end
 
+	
 	surface.SetMaterial( ice_overlay )
-	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * rate, 0, 120 ) ) --TODO: rewrite to use alterColorRGB. much more elegant
+	surface.setDrawColor( alterColorRGB(colorScheme[0]["IceOverlay"], 0, 0, 0, alphaMask))
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 
@@ -285,27 +288,27 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 		--//I know it's messy, but I don't care enough about something this small to rewrite it in a more appropriate fashion
 		local redkills, redExtra = GetGlobalInt( "RedKills" )
 		if redkills < 10 then
-			draw.SimpleText( "00", "Time", ScrW() / 2 - 85, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "00", "Time", ScrW() / 2 - 85, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif redkills < 100 then
-			draw.SimpleText( "0", "Time", ScrW() / 2 - 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "0", "Time", ScrW() / 2 - 100, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif redkills > 999 then
 			draw.SimpleText( ">1k", "Time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			redkills = ""
 		end
-		draw.SimpleText( "kills", "LVL", ScrW() / 2 - 73, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "kills", "LVL", ScrW() / 2 - 73, 27, colorScheme[0]["KillsLabelText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( redkills, "Time", ScrW() / 2 - 70, 9, Color( 255, 0, 0, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		--draw.SimpleText( redExtra, "Time", ScrW() / 2 - 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 
 		local bluekills, blueExtra = GetGlobalInt( "BlueKills" )
 		if bluekills < 10 then
-			draw.SimpleText( "00", "Time", ScrW() / 2 + 100, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "00", "Time", ScrW() / 2 + 100, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills < 100 then
-			draw.SimpleText( "0", "Time", ScrW() / 2 + 115, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "0", "Time", ScrW() / 2 + 115, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills > 999 then
 			draw.SimpleText( ">1k", "Time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			bluekills = ""
 		end
-		draw.SimpleText( "kills", "LVL", ScrW() / 2 + 70, 27, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "kills", "LVL", ScrW() / 2 + 70, 27, colorScheme[0]["KillsLabelText"], TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		draw.SimpleText( bluekills, "Time", ScrW() / 2 + 115, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		--draw.SimpleText( blueExtra, "Time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
@@ -345,7 +348,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	surface.DrawText( info )
 
 	--Gamemode name & version number
-	surface.SetTextColor( 255, 255, 255, 135 )
+	surface.SetTextColor( colorScheme[0]["GamemodeVersionText"] )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
 	surface.DrawText( GAMEMODE.Version .. " Release 033019" )
 end )
@@ -354,8 +357,8 @@ end )
 hook.Add( "HUDPaint", "HUD_NearMiss", function()
 	if LocalPlayer():Alive() then
 		for k, v in next, hitpos do
-			surface.SetMaterial( damage )
-			surface.SetDrawColor( 0, 0, 0, 255 * v[ 2 ] )
+			surface.SetMaterial( damage ) --*v[2]
+			surface.SetDrawColor( alterColorRGB(colorScheme[0]["DamageIndicatorShade"], 0, 0, 0, 255 * v[2])
 			surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() / 2, 288, 288, v[ 1 ] - 180 )
 			v[ 2 ] = v[ 2 ] - 0.1
 			if v[ 2 ] <= 0 then
@@ -372,11 +375,12 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	--//Health
 	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 	draw.SimpleText( "HP", "Health", ScrW() - 160, ScrH() - 105, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 54, ScrH() - 65, Color( 0, 0, 0, 200), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 56, ScrH() - 65, Color( 255, 255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 54, ScrH() - 65, colorScheme[0]["MaxHPTextShadow"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 56, ScrH() - 65, colorScheme[0]["MaxHPText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 
 	--//Ammo information, currently disabled in favor of CW2.0's floating text information
-	if LocalPlayer():GetActiveWeapon() ~= NULL then
+	-- DEPRECATED 04/06, remove after next release
+	--[[if LocalPlayer():GetActiveWeapon() ~= NULL then
 		local activewep = LocalPlayer():GetActiveWeapon()
 		local primaryammo = activewep:GetPrimaryAmmoType()
 		local ammocount = LocalPlayer():GetAmmoCount( primaryammo )
@@ -398,7 +402,7 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 			else
 				_c1 = ""
 			end
-			--[[Ammo count on right side of screen, keeping just in case we ever need it
+			--Ammo count on right side of screen, keeping just in case we ever need it
 			draw.SimpleText( _c1, "PrimaryAmmo", ScrW() - 290, ScrH() - 110, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 			draw.SimpleText( c1, "PrimaryAmmo", ScrW() - 290, ScrH() - 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 
@@ -416,10 +420,10 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 			surface.SetFont( "AltAmmo" )
 			surface.SetTextColor( Color( 255, 255, 255, 200 ) )
 			surface.SetTextPos( ScrW() - 285, ScrH() - 155 )
-			surface.DrawText( "/" )]]
+			surface.DrawText( "/" )
 			
 		end
-	end
+	end]]
 end )
 
 --Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
@@ -428,9 +432,9 @@ hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	local n = 11
 	teamcolor = Color( math.Clamp( teamcolor.r, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.g, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.b, 255 / n * ( n - 1 ), 255 ) )
 
-	local exp = currentexp
-	local nextexp = nextlvlexp
-	local lvl = currentlvl
+	local exp = currentexp --why is both exp and currentexp used?
+	local nextexp = nextlvlexp --same question
+	local lvl = currentlvl --it looks like one is only checked to see if its -1 and the other is actually used as a number. but why?
 	
 	local percent = exp / nextexp
 	local loading
@@ -448,7 +452,7 @@ hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	end
 
 	--Experience Bar & Level shite
-	surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
+	surface.SetDrawColor( colorScheme[0]["ExperienceBar"] )
 	surface.DrawRect( 44, ScrH() - 106, 231, 10 )
 	
 	surface.SetDrawColor( GAMEMODE.CurrentScheme )
@@ -457,14 +461,14 @@ hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	surface.DrawRect( 44, ScrH() - 96, 231, 2 )
 
 	for i = 0, 4 do 
-		draw.SimpleText( LocalPlayer():GetName(), "NameBG", 48, ScrH() - 135, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( LocalPlayer():GetName(), "NameBG", 48, ScrH() - 135, colorScheme[0]["PlayerNameShadow"], TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 		if currentlvl == -1 and currentexp == -1 and nextlvlexp == -1 then
-			draw.SimpleText( "Receiving game data" .. loading, "LevelBG", 50, ScrH() - 110, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+			draw.SimpleText( "Receiving game data" .. loading, "LevelBG", 50, ScrH() - 110, colorScheme[0]["RecvGameDataShadow"], TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 		else
 			if GetConVarNumber( "hud_showexp" ) == 0 then
-				draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "LevelBG", 50, ScrH() - 110, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "[ " .. math.Round( percent * 100, 1 ) .. "% ] Level " .. lvl, "LevelBG", 50, ScrH() - 110, colorScheme[0]["ExperiencePctTextShadow"], TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 			else
-				draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "LevelBG", 50, ScrH() - 110, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+				draw.SimpleText( "[ " .. exp .. " / " .. nextexp .. " ] Level " .. lvl, "LevelBG", 50, ScrH() - 110, colorScheme[0]["ExperienceTextShadow"], TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
 			end
 		end
 	end

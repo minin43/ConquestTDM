@@ -21,15 +21,29 @@ include( "sh_weaponbalancing.lua" )
 
 colorScheme = {
 	[0] = { --spectator/misc colors
+		--unique to spectator
 		["SpectatorText"] = Color(255, 255, 255, 255), --the "Press R" spectator text
 		["SpectatorTextShadow"] = Color(0, 0, 0, 255),
-		["IceOverlay"] = Color(255, 255, 255, 120), --not implemented until cl_hud:197 TODO is complete
+		["IceOverlay"] = Color(255, 255, 255, 120), --the overlay color when hit by Slaw. changing alpha does not change the rate of decay!
 		["GameTimerBG"] = Color(0, 0, 0, 200),
 		["GameScoreBG"] = Color(0, 0, 0, 200),
 		["GameTimerLow"] = Color(255, 0, 0, 255), --Timer text color when <60 seconds on clock
 		["GameTimer"] = Color(255, 255, 255, 200),
 		["HelpMenuShade"] = Color(0, 0, 0, 50), -- name might not be accurate, but i believe this is used to darken the "help menu" (F1/F2 tooltips in the corner).
-		["HelpMenuText"] = Color(255, 255, 255, 200)
+		["HelpMenuText"] = Color(255, 255, 255, 200),
+		["GamemodeVersionText"] = Color(255, 255, 255, 135),
+		["KillsPlaceholderText"] = Color(255, 255, 255, 177), --when on tdm mode, the color of the leading 0s before the kill counter
+		["KillsLabelText"] = Color(255, 255, 255, 100), --the word 'kills' under the number of kills in tdm mode
+		["DamageIndicatorShade"] = Color(0, 0, 0, 0), --sets the opacity of the damage indicator over time, but you could use this to color it differently i guess
+		["MaxHPText"] = Color(255, 255, 255, 255),
+		["MaxHPTextShadow"] = Color(0, 0, 0, 200),
+		["PlayerNameBG"] = Color(0, 0, 0, 255), --in the lower-left corner of the hud
+		["ExperienceBar"] = Color(0, 0, 0, 200),
+		["RecvGameDataShadow"] = Color(0, 0, 0, 255), --when stil recieving game data like level, money, etc it displays as such
+		["ExperienceTextShadow"] = Color(0, 0, 0, 255),
+		["ExperiencePctTextShadow"] = Color(0, 0, 0, 255)
+		--team vars
+		
 	} --[[,
 	--[1] = { --red
 
@@ -39,39 +53,8 @@ colorScheme = {
 	}]]
 }
 
-local groups = { --TODO: when these are rewritten please use [keys] instead of this format.
-	{ "vip", Color( 0, 200, 0 ), "VIP" },
-	{ "operator", Color( 180, 180, 180 ), "Operator" },
-	{ "vip+", Color( 0, 255, 0 ), "VIP+" },
-	{ "owner", Color( 255, 0, 0 ), "Owner" },
-	{ "creator", Color( 200, 0, 0 ), "Creator" },
-	{ "coowner", Color( 255, 0, 0 ), "Co-Owner" },
-	{ "Developer", Color( 179, 225, 0 ), "Developer" },
-	{ "superadmin", Color( 255, 0, 0 ), "Superadmin" },
-	{ "admin", Color( 220, 180, 0 ), "Admin" }
-}
-
-local ccolors = { --Same here.
-	{ "red", Color( 255, 0, 0 ) },
-	{ "blue", Color( 0, 0, 255 ) },
-	{ "yellow", Color( 255, 255, 0 ) },
-	{ "black", Color( 0, 0, 0 ) },
-	{ "white", Color( 255, 255, 255 ) },
-	{ "green", Color( 0, 255, 0 ) },
-	{ "orange", Color( 255, 120, 0 ) },
-	{ "pink", Color( 255, 0, 255 ) },
-	{ "purple", Color( 270, 0, 255 ) }
-}
-
-local ti = table.insert
-local IsValid = IsValid
-local Color = Color
-local unpack = unpack
-local white = color_white
-
 function id( steamid )
-	local x = string.gsub( steamid, ":", "x" )
-	return x
+	return string.gsub( steamid, ":", "x" )
 end
 
 function unid( steamid )

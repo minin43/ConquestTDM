@@ -11,46 +11,7 @@ GM.Votes = { } --The table that records the total tallies as well as all individ
 GM.VoteOptions = { } --The table we send to clients, contains the 6 map options
 GM.MapvoteTime = 20
 GM.RTVCooldown = 120
-GM.RTVTime = 40
-GM.MapTable = { --Controls both the map autodownload and the mapvote information
-    [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png" },
-    [ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png" },
-    [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png" },
-    [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png" },
-    [ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png" },
-    [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png" },
-    [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png" },
-    [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png" },
-    [ "de_star" ] = { id = 296000772, size = "Large", img = "vgui/maps/star.png" },
-    --[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png" }, --Fix spawns
-    [ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png" },
-    [ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png" },
-    [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png" },
-    [ "sh_smalltown_c" ] = { id = 865967849, size = "Midsize", img = "vgui/maps/smalltown.png" },
-    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Midsize", img = "vgui/maps/terminal.png" },
-    --[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png" }, --Removed while player count remains low
-    [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png" },
-    [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png" },
-    [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png" },
-    [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png" },
-    [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png" },
-    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png" },]]
-    [ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png" },
-    [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png" },
-    [ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png" },
-    [ "dm_powerstation" ] = { id = 446026985, size = "Midsize", img = "vgui/maps/powerstation.png" },
-    [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png" },
-    [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png" },
-    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" },
-    [ "dm_9rooms_b16" ] = { id = 1642035717, size = "Small", img = "vgui/maps/9rooms.png" },
-    [ "dm_avalon" ] = { id = 1669465120, size = "Midsize", img = "vgui/maps/avalon.png" },
-    [ "dm_bounce" ] = { id = 1645391828, size = "Small", img = "vgui/maps/bounce.png" },
-    [ "dm_resident" ] = { id = 1623087187, size = "Midsize", img = "vgui/maps/resident.png" },
-    [ "ttt_mw2_highrise" ] = { id = 290247692, size = "Large", img = "vgui/maps/highrise.png" },
-    [ "ttt_mw2_scrapyard" ] = { id = 294363438, size = "Large", img = "vgui/maps/scrapyard.png" }
-    --[ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" } --Seems to be crashing the server
-    --[ "" ] = { id = 0, size = "", img = "vgui/maps/.png" },
-}
+GM.RTVTime = 60
 
 local CSSMaps = { 
 	[ "cs_assault" ] = true,
@@ -195,36 +156,32 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
     if string.StartWith( stringCheck, "rtv" ) or string.StartWith( stringCheck, "!rtv" ) then
         if not timer.Exists( "RTVCooldownTimer" ) then --If the RTV isn't on cooldown (because it didn't pass)
             if not timer.Exists( "RTVTimer" ) then --If an RTV hasn't been started yet
+                if GAMEMODE.GameTime - GetGlobalInt( "RoundTime" ) > 60 then 
+                    GlobalChatPrintColor( "[RTV] Too early into the round before a Rock The Vote can be started!" )
+                    return
+                end
                 GAMEMODE.NecessaryRTVVotes = math.Round( #player.GetAll() / 2 ) or 1
                 GAMEMODE.RTVVotes = { [ id( ply:SteamID() ) ] = true }
                 GAMEMODE.TotalRTVVotes = 1
 
                 timer.Create( "RTVTimer", GAMEMODE.RTVTime, 1, function()
-                    for k, v in pairs( player.GetAll() ) do
-                        v:ChatPrint( "Not enough votes placed to Rock The Vote" )
-                    end
+                    GlobalChatPrintColor( "[RTV] Not enough votes placed to Rock The Vote" )
                     timer.Create( "RTVCooldownTimer", GAMEMODE.RTVCooldown, 1, function() end )
                     GAMEMODE.TotalRTVVotes = 0
                 end )
 
-                for k, v in pairs( player.GetAll() ) do
-                    v:ChatPrint( "Rock The Vote has been called, total votes necessary: " .. GAMEMODE.NecessaryRTVVotes )
-                    v:ChatPrint( "Time to cast your vote: " .. GAMEMODE.RTVTime .. " seconds" )
-                    v:ChatPrint( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
-                end
+                GlobalChatPrintColor( "[RTV] Rock The Vote has been called, total votes necessary: " .. GAMEMODE.NecessaryRTVVotes )
+                GlobalChatPrintColor( "[RTV] Time to cast your vote: " .. GAMEMODE.RTVTime .. " seconds" )
+                GlobalChatPrintColor( "[RTV] " .. ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
             else
                 if !GAMEMODE.RTVVotes[ id( ply:SteamID() ) ] then
                     GAMEMODE.RTVVotes[ id( ply:SteamID() ) ] = true
                     GAMEMODE.TotalRTVVotes = GAMEMODE.TotalRTVVotes + 1
                     
-                    for k, v in pairs( player.GetAll() ) do
-                        v:ChatPrint( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
-                    end
+                    GlobalChatPrintColor( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
 
                     if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
-                        for k, v in pairs( player.GetAll() ) do
-                            v:ChatPrint( "Enough votes have been cast, rocking the vote..." )
-                        end
+                        GlobalChatPrintColor( "[RTV] Enough votes have been cast, rocking the vote..." )
                         timer.Simple( 3, function()
                             hook.Run( "StartMapvote" )
                         end )
@@ -234,7 +191,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
                 end
             end
         else
-            ply:ChatPrint( "RockTheVote is on cooldown for " .. math.Round( timer.TimeLeft( "RTVCooldownTimer" ) ) .. " more second(s)" )
+            GlobalChatPrintColor( "[RTV] RockTheVote is on cooldown for " .. math.Round( timer.TimeLeft( "RTVCooldownTimer" ) ) .. " more second(s)" )
         end
         return ""
     end

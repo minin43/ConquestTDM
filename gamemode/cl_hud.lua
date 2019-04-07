@@ -65,22 +65,24 @@ net.Receive( "BroadcastCaptures", function()
 	capture = tab
 end )
 
-local hide = {
-	"CHudHealth",
-	"CHudBattery",
-	"CHudAmmo",
-	"CHudSecondaryAmmo",
-	"CHudDamageIndictator"
+local HideTheseElements = {
+	[ "CHudHealth"] =  true,
+	[ "CHudBattery"] =  true,
+	[ "CHudAmmo"] =  true,
+	[ "CHudSecondaryAmmo"] =  true,
+	[ "CHudDamageIndicator" ] = true,
+	[ "CHudCloseCaption" ] = true,
+	[ "CHudPoisonDamageIndicator" ] = true,
+	[ "CHudSquadStatus" ] = true,
+	[ "CHudTrain" ] = true,
+	[ "CHudVehicle" ] = true
 }
 
-function hidehud( name )
-	if( table.HasValue( hide, name ) ) then
+hook.Add( "HUDShouldDraw", "HideHL2Hud", function( part )
+	if HideTheseElements[ part ] then
 		return false
 	end
-	
-	return true
-end
-hook.Add( "HUDShouldDraw", "hidehud", hidehud )
+end )
 
 function surface.DrawFadingText( col, text )
 	local alpha = math.Round( 0.5 * ( 1 + math.sin( 2 * math.pi * 0.6 * CurTime() ) ), 3 )
@@ -184,9 +186,10 @@ hook.Add( "HUDPaint", "HUD_DisableChecks", function()
 	end
 end )
 
-local ice_overlay = Material( "vgui/frosted.png" )
+--[[local ice_overlay = Material( "vgui/frosted.png" )
 local slawAlphaMask = colorScheme[0]["IceOverlay"].a
 local slawDecay = 1.2
+local alphaMask = 0
 --//Runs the ice overlay when a player gets chilled by Slaw
 hook.Add( "HUDPaint", "HUD_IceEffects", function()
 	if GAMEMODE.ShouldDrawIce then
@@ -197,7 +200,20 @@ hook.Add( "HUDPaint", "HUD_IceEffects", function()
 
 	
 	surface.SetMaterial( ice_overlay )
-	surface.setDrawColor( alterColorRGB(colorScheme[0]["IceOverlay"], 0, 0, 0, alphaMask))
+	surface.SetDrawColor( alterColorRGB(colorScheme[0]["IceOverlay"], 0, 0, 0, alphaMask))
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+end )]]
+local ice_overlay, rate = Material( "vgui/frosted.png" ), 0
+--//Runs the ice overlay when a player gets chilled by Slaw
+hook.Add( "HUDPaint", "HUD_IceEffects", function()
+	if GAMEMODE.ShouldDrawIce then
+		rate = 1
+	else
+		rate = rate - 0.01
+	end
+
+	surface.SetMaterial( ice_overlay )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * rate, 0, 120 ) )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 
@@ -358,7 +374,7 @@ hook.Add( "HUDPaint", "HUD_NearMiss", function()
 	if LocalPlayer():Alive() then
 		for k, v in next, hitpos do
 			surface.SetMaterial( damage ) --*v[2]
-			surface.SetDrawColor( alterColorRGB(colorScheme[0]["DamageIndicatorShade"], 0, 0, 0, 255 * v[2])
+			surface.SetDrawColor( alterColorRGB(colorScheme[0]["DamageIndicatorShade"], 0, 0, 0, 255 * v[2]) )
 			surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() / 2, 288, 288, v[ 1 ] - 180 )
 			v[ 2 ] = v[ 2 ] - 0.1
 			if v[ 2 ] <= 0 then

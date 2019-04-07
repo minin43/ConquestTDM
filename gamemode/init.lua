@@ -3,6 +3,7 @@ GM.PerkTracking.LifelineList = { }
 GM.SavedAttachmentLists = { }
 GM.KillInfoTracking = { }
 GM.DamageSaving = { }
+GM.PreventFallDamage = false
 GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
 GM.DefaultJumpPower = 170
@@ -11,8 +12,8 @@ GM.Tickets = 200 --Number of tickets on conquest maps
 GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
 AddCSLuaFile( "cl_init.lua" )
-AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "shared.lua" )
+AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_spawnmenu.lua" )
 AddCSLuaFile( "cl_scoreboard.lua" )
 AddCSLuaFile( "cl_lvl.lua" )
@@ -49,8 +50,10 @@ include( "sv_mapvote.lua" )
 include( "sv_vendetta.lua" )
 include( "sv_teamselect.lua" )
 --include( "sv_backgroundgunfire.lua") -- TODO
+include( "sv_character_interaction.lua" )
 include( "sh_weaponbalancing.lua" )
 
+print( "check first")
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
 end
@@ -752,18 +755,22 @@ function GM:PlayerSpawn( ply )
 	ply:ConCommand( "cw_simple_telescopics 0" )
 
 	local redmodels = {
+		"models/player/group03/male_01.mdl",
+		"models/player/group03/male_02.mdl",
+		"models/player/group03/male_03.mdl",
+		"models/player/group03/male_04.mdl",
+		"models/player/group03/male_05.mdl",
 		"models/player/group03/male_06.mdl",
 		"models/player/group03/male_07.mdl",
 		"models/player/group03/male_08.mdl",
 		"models/player/group03/male_09.mdl"
 	}
     local bluemodels = {
-		"models/player/group03/male_01.mdl",
-		"models/player/group03/male_02.mdl",
-		"models/player/group03/male_03.mdl",
-		"models/player/group03/male_04.mdl",
-		"models/player/group03/male_05.mdl"
-		}
+		"models/player/combine_soldier_prisonguard.mdl",
+		"models/player/combine_super_soldier.mdl",
+		"models/player/police.mdl",
+		"models/player/combine_soldier.mdl"
+	}
 	timer.Simple(0, function()
 		if (ply:Team() == 1) then
 			local pmodel = redmodels[math.random(1, #redmodels)]
@@ -938,6 +945,7 @@ function GM:EntityTakeDamage( ply, dmginfo )
 end
 
 function GM:GetFallDamage( ply, speed )
+	if self.PreventFallDamage then return 0 end
 	speed = speed - 540
 	return ( speed * ( 100 / ( 1024 - 580 ) ) )
 end

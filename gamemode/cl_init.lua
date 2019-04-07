@@ -19,6 +19,20 @@ include( "cl_vendetta.lua" )
 include( "cl_teamselect.lua" )
 include( "sh_weaponbalancing.lua" )
 
+net.Start( "RequestTeams" )
+net.SendToServer()
+
+net.Receive( "RequestTeamsCallback", function()
+	print( "CLIENT received RequestTeamsCallback" )
+	GAMEMODE.redTeamName = net.ReadString()
+	GAMEMODE.blueTeamName = net.ReadString()
+
+	team.SetUp( 1, GAMEMODE.redTeamName, Color( 255, 0, 0 ) )
+	team.SetUp( 2, GAMEMODE.blueTeamName, Color( 0, 0, 255 ) )
+	print( "Team names: ", GAMEMODE.redTeamName, GAMEMODE.blueTeamName )
+	print( "Team colors: " ,team.GetColor(1), team.GetColor(2) )
+end )
+
 colorScheme = {
 	[0] = { --spectator/misc colors
 		["SpectatorText"] = Color(255, 255, 255, 255), --the "Press R" spectator text

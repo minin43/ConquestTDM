@@ -1,3 +1,14 @@
+function GM:PlayerDeathThink( ply )
+	if ply.NextSpawnTime and ply.NextSpawnTime > CurTime() then 
+		return
+	end
+	if ply:KeyPressed( IN_JUMP ) then
+		ply:Spawn()
+		umsg.Start( "CloseDeathScreen", ply )
+		umsg.End()
+	end
+end
+
 hook.Add( "Think", "GetWeps", function()
 	for k, v in next, player.GetAll() do
 		if IsValid( v ) and v:Alive() then

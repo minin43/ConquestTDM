@@ -1,3 +1,6 @@
+util.AddNetworkString( "Lifeline" )
+util.AddNetworkString( "EndLifeline" )
+
 hook.Add( "PostGiveLoadout", "LifelineSpawn", function( ply )
 	if CheckPerk( ply ) == "lifeline" then
 		GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus or 0
@@ -19,6 +22,23 @@ hook.Add( "PlayerDeath", "LifelineKill", function( ply, wep, att )
 			GAMEMODE.PerkTracking[ id( att:SteamID() ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( att:SteamID() ) ].LifelineBonus + 10
 			--att:SetMaxHealth( att:GetMaxHealth() + 10 ) --If this ends up being too strong, we can set the max health to be temporary
 			att:SetHealth( math.Clamp( att:Health() + 50, 0, att:GetMaxHealth() ) )
+
+			if timer.Exists( "LifelineEffectTimer" ) then
+				timer.Adjust( "LifelineEffectTimer", 2, 1, function()
+					net.Start( "EndLifeline" )
+					net.Send( att )
+					timer.Remove( "LifelineEffectTimer" )
+				end )
+			else
+				net.Start( "Lifeline" )
+				net.Send( att )
+				
+				timer.Create( "LifelineEffectTimer", 2, 1, function()
+					net.Start( "EndLifeline" )
+					net.Send( att )
+					timer.Remove( "LifelineEffectTimer" )
+				end )
+			end
 		end
 	end
 end )

@@ -12,36 +12,15 @@ Perks w/ special effects should notify the player when they're activated/used
             - Vulture -on finish
 ----
 Character Interaction Sounds
-    on HL2 maps (dm_, some gm_)
+    on HL2 maps (dm_, some gm_)                         DONE
         - Combine (can maybe use my sounds from PTP)
         - HL2 Rebels
-    on MW2 maps (ttt_mw2_ mostly)
+    on MW2 maps (ttt_mw2_ mostly)                       MISSING PLAYERMODELS, CONVERT SOUNDS
         - SEALs, Rangers, TF141
         - Spetsnaz, OpFor, Militia
-    on CS maps (de_, cs_)
+    on CS maps (de_, cs_)                               MISSING PLAYERMODELS, CONVERT SOUNDS
         - Terrorists (INS2 insurgents)
         - Counter-terrorists (INS2 security)
-    Events for voice:
-        HL2 availability:
-            - Self damaged
-            - Self death
-            - Reload
-        INS2 availability:
-            - Enemy killed
-            - Enemy spotted
-            - No ammo
-            - Self damaged
-            - Self death
-            - Point capture
-            - Reload
-            - Spawn
-        MW2 availability:
-            - Self damaged
-            - Self death
-            - Enemy killed
-            - Friendly killed
-            - Reloading
-            - Using tertiary weapon (c4, frag, flash, smoke, "grenade")
 ----
 New Loadout Menu
     Shop Menu

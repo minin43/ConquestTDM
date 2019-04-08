@@ -17,6 +17,7 @@ SCORECOUNTS = {
     FIRSTBLOOD = 50,
     DENIED = 100,
     
+    
     DOUBLE_KILL = 50,
     MULTI_KILL = 100,
     MEGA_KILL = 150,
@@ -113,10 +114,13 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --//Payback Check
     GAMEMODE.KillInfoTracking[ vicID ].LastKiller = attID
     if vicID == GAMEMODE.KillInfoTracking[ attID ].LastKiller then
-        AddNotice(att, "PAYBACK", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA)
+        AddNotice( att, "PAYBACK", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA )
         GAMEMODE.KillInfoTracking[ attID ].LastKiller = ""
         SoundToSend = "payback"
     end
+
+    if self.VendettaList[ vicID ][ attID ] > 2 then
+        AddNotice( att, "HUMILIATION", SCORECOUNTS. )
 
     --//Marksman Bonus Check
     shotDistance = math.Round(att:GetPos():Distance(vic:GetPos()) / 39) -- Converts to meters

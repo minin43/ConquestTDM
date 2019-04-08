@@ -186,34 +186,46 @@ hook.Add( "HUDPaint", "HUD_DisableChecks", function()
 	end
 end )
 
---[[local ice_overlay = Material( "vgui/frosted.png" )
-local slawAlphaMask = colorScheme[0]["IceOverlay"].a
-local slawDecay = 1.2
-local alphaMask = 0
---//Runs the ice overlay when a player gets chilled by Slaw
-hook.Add( "HUDPaint", "HUD_IceEffects", function()
-	if GAMEMODE.ShouldDrawIce then
-		slawAlphaMask = 0
+local overlayTable = {
+	slaw_overlay = Material( "vgui/frosted.png" ),
+	slaw_rate = 0,
+	lifeline_overlay = Material( "" ),
+	lifeline_rate = 0,
+	thornmail_overlay = Material( "" ),
+	thornmail_rate = 0,
+	vengeance_overlay = Material( "" ),
+	vengeance_rate = 0
+}
+--//Handles perk overlays, net.Receive's found lower in file. Surface draws are drawn in order, so important overlays should be drawn last
+hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
+	if GAMEMOD.SHouldDrawThornmail then
+		overlayTable.thornmail_rate = 1
 	else
-		alphaMask = alphaMask - slawDecay
+		overlayTable.thornmail_rate = overlayTable.thornmail_rate - 0.01
 	end
 
-	
-	surface.SetMaterial( ice_overlay )
-	surface.SetDrawColor( alterColorRGB(colorScheme[0]["IceOverlay"], 0, 0, 0, alphaMask))
+	surface.SetMaterial( overlayTable.thornmail_overlay )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 200 * overlayTable.thornmail_rate, 0, 200 ) )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
-end )]]
-local ice_overlay, rate = Material( "vgui/frosted.png" ), 0
---//Runs the ice overlay when a player gets chilled by Slaw
-hook.Add( "HUDPaint", "HUD_IceEffects", function()
-	if GAMEMODE.ShouldDrawIce then
-		rate = 1
+
+	if GAMEMODE.ShouldDrawLifeline then
+		overlayTable.lifeline_rate = overlayTable.lifeline_rate + 0.01
 	else
-		rate = rate - 0.01
+		overlayTable.lifeline_rate = overlayTable.lifeline_rate - 0.01
 	end
 
-	surface.SetMaterial( ice_overlay )
-	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * rate, 0, 120 ) )
+	surface.SetMaterial( overlayTable.lifeline_overlay )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * overlayTable.lifeline_rate, 0, 120 ) )
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+
+	if GAMEMODE.ShouldDrawIce then
+		overlayTable.slaw_rate = 1
+	else
+		overlayTable.slaw_rate = overlayTable.slaw_rate - 0.01
+	end
+
+	surface.SetMaterial( overlayTable.slaw_overlay )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * overlayTable.slaw_rate, 0, 120 ) )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 
@@ -379,7 +391,7 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 
 end )
 
---Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
+--//Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
 hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	local teamcolor = team.GetColor( LocalPlayer():Team() )
 	local n = 11
@@ -492,7 +504,7 @@ hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	end
 end )
 
---Draws all the flag information
+--//Draws all the flag information
 hook.Add( "HUDPaint", "HUD_Flags", function()
 	if GetGlobalBool( "ticketmode" ) == true then
 
@@ -689,6 +701,14 @@ end )
 
 net.Receive( "EndIceScreen", function()
 	GAMEMODE.ShouldDrawIce = false
+end )
+
+net.Receive( "Lifeline", function()
+	GAMEMODE.ShouldDrawLifeline = true
+end )
+
+net.Receive( "EndLifeline", function()
+	GAMEMODE.ShouldDrawLifeline = false
 end )
 
 --Grenade indicator

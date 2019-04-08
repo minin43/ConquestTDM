@@ -136,8 +136,8 @@ function alterColorHSV( col, hDelta, sDelta, vDelta, aDelta ) --takes a Color as
 	--this can be fixed if needed but it probably doesn't matter
 	local h,s,v = ColorToHSV(col)
 	return HSVToColor((h + hDelta) % 360,
-					 math.Clamp(s, 0, 1),
-					 math.Clamp(v, 0, 1))
+					 math.Clamp(s + sDelta, 0, 1),
+					 math.Clamp(v + vDelta, 0, 1))
 end
 
 function id( steamid )

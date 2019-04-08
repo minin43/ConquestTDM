@@ -332,23 +332,6 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	surface.SetFont( "Info" )
 	local info = "[F1] Choose Team | [F2] Choose Loadout"
 	local infowidth, infoheight = surface.GetTextSize( info )
-
-	--[[Round timer (DEPRECATED 4/02, remove after next release)
-	local _time = GetGlobalInt( "RoundTime" )
-	local col = Color( 255, 255, 255, 255 )
-	if _time <= 60 then
-		col = Color( math.abs( math.sin( RealTime() * ( 13 - ( _time / 5 ) ) ) * 205 ) + 50, 0, 0, 255 )
-	end
-	local time = string.FormattedTime( tostring( _time ) )
-	time.m = tostring( time.m )
-	time.s = tostring( time.s )
-	if #time.m == 1 then
-		time.m = "0" .. time.m
-	end
-	if #time.s == 1 then
-		time.s = "0" .. time.s
-	end
-	]]
 	
 	--Creates the boxes in the top left hand corner for F1 and F2 commands
 	surface.SetDrawColor( GAMEMODE.CurrentScheme ) 
@@ -394,52 +377,6 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 54, ScrH() - 65, colorScheme[0]["MaxHPTextShadow"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 56, ScrH() - 65, colorScheme[0]["MaxHPText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 
-	--//Ammo information, currently disabled in favor of CW2.0's floating text information
-	-- DEPRECATED 04/06, remove after next release
-	--[[if LocalPlayer():GetActiveWeapon() ~= NULL then
-		local activewep = LocalPlayer():GetActiveWeapon()
-		local primaryammo = activewep:GetPrimaryAmmoType()
-		local ammocount = LocalPlayer():GetAmmoCount( primaryammo )
-		local c1 = activewep:Clip1()
-		local _c1, _ammocount
-
-		if( activewep ~= NULL and primaryammo ~= NULL and ammocount > -1 ) then
-			if( c1 < 0 ) then
-				c1 = "---"
-			end
-			if( ammocount <= 0 ) then
-				ammocount = "---"
-			end
-			
-			if string.len( tostring( c1 ) ) == 2 then
-				_c1 = "0" .. c1
-			elseif string.len( tostring( c1 ) ) == 1 then
-				_c1 = "00" .. c1
-			else
-				_c1 = ""
-			end
-			--Ammo count on right side of screen, keeping just in case we ever need it
-			draw.SimpleText( _c1, "PrimaryAmmo", ScrW() - 290, ScrH() - 110, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( c1, "PrimaryAmmo", ScrW() - 290, ScrH() - 110, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-
-			draw.SimpleText( ammocount, "SecondaryAmmoBG", ScrW() - 80, ScrH() - 130, Color( 0, 0, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-			if string.len( tostring( ammocount ) ) == 2 then
-				_ammocount = "0" .. ammocount
-			elseif string.len( tostring( ammocount ) ) == 1 then
-				_ammocount = "00" .. ammocount
-			else
-				_ammocount = ""
-			end
-			draw.SimpleText( _ammocount, "SecondaryAmmo", ScrW() - 220, ScrH() - 100, Color( 0, 0, 0, 120 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-			draw.SimpleText( ammocount, "SecondaryAmmo", ScrW() - 220, ScrH() - 100, Color( 255, 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-
-			surface.SetFont( "AltAmmo" )
-			surface.SetTextColor( Color( 255, 255, 255, 200 ) )
-			surface.SetTextPos( ScrW() - 285, ScrH() - 155 )
-			surface.DrawText( "/" )
-			
-		end
-	end]]
 end )
 
 --Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy

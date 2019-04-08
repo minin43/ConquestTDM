@@ -319,7 +319,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 		if bluekills < 10 then
 			draw.SimpleText( "00", "Time", ScrW() / 2 + 100, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills < 100 then
-			draw.SimpleText( "0", "Time", ScrW() / 2 + 115, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "0", "Time", ScrW() / 2 + 85, 9, colorScheme[0]["KillsPlaceholderText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		elseif bluekills > 999 then
 			draw.SimpleText( ">1k", "Time", ScrW() / 2 + 80, 9, Color( 0, 0, 255, 177 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 			bluekills = ""

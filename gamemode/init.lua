@@ -480,17 +480,6 @@ function GM:PlayerShouldTakeDamage( ply, attacker )
 	return true
 end
 
-function GM:PlayerDeathThink( ply )
-	if ply.NextSpawnTime and ply.NextSpawnTime > CurTime() then 
-		return
-	end
-	if ply:KeyPressed( IN_JUMP ) then
-		ply:Spawn()
-		umsg.Start( "CloseDeathScreen", ply )
-		umsg.End()
-	end
-end
-
 hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
 	local tab = {
 		"how do i switch weapons",
@@ -919,6 +908,9 @@ function isPlayerMoving( ply )
 end
 
 function GM:EntityTakeDamage( ply, dmginfo )
+	--[[if dmginfo:IsBulletDamage() and ( ply:Health() - dmginfo:GetDamage() > 0 ) then
+		dmginfo:SetDamageType( DMG_GENERIC )
+	end]]
 	if( ply.spawning ) then
 		local dmg = dmginfo:GetDamage()
 		if dmginfo:GetAttacker() and dmginfo:GetAttacker() ~= NULL and dmginfo:GetAttacker():IsPlayer() and dmginfo:GetAttacker():Team() ~= ply:Team() then

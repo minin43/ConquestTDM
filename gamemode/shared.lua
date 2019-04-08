@@ -30,7 +30,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png", type = "ins2" },
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png", type = "ins2" },
     [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png", type = "ins2" },]]
-    [ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" },
+    --[ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" }, --Seems to be crashing clients
     [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png", type = "hl2" },
     [ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png", type = "hl2" },
     [ "dm_powerstation" ] = { id = 446026985, size = "Midsize", img = "vgui/maps/powerstation.png", type = "hl2" },

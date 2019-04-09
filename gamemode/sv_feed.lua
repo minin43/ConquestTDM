@@ -16,7 +16,8 @@ SCORECOUNTS = {
     LONGSHOT = 25,
     FIRSTBLOOD = 50,
     DENIED = 100,
-    
+    VENDETTA = 50
+    VENDETTA_HUMILIATION = 200,
     
     DOUBLE_KILL = 50,
     MULTI_KILL = 100,
@@ -119,8 +120,14 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         SoundToSend = "payback"
     end
 
-    if self.VendettaList[ vicID ][ attID ] > 2 then
-        AddNotice( att, "HUMILIATION", SCORECOUNTS. )
+    --//Vendetta Checks
+    if self.VendettaList[ vicID ][ attID ] > 2 then --//When you're their vendetta, and kill them anyway
+        AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
+        SoundToSend = "eradication"
+    elseif self.VendettaList[ attID ][ vicID ] > 2 then --//When they're your vendetta
+        AddNotice( att, "RETRIBUTION", SCORECOUNTS.VENDETTA, NOTICETYPES.EXTRA )
+        SoundToSend = "retribution"
+    end
 
     --//Marksman Bonus Check
     shotDistance = math.Round(att:GetPos():Distance(vic:GetPos()) / 39) -- Converts to meters

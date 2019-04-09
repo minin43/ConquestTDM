@@ -156,7 +156,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
     if string.StartWith( stringCheck, "rtv" ) or string.StartWith( stringCheck, "!rtv" ) then
         if not timer.Exists( "RTVCooldownTimer" ) then --If the RTV isn't on cooldown (because it didn't pass)
             if not timer.Exists( "RTVTimer" ) then --If an RTV hasn't been started yet
-                if GAMEMODE.GameTime - GetGlobalInt( "RoundTime" ) > 60 then 
+                if GAMEMODE.GameTime - GetGlobalInt( "RoundTime" ) < 60 then 
                     GlobalChatPrintColor( "[RTV] Too early into the round before a Rock The Vote can be started!" )
                     return
                 end

@@ -65,6 +65,7 @@ include( "cl_mapvote_setup.lua" )
 include( "cl_stattrack.lua" )
 include( "cl_vendetta.lua" )
 include( "cl_teamselect.lua" )
+include( "cl_character_interaction.lua" )
 include( "sh_weaponbalancing.lua" )
 
 hook.Add( "Think", "SetColors", function()

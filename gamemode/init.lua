@@ -31,6 +31,7 @@ AddCSLuaFile( "cl_mapvote_setup.lua" )
 AddCSLuaFile( "cl_stattrack.lua" )
 AddCSLuaFile( "cl_vendetta.lua" )
 AddCSLuaFile( "cl_teamselect.lua" )
+AddCSLuaFile( "cl_character_interaction.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -785,5 +786,12 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
 				self.CWAttachments[v] = true
 			end
 		end
+	end
+end )
+
+hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )
+	if ply:IsValid() and ply:IsPlayer() and dmginfo:IsBulletDamage() then
+		--local NewDamageType = DamageInfo()
+		--NewDamageType:SetDamageType( )
 	end
 end )

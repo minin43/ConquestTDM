@@ -172,7 +172,7 @@ function PlayerClass:StopSpawnProtection()
 	end
 end
 
-function GM:EntityTakeDamage( ply, dmginfo )
+hook.Add( "EntityTakeDamage", "SpawnProtection", function( ply, dmginfo )
 	if( ply.SpawnProtected ) then
 		if dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():IsPlayer() and dmginfo:GetAttacker():Team() != ply:Team() then
 			dmginfo:GetAttacker():ChatPrint( "Don't shoot people in spawn protection!" )
@@ -184,7 +184,7 @@ function GM:EntityTakeDamage( ply, dmginfo )
 		net.Send( ply )
 		dmginfo:ScaleDamage( 0.1 ) --// 90% damage reduced
 
-		return dmginfo
+		--return dmginfo
 	end
 	
 	--//This eliminated spawn protection when the player began shooting, but the player was never notified of this; I'm eliminating the mechanic entirely
@@ -200,8 +200,8 @@ function GM:EntityTakeDamage( ply, dmginfo )
 		end
 	end
 	
-    return dmginfo
-end
+    --return dmginfo
+end )
 
 hook.Add( "Think", "DisableProtectionByDistance", function()
 	local distance = 400

@@ -219,6 +219,7 @@ hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
 			wepclass = att:GetActiveWeapon():GetClass()
 		end
 
+		print("running UdpateVendetta")
 		GAMEMODE:UpdateVendetta( ply, att )
 
 		print("Sending client GetCurrentAttachments", ply )

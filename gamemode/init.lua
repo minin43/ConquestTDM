@@ -42,7 +42,7 @@ include( "sv_money.lua" )
 include( "sv_feed.lua" )
 include( "sv_flags.lua" )
 include( "sv_deathscreen.lua" )
-include( "sv_customspawns.lua" )
+include( "sv_spawning.lua" )
 include( "sv_leaderboards.lua" )
 include( "sv_teambalance.lua" )
 include( "sv_playercards.lua" )
@@ -51,9 +51,9 @@ include( "sv_vendetta.lua" )
 include( "sv_teamselect.lua" )
 --include( "sv_backgroundgunfire.lua") -- TODO
 include( "sv_character_interaction.lua" )
+include( "sv_spectator.lua" )
 include( "sh_weaponbalancing.lua" )
 
-print( "check first")
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
 end
@@ -64,13 +64,25 @@ function _Ply:AddScore( score )
 	self:SetNWInt( "tdm_score", num + score )
 end
 
+function _Ply:ChatPrintColor( ... )
+	local args = { ... }
+	local tab = {}
+
+	for k, v in pairs( args ) do
+		tab[ #tab + 1 ] = v
+	end
+
+	net.Start( "PlayerChatColor" )
+		net.WriteTable( tab )
+	net.Send( self )
+end
+
 local _flags = file.Find( "flags/*", "GAME" )
 for k, v in next, _flags do
 	resource.AddSingleFile( "flags/" .. v )
 end
 
 util.AddNetworkString( "tdm_loadout" )
-util.AddNetworkString( "tdm_spawnoverlay" )
 util.AddNetworkString( "tdm_deathnotice" )
 util.AddNetworkString( "tdm_killcountnotice" )
 util.AddNetworkString( "DoWin" )
@@ -116,20 +128,6 @@ function GlobalChatPrintColor( ... )
 	net.Start( "GlobalChatColor" )
 		net.WriteTable( tab )
 	net.Broadcast()
-end
-
-local PlayerClass = FindMetaTable( "Player" )
-function PlayerClass:ChatPrintColor( ... )
-	local args = { ... }
-	local tab = {}
-
-	for k, v in pairs( args ) do
-		tab[ #tab + 1 ] = v
-	end
-
-	net.Start( "PlayerChatColor" )
-		net.WriteTable( tab )
-	net.Send( self )
 end
 
 function GM:DoRedWin()
@@ -311,26 +309,6 @@ function GM:Initialize()
 	end )
 end
 
-function GM:Think()
-	if GetGlobalBool( "RoundFinished" ) then
-		/*
-		for k, v in next, player.GetAll() do
-			v:Freeze( true )
-		end
-		*/
-		if not GetConVar( "sv_alltalk" ):GetInt() == 3 then
-			game.ConsoleCommand( "sv_alltalk 3\n" )
-		end
-	else
-		/*
-		for k, v in next, player.GetAll() do
-			v:Freeze( false )
-		end
-		*/
-		return
-	end
-end
-
 function GM:PlayerConnect( name, ip )
 	for k, v in pairs( player.GetAll() ) do
 		v:ChatPrint( "Player " .. name .. " has joined the game." )
@@ -480,33 +458,6 @@ function GM:PlayerShouldTakeDamage( ply, attacker )
 	return true
 end
 
-hook.Add( "PlayerSay", "tdm_say", function( ply, text, bTeam )
-	local tab = {
-		"how do i switch weapons",
-		"switch weapons",
-		"change weapons",
-		"change loadout",
-		"switch loadout",
-		"different weapons",
-		"how do i change weapons"
-	}		
-		
-	if( text:lower() == "!team" ) then
-		ply:ConCommand( "tdm_spawnmenu" )
-	elseif( text:lower() == "!loadout" ) then
-		ply:ConCommand( "tdm_loadout" )
-		umsg.Start( "ClearTable", ply )
-		umsg.End()
-	end
-	for k, v in next, tab do
-		if string.find( text:lower(), v ) then
-			GlobalChatPrintColor( Color( 255, 255, 255 ), "To change your loadout, press F2." )
-			break
-		end
-	end	
-	return
-end )
-
 local col = {}
 col[0] = Vector( 0, 0, 0 )
 col[1] = Vector( 1.0, .2, .2 )
@@ -553,6 +504,12 @@ end )
 function giveLoadout( ply )
 	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
 	ply:StripWeapons()
+
+	if GetGlobalBool( "RoundFinished" ) then
+		ply:Give( "weapon_crowbar" )
+		return
+	end
+
 	local l = load[ply]
 	if( l ) then
 		ply:Give( l.primary )
@@ -600,106 +557,6 @@ function giveLoadout( ply )
 	hook.Call( "PostGiveLoadout", nil, ply )
 end
 
-local function GetValid()
-	local validEnts = {}
-	for k, v in next, player.GetAll() do
-		if IsValid( v ) and v:Team() and v:Team() ~= 0 then
-			table.insert( validEnts, v )
-		end
-	end
-	return validEnts
-end
-
-function SetupSpectator( ply )
-	ply:StripWeapons()
-	local ent = GetValid()
-	if #ent == 0 then
-		ply:Spectate( OBS_MODE_ROAMING )
-		return
-	end
-	ply:SpectateEntity( table.Random( ent ) )
-	ply:Spectate( OBS_MODE_IN_EYE )
-end
-
-local function NextSpec( ply )
-	if ply:Team() == 0 then
-		local specs = GetValid()
-		if not ply:GetObserverTarget() or ply:GetObserverTarget() == NULL then
-			return
-		end
-		local pos = table.KeyFromValue( specs, ply:GetObserverTarget() )
-		if not pos then
-			return
-		end
-		local newpos
-		if pos + 1 > #specs then
-			newpos = table.GetFirstKey( specs )
-		else
-			newpos = pos + 1
-		end
-		return specs[ newpos ]
-	end
-end
-
-local function PrevSpec( ply )
-	if ply:Team() == 0 then
-		local specs = GetValid()
-		if not ply:GetObserverTarget() or ply:GetObserverTarget() == NULL then
-			return
-		end
-		local pos = table.KeyFromValue( specs, ply:GetObserverTarget() )
-		if not pos then
-			return
-		end
-		local newpos
-		if pos - 1 < 1 then
-			newpos = table.GetLastKey( specs )
-		else
-			newpos = pos - 1
-		end
-		return specs[ newpos ]
-	end
-end
-
-hook.Add( "PlayerButtonDown", "SpectatorControls", function( ply, key )
-	if ply:Team() == 0 then
-		if key == KEY_R then
-			if ply:GetObserverMode() == OBS_MODE_IN_EYE then
-				ply:Spectate( OBS_MODE_CHASE )
-			elseif ply:GetObserverMode() == OBS_MODE_CHASE then
-				ply:Spectate( OBS_MODE_ROAMING )
-			elseif ply:GetObserverMode() == OBS_MODE_ROAMING then
-				ply:Spectate( OBS_MODE_IN_EYE )
-			end
-		elseif key == MOUSE_LEFT and ply:GetObserverMode() ~= OBS_MODE_ROAMING then
-			if not ply:GetObserverTarget() or ply:GetObserverTarget() == ply then
-				ply:SpectateEntity( GetValid()[ 1 ] )
-			else
-				ply:SpectateEntity( PrevSpec( ply ) )
-			end
-		elseif key == MOUSE_RIGHT and ply:GetObserverMode() ~= OBS_MODE_ROAMING then
-			if not ply:GetObserverTarget() or ply:GetObserverTarget() == ply then
-				ply:SpectateEntity( GetValid()[ 1 ] )
-			else
-				ply:SpectateEntity( NextSpec( ply ) )
-			end
-		end		
-	end
-end )
-
-hook.Add( "PlayerDisconnected", "Spec_DC", function( ply )
-	for k, v in next, player.GetAll() do
-		if v:Team() == 0 then
-			if v:GetObserverTarget() == ply then
-				v:SpectateEntity( NextSpec( v ) )
-				if v:GetObserverTarget() == v or v:GetObserverTarget() == nil then
-					v:Spectate( OBS_MODE_ROAMING )
-				end
-			end
-		end
-	end
-end )
-
 local dontgive = {
 	"fas2_ammobox",
 	"fast2_ifak",
@@ -724,9 +581,6 @@ function GM:PlayerSpawn( ply )
 		return
 	end
 	
-	ply:AllowFlashlight( true )
-	ply.spawning = true
-	
 	if ply:IsPlayer() and load[ ply ] ~= nil then
 		if( load[ply].perk ~= nil ) then
 			ply.perk = true
@@ -741,6 +595,9 @@ function GM:PlayerSpawn( ply )
 	ply:SetRunSpeed( GAMEMODE.DefaultRunSpeed )
 	ply:SetJumpPower( GAMEMODE.DefaultJumpPower )
 
+	ply:AllowFlashlight( true )
+	ply:StartSpawnProtection( 5 ) --//Moved to sv_customspawns
+	ply:SetNoCollideWithTeammates( true )
 	ply:ConCommand( "cw_simple_telescopics 0" )
 
 	local redmodels = {
@@ -797,29 +654,6 @@ function GM:PlayerSpawn( ply )
 			ply:GiveAmmo( 2, "40MM", true )
 		end
 	end )
-	
-	ply:SetColor( Color( 255, 255, 255, 200 ) )
-	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
-	ply:SetNoCollideWithTeammates( true )
-	net.Start( "tdm_spawnoverlay" )
-		net.WriteString( "" )
-	net.Send( ply )
-	
-	timer.Simple( 5, function()
-		if ply and ply:IsValid() then
-			ply:SetMaterial( "" )
-			ply:SetColor( Color( 255, 255, 255, 255 ) )
-			ply.spawning = false
-		end
-	end )
-	
-	if GetGlobalBool( "RoundFinished" ) then
-		timer.Simple( 0, function()
-			--ply:GodEnable()
-			ply:StripWeapons()
-			ply:Give( "weapon_crowbar" )
-		end )
-	end
 
 	net.Start( "StartAttTrack" )
 	net.Send( ply )
@@ -897,43 +731,6 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 			dmginfo:ScaleDamage( 1 )
 		end
 	end
-end
-
-function isPlayerMoving( ply )
-	if ply:KeyDown( IN_FORWARD ) or ply:KeyDown( IN_LEFT ) or ply:KeyDown( IN_RIGHT ) or ply:KeyDown( IN_BACK ) then
-		return true
-	end
-	
-	return false
-end
-
-function GM:EntityTakeDamage( ply, dmginfo )
-	--[[if dmginfo:IsBulletDamage() and ( ply:Health() - dmginfo:GetDamage() > 0 ) then
-		dmginfo:SetDamageType( DMG_GENERIC )
-	end]]
-	if( ply.spawning ) then
-		local dmg = dmginfo:GetDamage()
-		if dmginfo:GetAttacker() and dmginfo:GetAttacker() ~= NULL and dmginfo:GetAttacker():IsPlayer() and dmginfo:GetAttacker():Team() ~= ply:Team() then
-			dmginfo:GetAttacker():TakeDamage( dmg )
-			dmginfo:GetAttacker():ChatPrint( "Don't shoot people in spawn protection!" )
-		end
-		dmginfo:ScaleDamage( 0 )
-		return dmginfo
-	end
-	
-	if( dmginfo:GetAttacker():IsPlayer() and dmginfo:GetAttacker().spawning ) then
-		dmginfo:GetAttacker().spawning = false
-		--dmginfo:ScaleDamage( 0 )
-		return dmginfo
-	end
-	
-	if( GetConVarNumber( "tdm_ffa" ) == 1 ) then
-		if( not dmginfo:IsExplosionDamage() ) then
-			dmginfo:ScaleDamage( 1 )
-		end
-	end
-	
-    return dmginfo
 end
 
 function GM:GetFallDamage( ply, speed )

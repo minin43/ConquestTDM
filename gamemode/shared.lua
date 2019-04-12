@@ -64,7 +64,7 @@ if SERVER then
 	resource.AddWorkshop( "349050451" ) --CW2.0 Base
 	resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
 	resource.AddWorkshop( "1386774614" ) --CTDM Files
-	resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises
+	--resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises
 	resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
 	resource.AddWorkshop( "1698026320" ) --The 6 new guns
 	resource.AddWorkshop( "934839887" ) --The L96

@@ -194,19 +194,20 @@ local overlayTable = {
 	thornmail_overlay = Material( "" ),
 	thornmail_rate = 0,
 	vengeance_overlay = Material( "" ),
-	vengeance_rate = 0
+	vengeance_rate = 0,
+	spawn_rate = 0
 }
 --//Handles perk overlays, net.Receive's found lower in file. Surface draws are drawn in order, so important overlays should be drawn last
 hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
-	if GAMEMOD.SHouldDrawThornmail then
+	if GAMEMODE.ShouldDrawThornmail then
 		overlayTable.thornmail_rate = 1
 	else
 		overlayTable.thornmail_rate = overlayTable.thornmail_rate - 0.01
 	end
 
-	surface.SetMaterial( overlayTable.thornmail_overlay )
+	--surface.SetMaterial( overlayTable.thornmail_overlay )
 	surface.SetDrawColor( 255, 255, 255, math.Clamp( 200 * overlayTable.thornmail_rate, 0, 200 ) )
-	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+	--surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 
 	if GAMEMODE.ShouldDrawLifeline then
 		overlayTable.lifeline_rate = overlayTable.lifeline_rate + 0.01
@@ -214,9 +215,9 @@ hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
 		overlayTable.lifeline_rate = overlayTable.lifeline_rate - 0.01
 	end
 
-	surface.SetMaterial( overlayTable.lifeline_overlay )
+	--surface.SetMaterial( overlayTable.lifeline_overlay )
 	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * overlayTable.lifeline_rate, 0, 120 ) )
-	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+	--surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 
 	if GAMEMODE.ShouldDrawIce then
 		overlayTable.slaw_rate = 1
@@ -229,8 +230,24 @@ hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 
-local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
+hook.Add( "HUDPaint", "HUD_SpawnOverlay", function()
+	if GAMEMODE.ShouldDrawProtection then 
+		overlayTable.spawn_rate = 1
+	else
+		overlayTable.spawn_rate = overlayTable.spawn_rate - 0.02
+	end
+
+	surface.SetFont( "BigNotify" )
+	local tw, th = surface.GetTextSize( "[Spawn Protection Enabled]" )
+
+	surface.SetTextColor( 255, 255, 255, spawn_rate * 255 )
+	surface.SetTextPos( ( ScrW() / 2 ) - ( tw / 2 ), ScrH() - ( ScrH() / 1.1 ) )
+	surface.DrawText( "[Spawn Protection Enabled]" )
+end )
+
+
 --Newly improved low-health HUD effect - should be less intrusive and more immersive
+local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
 hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	if !LocalPlayer():Alive() then LocalPlayer():SetDSP( 0, false ) return end
 	local EffectDecay = 200 --Time before effect begins to grayscale
@@ -344,23 +361,6 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	surface.SetFont( "Info" )
 	local info = "[F1] Choose Team | [F2] Choose Loadout"
 	local infowidth, infoheight = surface.GetTextSize( info )
-
-	--[[Round timer (DEPRECATED 4/02, remove after next release)
-	local _time = GetGlobalInt( "RoundTime" )
-	local col = Color( 255, 255, 255, 255 )
-	if _time <= 60 then
-		col = Color( math.abs( math.sin( RealTime() * ( 13 - ( _time / 5 ) ) ) * 205 ) + 50, 0, 0, 255 )
-	end
-	local time = string.FormattedTime( tostring( _time ) )
-	time.m = tostring( time.m )
-	time.s = tostring( time.s )
-	if #time.m == 1 then
-		time.m = "0" .. time.m
-	end
-	if #time.s == 1 then
-		time.s = "0" .. time.s
-	end
-	]]
 	
 	--Creates the boxes in the top left hand corner for F1 and F2 commands
 	surface.SetDrawColor( GAMEMODE.CurrentScheme ) 
@@ -407,7 +407,6 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 56, ScrH() - 65, colorScheme[0]["MaxHPText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 
 	--//Ammo information, currently disabled in favor of CW2.0's floating text information
-	-- DEPRECATED 04/06, remove after next release
 	--[[if LocalPlayer():GetActiveWeapon() ~= NULL then
 		local activewep = LocalPlayer():GetActiveWeapon()
 		local primaryammo = activewep:GetPrimaryAmmoType()
@@ -567,7 +566,7 @@ hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	end
 end )
 
---//Draws all the flag information
+--//Draws all the flag information - Still Whuppo's code, still very messy
 hook.Add( "HUDPaint", "HUD_Flags", function()
 	if GetGlobalBool( "ticketmode" ) == true then
 
@@ -665,6 +664,7 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 	end
 end )
 
+
 local function GetPrintName( wep )
     if wep == nil || wep == NULL then return end
     if weapons.Get(wep) == nil then return "" end 
@@ -758,6 +758,14 @@ net.Receive( "DoTie", function()
 	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
 end )
 
+net.Receive( "StartSpawnOverlay", function()
+	GAMEMODE.ShouldDrawProtection = true
+end )
+
+net.Receive( "StopSpawnOverlay", function()
+	GAMEMODE.ShouldDrawProtection = false
+end )
+
 net.Receive( "IceScreen", function()
 	GAMEMODE.ShouldDrawIce = true
 end )
@@ -797,34 +805,6 @@ local function nade()
 	end
 end
 hook.Add( "HUDPaint", "nade", nade )
-
-net.Receive( "tdm_spawnoverlay", function( len, ply )
-
-	alpha = 255
-	
-	local time = CurTime()		
-	hook.Add( "HUDPaint", "spawno", function()
-		surface.SetDrawColor( Color( 0, 0, 0, alpha ) )
-		surface.DrawRect( 0, 0, ScrW(), ScrH() )
-		
-		surface.SetFont( "BigNotify" )
-		local tw, th = surface.GetTextSize( "[Spawn Protection Enabled]" )
-		surface.SetTextColor( 255, 255, 255, alpha > 100 and alpha or 100 )
-		surface.SetTextPos( ( ScrW() / 2 ) - ( tw / 2 ), ScrH() - ( ScrH() / 1.1 ) )
-		surface.DrawText( "[Spawn Protection Enabled]" )
-		if CurTime() - time >= 0.0162 then
-			if alpha - 1 >= 0 then
-				alpha = alpha - 1
-			end
-			time = CurTime()
-		end		
-	end )
-
-	timer.Simple( 5, function()
-		hook.Remove( "HUDPaint", "spawno" )
-		timer.Destroy( "spawning" )
-	end )
-end )
 
 hook.Add( "PostPlayerDraw", "hud_icon", function( ply )
 	if !IsValid( ply ) then return end

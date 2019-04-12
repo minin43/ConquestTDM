@@ -220,7 +220,7 @@ function GM:DoPlayerSound( ply, sound )
         timer.Create( id( ply:SteamID() ) .. "_VoiceTimer", 5, 1, function() --[[preventing more calls]] end )
         self.PlayedSounds[ id( ply:SteamID() ) ][ series ][ randomNumberFromSounds ]:SetSoundLevel( 75 )
     else
-        self.PlayedSounds[ id( ply:SteamID() ) ][ series ][ randomNumberFromSounds ]:SetSoundLevel( 40 )
+        self.PlayedSounds[ id( ply:SteamID() ) ][ series ][ randomNumberFromSounds ]:SetSoundLevel( 30 )
     end
 
     self.PlayedSounds[ id( ply:SteamID() ) ][ series ][ randomNumberFromSounds ]:Play()

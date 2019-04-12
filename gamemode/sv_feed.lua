@@ -16,7 +16,7 @@ SCORECOUNTS = {
     LONGSHOT = 25,
     FIRSTBLOOD = 50,
     DENIED = 100,
-    VENDETTA = 50
+    VENDETTA = 50,
     VENDETTA_HUMILIATION = 200,
     
     DOUBLE_KILL = 50,
@@ -120,11 +120,12 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         SoundToSend = "payback"
     end
 
+    print("vendettaList being checked...")
     --//Vendetta Checks
-    if self.VendettaList[ vicID ][ attID ] > 2 then --//When you're their vendetta, and kill them anyway
+    if GAMEMODE.VendettaList[ vicID ][ attID ] > 3 then --//When you're their vendetta, and kill them anyway
         AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
         SoundToSend = "eradication"
-    elseif self.VendettaList[ attID ][ vicID ] > 2 then --//When they're your vendetta
+    elseif GAMEMODE.VendettaList[ attID ][ vicID ] > 2 then --//When they're your vendetta
         AddNotice( att, "RETRIBUTION", SCORECOUNTS.VENDETTA, NOTICETYPES.EXTRA )
         SoundToSend = "retribution"
     end

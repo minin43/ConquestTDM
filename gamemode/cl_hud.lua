@@ -746,18 +746,6 @@ net.Receive( "tdm_killcountnotice", function()
 	end
 end )
 
-net.Receive( "DoWin", function()
-	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
-end )
-
-net.Receive( "DoLose", function()
-	surface.PlaySound( "ui/MP_Music_Losing_End_01_Wave.mp3" )
-end )
-
-net.Receive( "DoTie", function()
-	surface.PlaySound( "ui/MP_Music_Winning_End_01_Wave3.mp3" )
-end )
-
 net.Receive( "StartSpawnOverlay", function()
 	GAMEMODE.ShouldDrawProtection = true
 end )

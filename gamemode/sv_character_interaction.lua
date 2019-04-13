@@ -1,3 +1,5 @@
+util.AddNetworkString( "SetInteractionGroup" )
+
 GM.PlayedSounds = {} --//Since I use CSoundPatch for playing sounds, each sound per player has to be unique, so we need to set them all up here
 GM.InteractionList = {} --//This table is used to store a player's voice series (hl2 rebebl, ins2 security, mw2 rangers, etc)
 GM.ValidModels = { --//This table is used to check if a player's model is valid for the interaction voices, and which voice series it's from
@@ -235,14 +237,15 @@ end
 
 hook.Add( "PlayerSpawn", "SetInteractionAvailability", function( ply )
     timer.Simple( 0.5, function()
-        --print( ply:GetModel() )
         if GAMEMODE.ValidModels[ ply:GetModel() ] then
             GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
+            net.Start( "SetInteractionGroup" )
+                net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] )
+            net.Send( ply )
         end
 
         if ply:Team() != 1 and ply:Team() != 2 then return end
         timer.Simple( math.random(), function()
-            --print("SpawnMessage")
             GAMEMODE:DoPlayerSound( ply, "selfSpawn" )
         end )
     end )

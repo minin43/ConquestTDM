@@ -3,6 +3,7 @@ GM.PerkTracking.LifelineList = { }
 GM.SavedAttachmentLists = { }
 GM.KillInfoTracking = { }
 GM.DamageSaving = { }
+GM.SpawnSoundsTracking = { }
 GM.PreventFallDamage = false
 GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
@@ -557,6 +558,20 @@ function giveLoadout( ply )
 	end
 	hook.Call( "PostGiveLoadout", nil, ply )
 end
+
+hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
+	if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] then
+		if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] != ply:Team() then
+			net.Start( "DoStart" )
+			net.Send( ply 
+			GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
+		end
+	else
+		net.Start( "DoStart" )
+		net.Send( ply )
+		GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
+	end
+end )
 
 local dontgive = {
 	"fas2_ammobox",

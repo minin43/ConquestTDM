@@ -1749,6 +1749,10 @@ end
 surface.CreateFont( "ExoTitleFont" , { font = "Exo 2", size = 20, weight = 400 } )
 surface.CreateFont( "ExoInfoFont", { font = "Exo 2", size = 24, weight = 400 } )
 
+GM.playerLevel = 1
+GM.playerMoney = 0
+GM.playerRank = 0
+
 GM.ShopIcon = Material( "vgui/shopIcon.png", "noclamp smooth" )
 GM.LoadoutIcon = Material( "vgui/backpackIcon.png", "noclamp smooth" )
 GM.TeamChangeIcon = Material( "vgui/two-shadowsIcon.png", "noclamp smooth" )
@@ -1870,18 +1874,29 @@ function GM:NewLoadout()
 	end
 
 end
---[[ --no end brackets to delete
+
+---no end brackets to delete
 function GM:SetLoadout()
 	if self.LoadoutMain and self.LoadoutMain:IsValid() then return end
 
-	net.Start( "RequestWeapons" )
-	net.SendToServer()
+	--[[net.Start( "RequestWeapons" )
+	net.SendToServer()]]
 	net.Start( "GetRank" )
 	net.SendToServer()
 	net.Start( "GetMoney" )
 	net.SendToServer()
 	net.Start( "GetUserGroupRank" )
 	net.SendToServer()
+
+	net.Receive( "GetLevelCallback", function() --ATTENTION
+		GAMEMODE.playerLevel = net.ReadInt() --ATTENTION
+	end )
+	net.Receive( "GetMoneyCallback", function()
+		GAMEMODE.playerMoney = net.ReadInt( 64 )
+	end )
+	net.Receive( "GetUserGroupRank", function()
+		GAMEMODE.playerRank = net.ReadInt() --ATTENTION
+	end )
 
 	self.LoadoutMain = vgui.Create( "DFrame" )
 	self.LoadoutMain:SetSize( 750, 430 ) --Gonna need a new window size, 

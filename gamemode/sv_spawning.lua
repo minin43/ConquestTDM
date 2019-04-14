@@ -148,7 +148,7 @@ function PlayerClass:StartSpawnProtection( length )
 
 	length = length or 5
 
-	self:SetColor( Color( 255, 255, 255, 200 ) )
+	self:SetColor( Color( 255, 255, 255, 175 ) )
 	self:SetRenderMode( RENDERMODE_TRANSALPHA )
 	self.SpawnProtected = true
 
@@ -204,7 +204,7 @@ hook.Add( "EntityTakeDamage", "SpawnProtection", function( ply, dmginfo )
 end )
 
 hook.Add( "Think", "DisableProtectionByDistance", function()
-	local distance = 400
+	local distance = 500 --//Edit this value to change the distance needed to travel before losing protection
 	for k, v in pairs( player.GetAll() ) do
 		if v.SpawnProtected and v.SpawnPos then
 			--//Note: wiki says vector:Distance( vector ) is expensive due to square root call, & since this is being called in a think function, we can bypass it and use DistToSqr

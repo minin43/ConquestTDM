@@ -3,6 +3,7 @@ util.AddNetworkString( "UpdateVendetta" )
 GM.VendettaList = { } --Listed as victims, then by attackers
 
 function GM:GetVendettaRequirement( ply )
+    print("function GM:GetVendettaRequirement called...")
     local otherTeam
     if ply:Team() == 1 then
         otherTeam = 2
@@ -10,23 +11,30 @@ function GM:GetVendettaRequirement( ply )
         otherTeam = 1
     end
 
-    if #team.GetPlayers( otherTeam ) < 3 then
+    if #team.GetPlayers( otherTeam ) < 4 then
+        print( "returning: 4" )
         return 4
-    elseif #team.GetPlayers( otherTeam ) < 5 then
+    elseif #team.GetPlayers( otherTeam ) < 6 then
+        print( "returning: 3" )
         return 3
     else
+        print( "returning: 2" )
         return 2
     end
 end
 
 function GM:UpdateVendetta( vic, att )
+    if !att:IsPlayer() or !vic:IsPlayer() or att:IsWorld() then return end
     local vicID = id( vic:SteamID() )
     local attID = id( att:SteamID() )
     if vicID == attID then return end --Shouldn't ever run into this, but JIC
 
     self.VendettaList[ vicID ][ attID ] = ( self.VendettaList[ vicID ][ attID ] or 0 ) + 1
 
-    if self.VendettaList[ vicID ][ attID ] > self:GetVendettaRequirement( vic ) then
+    self.VendettaList[ vicID ].ActiveSaves = self.VendettaList[ vicID ].ActiveSaves or { }
+    self.VendettaList[ attID ].ActiveSaves = self.VendettaList[ attID ].ActiveSaves or { }
+
+    if self.VendettaList[ vicID ][ attID ] >= self:GetVendettaRequirement( vic ) --[[and !self.VendettaList[ vicID ].ActiveSaves[ attID ]] then
         self.VendettaList[ vicID ].ActiveSaves[ attID ] = true
         net.Start( "UpdateVendetta" )
             net.WriteString( attID )
@@ -35,13 +43,13 @@ function GM:UpdateVendetta( vic, att )
     end
     
     if self.VendettaList[ attID ][ vicID ] then
-        if self.VendettaList[ attID ][ vicID ].ActiveSaves[ vicID ] then
+        if self.VendettaList[ attID ].ActiveSaves[ vicID ] then
             net.Start( "UpdateVendetta" )
                 net.WriteString( vicID )
                 net.WriteBool( false )
             net.Send( att )
         end
-        --self.VendettaList[ attID ][ vicID ].ActiveSaves[ vicID ] = false -- set in sv_deathscreen
+        self.VendettaList[ attID ].ActiveSaves[ vicID ] = false
         self.VendettaList[ attID ][ vicID ] = 0
     end
 end

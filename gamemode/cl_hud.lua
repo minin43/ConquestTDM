@@ -240,11 +240,10 @@ hook.Add( "HUDPaint", "HUD_SpawnOverlay", function()
 	surface.SetFont( "BigNotify" )
 	local tw, th = surface.GetTextSize( "[Spawn Protection Enabled]" )
 
-	surface.SetTextColor( 255, 255, 255, spawn_rate * 255 )
+	surface.SetTextColor( 255, 255, 255, overlayTable.spawn_rate * 255 )
 	surface.SetTextPos( ( ScrW() / 2 ) - ( tw / 2 ), ScrH() - ( ScrH() / 1.1 ) )
 	surface.DrawText( "[Spawn Protection Enabled]" )
 end )
-
 
 --Newly improved low-health HUD effect - should be less intrusive and more immersive
 local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")

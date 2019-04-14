@@ -12,7 +12,7 @@ GM.AvailableTypes = {
         [ "announcerStart" ] = false,
         [ "gameTie" ] = false,
         [ "announcerTie" ] = false,
-        [ "path" ] = "" --To organize
+        [ "path" ] = "default/" --To organize
     },
     --//HL2 Sounds
     [ "rebels" ] = {
@@ -137,7 +137,7 @@ function GM:DoStartSounds()
         timer.Simple( 2, function()
             surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerStart.ogg" )
         end )
-    end )
+    end
 end
 
 function GM:DoWinSounds()
@@ -148,7 +148,7 @@ function GM:DoWinSounds()
         timer.Simple( 2, function()
             surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerWin.ogg" )
         end )
-    end )
+    end
 end
 
 function GM:DoLoseSounds()
@@ -159,7 +159,7 @@ function GM:DoLoseSounds()
         timer.Simple( 2, function()
             surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerLose.ogg" )
         end )
-    end )
+    end
 end
 
 function GM:DoTieSounds()
@@ -170,7 +170,7 @@ function GM:DoTieSounds()
         timer.Simple( 2, function()
             surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerTie.ogg" )
         end )
-    end )
+    end
 end
 
 net.Receive( "SetInteractionGroup", function()
@@ -183,10 +183,10 @@ net.Receive( "SetInteractionGroup", function()
     end
 end )
 
-net.Receive( "DoStart", GM:DoStartSounds )
+net.Receive( "DoStart", GM.DoStartSounds )
 
-net.Receive( "DoWin", GM:DoWinSounds )
+net.Receive( "DoWin", GM.DoWinSounds )
 
-net.Receive( "DoLose", GM:DoLoseSounds )
+net.Receive( "DoLose", GM.DoLoseSounds )
 
-net.Receive( "DoTie", GM:DoTieSounds )
+net.Receive( "DoTie", GM.DoTieSounds )

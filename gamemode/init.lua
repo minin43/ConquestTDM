@@ -90,6 +90,7 @@ util.AddNetworkString( "tdm_killcountnotice" )
 util.AddNetworkString( "DoWin" )
 util.AddNetworkString( "DoLose" )
 util.AddNetworkString( "DoTie" )
+util.AddNetworkString( "DoStart" )
 util.AddNetworkString( "StartAttTrack" )
 util.AddNetworkString( "GlobalChatColor" )
 util.AddNetworkString( "PlayerChatColor" )
@@ -563,7 +564,7 @@ hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
 	if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] then
 		if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] != ply:Team() then
 			net.Start( "DoStart" )
-			net.Send( ply 
+			net.Send( ply )
 			GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
 		end
 	else
@@ -628,10 +629,10 @@ function GM:PlayerSpawn( ply )
 		"models/player/group03/male_09.mdl"
 	}
     local bluemodels = {
-		"models/player/combine_soldier_prisonguard.mdl",
-		"models/player/combine_super_soldier.mdl",
-		"models/player/police.mdl",
-		"models/player/combine_soldier.mdl"
+		--"models/player/combine_soldier_prisonguard.mdl",
+		--"models/player/combine_super_soldier.mdl",
+		"models/player/police.mdl"--,
+		--"models/player/combine_soldier.mdl"
 	}
 	timer.Simple(0, function()
 		if (ply:Team() == 1) then

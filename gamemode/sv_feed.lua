@@ -121,10 +121,14 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     end
 
     --//Vendetta Checks
-    if GAMEMODE.VendettaList[ vicID ].ActiveSaves[ attID ] then --//When you're their vendetta, and kill them anyway
+    GAMEMODE.VendettaList[ vicID ].ActiveSaves = GAMEMODE.VendettaList[ vicID ].ActiveSaves or { }
+    GAMEMODE.VendettaList[ attID ].ActiveSaves = GAMEMODE.VendettaList[ attID ].ActiveSaves or { }
+    --//When you're their vendetta, and kill them anyway
+    if GAMEMODE.VendettaList[ vicID ].ActiveSaves[ attID ] then --and GAMEMODE.VendettaList[ vicID ][ attID ] > self:GetVendettaRequirement( vic ) then
         AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
         SoundToSend = "eradication"
-    elseif GAMEMODE.VendettaList[ attID ].ActiveSaves[ vicID ] then --//When they're your vendetta
+    --//When they're your vendetta
+    elseif GAMEMODE.VendettaList[ attID ].ActiveSaves[ vicID ] then
         AddNotice( att, "RETRIBUTION", SCORECOUNTS.VENDETTA, NOTICETYPES.EXTRA )
         SoundToSend = "retribution"
     end
@@ -280,6 +284,8 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
             net.WriteString( SoundToSend )
         net.Send( att )
     end
+
+    GAMEMODE:UpdateVendetta( vic, att )
 
     --Drone Road Kill
     --[[if inf:GetClass() == "prop_physics" then

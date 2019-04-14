@@ -1875,12 +1875,10 @@ function GM:NewLoadout()
 
 end
 
----no end brackets to delete
+--[[-no end brackets to delete
 function GM:SetLoadout()
 	if self.LoadoutMain and self.LoadoutMain:IsValid() then return end
 
-	--[[net.Start( "RequestWeapons" )
-	net.SendToServer()]]
 	net.Start( "GetRank" )
 	net.SendToServer()
 	net.Start( "GetMoney" )

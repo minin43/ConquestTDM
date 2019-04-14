@@ -89,7 +89,6 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	local wasVendetta = false
 	if GAMEMODE.VendettaList[ id( attacker:SteamID() ) ].ActiveSaves and GAMEMODE.VendettaList[ id( attacker:SteamID() ) ].ActiveSaves[ id( ply:SteamID() ) ] then
 		wasVendetta = true
-		GAMEMODE.VendettaList[ id( attacker:SteamID() ) ].ActiveSaves[ id( ply:SteamID() ) ] = false
 	end
 
 	--//Flavor timer

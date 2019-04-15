@@ -88,7 +88,7 @@ function ChooseMainButton:Paint()
 
     if self.Disabled then
         surface.SetDrawColor( Color( 0, 0, 0, 160 ) )
-		surface.DrawRect( 0, 0, self.ChooseShop:GetWide(), self.ChooseShop:GetTall() )
+		surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
     end
     
     return true

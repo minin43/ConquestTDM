@@ -591,6 +591,11 @@ flags[ "ttt_mw2_scrapyard" ] = {
 	{ "C", Vector( -1037.2188, 943.4063, 128.0313 ), 188, 0 }
 }
 
+flags[ "de_crash" ] = {
+	{ "A", Vector( -1459.75, -725.9063, -258.8438), 216, 0 }
+	{ "B", Vector( -2640, 1279.8125, -80.0625), 150, 0 }
+}
+
 
 --[[
 lua_run_cl local pos = LocalPlayer():GetEyeTrace().HitPos print( "{ \"A\", Vector( " .. math.Round( pos.x ) .. ", " .. math.Round( pos.y ) .. ", " .. math.Round( pos.z ) .. " ), 400, 0 }" )

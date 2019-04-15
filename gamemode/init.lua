@@ -322,7 +322,9 @@ function GM:ShowHelp( ply )
 	local wep = ply:GetActiveWeapon()
 	
 	if not IsValid(wep) or not wep.CW20Weapon or wep.dt.State == CW_IDLE then
-		ply:ConCommand( "tdm_spawnmenu" )
+		ply:ConCommand( "tdm_loadout" )
+		umsg.Start( "ClearTable", ply )
+		umsg.End()
 	end
 end
 
@@ -382,7 +384,7 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
-	ply:ConCommand( "tdm_spawnmenu" )
+	ply:ConCommand( "tdm_spawnmenu" ) --//Only called on initial spawn
 
 	self.PerkTracking[ id( ply:SteamID() ) ] = {}
 	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 

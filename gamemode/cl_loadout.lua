@@ -1759,13 +1759,8 @@ GM.TeamChangeIcon = Material( "vgui/two-shadowsIcon.png", "noclamp smooth" )
 GM.CancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" )
 
 GM.FirstLoadout = true
-function GM:NewLoadout()
-	if GAMEMODE.FirstLoadout then
-		GAMEMODE.FirstLoadout = false
-		--self:SetLoadout()
-		LoadoutMenu()
-		return
-	elseif (self.ChooseMain and self.ChooseMain:IsValid()) or (main and main:IsValid() ) or (self.LoadoutMain and self.LoadoutMain:IsValid()) or (self.ShopMain and self.ShopMain:IsValid()) then
+function GM:MenuMain()
+	if (self.ChooseMain and self.ChooseMain:IsValid()) or (main and main:IsValid() ) or (self.LoadoutMain and self.LoadoutMain:IsValid()) or (self.ShopMain and self.ShopMain:IsValid()) then
 		return
 	end
 
@@ -1805,7 +1800,9 @@ function GM:NewLoadout()
 	self.ChooseLoadout:SetText( "Loadout" )
 	self.ChooseLoadout:SetFont( "ExoInfoFont" )
 	self.ChooseLoadout:SetIcon( GAMEMODE.LoadoutIcon )
+	if LocalPlayer():Team() == 0 then self.ChooseLoadout:Disable( true ) end
 	self.ChooseLoadout.DoClick = function()
+		if self.ChooseLoadout.Disabled then return end
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
 		--self:SetLoadout()
@@ -1818,36 +1815,12 @@ function GM:NewLoadout()
 	self.ChooseShop:SetText( "Shop" )
 	self.ChooseShop:SetFont( "ExoInfoFont" )
 	self.ChooseShop:SetIcon( GAMEMODE.ShopIcon )
+	self.ChooseShop:Disable( true ) --to be removed when shop is finished
 	self.ChooseShop.DoClick = function()
+		if self.ChooseShop.Disabled then return end --Always returns true, to be removed when shop is finished
 		--surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		--self.ChooseMain:Close() --Remove?
-		--self:OpenShop()
-	end
-	self.ChooseShop.Paint = function()
-		surface.SetDrawColor( 0, 0, 0 )
-		surface.DrawOutlinedRect( 0, 0, self.ChooseShop:GetWide(), self.ChooseShop:GetTall() )
-
-		self.ChooseShop.MarkupObject:Draw( self.ChooseShop:GetWide() / 2, 24, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		surface.SetDrawColor( 0, 0, 0, 220 )
-		surface.SetMaterial( self.ChooseShop.Icon )
-		surface.DrawTexturedRect( self.ChooseShop:GetWide() / 2 - ( self.ChooseShop.IconSize / 2 ), self.ChooseShop:GetTall() / 2 - ( self.ChooseShop.IconSize / 2 ), self.ChooseShop.IconSize, self.ChooseShop.IconSize ) --To figure out
-
-		if !self.ChooseShop.Hover then
-			surface.SetTexture( gradient )
-			surface.SetDrawColor( 0, 0, 0, 164 )
-			surface.DrawTexturedRectRotated( self.ChooseShop:GetWide() - 10, self.ChooseShop:GetTall() / 2, self.ChooseMainTitleBar, self.ChooseShop:GetTall(), 180 )
-			surface.DrawTexturedRectRotated( 10, self.ChooseShop:GetTall() / 2, self.ChooseMainTitleBar, self.ChooseShop:GetTall(), 0 )
-		else
-
-		end
-
-		surface.SetDrawColor( Color( 0, 0, 0, 160 ) )
-		surface.DrawRect( 0, 0, self.ChooseShop:GetWide(), self.ChooseShop:GetTall() )
-		return true
-	end
-	self.ChooseShop.OnCursorEntered = function()
-	end
-	self.ChooseShop.OnCursorExited = function()
+		self.ChooseMain:Close() --Remove?
+		self:OpenShop()
 	end
 
 	self.ChooseTeam = vgui.Create( "ChooseMainButton", self.ChooseMain )
@@ -1886,14 +1859,14 @@ function GM:SetLoadout()
 	net.Start( "GetUserGroupRank" )
 	net.SendToServer()
 
-	net.Receive( "GetLevelCallback", function() --ATTENTION
-		GAMEMODE.playerLevel = net.ReadInt() --ATTENTION
+	net.Receive( "GetLevelCallback", function() --Net messages doesn't yet exist
+		GAMEMODE.playerLevel = net.ReadInt() --Need total byte count
 	end )
 	net.Receive( "GetMoneyCallback", function()
 		GAMEMODE.playerMoney = net.ReadInt( 64 )
 	end )
 	net.Receive( "GetUserGroupRank", function()
-		GAMEMODE.playerRank = net.ReadInt() --ATTENTION
+		GAMEMODE.playerRank = net.ReadInt() --Need total byte count
 	end )
 
 	self.LoadoutMain = vgui.Create( "DFrame" )
@@ -1998,14 +1971,23 @@ function GM:SetLoadout()
 	self.PerkPanel:SetSize( self.LoadoutMain:GetWide() / 2, ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
 	self.PerkPanel.Paint = function()
 		--Do the edge gradient shadow effect
-	end
+	end]]
+
+	--[[self.PlayerSheet = vgui.Create( "DFrame" )
+	self.PlayerSheet:SetSize( self.LoadoutMain, 250 ) --Gonna need a new window size
+	self.PlayerSheet:SetPos()
+	self.PlayerSheet:SetTitle( "" )
+	self.PlayerSheet:SetVisible( true )
+	self.PlayerSheet:SetDraggable( false )
+	self.PlayerSheet:ShowCloseButton( false )
+	self.PlayerSheet:MakePopup()
 end]]
 
 function GM:OpenShop()
 
 end
 
-concommand.Add( "tdm_loadout", GM.NewLoadout ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
+concommand.Add( "tdm_loadout", GM.MenuMain ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
 
 usermessage.Hook( "ClearTable", function( um )
 	LocalPlayer().blue = nil

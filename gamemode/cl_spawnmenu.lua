@@ -303,4 +303,4 @@ function GM:SpawnMenu()
 	end
 	
 end
---concommand.Add( "tdm_spawnmenu", SpawnMenu )
+concommand.Add( "tdm_spawnmenu", GM.SpawnMenu )

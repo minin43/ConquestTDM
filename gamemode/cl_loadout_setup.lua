@@ -6,6 +6,7 @@ ChooseMainButton.MarkupObject = markup.Parse( "" )
 ChooseMainButton.Font = "DermaDefault"
 ChooseMainButton.Icon = Material( "" )
 ChooseMainButton.IconBuffer = 45 --in pixels, this will double since it applies to both sides
+ChooseMainButton.Disabled = false
 ChooseMainButton.SoundTable = {
     "ambient/machines/keyboard2_clicks.wav",
     "ambient/machines/keyboard3_clicks.wav",
@@ -43,9 +44,19 @@ function ChooseMainButton:SetIcon( icon )
     end
 end
 
+function ChooseMainButton:Disable( bool )
+    if bool then
+        self.Disabled = bool
+    else
+        self.Disabled = false
+    end
+end
+
 function ChooseMainButton:OnCursorEntered()
-    --surface.PlaySound( self.SoundTable[ math.random( #self.SoundTable ) ] )
-    self.Hover = true
+    if !self.Disabled then
+        --surface.PlaySound( self.SoundTable[ math.random( #self.SoundTable ) ] )
+        self.Hover = true
+    end
 end
 
 function ChooseMainButton:OnCursorExited()
@@ -75,6 +86,11 @@ function ChooseMainButton:Paint()
 
     end
 
+    if self.Disabled then
+        surface.SetDrawColor( Color( 0, 0, 0, 160 ) )
+		surface.DrawRect( 0, 0, self.ChooseShop:GetWide(), self.ChooseShop:GetTall() )
+    end
+    
     return true
 end
 

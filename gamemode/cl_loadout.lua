@@ -1848,7 +1848,7 @@ function GM:MenuMain()
 
 end
 
---[[-no end brackets to delete
+--[[-no end brackets to delete]]
 function GM:SetLoadout()
 	if self.LoadoutMain and self.LoadoutMain:IsValid() then return end
 
@@ -1877,17 +1877,21 @@ function GM:SetLoadout()
 	self.LoadoutMain:ShowCloseButton( false )
 	self.LoadoutMain:MakePopup()
 	self.LoadoutMain:Center()
-
-	self.LoadoutTitleBar = vgui.Create( "DPanel", self.LoadoutMain )
-	self.LoadoutTitleBar:SetPos( 0, 0 )
-	self.LoadoutTitleBar:SetSize( self.LoadoutMain:GetWide(), 16 ) --Font size + 2 pixel buffer above & below
-	if self.FirstLoadout then self.TitleBarText = "Set Your Loadout" else self.TitleBarText = "Change Your oadout" end
-	self.LoadoutTitleBar.Paint = function()
-		draw.SimpleText( self.TitleBarText, "ExoTitleFont", self.LoadoutTitleBar:GetWide() / 2, self.LoadoutTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	self.LoadoutMain.Think = function()
+		self.LoadoutMain.x, self.LoadoutMain.y = self.LoadoutMain:GetPos()
 	end
 
-	self.LoadoutOptionBar = vgui.Create( "DPanel", self.LoadoutMain )
-	self.LoadoutOptionBar:SetPos( 0, self.LoadoutTitleBar:GetTall() + 1 )
+	self.LoadoutMainTitleBar = vgui.Create( "DPanel", self.LoadoutMain )
+	self.LoadoutMainTitleBar:SetPos( 0, 0 )
+	self.LoadoutMainTitleBar:SetSize( self.LoadoutMain:GetWide(), 56 )
+	self.LoadoutMainTitleBar.Paint = function()
+		draw.SimpleText( "Set Your Loadout", "ExoTitleFont", self.LoadoutMainTitleBar:GetWide() / 2, self.LoadoutMainTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
+	self.LoadoutMainPrimaryPanel = vgui.Create( "", self.LoadoutMain )
+
+	--[[self.LoadoutOptionBar = vgui.Create( "DPanel", self.LoadoutMain )
+	self.LoadoutOptionBar:SetPos( 0, self.LoadoutMainTitleBar:GetTall() + 1 )
 	self.LoadoutOptionBar:SetSize( self.LoadoutMain:GetWide(), 16 ) --Font size + 2 pixel buffer above & below
 	self.LoadoutOptionBar.Paint = function()
 		surface.SetDrawColor( Color( 255, 255, 255 ) )

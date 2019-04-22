@@ -2,7 +2,8 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
     if ply == nil or !ply:IsPlayer() or dmginfo == nil or dmginfo:GetAttacker() == nil then return end
 
 	if dmginfo:GetAttacker():IsPlayer() and dmginfo:IsBulletDamage() and dmginfo:GetAttacker():Team() ~= ply:Team() then
-		if CheckPerk( dmginfo:GetAttacker() ) == "pyro" then
+        if CheckPerk( dmginfo:GetAttacker() ) == "pyro" then
+            if timer.Exists( id( ply:SteamID() ) .. "ShotgunPyroFix" ) then print("PREVENTING PYRO") return end
 			local num = math.random( 1, 1000 )
 			
 			if num < 100 and ply:IsOnFire() then
@@ -19,15 +20,16 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
 
 				if not ply:Alive() then
 					ply:Kill()
-				end
+                end
+                timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix", 0.5, 1, function() end )
 			elseif num < 200 then
                 GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = dmginfo:GetAttacker()
 				ply:Ignite( 2 )
                 timer.Simple( 2.5, function()
                     GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = nil
                 end)
+                timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix", 0.5, 1, function() end )
 			end
-
 		end
 	end
 end )

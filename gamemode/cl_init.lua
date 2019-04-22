@@ -68,6 +68,11 @@ include( "cl_teamselect.lua" )
 include( "cl_character_interaction.lua" )
 include( "sh_weaponbalancing.lua" )
 
+function unid( steamid )
+    local x = string.gsub( steamid, "x", ":" )
+    return string.upper( x )
+end
+
 hook.Add( "Think", "SetColors", function()
 	if LocalPlayer():Team() == 1 then
 		GAMEMODE.TeamColor = Color( 244, 67, 54 )

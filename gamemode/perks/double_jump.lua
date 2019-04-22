@@ -32,4 +32,4 @@ hook.Add( "SetupMove", "DoubleJump", function( ply, mv, cmd )
 
 end )
 
-RegisterPerk( "Double Jump", "dbjump", 28, "Gain the ability to double jump, jump height is slightly increased." )
+--RegisterPerk( "Double Jump", "doublejump", 0, "Gain the ability to double jump, jump height is slightly increased." )

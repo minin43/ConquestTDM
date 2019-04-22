@@ -9,7 +9,7 @@ hook.Add( "PlayerDeath", "Excited", function( ply, inf, att )
 		local MaxedFOV = StartFOV * 1.75
 		local decayWSpeed = ( MaxedWalkedSpeed - StartWalkSpeed ) / 40
 		local decayRSpeed = ( MaxedRunSpeed - StartRunSpeed ) / 40
-		local decayFSpeed = ( MaxFOV - StartFOV ) / 40
+		local decayFSpeed = ( MaxedFOV - StartFOV ) / 40
 		
 		att:SetWalkSpeed( MaxedWalkedSpeed )
 		att:SetRunSpeed( MaxedRunSpeed )

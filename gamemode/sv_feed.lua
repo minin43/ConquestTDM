@@ -72,7 +72,7 @@ end
 --//All point distribution is done in this hook
 hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --Include checks for bots
-    if vic:IsWorld() or inf:IsWorld() or att:IsWorld() then return end
+    if vic:IsWorld() or att:IsWorld() or att:IsWorld() then return end
     if att == "entityflame" or att:GetClass() == "entityflame" then
         att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
     end

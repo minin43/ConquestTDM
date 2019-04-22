@@ -283,7 +283,7 @@ hook.Add( "DoPlayerDeath", "DoDeathSounds", function( ply, att, dmginfo )
     end
 
     --//enemyDeath
-    if ply == att or att:IsWorld() then return end
+    if ply == att or att:IsWorld() or !att:IsPlayer() then return end
     if !timer.Exists( id( att:SteamID() ) .. "_KillTimer" ) then
         timer.Simple( math.random(), function()
             timer.Create( id( att:SteamID() ) .. "_KillTimer", 4, 1, function() --[[preventing more calls]] end )
@@ -308,7 +308,7 @@ hook.Add( "KeyPress", "DoSelfReloadSound", function( ply, key )
     if !ply:Alive() then return end
 
     local wep = ply:GetActiveWeapon()    
-	if key == IN_RELOAD and wep:Clip1() < wep:GetMaxClip1() then
+	if key == IN_RELOAD and wep.Clip1 and wep:Clip1() < wep:GetMaxClip1() then
 		GAMEMODE:DoPlayerSound( ply, "selfReload" )
 	end
 end )

@@ -54,6 +54,7 @@ include( "sv_teamselect.lua" )
 --include( "sv_backgroundgunfire.lua") -- TODO
 include( "sv_character_interaction.lua" )
 include( "sv_spectator.lua" )
+include( "sv_custommaps.lua" )
 include( "sh_weaponbalancing.lua" )
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do

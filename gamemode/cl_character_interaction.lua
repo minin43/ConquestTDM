@@ -1,174 +1,219 @@
 --//This file is actually used for announcer sounds & music, but I figured I'd keep the naming moniker the same, just for consistency
---//These sound calls need to be done with Sound objects using CreateSound, so they can be stopped when necessary
+GM.PlayedSounds  = { }
 GM.AnnouncerType = "default"
 GM.AvailableTypes = {
     --//Default game music, ripped from BF4
     [ "default" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = false,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
-        [ "gameStart" ] = false,
+        [ "musicStart" ] = false,
         [ "announcerStart" ] = false,
-        [ "gameTie" ] = false,
+        [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "default/" --To organize
     },
     --//HL2 Sounds
     [ "rebels" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = false,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = false,
-        [ "gameTie" ] = false,
+        [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "hl2/rebels/"
     },
     [ "combine" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = false,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = false,
+        [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "hl2/combine/"
     },
     --//INS2 Sounds
     [ "security" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = false,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = false,
+        [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "ins2/security/"
     },
     [ "insurgent" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = false,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = false,
+        [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "ins2/insurgent/"
     },
     --//MW2 Sounds
     [ "opfor" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = false,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = true,
+        [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/opfor/"
     },
     [ "spetsnaz" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = true,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = true,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = true,
+        [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/spetsnaz/"
     },
     --[[[ "militia" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = true,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = true,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = true,
+        [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/militia/"
     },]]
     [ "rangers" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = true,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = true,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = true,
+        [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/rangers/"
     },
     [ "seals" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = true,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = true,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = true,
+        [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/seals/"
     },
     [ "tf141" ] = {
-        [ "gameWin" ] = true,
+        [ "musicWin" ] = true,
         [ "announcerWin" ] = true,
-        [ "gameLose" ] = true,
+        [ "musicLose" ] = true,
         [ "announcerLose" ] = true,
-        [ "gameStart" ] = true,
+        [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "gameTie" ] = true,
+        [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/tf141/"
     },
 }
 
-function GM:DoStartSounds()
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].gameStart then
-        surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "gameStart.ogg" )
+function GM:DoGameSound( soundName, isVoice, numVariance )
+    numVariance = numVariance or ""
+    soundName = soundName .. numVariance
+
+    if self.PlayedSounds.Current and self.PlayedSounds.Current:IsPlaying() and !isVoice then
+        self.PlayedSounds.Current:Stop()
     end
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].announcerStart then
+    if self.PlayedSounds.CurrentAnnouncer and self.PlayedSounds.CurrentAnnouncer:IsPlaying() and isVoice then
+        self.PlayedSounds.CurrentAnnouncer:Stop()
+    end
+
+    self.PlayedSounds[ self.AnnouncerType ] = self.PlayedSounds[ self.AnnouncerType ] or { }
+
+    if !self.PlayedSounds[ self.AnnouncerType ][ soundName ] then
+        self.PlayedSounds[ self.AnnouncerType ][ soundName ] = CreateSound( LocalPlayer(), self.AvailableTypes[ self.AnnouncerType ].path .. soundName .. ".ogg" )
+    end
+
+    self.PlayedSounds[ self.AnnouncerType ][ soundName ]:Play()
+    if isVoice then
+        self.PlayedSounds.CurrentAnnouncer = self.PlayedSounds[ self.AnnouncerType ][ soundName ]
+    else
+        self.PlayedSounds.Current = self.PlayedSounds[ self.AnnouncerType ][ soundName ]
+
+        timer.Simple( 25, function()
+            self.PlayedSounds[ self.AnnouncerType ][ soundName ]:FadeOut( 5 )
+        end )
+    end
+end
+
+function GM:DoStartSounds()
+    if self.AvailableTypes[ self.AnnouncerType ].musicStart then
+        self:DoGameSound( "musicStart" )
+    end
+    if self.AvailableTypes[ self.AnnouncerType ].announcerStart then
         timer.Simple( 2, function()
-            surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerStart.ogg" )
+            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerStart" ] ) then
+                self:DoGameSound( "announcerStart", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerStart" ] )
+            else
+                self:DoGameSound( "announcerStart", true )
+            end
         end )
     end
 end
 
 function GM:DoWinSounds()
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].gameWin then
-        surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "gameWin.ogg" )
+    if self.AvailableTypes[ self.AnnouncerType ].musicWin then
+        self:DoGameSound( "musicWin" )
     end
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].announcerWin then
+    if self.AvailableTypes[ self.AnnouncerType ].announcerWin then
         timer.Simple( 2, function()
-            surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerWin.ogg" )
+            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerWin" ] ) then
+                self:DoGameSound( "announcerWin", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerWin" ] )
+            else
+                self:DoGameSound( "announcerWin", true )
+            end
         end )
     end
 end
 
 function GM:DoLoseSounds()
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].gameLose then
-        surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "gameLose.ogg" )
+    if self.AvailableTypes[ self.AnnouncerType ].musicLose then
+        self:DoGameSound( "musicLose" )
     end
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].announcerLose then
+    if self.AvailableTypes[ self.AnnouncerType ].announcerLose then
         timer.Simple( 2, function()
-            surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerLose.ogg" )
+            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerLose" ] ) then
+                self:DoGameSound( "announcerLose", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerLose" ] )
+            else
+                self:DoGameSound( "announcerLose", true )
+            end
         end )
     end
 end
 
 function GM:DoTieSounds()
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].gameTie then
-        surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "gameTie.ogg" )
+    if self.AvailableTypes[ self.AnnouncerType ].musicTie then
+        self:DoGameSound( "musicTie" )
     end
-    if GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].announcerTie then
+    if self.AvailableTypes[ self.AnnouncerType ].announcerTie then
         timer.Simple( 2, function()
-            surface.PlaySound( GAMEMODE.AvailableTypes[ GAMEMODE.AnnouncerType ].path .. "announcerTie.ogg" )
+            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerTie" ] ) then
+                self:DoGameSound( "announcerTie", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerTie" ] )
+            else
+                self:DoGameSound( "announcerTie", true )
+            end
         end )
     end
 end

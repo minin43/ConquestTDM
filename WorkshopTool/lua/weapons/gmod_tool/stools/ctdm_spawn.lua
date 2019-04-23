@@ -13,7 +13,6 @@ end
 TOOL.Category = "ConquestTDM"
 TOOL.Name = "#tool.ctdm_spawn.name"
 TOOL.ClientConVar[ "team" ] = 1 --1 is red team, 2 is blue team
-TOOL.ClientConVar[ "show" ] = "true" --Currently does nothing
 TOOL.ClientConVar[ "write_to_disc" ] = "false"
 TOOL.SpawnTable = {}
 TOOL.FlagTable = {}
@@ -150,7 +149,7 @@ function TOOL:LeftClick( trace )
     elseif self.PosTwo == nil then
         self.PosTwo = trace.HitPos
         ply:ChatPrint( "Point two placed - click again to review the values" )
-        self:UpdateSpawnPos( 2, self.PosTwo, ply)
+        self:UpdateSpawnPos( 2, self.PosTwo, ply )
     else
         net.Start( "ReviewValues" )
         net.Send( ply )
@@ -239,7 +238,6 @@ end
 
 --//Suppose this'll need to run disables on the 3D2D drawing on client
 function TOOL:Holster()
-    print( "TOOL:Holster called" )
     self:ClearValues()
     self.IsHeld = false
 end
@@ -309,7 +307,7 @@ function TOOL.BuildCPanel( CPanel )
     discWrite.DoClick = function()
         net.Start( "ServerSaveToDisc" )
         net.SendToServer()
-        LocalPlayer():ChatPrint( "Flags & Spawns have been saved! Find the file in data/tdm/tool" .. game.GetMap() .. ".txt" )
+        LocalPlayer():ChatPrint( "Flags & Spawns have been saved! Find the file in data/tdm/tool/" .. game.GetMap() .. ".txt" )
         LocalPlayer():ChatPrint( "From that file, you can delete any flag or spawn placements - the next update will provide an easier solution" )
     end
 end
@@ -462,7 +460,7 @@ if CLIENT then
         myTool.preview = vgui.Create( "DButton" , myTool.main )
         myTool.preview:SetSize( buttonWide, buttonTall  )
         myTool.preview:SetPos( myTool.main:GetWide() / 4 * 2 - ( buttonWide / 2 ), myTool.main:GetTall() - buttonTall - ( buttonTall / 2 ) )
-        myTool.preview:SetText( "Preview Current" )
+        myTool.preview:SetText( "Close & Preview" )
         myTool.preview.DoClick = function()
             if spawn then
                 myTool.PosOne = Vector( myTool.PosOneSep.x, myTool.PosOneSep.y, myTool.PosOneSep.z )
@@ -559,9 +557,9 @@ if CLIENT then
     
     surface.CreateFont( "FlagNames", { font = "Arial", size = 40 } )
     hook.Add( "PostDrawOpaqueRenderables", "DrawEverything", function()
-        if !LocalPlayer():Alive() then return end
+        if !LocalPlayer():Alive() or !LocalPlayer():GetWeapon( "gmod_tool" ).Tool then return end
         myTool = LocalPlayer():GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
-        if not myTool.IsHeld then return end
+        if not myTool or not myTool.IsHeld then return end
         --//Draw placed flags
         for k, v in next, myTool.FlagTable do
             local trace = v[ 2 ]

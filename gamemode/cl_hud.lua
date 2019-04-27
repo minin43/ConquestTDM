@@ -226,7 +226,7 @@ hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
 	end
 
 	surface.SetMaterial( overlayTable.slaw_overlay )
-	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * overlayTable.slaw_rate, 0, 120 ) )
+	surface.SetDrawColor( 255, 255, 255, math.Clamp( 100 * overlayTable.slaw_rate, 0, 100 ) )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 

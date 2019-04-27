@@ -174,6 +174,7 @@ function GM:DoStartSounds()
 end
 
 function GM:DoWinSounds()
+    if LocalPlayer():Team() == 0 then return end
     if self.AvailableTypes[ self.AnnouncerType ].musicWin then
         self:DoGameSound( "musicWin" )
     end
@@ -189,6 +190,7 @@ function GM:DoWinSounds()
 end
 
 function GM:DoLoseSounds()
+    if LocalPlayer():Team() == 0 then return end
     if self.AvailableTypes[ self.AnnouncerType ].musicLose then
         self:DoGameSound( "musicLose" )
     end
@@ -204,6 +206,7 @@ function GM:DoLoseSounds()
 end
 
 function GM:DoTieSounds()
+    if LocalPlayer():Team() == 0 then return end
     if self.AvailableTypes[ self.AnnouncerType ].musicTie then
         self:DoGameSound( "musicTie" )
     end
@@ -228,10 +231,10 @@ net.Receive( "SetInteractionGroup", function()
     end
 end )
 
-net.Receive( "DoStart", GM.DoStartSounds )
+net.Receive( "DoStart", GM:DoStartSounds() )
 
-net.Receive( "DoWin", GM.DoWinSounds )
+net.Receive( "DoWin", GM:DoWinSounds() )
 
-net.Receive( "DoLose", GM.DoLoseSounds )
+net.Receive( "DoLose", GM:DoLoseSounds() )
 
-net.Receive( "DoTie", GM.DoTieSounds )
+net.Receive( "DoTie", GM:DoTieSounds() )

@@ -48,7 +48,9 @@ if SERVER then
         myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_props"]
 
         for k, v in pairs( myTool.Marked.Props ) do
-            k:Remove()
+            if k and k:IsValid() then 
+                k:Remove()
+            end
         end
         myTool.Marked.Props = {}
         

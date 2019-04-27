@@ -8,8 +8,15 @@ GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
 GM.MapTable = { --Controls both the map autodownload and the mapvote information
+--[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png", type = "ins2" }, --Removed while player count remains low
+    [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png", type = "ins2" },
+    [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png", type = "ins2" },
+    [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png", type = "ins2" },
+    [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png", type = "ins2" },
+    [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png", type = "ins2" },
+	[ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png", type = "ins2" },]]
+	
     [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2" },
-    --[ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png", type = "ins2" },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png", type = "hl2" },
     [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png", type = "hl2" },
     [ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png", type = "ins2" },
@@ -18,37 +25,39 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png", type = "ins2" },
     [ "de_star" ] = { id = 296000772, size = "Midsize", img = "vgui/maps/star.png", type = "ins2" },
     --[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png" }, --Fix spawns
-    --[ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png", type = "ins2" },
     [ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png", type = "hl2" },
     [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png", type = "ins2" },
     [ "sh_smalltown_c" ] = { id = 865967849, size = "Large", img = "vgui/maps/smalltown.png", type = "ins2" },
     [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Large", img = "vgui/maps/terminal.png", type = "mw2" },
-    --[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png", type = "ins2" }, --Removed while player count remains low
-    [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png", type = "ins2" },
-    [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png", type = "ins2" },
-    [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png", type = "ins2" },
-    [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png", type = "ins2" },
-    [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png", type = "ins2" },
-    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png", type = "ins2" },]]
-    --[ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" }, --Seems to be crashing clients
     [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png", type = "hl2" },
     [ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png", type = "hl2" },
     [ "dm_powerstation" ] = { id = 446026985, size = "Small", img = "vgui/maps/powerstation.png", type = "hl2" },
     [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png", type = "hl2" },
-    [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png" },
-    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png" },
-    --[ "dm_9rooms_b16" ] = { id = 1642035717, size = "Small", img = "vgui/maps/9rooms.png", type = "hl2" },
+    [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png", type = "ins2" },
+    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png", type = "ins2" },
     [ "dm_avalon" ] = { id = 1669465120, size = "Midsize", img = "vgui/maps/avalon.png", type = "hl2", extra = { "NoFall" } },
     [ "dm_bounce" ] = { id = 1645391828, size = "Small", img = "vgui/maps/bounce.png", type = "hl2", extra = { "NoFall" } },
-    --[ "dm_resident" ] = { id = 1623087187, size = "Midsize", img = "vgui/maps/resident.png", type = "hl2" },
     [ "ttt_mw2_highrise" ] = { id = 290247692, size = "Large", img = "vgui/maps/highrise.png", type = "mw2" },
 	[ "ttt_mw2_scrapyard" ] = { id = 294363438, size = "Large", img = "vgui/maps/scrapyard.png", type = "mw2" },
 	[ "de_crash" ] = { id = 671482026, size = "Large", img = "vgui/maps/crash.png", type = "mw2" },
 	[ "dm_mines" ] = { id = 660390276, size = "Midsize", img = "vgui/maps/mines.png", type = "hl2" },
-	[ "de_boston" ] = { id = 296008620, size = "Large", img = "vgui/maps/boston.png", type = "ins2" }
-    --[ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" } --Seems to be crashing the server
+	[ "de_boston" ] = { id = 296008620, size = "Large", img = "vgui/maps/boston.png", type = "ins2" },
+	[ "ttt_cwoffice2019" ] = { id = 1659123269, size = "Large", img = "vgui/maps/cwoffice2019.png", type = "ins2" },
+	[ "ba_stadium" ] = { id = 1721873165, size = "Small", img = "vgui/maps/stadium.png", type = "hl2" },
+	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png" },
+	[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" },
+	--[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2" }, --//Not set up yet
+	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png" }
+
+	--[ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" }, --Seems to be crashing clients
+	--[ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png", type = "ins2" }, --To big/open
+	--[ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png", type = "ins2" }, --Too big/open
+	--[ "dm_9rooms_b16" ] = { id = 1642035717, size = "Small", img = "vgui/maps/9rooms.png", type = "hl2" }, --Not popular
+	--[ "dm_resident" ] = { id = 1623087187, size = "Midsize", img = "vgui/maps/resident.png", type = "hl2" }, --Too hard to balance
+	--[ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" } --Seems to be crashing the server
+	
 	--[ "" ] = { id = 0, size = "", img = "vgui/maps/.png", type = "" },
-	--More maps: de_secretcamp, de_keystone_beta, gm_devruins, ttt_bf3_scrapmetal, 
+	--More maps: de_secretcamp
 }
 
 GM.TeamNames = {

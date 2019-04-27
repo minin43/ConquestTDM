@@ -1848,7 +1848,7 @@ function GM:MenuMain()
 
 end
 
---[[-no end brackets to delete]]
+--[[-no end brackets to delete
 function GM:SetLoadout()
 	if self.LoadoutMain and self.LoadoutMain:IsValid() then return end
 

@@ -596,13 +596,35 @@ flags[ "de_crash" ] = {
 	{ "B", Vector( -2640, 1279.8125, -80.0625 ), 150, 0 }
 }
 
+flags[ "ttt_cwoffice2019" ] = {
+	{ "A", Vector( 2570.9063, -1243.5625, -327.9688 ),324, 0 },
+	{ "B", Vector( 1544.8125, 498.25, -495.9688 ), 253, 0 },
+	{ "C", Vector( 889.9063, 853.6563, -151.9688 ), 200, 0 }
+}
 
---[[
-lua_run_cl local pos = LocalPlayer():GetEyeTrace().HitPos print( "{ \"A\", Vector( " .. math.Round( pos.x ) .. ", " .. math.Round( pos.y ) .. ", " .. math.Round( pos.z ) .. " ), 400, 0 }" )
-]]
+flags[ "ba_stadium" ] = {
+	{ "A", Vector( 0, 512, 64 ), 510.0, 0 }
+}
+
+flags[ "de_westwood" ] = {
+	{ "A", Vector( 1447.375, -814.9375, -111.9688 ), 85.0, 0 },
+	{ "B", Vector( 255.8438, -257.4688, -63.9688 ), 111.0, 0 },
+	{ "C", Vector( 866.7188, 440.6563, -127.9688 ), 135.0, 0 }
+}
+
+flags[ "gm_devruins" ] = {
+	{ "A", Vector( 1168.1563, -1728.1563, 0.0313 ), 127.0, 0 },
+	{ "B", Vector( 1728.75, -1152.4688, -120 ), 95.0, 0 },
+	{ "C", Vector( 3328.0313, -640.1563, -55.9688 ), 127.0, 0 }
+}
+
+flags[ "ttt_bf3_scrapmetal" ] = {
+	{ "A", Vector( 678.7813, -187.375, 1180.0313 ), 141.0, 0 },
+	{ "B", Vector( -113.1563, 893.6875, 832.3125 ), 98.0, 0 },
+	{ "C", Vector( -1.375, 2435.9688, 1191.0313 ), 159.0, 0 }
+}
 
 tab = {}
-
 for k, v in next, player.GetAll() do
 	tab[ v ] = 0
 end

@@ -153,7 +153,7 @@ end )
 hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
     if #player.GetAll() == 1 then return end
     local stringCheck = string.lower( msg )
-    if string.StartWith( stringCheck, "rtv" ) or string.StartWith( stringCheck, "!rtv" ) then
+    if string.StartWith( stringCheck, "rtv" ) or string.StartWith( stringCheck, "/rtv" ) then
         if not timer.Exists( "RTVCooldownTimer" ) then --If the RTV isn't on cooldown (because it didn't pass)
             if not timer.Exists( "RTVTimer" ) then --If an RTV hasn't been started yet
                 if GAMEMODE.GameTime - GetGlobalInt( "RoundTime" ) < 60 then 
@@ -171,6 +171,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
                 end )
 
                 GlobalChatPrintColor( "[RTV] Rock The Vote has been called, total votes necessary: " .. GAMEMODE.NecessaryRTVVotes )
+                GlobalChatPrintColor( "[RTV] Type \"rtv\" in chat to cast your vote" )
                 GlobalChatPrintColor( "[RTV] Time to cast your vote: " .. GAMEMODE.RTVTime .. " seconds" )
                 GlobalChatPrintColor( "[RTV] " .. ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
             else

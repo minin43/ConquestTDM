@@ -1888,7 +1888,42 @@ function GM:SetLoadout()
 		draw.SimpleText( "Set Your Loadout", "ExoTitleFont", self.LoadoutMainTitleBar:GetWide() / 2, self.LoadoutMainTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 
-	self.LoadoutMainPrimaryPanel = vgui.Create( "", self.LoadoutMain )
+	local defaultTable = {
+		primary = { class = "cw_ar15", att = {} },
+		secondary = { class = "cw_p99", att = {} },
+		equipment = { class = "weapon_fists", att = {} },
+		perk = { class = "packrat" }
+	}
+	self.LocalWeaponTable = self.LocalWeaponTable or defaultTable
+
+	local panelWide, panelTall = self.LoadoutMain:GetWide() / 4, self.LoadoutMain:GetTall() - self.LoadoutMainTitleBar:GetTall()
+	self.LoadoutMainPrimaryPanel = vgui.Create( "SelectionPanel", self.LoadoutMain )
+	self.LoadoutMainPrimaryPanel:SetPos( 0, self.LoadoutMainTitleBar:GetTall() )
+	self.LoadoutMainPrimaryPanel:SetSize( panelWide, panelTall )
+	self.LoadoutMainPrimaryPanel:SetType( self.LoadoutMainPrimaryPanel.EnumerationTypes.TYPE_WEAPON )
+
+	self.LoadoutMainSecondaryPanel = vgui.Create( "SelectionPanel", self.LoadoutMain )
+	self.LoadoutMainSecondaryPanel:SetPos( panelWide, self.LoadoutMainTitleBar:GetTall() )
+	self.LoadoutMainSecondaryPanel:SetSize( panelWide, panelTall )
+	self.LoadoutMainSecondaryPanel:SetType( self.LoadoutMainSecondaryPanel.EnumerationTypes.TYPE_WEAPON )
+
+	self.LoadoutMainEquipmentPanel = vgui.Create( "SelectionPanel", self.LoadoutMain )
+	self.LoadoutMainEquipmentPanel:SetPos( panelWide * 2, self.LoadoutMainTitleBar:GetTall() )
+	self.LoadoutMainEquipmentPanel:SetSize( panelWide, panelTall )
+	self.LoadoutMainEquipmentPanel:SetType( self.LoadoutMainEquipmentPanel.EnumerationTypes.TYPE_NONWEAPON )
+
+	self.LoadoutMainPerkPanel = vgui.Create( "SelectionPanel", self.LoadoutMain )
+	self.LoadoutMainPerkPanel:SetPos( panelWide * 3, self.LoadoutMainTitleBar:GetTall() )
+	self.LoadoutMainPerkPanel:SetSize( panelWide, panelTall )
+	self.LoadoutMainPerkPanel:SetType( self.LoadoutMainPerkPanel.EnumerationTypes.TYPE_NONWEAPON )
+
+	function self:RefreshMenu()
+		self.LoadoutMainPrimaryPanel:SetObject( self.LocalWeaponTable.primary.class )
+		self.LoadoutMainSecondaryPanel:SetObject( self.LocalWeaponTable.secondary.class )
+		self.LoadoutMainEquipmentPanel:SetObject( self.LocalWeaponTable.equipment.class )
+		self.LoadoutMainPerkPanel:SetObject( self.LocalWeaponTable.perk.class )
+	end
+	self:RefreshMenu()
 
 	--[[self.LoadoutOptionBar = vgui.Create( "DPanel", self.LoadoutMain )
 	self.LoadoutOptionBar:SetPos( 0, self.LoadoutMainTitleBar:GetTall() + 1 )

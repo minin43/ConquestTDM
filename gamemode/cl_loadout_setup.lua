@@ -209,12 +209,17 @@ local SelectionPanel = {}
 --SelectionPanel.Object
 SelectionPanel.Type = 1
 SelectionPanel.TypeEnumerations = { TYPE_WEAPON = 1, TYPE_NONWEAPON = 2 }
+SelectionPanel.ObjectName = "A weapon"
 SelectionPanel.TitleText = "Tertiary"
 SelectionPanel.TitleFont = "DermaDefault"
 SelectionPanel.TitleBuffer = 2 --//in pixels
 
 function SelectionPanel:SetType( enum )
     self.Type = enum
+end
+
+function SelectionPanel:SetName( name )
+    self.ObjectName = name
 end
 
 function SelectionPanel:SetTitle( txt )
@@ -254,6 +259,8 @@ function SelectionPanel:DrawModel( mdl )
     self.ModelPanel:GetEntity():SetPos( Vector( -6, 13.5, -1 ) )
     self.ModelPanel:SetAmbientLight( Color( 255, 255, 255 ) )
     self.ModelPanel.LayoutEntity = function() return true end --Disables rotation
+
+    self.NamePosition = self.FullTitleTall + self.TitleBuffer + self.TitleTall
 end
 
 function SelectionPanel:SetObject( objClass, drawNonWepModel )
@@ -265,7 +272,7 @@ function SelectionPanel:SetObject( objClass, drawNonWepModel )
         if weapons.Get( objClass ) and drawNonWepModel then
             self:DrawModel()
         else
-            --center the name text
+            self.NamePosition = self:GetTall() / 2 - ( ( self:GetTall() / 2 - self.FullTitleTall ) / 2 )
         end
     end
 end
@@ -273,5 +280,10 @@ end
 function SelectionPanel:Paint()
     surface.SetDrawColor( 0, 0, 0 )
     surface.DrawPoly( self.TitleBox )
-    draw.SimpleText( self.TitleText, self.TitleFont, self:GetWide() / 2, self.TitleTall / 2 + self.TitleBuffer, Color(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    draw.SimpleText( self.TitleText, self.TitleFont, self:GetWide() / 2, self.TitleTall / 2 + self.TitleBuffer, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    draw.SimpleText( self.ObjectName, self.TitleFont, self:GetWide() / 2, self.NamePosition, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+end
+
+function SelectionPanel:OnCursorEntered()
+    --if !timer.Exists
 end

@@ -75,7 +75,8 @@ local HideTheseElements = {
 	[ "CHudPoisonDamageIndicator" ] = true,
 	[ "CHudSquadStatus" ] = true,
 	[ "CHudTrain" ] = true,
-	[ "CHudVehicle" ] = true
+	[ "CHudVehicle" ] = true,
+	[ "CHudCrosshair" ] = true
 }
 
 hook.Add( "HUDShouldDraw", "HideHL2Hud", function( part )

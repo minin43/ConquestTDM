@@ -236,14 +236,8 @@ function GM:DoPlayerSound( ply, sound )
 end
 
 hook.Add( "PlayerSpawn", "SetInteractionAvailability", function( ply )
+    --//Setting server-side var for InteractionList is done in init.lua in hook PostGiveLoadout
     timer.Simple( 0.5, function()
-        if GAMEMODE.ValidModels[ ply:GetModel() ] then
-            GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
-            net.Start( "SetInteractionGroup" )
-                net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] )
-            net.Send( ply )
-        end
-
         if ply:Team() != 1 and ply:Team() != 2 then return end
         timer.Simple( math.random(), function()
             GAMEMODE:DoPlayerSound( ply, "selfSpawn" )

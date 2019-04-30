@@ -130,7 +130,11 @@ GM.AvailableTypes = {
 }
 
 function GM:DoGameSound( soundName, isVoice, numVariance )
-    numVariance = numVariance or ""
+    if numVariance then
+        numVariance = math.random( numVariance )
+    else
+        numVariance = ""
+    end
     soundName = soundName .. numVariance
 
     if self.PlayedSounds.Current and self.PlayedSounds.Current:IsPlaying() and !isVoice then
@@ -164,7 +168,7 @@ function GM:DoStartSounds()
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerStart then
         timer.Simple( 2, function()
-            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerStart" ] ) then
+            if isnumber( self.AvailableTypes[ self.AnnouncerType ][ "announcerStart" ] ) then
                 self:DoGameSound( "announcerStart", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerStart" ] )
             else
                 self:DoGameSound( "announcerStart", true )
@@ -180,7 +184,7 @@ function GM:DoWinSounds()
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerWin then
         timer.Simple( 2, function()
-            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerWin" ] ) then
+            if isnumber( self.AvailableTypes[ self.AnnouncerType ][ "announcerWin" ] ) then
                 self:DoGameSound( "announcerWin", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerWin" ] )
             else
                 self:DoGameSound( "announcerWin", true )
@@ -196,7 +200,7 @@ function GM:DoLoseSounds()
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerLose then
         timer.Simple( 2, function()
-            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerLose" ] ) then
+            if isnumber( self.AvailableTypes[ self.AnnouncerType ][ "announcerLose" ] ) then
                 self:DoGameSound( "announcerLose", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerLose" ] )
             else
                 self:DoGameSound( "announcerLose", true )
@@ -212,7 +216,7 @@ function GM:DoTieSounds()
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerTie then
         timer.Simple( 2, function()
-            if isnunber( self.AvailableTypes[ self.AnnouncerType ][ "announcerTie" ] ) then
+            if isnumber( self.AvailableTypes[ self.AnnouncerType ][ "announcerTie" ] ) then
                 self:DoGameSound( "announcerTie", true, self.AvailableTypes[ self.AnnouncerType ][ "announcerTie" ] )
             else
                 self:DoGameSound( "announcerTie", true )
@@ -231,10 +235,18 @@ net.Receive( "SetInteractionGroup", function()
     end
 end )
 
-net.Receive( "DoStart", GM:DoStartSounds() )
+net.Receive( "DoStart", function()
+    GAMEMODE:DoStartSounds()
+end )
 
-net.Receive( "DoWin", GM:DoWinSounds() )
+net.Receive( "DoWin", function()
+    GAMEMODE:DoWinSounds()
+end )
 
-net.Receive( "DoLose", GM:DoLoseSounds() )
+net.Receive( "DoLose", function()
+    GAMEMODE:DoLoseSounds()
+end )
 
-net.Receive( "DoTie", GM:DoTieSounds() )
+net.Receive( "DoTie", function()
+    GAMEMODE:DoTieSounds()
+end )

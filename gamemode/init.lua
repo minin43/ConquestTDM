@@ -138,7 +138,7 @@ function GM:DoRedWin()
 	for k, v in pairs( team.GetPlayers( 1 ) ) do
 		AddNotice(v, "WON THE ROUND", SCORECOUNTS.ROUND_WON, NOTICETYPES.ROUND)
 		AddRewards(v, SCORECOUNTS.ROUND_WON)
-
+		
 		net.Start( "DoWin" )
 		net.Send( v )
 	end
@@ -564,15 +564,27 @@ function giveLoadout( ply )
 end
 
 hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
+	--//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
+	if GAMEMODE.ValidModels[ ply:GetModel() ] then
+		GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
+		net.Start( "SetInteractionGroup" )
+			net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] )
+		net.Send( ply )
+	end
+
 	if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] then
 		if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] != ply:Team() then
-			net.Start( "DoStart" )
-			net.Send( ply )
+			timer.Simple( 0.5, function()
+				net.Start( "DoStart" )
+				net.Send( ply )
+			end )
 			GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
 		end
 	else
-		net.Start( "DoStart" )
-		net.Send( ply )
+		timer.Simple( 0.5, function()
+			net.Start( "DoStart" )
+			net.Send( ply )
+		end )
 		GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
 	end
 end )
@@ -637,7 +649,7 @@ function GM:PlayerSpawn( ply )
 		"models/player/police.mdl"--,
 		--"models/player/combine_soldier.mdl"
 	}
-	timer.Simple(0, function()
+	--timer.Simple(0, function()
 		if (ply:Team() == 1) then
 			local pmodel = redmodels[math.random(1, #redmodels)]
 			ply:SetModel(pmodel)
@@ -646,7 +658,7 @@ function GM:PlayerSpawn( ply )
 			ply:SetModel(pmodel)
 		end
 		ply:SetPlayerColor( col[ply:Team()] )
-	end)
+	--end)
 	giveLoadout( ply )
 
 	if GetGlobalBool( "RoundFinished" ) then

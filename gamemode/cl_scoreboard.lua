@@ -205,7 +205,7 @@ local function CreateScoreboard()
 		surface.DrawRect( 0, 0, red:GetWide(), red:GetTall() )
 		surface.SetDrawColor( TeamColor.red )
 		surface.DrawRect( 0, 0, red:GetWide(), 56 )
-		draw.SimpleText( "Red Team [" .. tostring( #team.GetPlayers( 1 ) ) .. "]", "Exo 2", 66, 56 / 2, white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( team.GetName( 1 ) .. " [" .. tostring( #team.GetPlayers( 1 ) ) .. "]", "Exo 2", 66, 56 / 2, white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		local width, height = 0, 0
 		for k, v in next, headers do
 			draw.SimpleText( v, "Exo 2 Header", red:GetWide() - width - ( 29 * ( k - 1 ) ) - 24 - 42, 56 / 2, white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
@@ -239,7 +239,7 @@ local function CreateScoreboard()
 		surface.DrawRect( 0, 0, blue:GetWide(), blue:GetTall() )
 		surface.SetDrawColor( TeamColor.blue )
 		surface.DrawRect( 0, 0, blue:GetWide(), 56 )
-		draw.SimpleText( "Blue Team [" .. tostring( #team.GetPlayers( 2 ) ) .. "]", "Exo 2", 66, 56 / 2, white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( team.GetName( 2 ) .. " [" .. tostring( #team.GetPlayers( 2 ) ) .. "]", "Exo 2", 66, 56 / 2, white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		local width, height = 0, 0
 		for k, v in next, headers do
 			draw.SimpleText( v, "Exo 2 Header", blue:GetWide() - width - ( 29 * ( k - 1 ) ) - 24 - 42, 56 / 2, white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )

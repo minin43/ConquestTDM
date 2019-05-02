@@ -16,6 +16,22 @@ surface.CreateFont( "Exo 2 Button", {
 	weight = 700
 } )
 
+GM.Icons = {
+	[ "Red Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	[ "Blue Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Default = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Rebels = Material( "vgui/rebelIcon.png", "smooth" ),
+	Combine = Material( "vgui/combineIcon.png", "smooth" ),
+	Insurgents = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Security = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Spetsnaz = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	OpFor = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Milita = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	[ "TF 141" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Rangers = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Seals = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
+}
+
 GM.TeamIcon = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
 GM.GradientTexture = surface.GetTextureID( "gui/gradient" )
 GM.FirstSelect = true
@@ -23,7 +39,6 @@ GM.TeamColor = Color( 76, 175, 80 )
 
 function GM:TeamMenu()
 	if ( main and main:IsValid() ) or ( self.main and self.main:IsValid() ) or ( self.TeamMain and self.TeamMain:IsValid() ) then return end
-	
 	self.TeamMain = vgui.Create( "DFrame" )
 	self.TeamMain:SetSize( 400, 280 )
 	self.TeamMain:SetTitle( "" )
@@ -109,11 +124,11 @@ function GM:TeamMenu()
 			surface.DrawLine( 8, self.TeamMainRed:GetTall() - 1, self.TeamMainRed:GetWide() - 8, self.TeamMainRed:GetTall() - 1 )
 
 			surface.SetDrawColor( 213, 0, 0, 255 )
-			surface.SetMaterial( GAMEMODE.TeamIcon )
+			surface.SetMaterial( GAMEMODE.Icons[ team.GetName( 1 ) ] )
 			surface.DrawTexturedRect( self.TeamMainIconSize / 4, ( self.TeamMainRed:GetTall() / 2 ) - ( self.TeamMainIconSize / 2 ), self.TeamMainIconSize , self.TeamMainIconSize )
 
 			local starttextpos = self.TeamMainIconSize * 1.5 --width of the icon + a buffer
-			draw.SimpleText( "Red Team", "Exo 2", starttextpos + 14, self.TeamMainRed:GetTall() / 3, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( team.GetName( 1 ), "Exo 2", starttextpos + 14, self.TeamMainRed:GetTall() / 3, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			draw.SimpleText( "Currently: " .. self.TeamMainRed.NumberPlayers .. " player(s) on this team.", "Exo 2 Subhead", starttextpos + 14, self.TeamMainRed:GetTall() / 3 * 2, Color( 128, 128, 128 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			
 			if !self.TeamMainRed.Hover then
@@ -178,11 +193,11 @@ function GM:TeamMenu()
 			end
 
 			surface.SetDrawColor( 41, 98, 255, 255 )
-			surface.SetMaterial( GAMEMODE.TeamIcon )
+			surface.SetMaterial( GAMEMODE.Icons[ team.GetName( 2 ) ] )
 			surface.DrawTexturedRect( self.TeamMainIconSize / 4, ( self.TeamMainBlue:GetTall() / 2 ) - ( self.TeamMainIconSize / 2 ), self.TeamMainIconSize , self.TeamMainIconSize )
 
 			local starttextpos = self.TeamMainIconSize * 1.5 --width of the icon + a buffer
-			draw.SimpleText( "Blue Team", "Exo 2", starttextpos + 14, self.TeamMainBlue:GetTall() / 3, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( team.GetName( 2 ), "Exo 2", starttextpos + 14, self.TeamMainBlue:GetTall() / 3, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			draw.SimpleText( "Currently: " .. self.TeamMainBlue.NumberPlayers .. " player(s) on this team.", "Exo 2 Subhead", starttextpos + 14, self.TeamMainBlue:GetTall() / 3 * 2, Color( 128, 128, 128 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 			
 			if !self.TeamMainBlue.Hover then

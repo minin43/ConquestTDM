@@ -148,6 +148,7 @@ function GM:DoGameSound( soundName, isVoice, numVariance )
 
     if !self.PlayedSounds[ self.AnnouncerType ][ soundName ] then
         self.PlayedSounds[ self.AnnouncerType ][ soundName ] = CreateSound( LocalPlayer(), self.AvailableTypes[ self.AnnouncerType ].path .. soundName .. ".ogg" )
+        self.PlayedSounds[ self.AnnouncerType ][ soundName ]:SetSoundLevel( 45 )
     end
 
     self.PlayedSounds[ self.AnnouncerType ][ soundName ]:Play()

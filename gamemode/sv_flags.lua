@@ -634,6 +634,11 @@ flags[ "dm_canals" ] = {
 	{ "C", Vector( -979.375, -2437.625, 16.0313 ), 115.0, 0 }
 }
 
+flags[ "ba_halo_crypt" ] = {
+	{ "A", Vector( 716.4375, 0.4063, 0.0313 ), 30.0, 0 },
+	{ "B", Vector( -716.0313, 33.5938, 0.0313 ), 30.0, 0 }
+}
+
 tab = {}
 for k, v in next, player.GetAll() do
 	tab[ v ] = 0

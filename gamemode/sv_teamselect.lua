@@ -29,9 +29,9 @@ function GM:ChangeTeam( _, args, _ ) --This is a wonky return as the function is
 	if ply:Team() == 0 then
 		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the spectators" )
 	elseif ply:Team() == 1 then
-		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "red team" )
+		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), team.GetName( 1 ) )
 	elseif ply:Team() == 2 then
-		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), "blue team" )
+		GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", team.GetColor( ply:Team() ), ply:Nick(), Color( 255, 255, 255 ), " is joining the ", team.GetColor( ply:Team() ), team.GetName( 2 ) )
 	end
 end
 

@@ -1,9 +1,8 @@
-print("check second")
 GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Cobalt, Whuppo, Logan"
 GM.Email = "lobsterlogan43@yahoo.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.5"
+GM.Version = "Conquest Team Deathmatch V. 1.7"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
@@ -39,9 +38,11 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "dm_bounce" ] = { id = 1645391828, size = "Small", img = "vgui/maps/bounce.png", type = "hl2", extra = { "NoFall" } },
     [ "ttt_mw2_highrise" ] = { id = 290247692, size = "Large", img = "vgui/maps/highrise.png", type = "mw2" },
 	[ "ttt_mw2_scrapyard" ] = { id = 294363438, size = "Large", img = "vgui/maps/scrapyard.png", type = "mw2" },
+	--//Update 1.6
 	[ "de_crash" ] = { id = 671482026, size = "Large", img = "vgui/maps/crash.png", type = "mw2" },
 	[ "dm_mines" ] = { id = 660390276, size = "Midsize", img = "vgui/maps/mines.png", type = "hl2" },
 	[ "de_boston" ] = { id = 296008620, size = "Large", img = "vgui/maps/boston.png", type = "ins2" },
+	--//Update 1.7
 	[ "ttt_cwoffice2019" ] = { id = 1659123269, size = "Large", img = "vgui/maps/cwoffice2019.png", type = "ins2" },
 	[ "ba_stadium" ] = { id = 1721873165, size = "Small", img = "vgui/maps/stadium.png", type = "hl2" },
 	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png" },
@@ -64,15 +65,9 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 
 GM.TeamNames = {
     [ "mw2" ] = { [ "red" ] = { "Spetsnaz", "OpFor"--[[, "Milita"]] }, [ "blue" ] = { "TF 141", "Rangers", "Seals" }},
-    [ "hl2" ] = { [ "red" ] = { "Combine" }, [ "blue" ] = { "Rebels" } },
+    [ "hl2" ] = { [ "red" ] = { "Rebels" }, [ "blue" ] = { "Combine" } },
     [ "ins2" ] = { [ "red" ] = { "Insurgents" }, [ "blue" ] = { "Security" } }
 }
-
---hardcoded colors. once fully implemented we could change from red v. blue to any two colors.
-team.SetUp( 0, "Spectators", Color( 0, 0, 0 ) )
-team.SetUp( 1, GM.redTeamName, Color( 255, 0, 0 ) )
-team.SetUp( 2, GM.blueTeamName, Color( 0, 0, 255 ) )
-team.SetUp( 3, "deathSelf", Color( 158, 253, 56 ) ) --colors defined here will be deprecated soon
 
 if SERVER then
     
@@ -88,7 +83,7 @@ if SERVER then
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )
 
-	if GM.MapTable[ game.GetMap() ] then
+	--[[if GM.MapTable[ game.GetMap() ] then --Commented out until there are MW2 and INS2 playermodels for the teams
 		if GM.MapTable[ game.GetMap() ].type then
 			local redOptions = #GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].red
 			local blueOptions = #GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].blue
@@ -96,14 +91,18 @@ if SERVER then
 			GM.redTeamName = GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].red[ math.random( redOptions ) ]
 			GM.blueTeamName = GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].blue[ math.random( blueOptions ) ]
 		end
-	end
-	print( "Setting up teams...", GM.redTeamName, GM.blueTeamName )
+	end]]
+	GM.redTeamName = "Rebels" --To be removed when the above is added back
+	GM.blueTeamName = "Combine" --To be removed when the above is added back
+	
+	team.SetUp( 0, "Spectators", Color( 0, 0, 0 ) )
 	team.SetUp( 1, GM.redTeamName, Color( 255, 0, 0 ) )
 	team.SetUp( 2, GM.blueTeamName, Color( 0, 0, 255 ) )
+	team.SetUp( 3, "deathSelf", Color( 158, 253, 56 ) )
+
 	hook.Run( "FinishTeamSetup" )
 
 	net.Receive( "RequestTeams", function( len, ply )
-		print( "SERVER received RequestTeams", GAMEMODE.redTeamName, GAMEMODE.blueTeamName )
 		net.Start( "RequestTeamsCallback" )
 			net.WriteString( GAMEMODE.redTeamName )
 			net.WriteString( GAMEMODE.blueTeamName )

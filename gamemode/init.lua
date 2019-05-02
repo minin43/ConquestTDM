@@ -12,6 +12,23 @@ GM.PostGameCountdown = 20 --Amount of time after the game has ended players can 
 GM.Tickets = 200 --Number of tickets on conquest maps
 GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
+GM.DefaultModels = {
+	Rebels = {
+		"models/player/group03/male_01.mdl",
+		"models/player/group03/male_02.mdl",
+		"models/player/group03/male_03.mdl",
+		"models/player/group03/male_04.mdl",
+		"models/player/group03/male_05.mdl",
+		"models/player/group03/male_06.mdl",
+		"models/player/group03/male_07.mdl",
+		"models/player/group03/male_08.mdl",
+		"models/player/group03/male_09.mdl"
+	}
+	Combine = {
+		"models/player/police.mdl" --//Unfortunately, only the metropolice model works with cw2.0 animations
+	}
+}
+
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_hud.lua" )
@@ -150,7 +167,7 @@ function GM:DoRedWin()
 		net.Send( v )
 	end
 
-	GlobalChatPrintColor( color_red, "Red Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	GlobalChatPrintColor( color_red, team.GetName( 1 ), " Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:DoBlueWin()
@@ -169,7 +186,7 @@ function GM:DoBlueWin()
 		net.Send( v )
 	end
 
-	GlobalChatPrintColor( color_blue, "Blue Team Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
+	GlobalChatPrintColor( color_blue, team.GetName( 2 ), " Won! ", color_white, "Mapvote will start in ", color_green, self.PostGameCountdown .. " seconds", color_white, "." )
 end
 
 function GM:DoTie()
@@ -385,7 +402,7 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
-	ply:ConCommand( "tdm_spawnmenu" ) --//Only called on initial spawn
+	--ply:ConCommand( "tdm_spawnmenu" ) --//Only called on initial spawn
 
 	self.PerkTracking[ id( ply:SteamID() ) ] = {}
 	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
@@ -632,33 +649,15 @@ function GM:PlayerSpawn( ply )
 	ply:SetNoCollideWithTeammates( true )
 	ply:ConCommand( "cw_simple_telescopics 0" )
 
-	local redmodels = {
-		"models/player/group03/male_01.mdl",
-		"models/player/group03/male_02.mdl",
-		"models/player/group03/male_03.mdl",
-		"models/player/group03/male_04.mdl",
-		"models/player/group03/male_05.mdl",
-		"models/player/group03/male_06.mdl",
-		"models/player/group03/male_07.mdl",
-		"models/player/group03/male_08.mdl",
-		"models/player/group03/male_09.mdl"
-	}
-    local bluemodels = {
-		--"models/player/combine_soldier_prisonguard.mdl",
-		--"models/player/combine_super_soldier.mdl",
-		"models/player/police.mdl"--,
-		--"models/player/combine_soldier.mdl"
-	}
-	--timer.Simple(0, function()
-		if (ply:Team() == 1) then
-			local pmodel = redmodels[math.random(1, #redmodels)]
-			ply:SetModel(pmodel)
-		elseif (ply:Team() == 2) then
-			local pmodel = bluemodels[math.random(1, #bluemodels)]
-			ply:SetModel(pmodel)
-		end
-		ply:SetPlayerColor( col[ply:Team()] )
-	--end)
+	if ply:Team() == 1 then
+		local teamName = team.GetName( 1 )
+		ply:SetModel( self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ] )
+	elseif ply:Team() == 2 then
+		local teamName = team.GetName( 2 )
+		ply:SetModel( self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ] )
+	end
+	ply:SetPlayerColor( col[ply:Team()] )
+
 	giveLoadout( ply )
 
 	if GetGlobalBool( "RoundFinished" ) then
@@ -821,8 +820,9 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
 end )
 
 hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )
-	if ply:IsValid() and ply:IsPlayer() and dmginfo:IsBulletDamage() then
-		--local NewDamageType = DamageInfo()
-		--NewDamageType:SetDamageType( )
+	if ply:IsValid() and ply:IsPlayer() and dmginfo:IsBulletDamage() and ply:Team() != dmginfo:GetAttacker():Team() then
+		local dmg = dmginfo:GetDamage()
+		dmginfo:SetDamage( 0 )
+		ply:SetHealth( ply:Health() - dmg )
 	end
 end )

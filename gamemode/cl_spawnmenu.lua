@@ -16,11 +16,19 @@ surface.CreateFont( "Exo 2 Button", {
 	weight = 700
 } )
 
+GM.Icons = {
+	[ "Red Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	[ "Blue Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Default = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+	Rebels = Material( "vgui/rebelIcon.png", "smooth" ),
+	Combine = Material( "vgui/combineIcon.png", "smooth" )
+}
+
 local teamIcon = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
 local gradient = surface.GetTextureID( "gui/gradient" )
 
 function GM:SpawnMenu()
-
+	print("function GM:SpawnMenu called with team names set as:", team.GetName( 1 ), team.GetName( 2 ))
 	if main then
 		return
 	end
@@ -82,7 +90,7 @@ function GM:SpawnMenu()
 	
 	spec.Paint = function()
 		surface.SetDrawColor( 56, 142, 60, 255 )
-		surface.SetMaterial( teamIcon )
+		surface.SetMaterial( GAMEMODE.Icons.Default )
 		surface.DrawTexturedRect( 16, 16, 40, 40 )
 		surface.SetFont( "Exo 2" )
 		surface.SetTextColor( 0, 0, 0, 255 )
@@ -130,12 +138,12 @@ function GM:SpawnMenu()
 		surface.SetDrawColor( 0, 0, 0, 64 )
 		surface.DrawRect( 72, 71, red:GetWide(), 1 )
 		surface.SetDrawColor( 213, 0, 0, 255 )
-		surface.SetMaterial( teamIcon )
+		surface.SetMaterial( GAMEMODE.Icons[ team.GetName( 1 ) ] )
 		surface.DrawTexturedRect( 16, 16, 40, 40 )
 		surface.SetFont( "Exo 2" )
 		surface.SetTextColor( 0, 0, 0, 255 )
 		surface.SetTextPos( 72, 16 )
-		surface.DrawText( "Red Team" )
+		surface.DrawText( team.GetName( 1 ) )
 		surface.SetFont( "Exo 2 Subhead" )
 		surface.SetTextColor( 128, 128, 128, 255 )
 		surface.SetTextPos( 72, 40 )
@@ -184,12 +192,12 @@ function GM:SpawnMenu()
 		surface.SetDrawColor( 0, 0, 0, 64 )
 		surface.DrawRect( 72, 71, blue:GetWide(), 1 )
 		surface.SetDrawColor( 41, 98, 255, 255 )
-		surface.SetMaterial( teamIcon )
+		surface.SetMaterial( GAMEMODE.Icons[ team.GetName( 2 ) ] )
 		surface.DrawTexturedRect( 16, 16, 40, 40 )
 		surface.SetFont( "Exo 2" )
 		surface.SetTextColor( 0, 0, 0, 255 )
 		surface.SetTextPos( 72, 16 )
-		surface.DrawText( "Blue Team" )
+		surface.DrawText( team.GetName( 2 ) )
 		surface.SetFont( "Exo 2 Subhead" )
 		surface.SetTextColor( 128, 128, 128, 255 )
 		surface.SetTextPos( 72, 40 )

@@ -46,3 +46,8 @@ MCFX Suggestions
     - Team shuffle (command/vote)
         - Rewrite autobalancing
     - Fix exploitable net messaging on buy and loadout
+
+
+
+BEFORE NEXT UPDATE:
+    Finish the new medkits

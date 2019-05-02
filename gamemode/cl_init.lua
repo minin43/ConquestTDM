@@ -1,16 +1,3 @@
-net.Start( "RequestTeams" )
-net.SendToServer()
-
-net.Receive( "RequestTeamsCallback", function()
-	print( "CLIENT received RequestTeamsCallback" )
-	GAMEMODE.redTeamName = net.ReadString()
-	GAMEMODE.blueTeamName = net.ReadString()
-
-	team.SetUp( 1, GAMEMODE.redTeamName, Color( 255, 0, 0 ) )
-	team.SetUp( 2, GAMEMODE.blueTeamName, Color( 0, 0, 255 ) )
-	print( "Team names: ", GAMEMODE.redTeamName, GAMEMODE.blueTeamName )
-	print( "Team colors: " ,team.GetColor(1), team.GetColor(2) )
-end )
 print( "setting up colorScheme" )
 colorScheme = {
 	[0] = { --spectator/misc colors
@@ -81,6 +68,24 @@ hook.Add( "Think", "SetColors", function()
 	else
 		GAMEMODE.TeamColor = Color( 76, 175, 80 )
 	end
+
+	if !GAMEMODE.ReceivedTeams then
+		net.Start( "RequestTeams" )
+		net.SendToServer()
+	end
+end )
+
+net.Receive( "RequestTeamsCallback", function()
+	GAMEMODE.ReceivedTeams = true
+	GAMEMODE.redTeamName = net.ReadString()
+	GAMEMODE.blueTeamName = net.ReadString()
+
+	team.SetUp( 0, "Spectators", Color( 0, 0, 0 ) )
+	team.SetUp( 1, GAMEMODE.redTeamName, Color( 255, 0, 0 ) )
+	team.SetUp( 2, GAMEMODE.blueTeamName, Color( 0, 0, 255 ) )
+	team.SetUp( 3, "deathSelf", Color( 158, 253, 56 ) )
+
+	LocalPlayer():ConCommand( "tdm_spawnmenu" )
 end )
 
 net.Receive( "GlobalChatColor", function()
@@ -106,7 +111,7 @@ net.Receive( "PlayerChatColor", function()
 	end
 	chat.AddText( unpack( fixedtab ) )
 end )
-
+--[[
 net.Receive( "SetMagician", function()
 	local bool = net.ReadBool()
 	local wep = net.ReadEntity()
@@ -153,7 +158,7 @@ net.Receive( "UnFixReloadSpeeds", function()
 			weapons.GetStored( k ).ReloadStartTime = v[2]
 		end
 	end
-end )
+end )]]
 
 
 

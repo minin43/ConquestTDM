@@ -1,23 +1,23 @@
 hook.Add( "PlayerSpawn", "DoubleJumpIncreease", function( ply )
 	timer.Simple( 0, function()
-		if CheckPerk( ply ) == "dbjump" then
-			ply:SetJumpPower( 215 )
+		if CheckPerk( ply ) == "doublejump" then
+			ply:SetJumpPower( GAMEMODE.DefaultJumpPower + 40 )
 		end
 	end )
 end )
 
 tf2_dbjumpsound = {
-	Sound( "player/pl_scout_jump1.wav" ),
-	Sound( "player/pl_scout_jump2.wav" ),
-	Sound( "player/pl_scout_jump3.wav" ),
-	Sound( "player/pl_scout_jump4.wav" )
+	Sound( "perks/doublejump/jump1.wav" ),
+	Sound( "perks/doublejump/jump2.wav" ),
+	Sound( "perks/doublejump/jump3.wav" ),
+	Sound( "perks/doublejump/jump4.wav" )
 }
 
 hook.Add( "SetupMove", "DoubleJump", function( ply, mv, cmd )
 
 	ply.CanDoubleJump = ply.CanDoubleJump and true
 
-	if CheckPerk( ply ) == "dbjump" then
+	if CheckPerk( ply ) == "doublejump" then
 		if mv:KeyPressed( IN_JUMP ) and !ply:IsOnGround() and ply.CanDoubleJump then
 			local Vel = mv:GetVelocity()
 			local zVel = 0
@@ -32,4 +32,4 @@ hook.Add( "SetupMove", "DoubleJump", function( ply, mv, cmd )
 
 end )
 
---RegisterPerk( "Double Jump", "doublejump", 0, "Gain the ability to double jump, jump height is slightly increased." )
+RegisterPerk( "Double Jump", "doublejump", 16, "Gain the ability to double jump, jump height is slightly increased." )

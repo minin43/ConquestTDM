@@ -549,9 +549,12 @@ function weapons.OnLoaded()
         wep.Slot = 2
     end
 
-    if weapons.Get( "weapon_medkit" ) then
-        local wep = weapons.GetStored( "weapon_medkit" )
-        wep.Slot = 2
+    local medkits = { "weapon_medkit", "medkit_slow", "medkit_fast", "medkit_full" }
+    for k, v in pairs( medkits ) do 
+        if weapons.Get( v ) then
+            local wep = weapons.GetStored( v )
+            wep.Slot = 2
+        end
     end
 
 end

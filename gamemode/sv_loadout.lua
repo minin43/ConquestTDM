@@ -68,24 +68,26 @@ extras = {
 	{ "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0 },
 	{ "Flash Grenades", 	"cw_flash_grenade",	6, "models/weapons/w_eq_flashbang.mdl", 			2000 },
 	{ "Slow Medkit", 		"medkit_slow",		11, "models/weapons/w_medkit.mdl",					5000 },
-	{ "Smoke Grenades", 	"cw_smoke_grenade", 17, "models/weapons/w_eq_smokegrenade.mdl", 		5000 },
-	{ "Frag Grenade x2",	"grenades", 		26, "models/weapons/w_cw_fraggrenade_thrown.mdl",	5000 },
-	{ "Fast Medkit", 		"medkit_fast", 		34, "models/weapons/w_medkit.mdl", 					10000 }
+	{ "Smoke Grenades", 	"cw_smoke_grenade", 18, "models/weapons/w_eq_smokegrenade.mdl", 		5000 },
+	{ "Fast Medkit", 		"medkit_fast", 		26, "models/weapons/w_medkit.mdl", 					10000 },
+	{ "Frag Grenade x2",	"grenades", 		35, "models/weapons/w_cw_fraggrenade_thrown.mdl",	10000 },
+	{ "Large Medkit", 		"medkit_full", 		45, "models/weapons/w_medkit.mdl", 					15000 }
 }
 
 --[[	Perk table - used for your reference only
 	Packrat -Ammo			- 1
-	Hunter -Movement		- 5
-	Vengeance -Misc			- 10
-	Regeneration -Life		- 14
-	Slaw					- 19
-	Headpopper -Sniper		- 23
+	Hunter -Movement		- 4
+	Vengeance -Misc			- 8
+	Regeneration -Life		- 13
+	Double Jump	 -Movement	- 16
+	Slaw	-Misc			- 20
+	Headpopper -Sniper		- 25
 	Thornmail -Misc			- 28
 	Excited -Movement		- 32
 	Leech -Life				- 37
-	Pyromancer -Misc		- 41
-	Vulture -Sniper			- 46
-	Lifeline -Life/Movement	- 50
+	Pyromancer -Misc		- 40
+	Vulture -Sniper			- 44
+	Lifeline -Life/Movement	- 49
 ]]
 
 hook.Add( "InitPostEntity", "SetStats", function()

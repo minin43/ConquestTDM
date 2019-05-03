@@ -36,4 +36,4 @@ hook.Add( "PlayerDeath", "removeregen", function( ply )
 	end
 end )
 
-RegisterPerk( "Regeneration", "regen", 14, "Slowly regenerate health after 3 seconds of taking damage" )
+RegisterPerk( "Regeneration", "regen", 13, "Slowly regenerate health after 3 seconds of taking damage" )

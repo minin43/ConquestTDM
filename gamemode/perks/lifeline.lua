@@ -56,5 +56,5 @@ hook.Add( "Think", "LifelineChecks", function()
 	end
 end )
 
-RegisterPerk( "Lifeline", "lifeline", 50, "Walk speed, sprint speed, & jump height are based on missing health. Headshots and kills while low revitalize you,"
+RegisterPerk( "Lifeline", "lifeline", 49, "Walk speed, sprint speed, & jump height are based on missing health. Headshots and kills while low revitalize you,"
 	.. " increasing your health by 50 and max health by 10." )

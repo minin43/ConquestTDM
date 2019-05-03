@@ -23,7 +23,7 @@ GM.DefaultModels = {
 		"models/player/group03/male_07.mdl",
 		"models/player/group03/male_08.mdl",
 		"models/player/group03/male_09.mdl"
-	}
+	},
 	Combine = {
 		"models/player/police.mdl" --//Unfortunately, only the metropolice model works with cw2.0 animations
 	}

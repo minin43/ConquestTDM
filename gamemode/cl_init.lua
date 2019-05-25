@@ -33,6 +33,30 @@ colorScheme = {
 	}]]
 }
 
+GM.Icons = {
+	Teams = {
+		[ "Red Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		[ "Blue Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Default = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Rebels = Material( "vgui/rebelIcon.png", "smooth" ),
+		Combine = Material( "vgui/combineIcon.png", "smooth" ),
+		Insurgents = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Security = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Spetsnaz = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		OpFor = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Milita = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		[ "TF 141" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Rangers = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+		Seals = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
+	},
+	Weapons = {
+
+	},
+	Perks = {
+		
+	}
+}
+
 include( "shared.lua" )
 include( "cl_hud.lua" )
 include( "cl_spawnmenu.lua" )

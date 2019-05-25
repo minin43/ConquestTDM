@@ -74,7 +74,7 @@ function ChooseMainButton:Paint()
     self.MarkupObject:Draw( self:GetWide() / 2, 24, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     surface.SetDrawColor( 0, 0, 0, 220 )
     surface.SetMaterial( self.Icon )
-    surface.DrawTexturedRect( self:GetWide() / 2 - ( self.IconSize / 2 ), self:GetTall() / 2 - ( self.IconSize / 2 ), self.IconSize, self.IconSize ) --To figure out
+    surface.DrawTexturedRect( self:GetWide() / 2 - ( self.IconSize / 2 ), self:GetTall() / 2 - ( self.IconSize / 2 ), self.IconSize, self.IconSize )
 
     if !self.Hover then
         surface.SetTexture( gradient )
@@ -199,9 +199,9 @@ end
     self:MoveToFront()
     if self.basePanel and self.basePanel:IsValid() and self.basePanel.isOpen then return end
     self:Remove()
-end]]
+end
 
-vgui.Register("AttachmentButton", AttachmentButton, "DButton")
+vgui.Register("AttachmentButton", AttachmentButton, "DButton")]]
 
 --//
 
@@ -259,31 +259,55 @@ function SelectionPanel:DrawModel( mdl )
     self.ModelPanel:GetEntity():SetPos( Vector( -6, 13.5, -1 ) )
     self.ModelPanel:SetAmbientLight( Color( 255, 255, 255 ) )
     self.ModelPanel.LayoutEntity = function() return true end --Disables rotation
+    self.ModelPanel.OnCursorEntered = function()
+        self.Hover = true
+    end
+    self.ModelPanel.OnCursorExited = function()
+        self.Hover = false
+    end
 
     self.NamePosition = self.FullTitleTall + self.TitleBuffer + self.TitleTall
 end
 
-function SelectionPanel:SetObject( objClass, drawNonWepModel )
+function SelectionPanel:SetObject( objClass, perkTable, drawNonWepModel )
     self.Object = objClass
     if self.Type == 1 then --//If type weapon
         if !weapons.Get( objClass ) then return end
         self:DrawModel()
+        --Set up attachment button group, 
     else
         if weapons.Get( objClass ) and drawNonWepModel then
             self:DrawModel()
         else
-            self.NamePosition = self:GetTall() / 2 - ( ( self:GetTall() / 2 - self.FullTitleTall ) / 2 )
+            if GAMEMODE.Icons.Weapons[ objClass ] then
+                --self:DrawIcon( GAMEMODE.Icons.Weapons[ objClass ] )
+                self.DrawIcon = true
+                self.IconMaterial = GAMEMODE.Icons.Weapons[ objClass ]
+            elseif GAMEMODE.ICons.Perks[ objClass ] then
+                --self:DrawIcon( GAMEMODE.Icons.Perks[ objClass ] )
+                self.DrawIcon = true
+                self.IconMaterial = GAMEMODE.Icons.Perks[ objClass ]
+            else
+                self.NamePosition = self:GetTall() / 2 - ( ( self:GetTall() / 2 - self.FullTitleTall ) / 2 )
+            end
+            --Set up description box
         end
     end
 end
 
 function SelectionPanel:Paint()
     surface.SetDrawColor( 0, 0, 0 )
+    surface.DrawLine( 0, self:GetTall() / 2, self:GetWide(), self:GetTall() / 2 )
+    --do gradient above the dividing line
+    --do gradient underneath poly draw
+
     surface.DrawPoly( self.TitleBox )
     draw.SimpleText( self.TitleText, self.TitleFont, self:GetWide() / 2, self.TitleTall / 2 + self.TitleBuffer, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     draw.SimpleText( self.ObjectName, self.TitleFont, self:GetWide() / 2, self.NamePosition, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-end
 
-function SelectionPanel:OnCursorEntered()
-    --if !timer.Exists
+    if self.DrawIcon then
+        local spaceAvailable = self:GetTall() / 2 - self.FullTitleTall - ( self.TitleBuffer * 2 )
+        surface.SetMaterial( self.IconMaterial )
+        surface.DrawTexturedRect( self:GetWide() / 2 - ( spaceAvailable / 2 ), self:GetTall() / 2 - ( spaceAvailable / 2 ) - self.TitleBuffer, spaceAvailable, spaceAvailable )
+    end
 end

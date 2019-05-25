@@ -16,7 +16,7 @@ surface.CreateFont( "Exo 2 Button", {
 	weight = 700
 } )
 
-GM.Icons = {
+--[[GM.Icons = {
 	[ "Red Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
 	[ "Blue Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
 	Default = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
@@ -30,7 +30,7 @@ GM.Icons = {
 	[ "TF 141" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
 	Rangers = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
 	Seals = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
-}
+}]]
 
 GM.TeamIcon = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
 GM.GradientTexture = surface.GetTextureID( "gui/gradient" )
@@ -124,7 +124,7 @@ function GM:TeamMenu()
 			surface.DrawLine( 8, self.TeamMainRed:GetTall() - 1, self.TeamMainRed:GetWide() - 8, self.TeamMainRed:GetTall() - 1 )
 
 			surface.SetDrawColor( 213, 0, 0, 255 )
-			surface.SetMaterial( GAMEMODE.Icons[ team.GetName( 1 ) ] )
+			surface.SetMaterial( GAMEMODE.Icons.Teams[ team.GetName( 1 ) ] )
 			surface.DrawTexturedRect( self.TeamMainIconSize / 4, ( self.TeamMainRed:GetTall() / 2 ) - ( self.TeamMainIconSize / 2 ), self.TeamMainIconSize , self.TeamMainIconSize )
 
 			local starttextpos = self.TeamMainIconSize * 1.5 --width of the icon + a buffer
@@ -193,7 +193,7 @@ function GM:TeamMenu()
 			end
 
 			surface.SetDrawColor( 41, 98, 255, 255 )
-			surface.SetMaterial( GAMEMODE.Icons[ team.GetName( 2 ) ] )
+			surface.SetMaterial( GAMEMODE.Icons.Teams[ team.GetName( 2 ) ] )
 			surface.DrawTexturedRect( self.TeamMainIconSize / 4, ( self.TeamMainBlue:GetTall() / 2 ) - ( self.TeamMainIconSize / 2 ), self.TeamMainIconSize , self.TeamMainIconSize )
 
 			local starttextpos = self.TeamMainIconSize * 1.5 --width of the icon + a buffer

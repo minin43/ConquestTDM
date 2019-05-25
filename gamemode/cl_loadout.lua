@@ -1848,11 +1848,12 @@ function GM:MenuMain()
 
 end
 
---[[-no end brackets to delete
+--//Loadout Menu - Set your primary/secondary weapon, equipment, and perk
 function GM:SetLoadout()
 	if self.LoadoutMain and self.LoadoutMain:IsValid() then return end
 
-	net.Start( "GetRank" )
+	--Not needed in the loadout menu, should be in the shop menu
+	--[[net.Start( "GetRank" )
 	net.SendToServer()
 	net.Start( "GetMoney" )
 	net.SendToServer()
@@ -1867,6 +1868,41 @@ function GM:SetLoadout()
 	end )
 	net.Receive( "GetUserGroupRank", function()
 		GAMEMODE.playerRank = net.ReadInt() --Need total byte count
+	end )]]
+
+	net.Start( "RequestUnlocked" )
+	net.SendToServer()
+
+	net.Receive( "RequestUnlockedCallback", function()
+		local unlocks = net.ReadTable()
+		GAMEMODE.UnlockTable = { primaries = {}, secondaries = {}, equipment = {}, perks = {} }
+
+		for k, v in pairs( unlocks[ 1 ] ) do
+			GAMEMODE.UnlockTable.primaries[ #GAMEMODE.UnlockTable.primaries + 1 ] = GAMEMODE.PrimariesList[ k ]
+			GAMEMODE.UnlockTable.primaries[ #GAMEMODE.UnlockTable.primaries ].attachments = v
+		end
+		for k, v in pairs( unlocks[ 2 ] ) do
+			GAMEMODE.UnlockTable.secondaries[ #GAMEMODE.UnlockTable.secondaries + 1 ] = GAMEMODE.SecondariesList[ k ]
+			GAMEMODE.UnlockTable.secondaries[ #GAMEMODE.UnlockTable.secondaries ].attachments = v
+		end
+		for k, v in pairs( unlocks[ 3 ] ) do
+			GAMEMODE.UnlockTable.equipment[ #GAMEMODE.UnlockTable.equipment + 1 ] = GAMEMODE.EquipmentList[ k ]
+		end
+		for k, v in pairs( unlocks[ 4 ] ) do
+			GAMEMODE.UnlockTable.perks[ #GAMEMODE.UnlockTable.perks + 1 ] = v
+		end
+		
+		if not GAMEMODE.LoadoutMain then
+			timer.Simple( 0.5, function()
+				if not GAMEMODE.LoadoutMain then
+					Error(  ) --dunno what the params are
+				else
+					ExtendLoadout()
+				end
+			end )
+		else
+			ExtendLoadout()
+		end
 	end )
 
 	self.LoadoutMain = vgui.Create( "DFrame" )
@@ -1889,12 +1925,12 @@ function GM:SetLoadout()
 	end
 
 	local defaultTable = {
-		primary = { class = "cw_ar15", att = {} },
-		secondary = { class = "cw_p99", att = {} },
-		equipment = { class = "weapon_fists", att = {} },
+		primary = { class = "cw_ar15", attachments = {} },
+		secondary = { class = "cw_p99", attachments = {} },
+		equipment = { class = "weapon_fists" },
 		perk = { class = "packrat" }
 	}
-	self.LocalWeaponTable = self.LocalWeaponTable or defaultTable
+	self.SelectedLoadout = self.SelectedLoadout or defaultTable
 
 	local panelWide, panelTall = self.LoadoutMain:GetWide() / 4, self.LoadoutMain:GetTall() - self.LoadoutMainTitleBar:GetTall()
 	self.LoadoutMainPrimaryPanel = vgui.Create( "SelectionPanel", self.LoadoutMain )
@@ -1918,112 +1954,56 @@ function GM:SetLoadout()
 	self.LoadoutMainPerkPanel:SetType( self.LoadoutMainPerkPanel.EnumerationTypes.TYPE_NONWEAPON )
 
 	function self:RefreshMenu()
-		self.LoadoutMainPrimaryPanel:SetObject( self.LocalWeaponTable.primary.class )
-		self.LoadoutMainSecondaryPanel:SetObject( self.LocalWeaponTable.secondary.class )
-		self.LoadoutMainEquipmentPanel:SetObject( self.LocalWeaponTable.equipment.class )
-		self.LoadoutMainPerkPanel:SetObject( self.LocalWeaponTable.perk.class )
+		self.LoadoutMainPrimaryPanel:SetObject( self.SelectedLoadout.primary.class, self.SelectedLoadout.primary.attachments )
+		self.LoadoutMainSecondaryPanel:SetObject( self.SelectedLoadout.secondary.class, self.SelectedLoadout.secondary.attachments )
+		self.LoadoutMainEquipmentPanel:SetObject( self.SelectedLoadout.equipment.class, nil, true )
+		self.LoadoutMainPerkPanel:SetObject( self.SelectedLoadout.perk.class )
 	end
 	self:RefreshMenu()
 
-	--[[self.LoadoutOptionBar = vgui.Create( "DPanel", self.LoadoutMain )
-	self.LoadoutOptionBar:SetPos( 0, self.LoadoutMainTitleBar:GetTall() + 1 )
-	self.LoadoutOptionBar:SetSize( self.LoadoutMain:GetWide(), 16 ) --Font size + 2 pixel buffer above & below
-	self.LoadoutOptionBar.Paint = function()
-		surface.SetDrawColor( Color( 255, 255, 255 ) )
-		surface.DrawLine( self.LoadoutOptionBar:GetWide() / 4, 6, self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() - 6)
-		surface.DrawLine( self.LoadoutOptionBar:GetWide() / 4 * 2, 6, self.LoadoutOptionBar:GetWide() / 4 * 2, self.LoadoutOptionBar:GetTall() - 6)
-		surface.DrawLine( self.LoadoutOptionBar:GetWide() / 4 * 3, 6, self.LoadoutOptionBar:GetWide() / 4 * 3, self.LoadoutOptionBar:GetTall() - 6)
-		--Do the gradient effect
+	--//Starts the drawing for the bottom half of the loadout menu
+	local function ExtendLoadout()
+		if not self.LoadoutMain then return end
+		self.LoadoutMenuBuffer = 6
+
+		self.LoadoutUnlocks = vgui.Create( "DFrame" )
+		self.LoadoutUnlocks:SetSize( self.LoadoutMain:GetWide(), 430 )
+		self.LoadoutUnlocks:SetPos( self.LoadoutMain.x, self.LoadoutMain.y + self.LoadoutMain:GetTall() + self.LoadoutMenuBuffer )
+		self.LoadoutUnlocks:SetTitle( "" )
+		self.LoadoutUnlocks:SetVisible( true )
+		self.LoadoutUnlocks:SetDraggable( false )
+		self.LoadoutUnlocks:ShowCloseButton( false )
+		self.LoadoutUnlocks:MakePopup()
+		self.LoadoutUnlocks.Think = function()
+			self.LoadoutUnlocks.x, self.LoadoutUnlocks.y = self.LoadoutUnlocks:GetPos()
+		end
+
+		self.LoadoutUnlocksTitleBar = vgui.Create( "DPanel", self.LoadoutUnlocks )
+		self.LoadoutUnlocksTitleBar:SetPos( 0, 0 )
+		self.LoadoutUnlocksTitleBar:SetSize( self.LoadoutUnlocks:GetWide(), 56 )
+		self.LoadoutUnlocksTitleBar.Paint = function()
+			draw.SimpleText( "Unlocked Weapons, Equipment, & Perks", "ExoTitleFont", self.LoadoutUnlocksTitleBar:GetWide() / 2, self.LoadoutUnlocksTitleBar:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		end
+
+		--Create 4 custom list-button parent/child vgui elements, don't do any unnecessary calling here
+		--Send each the their respective list, do formating in the custom thinking
 	end
-
-	self.LoadoutPropertySheet = vgui.Create( "DPropertySheet", self.LoadoutMain )
-	self.LoadoutPropertySheet:SetSize( self.LoadoutMain:GetWide(), self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() - self.LoadoutOptionBar:GetTall() )
-	self.LoadoutPropertySheet:SetPos( 0, self.LoadoutTitleBar:GetTall() + self.LoadoutOptionBar:GetTall() )
-	self.LoadoutPropertySheet.Paint = function()
-	end
-
-	self.LoadoutPrimarySheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
-	self.LoadoutSecondarySheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
-	self.LoadoutEquipmentSheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
-	self.LoadoutPerkSheet = vgui.Create( "LoadoutSheetMasterPanel", self.LoadoutPropertySheet )
-
-	self.LoadoutPrimarySheetReference = self.LoadoutPropertySheet:AddSheet( "Primaries", self.LoadoutPrimarySheet )
-	self.LoadoutSecondarySheetReference = self.LoadoutPropertySheet:AddSheet( "Secondaries", self.LoadoutSecondarySheet )
-	self.LoadoutEquipmentSheetReference = self.LoadoutPropertySheet:AddSheet( "Equipment", self.LoadoutEquipmentSheet )
-	self.LoadoutPerkSheetReference = self.LoadoutPropertySheet:AddSheet( "Perks", self.LoadoutPerkSheet )
-
-	self.LoadoutPrimaryButton = vgui.Create( "LoadoutOptionButton", self.LoadoutOptionBar )
-	self.LoadoutPrimaryButton:SetPos( 0, 0 )
-	self.LoadoutPrimaryButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
-	self.LoadoutPrimaryButton:SetText( "Primaries" )
-	self.LoadoutPrimaryButton:SetFont( "" )
-	self.LoadoutPrimaryButton:SetSheet( self.LoadoutPrimarySheetReference )
-
-	self.LoadoutSecondaryButton = vgui.Create( "DButton", self.LoadoutOptionBar )
-	self.LoadoutSecondaryButton:SetPos( self.LoadoutOptionBar:GetWide() / 4, 0 )
-	self.LoadoutSecondaryButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
-	self.LoadoutSecondaryButton:SetText( "Secondaries" )
-	self.LoadoutSecondaryButton:SetFont( "" )
-	self.LoadoutSecondaryButton:SetSheet( self.LoadoutSecondarySheetReference )
-
-	self.LoadoutEquipmentButton = vgui.Create( "DButton", self.LoadoutOptionBar )
-	self.LoadoutEquipmentButton:SetPos( self.LoadoutOptionBar:GetWide() / 2, 0 )
-	self.LoadoutEquipmentButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
-	self.LoadoutEquipmentButton:SetText( "Equipment" )
-	self.LoadoutEquipmentButton:SetFont( "" )
-	self.LoadoutEquipmentButton:SetSheet( self.LoadoutEquipmentSheetReference )
-
-	self.LoadoutPerkButton = vgui.Create( "DButton", self.LoadoutOptionBar )
-	self.LoadoutPerkButton:SetPos( self.LoadoutOptionBar:GetWide() / 4 * 3, 0 )
-	self.LoadoutPerkButton:SetSize( self.LoadoutOptionBar:GetWide() / 4, self.LoadoutOptionBar:GetTall() )
-	self.LoadoutPerkButton:SetText( "Perks" )
-	self.LoadoutPerkButton:SetFont( "" )
-	self.LoadoutPerkButton:SetSheet( self.LoadoutPerkSheetReference )
-
-	--[[self.PrimaryPanel = vgui.Create( "DPanel", self.LoadoutMain )
-	self.PrimaryPanel:SetPos( 0, self.LoadoutTitleBar:GetTall() )
-	self.PrimaryPanel:SetSize( self.LoadoutMain:GetWide(), ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
-	self.PrimaryPanel.Paint = function()
-		--Do the edge gradient shadow effect
-	end
-
-	self.PrimaryPanelScrollList = vgui.Create( "DScrollList", self.PrimaryPanel )
-	self.PrimaryPanelScrollList:SetPos( 0, 0 )
-	self.PrimaryPanelScrollList:SetSize( 100, self.PrimaryPanel:GetTall() )
-
-	self.SecondaryPanel = vgui.Create( "DPanel", self.LoadoutMain )
-	self.SecondaryPanel:SetPos( 0, self.LoadoutTitleBar:GetTall() + self.PrimaryPanel:GetTall() )
-	self.SecondaryPanel:SetSize( self.LoadoutMain:GetWide(), ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
-	self.SecondaryPanel.Paint = function()
-		--Do the edge gradient shadow effect
-	end
-
-	self.EquipmentPanel = vgui.Create( "DPanel", self.LoadoutMain )
-	self.EquipmentPanel:SetPos( 0, self.LoadoutTitleBar:GetTall() + self.PrimaryPanel:GetTall() + self.SecondaryPanel:GetTall() )
-	self.EquipmentPanel:SetSize( self.LoadoutMain:GetWide() / 2, ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
-	self.EquipmentPanel.Paint = function()
-		--Do the edge gradient shadow effect
-	end
-
-	self.PerkPanel = vgui.Create( "DPanel", self.LoadoutMain )
-	self.PerkPanel:SetPos( self:LoadoutMain:GetWide() / 2, self.LoadoutTitleBar:GetTall() + self.PrimaryPanel:GetTall() + self.SecondaryPanel:GetTall() )
-	self.PerkPanel:SetSize( self.LoadoutMain:GetWide() / 2, ( self.LoadoutMain:GetTall() - self.LoadoutTitleBar:GetTall() ) / 3 )
-	self.PerkPanel.Paint = function()
-		--Do the edge gradient shadow effect
-	end]]
-
-	--[[self.PlayerSheet = vgui.Create( "DFrame" )
-	self.PlayerSheet:SetSize( self.LoadoutMain, 250 ) --Gonna need a new window size
-	self.PlayerSheet:SetPos()
-	self.PlayerSheet:SetTitle( "" )
-	self.PlayerSheet:SetVisible( true )
-	self.PlayerSheet:SetDraggable( false )
-	self.PlayerSheet:ShowCloseButton( false )
-	self.PlayerSheet:MakePopup()
-end]]
+end
 
 function GM:OpenShop()
+	--Insert validity checks here
 
+	self.ShopMain = vgui.Create( "DFrame" )
+	self.ShopMain:SetSize( 100, 100 )
+	self.ShopMain:SetTitle( "" )
+	self.ShopMain:SetVisible( true )
+	self.ShopMain:SetDraggable( false )
+	self.ShopMain:ShowCloseButton( false )
+	self.ShopMain:Center()
+	self.ShopMain:MakePopup()
+	self.ShopMain.Think = function()
+		self.ShopMain.x, self.ShopMain.y = self.ShopMain:GetPos()
+	end
 end
 
 concommand.Add( "tdm_loadout", GM.MenuMain ) --GAMEMODE.NewLoadout( GAMEMODE ) ?

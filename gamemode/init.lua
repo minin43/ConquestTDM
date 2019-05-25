@@ -819,10 +819,10 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
 	end
 end )
 
-hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )
+--[[hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )
 	if ply:IsValid() and ply:IsPlayer() and dmginfo:IsBulletDamage() and ply:Team() != dmginfo:GetAttacker():Team() then
 		local dmg = dmginfo:GetDamage()
 		dmginfo:SetDamage( 0 )
 		ply:SetHealth( ply:Health() - dmg )
 	end
-end )
+end )]]

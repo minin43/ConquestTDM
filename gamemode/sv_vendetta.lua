@@ -3,7 +3,6 @@ util.AddNetworkString( "UpdateVendetta" )
 GM.VendettaList = { } --Listed as victims, then by attackers
 
 function GM:GetVendettaRequirement( ply )
-    print("function GM:GetVendettaRequirement called...")
     local otherTeam
     if ply:Team() == 1 then
         otherTeam = 2
@@ -12,13 +11,10 @@ function GM:GetVendettaRequirement( ply )
     end
 
     if #team.GetPlayers( otherTeam ) < 4 then
-        print( "returning: 4" )
         return 4
     elseif #team.GetPlayers( otherTeam ) < 6 then
-        print( "returning: 3" )
         return 3
     else
-        print( "returning: 2" )
         return 2
     end
 end

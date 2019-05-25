@@ -1,5 +1,3 @@
---If you have died to a player 3 times without killing them, they become your vendetta, and you see them through all walls
-
 GM.VendettaPlayers = { }
 
 net.Receive( "UpdateVendetta", function()
@@ -21,6 +19,11 @@ net.Receive( "UpdateVendetta", function()
         end
     end
 end )
+
+--[[hook.Add( "Think", "RemoveDeadPlayers", function()
+    for k, v in pairs( GAMEMODE.VendettaPlayers ) do
+        if 
+end )]]
 
 hook.Add( "PreDrawHalos", "VendettaHalos", function()
     --if !LocalPlayer():Alive() then return end

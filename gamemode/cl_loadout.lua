@@ -23,6 +23,9 @@ local unlock = Material( "tdm/ic_lock_open_white_24dp.png", "noclamp smooth" )
 local buyicon = Material( "tdm/ic_add_shopping_cart_white_48dp.png", "noclamp smooth" )
 local gradient = surface.GetTextureID( "gui/gradient" )
 
+local FontColor = colorScheme[0]["DefaultFontColor"]
+local TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
+
 function LoadoutMenu()
 	if main then
 		return
@@ -30,30 +33,7 @@ function LoadoutMenu()
 
 	local CurrentMoneyAmt = "Fetching..."
 	local CurrentLevel = 0
-
-	local currentTeam = LocalPlayer():Team()
-	local TeamColor, FontColor
-	if currentTeam == 0 then --fucking scrubs
-		TeamColor = Color( 76, 175, 80 )
-		FontColor = Color( 255, 255, 255 )
-	elseif currentTeam == 1 then --red
-		TeamColor = Color( 244, 67, 54 )
-		FontColor = Color( 255, 255, 255 )
-	elseif currentTeam == 2 then --blue
-		TeamColor = Color( 33, 150, 243 )
-		FontColor = Color( 255, 255, 255 )
-	end
-	GAMEMODE.TeamColor = TeamColor
-	GAMEMODE.FontColor = FontColor
-
-	if LocalPlayer().red == true then
-		TeamColor = Color( 244, 67, 54 )
-		FontColor = Color( 255, 255, 255 )
-	elseif LocalPlayer().blue == true then
-		TeamColor = Color( 33, 150, 243 )
-		FontColor = Color( 255, 255, 255 )
-	end
-
+	
 	main = vgui.Create( "DFrame" )
 	main:SetSize( 750, 430 )
 	main:SetTitle( "" )
@@ -496,15 +476,7 @@ function LoadoutMenu()
 	buttonindicator:SetType( "Rect" )
 	buttonindicator:SetPos( 0, 46 + 56 )
 	buttonindicator:SetSize( choose:GetWide() / 4, 2 )
-	buttonindicator:SetColor( Color( 255, 255, 0, 255 ) )
-	if currentTeam == 0 then
-		buttonindicator:SetColor( Color( 175, 76, 171, 255 ) )
-	end
-	if LocalPlayer().red == true then
-		buttonindicator:SetColor( Color( 255, 255, 0, 255 ) )
-	elseif LocalPlayer().blue == true then
-		buttonindicator:SetColor( Color( 255, 255, 0, 255 ) )
-	end
+	buttonindicator:SetColor( colorScheme[LocalPlayer():Team()]["ButtonIndicator"]
 	buttonindicator.Think = function()
 		for k, v in pairs( choose.Items ) do
 			if ( !v.Tab ) then continue end
@@ -1764,17 +1736,6 @@ function GM:MenuMain()
 		return
 	end
 
-	if LocalPlayer():Team() == 0 then --Spectator
-		self.TeamColor = Color( 76, 175, 80 )
-		self.FontColor = Color( 255, 255, 255 )
-	elseif LocalPlayer():Team() == 1 then --Red team
-		self.TeamColor = Color( 244, 67, 54 )
-		self.FontColor = Color( 255, 255, 255 )
-	elseif LocalPlayer():Team() == 2 then --Blue team
-		self.TeamColor = Color( 33, 150, 243 )
-		self.FontColor = Color( 255, 255, 255 )
-	end
-
 	self.ChooseMain = vgui.Create( "DFrame" )
 	self.ChooseMain:SetSize( 800, 250 )
 	self.ChooseMain:SetTitle( "" )
@@ -1785,7 +1746,7 @@ function GM:MenuMain()
 	self.ChooseMain:Center()
 	self.ChooseMainTitleBar = 56 --The originally-sized title bar height - to be kept consistent as an homage to the old menu
 	self.ChooseMain.Paint = function()
-		surface.SetDrawColor( self.TeamColor )
+		surface.SetDrawColor( TeamColor )
 		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
 
 		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, self.ChooseMainTitleBar / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )

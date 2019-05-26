@@ -2,6 +2,9 @@ print( "setting up colorScheme" )
 colorScheme = {
 	[0] = { --spectator/misc colors
 		--unique to spectator
+		["TeamColor"] = Color(76, 175, 80),
+		["DefaultFontColor"] = Color(255, 255, 255),
+		["ButtonIndicator"] = Color(175, 76, 171, 255),
 		["SpectatorText"] = Color(255, 255, 255, 255), --the "Press R" spectator text
 		["SpectatorTextShadow"] = Color(0, 0, 0, 255),
 		["IceOverlay"] = Color(255, 255, 255, 120), --the overlay color when hit by Slaw. changing alpha does not change the rate of decay!
@@ -22,15 +25,19 @@ colorScheme = {
 		["RecvGameDataShadow"] = Color(0, 0, 0, 255), --when stil recieving game data like level, money, etc it displays as such
 		["ExperienceTextShadow"] = Color(0, 0, 0, 255),
 		["ExperiencePctTextShadow"] = Color(0, 0, 0, 255)
+		--will finish implementing later (maybe)
+		
 		--team vars
 		
-	} --[[,
-	--[1] = { --red
-
-	}
+	},
+	[1] = { --red
+		["TeamColor"] = Color(244, 67, 54),
+		["ButtonIndicator"] = Color(255, 255, 0, 255)
+	},
 	[2] = { --blue
-
-	}]]
+		["TeamColor"] = Color(33, 150, 243),
+		["ButtonIndicator"] = Color(255, 255, 0, 255)
+	}
 }
 
 GM.Icons = {

@@ -92,13 +92,7 @@ function unid( steamid )
 end
 
 hook.Add( "Think", "SetColors", function()
-	if LocalPlayer():Team() == 1 then
-		GAMEMODE.TeamColor = Color( 244, 67, 54 )
-	elseif LocalPlayer():Team() == 2 then
-		GAMEMODE.TeamColor = Color( 33, 150, 243 )
-	else
-		GAMEMODE.TeamColor = Color( 76, 175, 80 )
-	end
+	GAMEMODE.TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
 
 	if !GAMEMODE.ReceivedTeams then
 		net.Start( "RequestTeams" )

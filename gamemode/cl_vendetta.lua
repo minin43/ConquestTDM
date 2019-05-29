@@ -25,9 +25,9 @@ end )
         if 
 end )]]
 
-hook.Add( "PreDrawHalos", "VendettaHalos", function()
+--[[hook.Add( "PreDrawHalos", "VendettaHalos", function()
     --if !LocalPlayer():Alive() then return end
     if LocalPlayer():Team() == 0 then return end
 
     halo.Add( GAMEMODE.VendettaPlayers, Color( 255, 255, 255 ), 1, 1, 1, true, true )
-end )
+end )]]

@@ -19,26 +19,49 @@ wep_att = { }
 
 specialAttachmentRules = { } --This didn't work like I wanted it to, so we'll just do these manually when necessary
 
+--//The AR-15, UMP .45, and M3 Super 90 get special attachment scaling as a way to more quickly introduce attachments to new players, the guns are also cheaper
+
 wep_att[ "cw_ar15" ] = {
 	{ "bg_foldsight", 0 },
-	{ "md_microt1", 10 },
-	{ "md_saker", 20 },
-	{ "bg_magpulhandguard", 30 },
-	{ "md_foregrip", 40 },
-	{ "bg_ar1560rndmag", 50 },
-	{ "bg_ar15sturdystock", 60 },
-	{ "md_eotech", 70 },
-	{ "bg_longbarrel", 80 },
-	{ "bg_ar15heavystock", 90 },
-	{ "md_aimpoint", 100 },
-	{ "bg_ris", 110 },
-	{ "md_anpeq15", 120 },
-	{ "md_schmidt_shortdot", 130 },
-	{ "bg_longris", 140 },
-	{ "md_m203", 150 },
-	{ "md_acog", 160 },
-	{ "am_magnum", 170 },
+	{ "md_microt1", 5 },
+	{ "md_saker", 10 },
+	{ "bg_magpulhandguard", 15 },
+	{ "md_foregrip", 20 },
+	{ "bg_ar1560rndmag", 30 },
+	{ "bg_ar15sturdystock", 40 },
+	{ "md_eotech", 50 },
+	{ "bg_longbarrel", 60 },
+	{ "bg_ar15heavystock", 70 },
+	{ "md_aimpoint", 80 },
+	{ "bg_ris", 90 },
+	{ "md_anpeq15", 100 },
+	{ "md_schmidt_shortdot", 110 },
+	{ "bg_longris", 120 },
+	{ "md_m203", 130 },
+	{ "md_acog", 140 },
+	{ "am_magnum", 160 },
 	{ "am_matchgrade", 180 }
+}
+
+wep_att[ "cw_ump45" ] = {
+	{ "md_microt1", 5 },
+	{ "md_saker", 10 },
+	{ "md_anpeq15", 15 },
+	{ "md_eotech", 20 },
+	{ "md_aimpoint", 30 },
+	{ "md_schmidt_shortdot", 40 },
+	{ "md_acog", 50 },
+	{ "am_magnum", 70 },
+	{ "am_matchgrade", 90 }
+}
+
+wep_att[ "cw_super90" ] = {
+	{ "md_microt1", 5 },
+	{ "md_eotech", 10 },
+	{ "md_aimpoint", 15 },
+	{ "md_acog", 20 },
+	{ "am_slugrounds", 40 },
+	{ "am_flechetterounds", 60 }
 }
 
 wep_att[ "cw_m14" ] = {

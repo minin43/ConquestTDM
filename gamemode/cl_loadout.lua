@@ -24,7 +24,16 @@ local buyicon = Material( "tdm/ic_add_shopping_cart_white_48dp.png", "noclamp sm
 local gradient = surface.GetTextureID( "gui/gradient" )
 
 local FontColor = colorScheme[0]["DefaultFontColor"]
-local TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
+
+function GetTeamColor() --this implementation is only needed here, because everywhere else we already know what team the player is on and can use colorScheme[LocalPlayer():Team()]["TeamColor"]
+	if LocalPlayer().red then
+		return colorScheme[1]["TeamColor"]
+	elseif LocalPlayer().blue then
+		return colorScheme[2]["TeamColor"]
+	else
+		return colorScheme[0]["TeamColor"]
+	end
+end
 
 function LoadoutMenu()
 	if main then
@@ -50,7 +59,7 @@ function LoadoutMenu()
 		Derma_DrawBackgroundBlur( main, CurTime() )
 		surface.SetDrawColor( 255, 255, 255, 255 )
 		surface.DrawRect( 0, 0, main:GetWide(), main:GetTall() )
-		surface.SetDrawColor( TeamColor )
+		surface.SetDrawColor( GetTeamColor() )
 		surface.DrawRect( 0, 0, main:GetWide(), 56 + 48 )
 		surface.SetFont( "Exo 2" )
 		surface.SetTextColor( FontColor )
@@ -108,10 +117,10 @@ function LoadoutMenu()
 			surface.SetDrawColor( 0, 0, 0, 164 )
 			surface.DrawRect( 0, 0, model:GetWide(), model:GetTall() )
 			draw.SimpleText( "LOCKED", "Exo 2", model:GetWide() / 2 + 1, model:GetTall() / 2 + 2 + 1, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-			draw.SimpleText( "LOCKED", "Exo 2", model:GetWide() / 2, model:GetTall() / 2 + 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+			draw.SimpleText( "LOCKED", "Exo 2", model:GetWide() / 2, model:GetTall() / 2 + 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 		end
 		draw.SimpleText( model.name, "Exo 2 Button", model:GetWide() / 2 + 1, model:GetTall() / 2 + 2 + 1, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
-		draw.SimpleText( model.name, "Exo 2 Button", model:GetWide() / 2, model:GetTall() / 2 + 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
+		draw.SimpleText( model.name, "Exo 2 Button", model:GetWide() / 2, model:GetTall() / 2 + 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM )
 	end
 	function model:LayoutEntity( ent )
 		ent:SetAngles( Angle( 0, 90, 0 ) )
@@ -204,7 +213,7 @@ function LoadoutMenu()
 			else
 				draw.RoundedBox( 2, 4, 4, buy:GetWide() - 8, buy:GetTall() - 8, Color( 0, 0, 0, 255 / 4 ) )
 			end
-			draw.SimpleText( "DONATE", "Exo 2 Button", buy:GetWide() / 2, buy:GetTall() / 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "DONATE", "Exo 2 Button", buy:GetWide() / 2, buy:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		else
 			if buy.restricted ~= 1 then
 				if buy.Hover == false then
@@ -214,7 +223,7 @@ function LoadoutMenu()
 				else
 					draw.RoundedBox( 2, 4, 4, buy:GetWide() - 8, buy:GetTall() - 8, Color( 0, 0, 0, 255 / 4 ) )
 				end
-				draw.SimpleText( "BUY", "Exo 2 Button", buy:GetWide() / 2, buy:GetTall() / 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+				draw.SimpleText( "BUY", "Exo 2 Button", buy:GetWide() / 2, buy:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			else
 				draw.RoundedBox( 2, 4, 4, buy:GetWide() - 8, buy:GetTall() - 8, Color( 0, 0, 0, 255 * 0.12 * 2.75 ) )
 				draw.SimpleText( "BUY", "Exo 2 Button", buy:GetWide() / 2, buy:GetTall() / 2, Color( 0, 0, 0, 255 * 0.26 * 2.75 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -280,10 +289,10 @@ function LoadoutMenu()
 	money:SetSize( info:GetWide(), 36 )
 	money.Paint = function()
 		if !isnumber( CurrentMoneyAmt ) then
-			draw.SimpleText( CurrentMoneyAmt, "Exo 2", x - 8, money:GetTall() / 2 - 2, TeamColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( CurrentMoneyAmt, "Exo 2", x - 8, money:GetTall() / 2 - 2, GetTeamColor(), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		else
-			draw.SimpleText( "$" .. comma_value( CurrentMoneyAmt ), "Exo 2", x - 8, money:GetTall() / 2 - 8, TeamColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-			draw.SimpleText( "Level " .. CurrentLevel, "Exo 2 Tab", x - 8, money:GetTall() / 2 + 16, TeamColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+			draw.SimpleText( "$" .. comma_value( CurrentMoneyAmt ), "Exo 2", x - 8, money:GetTall() / 2 - 8, GetTeamColor(), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Level " .. CurrentLevel, "Exo 2 Tab", x - 8, money:GetTall() / 2 + 16, GetTeamColor(), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
 		end
 		return true
 	end
@@ -300,7 +309,7 @@ function LoadoutMenu()
 	damageunder:SetType( "Rect" )
 	damageunder:SetPos( 8, y + 24 + 4 )
 	damageunder:SetSize( info:GetWide() - 16, 12 )
-	damageunder:SetColor( Color( TeamColor.r, TeamColor.g, TeamColor.b, 64 ) )
+	damageunder:SetColor( Color( GetTeamColor().r, GetTeamColor().g, GetTeamColor().b, 64 ) )
 
 	local damage = vgui.Create( "DShape", info )
 	damage.value = {}
@@ -312,7 +321,7 @@ function LoadoutMenu()
 	damage:SetType( "Rect" )
 	damage:SetPos( 8, y + 24 + 4 )
 	damage:SetSize( damage.width.min, 12 )
-	damage:SetColor( TeamColor )
+	damage:SetColor( GetTeamColor() )
 	damage.Think = function()
 		damage.value.display = Lerp( FrameTime() * 16, damage.value.display, math.Clamp( damage.value.real, 1, 100 ) )
 		damage.width.min = Lerp( FrameTime() * 16, damage.width.min, damage.width.max * ( damage.value.display / 100 ) )
@@ -333,7 +342,7 @@ function LoadoutMenu()
 	accuracyunder:SetType( "Rect" )
 	accuracyunder:SetPos( 8, y + 24 + 4 )
 	accuracyunder:SetSize( info:GetWide() - 16, 12 )
-	accuracyunder:SetColor( Color( TeamColor.r, TeamColor.g, TeamColor.b, 64 ) )
+	accuracyunder:SetColor( Color( GetTeamColor().r, GetTeamColor().g, GetTeamColor().b, 64 ) )
 
 	local accuracy = vgui.Create( "DShape", info )
 	accuracy.value = {}
@@ -345,7 +354,7 @@ function LoadoutMenu()
 	accuracy:SetType( "Rect" )
 	accuracy:SetPos( 8, y + 24 + 4 )
 	accuracy:SetSize( accuracy.width.min, 12 )
-	accuracy:SetColor( TeamColor )
+	accuracy:SetColor( GetTeamColor() )
 	accuracy.Think = function()
 		accuracy.value.display = Lerp( FrameTime() * 16, accuracy.value.display, math.Clamp( accuracy.value.real, 1, 100 ) )
 		accuracy.width.min = Lerp( FrameTime() * 16, accuracy.width.min, accuracy.width.max * ( accuracy.value.display / 100 ) )
@@ -366,7 +375,7 @@ function LoadoutMenu()
 	rofunder:SetType( "Rect" )
 	rofunder:SetPos( 8, y + 24 + 4 )
 	rofunder:SetSize( info:GetWide() - 16, 12 )
-	rofunder:SetColor( Color( TeamColor.r, TeamColor.g, TeamColor.b, 64 ) )
+	rofunder:SetColor( Color( GetTeamColor().r, GetTeamColor().g, GetTeamColor().b, 64 ) )
 
 	local rof = vgui.Create( "DShape", info )
 	rof.value = {}
@@ -378,7 +387,7 @@ function LoadoutMenu()
 	rof:SetType( "Rect" )
 	rof:SetPos( 8, y + 24 + 4 )
 	rof:SetSize( rof.width.min, 12 )
-	rof:SetColor( TeamColor )
+	rof:SetColor( GetTeamColor() )
 	rof.Think = function()
 		rof.value.display = Lerp( FrameTime() * 16, rof.value.display, math.Clamp( rof.value.real, 1, 100 ) )
 		rof.width.min = Lerp( FrameTime() * 16, rof.width.min, rof.width.max * ( rof.value.display / 100 ) )
@@ -398,7 +407,7 @@ function LoadoutMenu()
 		surface.SetDrawColor( 255, 255, 255 )
 		surface.DrawRect( 0, 0, hint:GetWide(), hint:GetTall() )
 		if hint:GetText() ~= "" then
-			self:DrawTextEntryText( TeamColor, Color( 255, 255, 255 ), Color( 255, 255, 255 ) )
+			self:DrawTextEntryText( GetTeamColor(), Color( 255, 255, 255 ), Color( 255, 255, 255 ) )
 		else
 			draw.SimpleText( "No Description", "Exo 2 Hint Empty", hint:GetWide() / 2, hint:GetTall() / 2, Color( 0, 0, 0, 164 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
@@ -1378,7 +1387,7 @@ function LoadoutMenu()
 		if close.Click then
 			draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
 		end
-		draw.SimpleText( "CLOSE", "Exo 2 Button", close:GetWide() / 2, close:GetTall() / 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "CLOSE", "Exo 2 Button", close:GetWide() / 2, close:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return true
 	end
 	close.Paint = PaintClose
@@ -1433,7 +1442,7 @@ function LoadoutMenu()
 		local s = secondaryequip
 
 		if p ~= NULL and s ~= NULL then
-			spawncolor = LerpVector( FrameTime() * 12, spawncolor, Vector( TeamColor.r, TeamColor.g, TeamColor.b ) )
+			spawncolor = LerpVector( FrameTime() * 12, spawncolor, Vector( GetTeamColor().r, GetTeamColor().g, GetTeamColor().b ) )
 			spawn:SetDisabled( false )
 		else
 			spawncolor = LerpVector( FrameTime() * 12, spawncolor, Vector( 200, 200, 200 ) )
@@ -1509,7 +1518,7 @@ function LoadoutMenu()
 		if presets.Click then
 			draw.RoundedBox( 4, 0, 0, presets:GetWide(), presets:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
 		end
-		draw.SimpleText( "PRESETS", "Exo 2 Button", presets:GetWide() / 2, presets:GetTall() / 2, TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "PRESETS", "Exo 2 Button", presets:GetWide() / 2, presets:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return true
 	end
 	presets.Paint = PaintPresets
@@ -1560,7 +1569,7 @@ function LoadoutMenu()
             //Derma_DrawBackgroundBlur( presetsui, CurTime() )
             surface.SetDrawColor( 255, 255, 255, 255 )
             surface.DrawRect( 0, 0, presetsui:GetWide(), presetsui:GetTall() )
-            surface.SetDrawColor( TeamColor )
+            surface.SetDrawColor( GetTeamColor() )
             surface.DrawRect( 0, 0, presetsui:GetWide(), 56 )
             surface.SetFont( "Exo 2" )
             surface.SetTextColor( FontColor )
@@ -1746,7 +1755,7 @@ function GM:MenuMain()
 	self.ChooseMain:Center()
 	self.ChooseMainTitleBar = 56 --The originally-sized title bar height - to be kept consistent as an homage to the old menu
 	self.ChooseMain.Paint = function()
-		surface.SetDrawColor( TeamColor )
+		surface.SetDrawColor( GetTeamColor() )
 		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
 
 		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, self.ChooseMainTitleBar / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )

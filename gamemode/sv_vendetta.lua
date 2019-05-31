@@ -25,7 +25,7 @@ function GM:VendettaKillRegen( ply )
         timer.Create( "VendettaRegen" .. ply:SteamID(), 0.5, 0, function()
             if ply:Alive() then 
                 if self.VendettaList.RegenTable[ id( ply:SteamID() ) ] > 0 then
-                    ply:SetHealth( math.Clamp( ply:Health + 1, 0, ply:GetMaxHealth() ) )
+                    ply:SetHealth( math.Clamp( ply:Health() + 1, 0, ply:GetMaxHealth() ) )
                 else
                     timer.Remove( "VendettaRegen" .. ply:SteamID() )
                     self.VendettaList.RegenTable[ id( ply:SteamID() ) ] = 0

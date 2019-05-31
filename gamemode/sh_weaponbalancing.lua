@@ -147,10 +147,10 @@ function weapons.OnLoaded()
         wep.Damage = 100
         wep.FireDelay = 1.5
         wep.Recoil = 2.5
-        wep.HipSpread = 0.075
+        wep.HipSpread = 0.35
         wep.AimSpread = 0.001
         wep.VelocitySensitivity = 2.5
-        wep.MaxSpreadInc = 0.2
+        wep.MaxSpreadInc = 0.4
         wep.SpreadPerShot = 0.1
         wep.ClumpSpread = 0
         wep.Shots = 1
@@ -166,11 +166,11 @@ function weapons.OnLoaded()
         wep.Damage = 42
         wep.FireDelay = 0.09
         wep.Recoil = 1.6
-        wep.HipSpread = 0.15
+        wep.HipSpread = 0.35
         wep.AimSpread = 0.002
-        wep.VelocitySensitivity = 2.1
-        wep.MaxSpreadInc = 0.15
-        wep.SpreadPerShot = 0.004
+        wep.VelocitySensitivity = 2.4
+        wep.MaxSpreadInc = 0.45
+        wep.SpreadPerShot = 0.009
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 15
@@ -185,10 +185,10 @@ function weapons.OnLoaded()
         wep.Damage = 110
         wep.FireDelay = 1.5
         wep.Recoil = 3.5
-        wep.HipSpread = 0.075
+        wep.HipSpread = 0.35
         wep.AimSpread = 0.001
         wep.VelocitySensitivity = 3.5
-        wep.MaxSpreadInc = 0.3
+        wep.MaxSpreadInc = 0.4
         wep.SpreadPerShot = 0.1
         wep.ClumpSpread = 0
         wep.Shots = 1
@@ -323,13 +323,13 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_official_m249" ) then
         local wep = weapons.GetStored( "cw_official_m249" )
         wep.Slot = 0
-        wep.Damage = 28
+        wep.Damage = 32
         wep.FireDelay = 0.075
-        wep.Recoil = 1.1
-        wep.HipSpread = 0.1
-        wep.AimSpread = 0.003
-        wep.VelocitySensitivity = 0.8
-        wep.MaxSpreadInc = 0.04
+        wep.Recoil = 1.75
+        wep.HipSpread = 0.18
+        wep.AimSpread = 0.006
+        wep.VelocitySensitivity = 1.0
+        wep.MaxSpreadInc = 0.22
         wep.SpreadPerShot = 0.004
         wep.ClumpSpread = 0
         wep.Shots = 1
@@ -337,6 +337,87 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.35
         wep.SpeedDec = 70
+        wep.Trivia = { } --//Removes the line "Accurate aimed fire is not possible without the use of a bipod", as all LMGs will utilize that mechanic
+    end
+
+    if weapons.Get( "cw_amr2_mk46" ) then
+        local wep = weapons.GetStored( "cw_amr2_mk46" )
+        wep.Slot = 0
+        wep.Damage = 36
+        wep.FireDelay = 0.08
+        wep.Recoil = 1.65
+        wep.HipSpread = 0.18
+        wep.AimSpread = 0.008
+        wep.VelocitySensitivity = 1.0
+        wep.MaxSpreadInc = 0.22
+        wep.SpreadPerShot = 0.002
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 100
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.37
+        wep.SpeedDec = 70
+
+        wep.badAccuracyModifier = 3
+        function wep:hasBadAccuracy()
+            return self.dt.State == CW_AIMING and not self.dt.BipodDeployed
+        end
+        function wep:getBaseCone()
+            local baseCone, maxSpreadMod = self.BaseClass.getBaseCone(self)
+            
+            if self:hasBadAccuracy() then
+                return baseCone * self.badAccuracyModifier, maxSpreadMod
+            end
+            
+            return baseCone, maxSpreadMod
+        end
+        function wep:getMaxSpreadIncrease(maxSpreadMod)
+            if self:hasBadAccuracy() then
+                return self.BaseClass.getMaxSpreadIncrease(self, maxSpreadMod) * self.badAccuracyModifier
+            end
+            
+            return self.BaseClass.getMaxSpreadIncrease(self, maxSpreadMod)
+        end
+    end
+
+    if weapons.Get( "cw_amr2_rpk74" ) then
+        local wep = weapons.GetStored( "cw_amr2_rpk74" )
+        wep.Slot = 0
+        wep.Damage = 30
+        wep.FireDelay = 0.085
+        wep.Recoil = 1.6
+        wep.HipSpread = 0.18
+        wep.AimSpread = 0.003
+        wep.VelocitySensitivity = 1.1
+        wep.MaxSpreadInc = 0.21
+        wep.SpreadPerShot = 0.002
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 75
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.32
+        wep.SpeedDec = 70
+
+        wep.badAccuracyModifier = 5
+        function wep:hasBadAccuracy()
+            return self.dt.State == CW_AIMING and not self.dt.BipodDeployed
+        end
+        function wep:getBaseCone()
+            local baseCone, maxSpreadMod = self.BaseClass.getBaseCone(self)
+            
+            if self:hasBadAccuracy() then
+                return baseCone * self.badAccuracyModifier, maxSpreadMod
+            end
+            
+            return baseCone, maxSpreadMod
+        end
+        function wep:getMaxSpreadIncrease(maxSpreadMod)
+            if self:hasBadAccuracy() then
+                return self.BaseClass.getMaxSpreadIncrease(self, maxSpreadMod) * self.badAccuracyModifier
+            end
+            
+            return self.BaseClass.getMaxSpreadIncrease(self, maxSpreadMod)
+        end
     end
 
     --// Shotguns //--
@@ -352,7 +433,7 @@ function weapons.OnLoaded()
         wep.VelocitySensitivity = 1.1
         wep.MaxSpreadInc = 0.06
         wep.SpreadPerShot = 0.01
-        wep.ClumpSpread = 0.025
+        wep.ClumpSpread = 0.030
         wep.Shots = 16
         wep.Primary.ClipSize = 8
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
@@ -368,10 +449,10 @@ function weapons.OnLoaded()
         wep.Recoil = 3
         wep.HipSpread = 0.04
         wep.AimSpread = 0.005
-        wep.VelocitySensitivity = 1.6
+        wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.06
         wep.SpreadPerShot = 0.01
-        wep.ClumpSpread = 0.035
+        wep.ClumpSpread = 0.040
         wep.Shots = 16
         wep.Primary.ClipSize = 6
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
@@ -387,10 +468,10 @@ function weapons.OnLoaded()
         wep.Recoil = 2
         wep.HipSpread = 0.04
         wep.AimSpread = 0.01
-        wep.VelocitySensitivity = 1.4
+        wep.VelocitySensitivity = 1.6
         wep.MaxSpreadInc = 0.02
         wep.SpreadPerShot = 0.007
-        wep.ClumpSpread = 0.03
+        wep.ClumpSpread = 0.0325
         wep.Shots = 16
         wep.Primary.ClipSize = 2
         wep.Primary.DefaultClip	= wep.Primary.ClipSize

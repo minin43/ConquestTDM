@@ -1,10 +1,9 @@
---Perk idea: something on headshots
 hook.Add( "DoPlayerDeath", "HEAD-POPPER", function( vic, att, dmginfo )
     if vic:LastHitGroup() == HITGROUP_HEAD and CheckPerk( att ) == "headpopper" then
         local explosion = ents.Create( "env_explosion" )
 
         if IsValid( explosion ) then
-            local explosionRadius = math.Clamp( math.Round( att:GetPos():Distance( vic:GetPos() ) / 15 ), 10, 1000 )
+            local explosionRadius = math.Clamp( math.Round( att:GetPos():Distance( vic:GetPos() ) / 12 ), 10, 1000 )
             explosion:SetPos( vic:GetPos() )
             explosion:SetOwner( att )
             explosion:Spawn()

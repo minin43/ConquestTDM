@@ -93,7 +93,6 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     GAMEMODE.KillInfoTracking[ attID ].KillSpree = GAMEMODE.KillInfoTracking[ attID ].KillSpree or 0
 
     if vicID == attID then GAMEMODE.KillInfoTracking[ attID ].KillsThisLife = 0 return end
-    GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife = 0
 
     if !att:IsPlayer() or !att:IsValid() or !vic:IsValid() or att == vic or att:GetActiveWeapon() == NULL or att:GetActiveWeapon() == NULL then
         return
@@ -182,34 +181,35 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         AddNotice(att, "END GAME KILL", SCORECOUNTS.END_GAME, NOTICETYPES.EXTRA)
     end
     
-    --//Assist Shit - I'm not touching this with a 10 foot pole, no thanks, it can stay unoptimized
-    if vic.PotentialAssist then
-        local assist = vic.PotentialAssist
-        if IsValid(assist[1]) and assist[1] ~= NULL then
-            if assist[1] ~= att then
-                AddNotice(assist[1], "ASSIST", assist[2], NOTICETYPES.KILL)
-                if assist[1]:GetNWString("assists") == "" or not assist[1]:GetNWString("assists") then
-                    assist[1]:SetNWString("assists", "1")
+    --//Assist Shit
+    if GAMEMODE.AssistTable[ vicID ] then
+        for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
+            if damageDone > 0 then
+                AddNotice( attacker, "ASSIST", damageDone, NOTICETYPES.KILL )
+
+                if attacker:GetPData( "g_assists" ) then
+                    attacker:SetPData("g_assists", tostring( attacker:GetPData( "g_assists" ) + 1 ) )
                 else
-                    assist[1]:SetNWString("assists", tostring(tonumber(assist[1]:GetNWString("assists")) + 1))
+                    attacker:SetPData("g_assists", "1" )
                 end
-                local ply = assist[1]
-                local data = ply:GetPData("g_assists")
-                if !data then
-                    ply:SetPData("g_assists", "1")
+
+                if attacker:GetNWString( "assists" ) == "" or !attacker:GetNWString( "assists" ) then
+                    attacker:SetNWString( "assists", "1" )
                 else
-                    local num = tonumber(data)
-                    ply:SetPData("g_assists", tostring(num + 1))
+                    attacker:SetNWString( "assists", tostring( tonumber( attacker:GetNWString( "assists" ) ) + 1) )
                 end
-                
-                ply.AttFromAssist = ( ply.AttFromAssist or 0 ) + assist[2]
-                if ply.AttFromAssist >= 200 then UpdateAttKillTracking( ply, ply:GetActiveWeapon() ) end
+
+                ply.AttFromAssist = ( ply.AttFromAssist or 0 ) + damageDone
+                if ply.AttFromAssist >= 200 then 
+                    UpdateAttKillTracking( ply, ply:GetActiveWeapon() ) 
+                    
+                end
                 ply.AttFromAssist = ply.AttFromAssist - 200
+
             end
         end
     end
-    vic.PotentialAssist = nil
-    vic.dmg = nil
+    table.Empty( GAMEMODE.AssistTable[ vicID ] )
 
     --//Killspree & Killstreak End Check
     if GAMEMODE.KillInfoTracking[ vicID ].KillSpree >= 2 then --If the victim has reached a double kill, but hasn't timed the spree out yet
@@ -219,6 +219,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         AddNotice(att, "DENIED KILLSTREAK", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
         SoundToSend = "rejected"
     end
+    GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife = 0
 
     --//Killspree Timer Check
     if timer.Exists( "Killcount" .. attID ) then 
@@ -287,42 +288,17 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
 
     GAMEMODE:UpdateVendetta( vic, att )
 
-    --Drone Road Kill
-    --[[if inf:GetClass() == "prop_physics" then
-        AddNotice( att, "VEHICLE KILL", SCORECOUNTS.KILL, NOTICETYPES.EXTRA)
-    end]]
 end)
 
---[[hook.Add("PlayerHurt", "CalculateAssists", function(victim, attacker, x, dmg)
-	if victim and attacker and victim:IsPlayer() and attacker:IsPlayer() and victim ~= NULL and attacker ~= NULL then
-		if not victim.dmg then
-			victim.dmg = {}
-		end
-		if not victim.dmg[attacker] then
-			victim.dmg[attacker] = dmg
-		else
-			victim.dmg[attacker] = victim.dmg[attacker] + dmg
-		end
-		if not victim.PotentialAssist then
-			if victim.dmg[attacker] >= 1 then
-				victim.PotentialAssist = { attacker, math.Round(victim.dmg[attacker]) }
-			end
-		end
-	end
-end)]]
+GM.AssistTable = { }
+hook.Add( "PlayerHurt", "CalculateAssists", function( victim, attacker, healthRemaining, damageTaken )
+    if victim:IsValid() and attacker:IsValid() and attacker:IsPlayer() then
 
-hook.Add("PlayerHurt", "CalculateAssists", function(victim, attacker, x, dmg)
-	if victim and attacker and victim:IsPlayer() and attacker:IsPlayer() and victim ~= NULL and attacker ~= NULL then
-		if not victim.dmg then
-			victim.dmg = {}
-        end
+        local vicID = id( victim:SteamID() )
+		GAMEMODE.AssistTable[ vicID ] = GAMEMODE.AssistTable[ vicID ] or { }
         
-        victim.dmg[attacker] = ( victim.dmg[attacker] or 0 ) + dmg
-
-		if not victim.PotentialAssist then
-			if victim.dmg[attacker] >= 1 then
-				victim.PotentialAssist = { attacker, math.Round(victim.dmg[attacker]) }
-			end
-		end
-	end
+        --//This assist calculation doesn't track victim health regen, but w/e, I'm assuming the gameplay choices the victim makes as a result of having low HP
+        --//will be enough to warrant giving the attacker assist points anyway
+        GAMEMODE.AssistTable[ vicID ][ attacker ] = ( GAMEMODE.AssistTable[ vicID ][ attacker ] or 0 ) + damageTaken
+    end
 end)

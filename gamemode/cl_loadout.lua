@@ -24,13 +24,13 @@ local buyicon = Material( "tdm/ic_add_shopping_cart_white_48dp.png", "noclamp sm
 local gradient = surface.GetTextureID( "gui/gradient" )
 
 local FontColor = colorScheme[0]["DefaultFontColor"]
-local TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
 
 function LoadoutMenu()
 	if main then
 		return
 	end
 
+	local TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
 	local CurrentMoneyAmt = "Fetching..."
 	local CurrentLevel = 0
 	
@@ -476,7 +476,7 @@ function LoadoutMenu()
 	buttonindicator:SetType( "Rect" )
 	buttonindicator:SetPos( 0, 46 + 56 )
 	buttonindicator:SetSize( choose:GetWide() / 4, 2 )
-	buttonindicator:SetColor( colorScheme[LocalPlayer():Team()]["ButtonIndicator"]
+	buttonindicator:SetColor( colorScheme[LocalPlayer():Team()]["ButtonIndicator"] )
 	buttonindicator.Think = function()
 		for k, v in pairs( choose.Items ) do
 			if ( !v.Tab ) then continue end
@@ -1746,7 +1746,7 @@ function GM:MenuMain()
 	self.ChooseMain:Center()
 	self.ChooseMainTitleBar = 56 --The originally-sized title bar height - to be kept consistent as an homage to the old menu
 	self.ChooseMain.Paint = function()
-		surface.SetDrawColor( TeamColor )
+		surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ][ "TeamColor" ] )
 		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
 
 		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, self.ChooseMainTitleBar / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )

@@ -1960,22 +1960,6 @@ function GM:SetLoadout()
 	end
 end
 
-function GM:OpenShop()
-	--Insert validity checks here
-
-	self.ShopMain = vgui.Create( "DFrame" )
-	self.ShopMain:SetSize( 100, 100 )
-	self.ShopMain:SetTitle( "" )
-	self.ShopMain:SetVisible( true )
-	self.ShopMain:SetDraggable( false )
-	self.ShopMain:ShowCloseButton( false )
-	self.ShopMain:Center()
-	self.ShopMain:MakePopup()
-	self.ShopMain.Think = function()
-		self.ShopMain.x, self.ShopMain.y = self.ShopMain:GetPos()
-	end
-end
-
 concommand.Add( "tdm_loadout", GM.MenuMain ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
 
 usermessage.Hook( "ClearTable", function( um )

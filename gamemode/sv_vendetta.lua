@@ -1,6 +1,6 @@
 util.AddNetworkString( "UpdateVendetta" )
 
-GM.VendettaList = { } --Listed as victims, then by attackers
+GM.VendettaList = { RegenTable = { } } --Listed as victims, then by attackers
 
 function GM:GetVendettaRequirement( ply )
     local otherTeam
@@ -16,6 +16,25 @@ function GM:GetVendettaRequirement( ply )
         return 3
     else
         return 2
+    end
+end
+
+function GM:VendettaKillRegen( ply )
+    if ply:Alive() then
+        self.VendettaList.RegenTable[ id( ply:SteamID() ) ] = ( self.VendettaList.RegenTable[ id( ply:SteamID() ) ] or 0 ) + ( ( ply:GetMaxHealth() - ply:Health() ) / 2 )
+        timer.Create( "VendettaRegen" .. ply:SteamID(), 0.5, 0, function()
+            if ply:Alive() then 
+                if self.VendettaList.RegenTable[ id( ply:SteamID() ) ] > 0 then
+                    ply:SetHealth( math.Clamp( ply:Health + 1, 0, ply:GetMaxHealth() ) )
+                else
+                    timer.Remove( "VendettaRegen" .. ply:SteamID() )
+                    self.VendettaList.RegenTable[ id( ply:SteamID() ) ] = 0
+                end 
+            else
+                timer.Remove( "VendettaRegen" .. ply:SteamID() )
+                self.VendettaList.RegenTable[ id( ply:SteamID() ) ] = 0
+            end
+        end )
     end
 end
 
@@ -44,11 +63,20 @@ function GM:UpdateVendetta( vic, att )
                 net.WriteString( vicID )
                 net.WriteBool( false )
             net.Send( att )
+            self:VendettaKillRegen( att )
         end
         self.VendettaList[ attID ].ActiveSaves[ vicID ] = false
         self.VendettaList[ attID ][ vicID ] = 0
     end
 end
+
+hook.Add( "EntityTakeDamage", "ScaleVendettaDamage", function( vic, dmginfo )
+    if vic:IsValid() and vic:IsPlayer() and dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():IsPlayer() then
+        if self.VendettaList[ id( vic:SteamID() ) ].ActiveSaves[ id( dmginfo:GetAttacker():SteamID() ) ] then
+            dmginfo:ScaleDamage( 0.8 )
+        end
+    end
+end )
 
 hook.Add( "PlayerSwitchedTeams", "RemoveVendetta", function( ply, oldTeamNum, newTeamNum )
     GAMEMODE.VendettaList[ id( ply:SteamID() ) ] = { }

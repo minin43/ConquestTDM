@@ -79,6 +79,7 @@ if SERVER then
 	resource.AddWorkshop( "1698026320" ) --The 6 new guns
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
+	resource.AddWorkshop( "1757496598" ) --AMR pack (M500, RPK, MK 46)
 
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )

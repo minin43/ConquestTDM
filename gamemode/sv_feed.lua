@@ -184,7 +184,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --//Assist Shit
     if GAMEMODE.AssistTable[ vicID ] then
         for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
-            if damageDone > 0 then
+            if damageDone > 0 and attacker != att then
                 AddNotice( attacker, "ASSIST", damageDone, NOTICETYPES.KILL )
 
                 if attacker:GetPData( "g_assists" ) then
@@ -199,12 +199,12 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
                     attacker:SetNWString( "assists", tostring( tonumber( attacker:GetNWString( "assists" ) ) + 1) )
                 end
 
-                ply.AttFromAssist = ( ply.AttFromAssist or 0 ) + damageDone
-                if ply.AttFromAssist >= 200 then 
-                    UpdateAttKillTracking( ply, ply:GetActiveWeapon() ) 
+                attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
+                if attacker.AttFromAssist >= 400 then 
+                    UpdateAttKillTracking( attacker, attacker:GetActiveWeapon():GetClass() ) 
                     
                 end
-                ply.AttFromAssist = ply.AttFromAssist - 200
+                attacker.AttFromAssist = attacker.AttFromAssist - 200
 
             end
         end

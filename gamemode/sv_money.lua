@@ -12,7 +12,7 @@ function GetMoney( ply )
 		ply:SetPData( "tdm_money", "0" )
 	end
 	
-	return tonumber( ply:GetPData( "tdm_money" ) )
+	return tonumber( math.Round( ply:GetPData( "tdm_money" ) ) )
 end
 
 function AddMoney( ply, amt )
@@ -23,14 +23,14 @@ function AddMoney( ply, amt )
 				amt = amt + ( amt * v[ 2 ] )
 			end
 		end
-		ply:SetPData( "tdm_money", GetMoney( ply ) + amt )
+		ply:SetPData( "tdm_money", math.Round( GetMoney( ply ) + amt ) )
 
 		SendUpdate( ply )
 	end
 end
 
 function SetMoney( ply, num )
-	ply:SetPData( "tdm_money", num )
+	ply:SetPData( "tdm_money", math.Round( num ) )
 
 	SendUpdate( ply )
 end

@@ -185,7 +185,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     if GAMEMODE.AssistTable[ vicID ] then
         for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
             if damageDone > 0 and attacker != att then
-                AddNotice( attacker, "ASSIST", damageDone, NOTICETYPES.KILL )
+                AddNotice( attacker, "ASSIST", math.Round( damageDone ), NOTICETYPES.KILL )
 
                 if attacker:GetPData( "g_assists" ) then
                     attacker:SetPData("g_assists", tostring( attacker:GetPData( "g_assists" ) + 1 ) )
@@ -202,7 +202,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
                 attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
                 if attacker.AttFromAssist >= 400 then 
                     UpdateAttKillTracking( attacker, attacker:GetActiveWeapon():GetClass() ) 
-                    
+                    attacker:ChatPrintColor( "You earned a ", Color( 0, 255, 0 ), "free kill towards your attachment", Color( 255, 255, 255 ), "due to assists" )
                 end
                 attacker.AttFromAssist = attacker.AttFromAssist - 200
 
@@ -216,7 +216,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         AddNotice(att, "DENIED KILLSPREE", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
         SoundToSend = "denied"
     elseif GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife >= 5 then --If the victim has hit a DOMINATING killstreak
-        AddNotice(att, "DENIED KILLSTREAK", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
+        AddNotice(att, "REJECTED KILLSTREAK", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
         SoundToSend = "rejected"
     end
     GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife = 0

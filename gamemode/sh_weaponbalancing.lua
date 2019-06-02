@@ -338,6 +338,8 @@ function weapons.OnLoaded()
         wep.SpreadCooldown = 0.35
         wep.SpeedDec = 70
         wep.Trivia = { } --//Removes the line "Accurate aimed fire is not possible without the use of a bipod", as all LMGs will utilize that mechanic
+
+        wep.RecoilToSpread = 0.8
     end
 
     if weapons.Get( "cw_amr2_mk46" ) then
@@ -357,6 +359,8 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.37
         wep.SpeedDec = 70
+
+        wep.RecoilToSpread = 0.8
 
         wep.badAccuracyModifier = 3
         function wep:hasBadAccuracy()
@@ -397,6 +401,8 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.32
         wep.SpeedDec = 70
+
+        wep.RecoilToSpread = 0.8
 
         wep.badAccuracyModifier = 5
         function wep:hasBadAccuracy()

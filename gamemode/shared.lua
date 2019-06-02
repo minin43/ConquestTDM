@@ -2,7 +2,7 @@ GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Cobalt, Whuppo, Logan"
 GM.Email = "lobsterlogan43@yahoo.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.7"
+GM.Version = "Conquest Team Deathmatch V. 1.8"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
@@ -79,7 +79,7 @@ if SERVER then
 	resource.AddWorkshop( "1698026320" ) --The 6 new guns
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
-	resource.AddWorkshop( "1757496598" ) --AMR pack (M500, RPK, MK 46)
+	resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons
 
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )

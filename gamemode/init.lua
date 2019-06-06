@@ -26,6 +26,16 @@ GM.DefaultModels = {
 	},
 	Combine = {
 		"models/player/police.mdl" --//Unfortunately, only the metropolice model works with cw2.0 animations
+	},
+	Insurgents = {
+		"models/player/ins_insurgent_heavy.mdl",
+		"models/player/ins_insurgent_light.mdl",
+		"models/player/ins_insurgent_standard.mdl"
+	},
+	Security = {
+		"models/player/ins_security_heavy.mdl",
+		"models/player/ins_security_light.mdl",
+		"models/player/ins_security_standard.mdl"
 	}
 }
 

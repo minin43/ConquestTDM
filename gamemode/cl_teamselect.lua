@@ -123,7 +123,7 @@ function GM:TeamMenu()
 			surface.DrawLine( self.TeamMainIconSize * 1.5, self.TeamMainRed:GetTall() / 2, self.TeamMainRed:GetWide(), self.TeamMainRed:GetTall() / 2 )
 			surface.DrawLine( 8, self.TeamMainRed:GetTall() - 1, self.TeamMainRed:GetWide() - 8, self.TeamMainRed:GetTall() - 1 )
 
-			surface.SetDrawColor( 213, 0, 0, 255 )
+			surface.SetDrawColor( ( GAMEMODE.Icons.Teams[ team.GetName( 1 ) .. "Color" ] ) or Color( 213, 0, 0, 255 ) )
 			surface.SetMaterial( GAMEMODE.Icons.Teams[ team.GetName( 1 ) ] )
 			surface.DrawTexturedRect( self.TeamMainIconSize / 4, ( self.TeamMainRed:GetTall() / 2 ) - ( self.TeamMainIconSize / 2 ), self.TeamMainIconSize , self.TeamMainIconSize )
 
@@ -192,7 +192,7 @@ function GM:TeamMenu()
 				surface.DrawLine( 8, self.TeamMainBlue:GetTall() - 1, self.TeamMainBlue:GetWide() - 8, self.TeamMainBlue:GetTall() - 1 )
 			end
 
-			surface.SetDrawColor( 41, 98, 255, 255 )
+			surface.SetDrawColor( ( GAMEMODE.Icons.Teams[ team.GetName( 2 ) .. "Color" ] ) or Color( 41, 98, 255, 255 ) )
 			surface.SetMaterial( GAMEMODE.Icons.Teams[ team.GetName( 2 ) ] )
 			surface.DrawTexturedRect( self.TeamMainIconSize / 4, ( self.TeamMainBlue:GetTall() / 2 ) - ( self.TeamMainIconSize / 2 ), self.TeamMainIconSize , self.TeamMainIconSize )
 

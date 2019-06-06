@@ -76,7 +76,7 @@ hook.Add( "EntityTakeDamage", "ScaleVendettaDamage", function( vic, dmginfo )
     if vic:IsValid() and vic:IsPlayer() and dmginfo:GetAttacker():IsValid() and dmginfo:GetAttacker():IsPlayer() then
         if GAMEMODE.VendettaList[ id( vic:SteamID() ) ].ActiveSaves then
             if GAMEMODE.VendettaList[ id( vic:SteamID() ) ].ActiveSaves[ id( dmginfo:GetAttacker():SteamID() ) ] then
-                dmginfo:ScaleDamage( 0.8 )
+                dmginfo:ScaleDamage( 0.7 )
             end
         end
     end

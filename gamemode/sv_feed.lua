@@ -186,6 +186,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
             if damageDone > 0 and attacker != att then
                 AddNotice( attacker, "ASSIST", math.Round( damageDone ), NOTICETYPES.KILL )
+                VampirismAssist( attacker, damageDone )
 
                 if attacker:GetPData( "g_assists" ) then
                     attacker:SetPData("g_assists", tostring( attacker:GetPData( "g_assists" ) + 1 ) )
@@ -201,10 +202,10 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
 
                 attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
                 if attacker.AttFromAssist >= 400 then 
+                    attacker:ChatPrintColor( "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your attachment due to assists" )
                     UpdateAttKillTracking( attacker, attacker:GetActiveWeapon():GetClass() ) 
-                    attacker:ChatPrintColor( "You earned a ", Color( 0, 255, 0 ), "free kill towards your attachment", Color( 255, 255, 255 ), "due to assists" )
+                    attacker.AttFromAssist = attacker.AttFromAssist - 400
                 end
-                attacker.AttFromAssist = attacker.AttFromAssist - 200
 
             end
         end

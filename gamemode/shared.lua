@@ -17,19 +17,14 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	
     [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2" },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png", type = "hl2" },
-    [ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png", type = "hl2" },
-    [ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png", type = "ins2" },
     [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png", type = "hl2" },
     [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png", type = "hl2" },
     [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png", type = "ins2" },
     [ "de_star" ] = { id = 296000772, size = "Midsize", img = "vgui/maps/star.png", type = "ins2" },
-    --[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png", type = "hl2" }, --Need better spawns
-    [ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png", type = "hl2" },
     [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png", type = "ins2" },
     [ "sh_smalltown_c" ] = { id = 865967849, size = "Large", img = "vgui/maps/smalltown.png", type = "ins2" },
-    [ "ttt_mw2_terminal" ] = { id = 176887855, size = "Large", img = "vgui/maps/terminal.png", type = "mw2" },
+	[ "ttt_mw2_terminal" ] = { id = 176887855, size = "Large", img = "vgui/maps/terminal.png", type = "mw2" },
     [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png", type = "hl2" },
-    [ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png", type = "hl2" },
     [ "dm_powerstation" ] = { id = 446026985, size = "Small", img = "vgui/maps/powerstation.png", type = "hl2" },
     [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png", type = "hl2" },
     [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png", type = "ins2" },
@@ -48,7 +43,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png" },
 	[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2" },
 	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png" },
-	[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" },
+	--[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Needs better prop spawns
 	[ "dm_octagon" ] = { id = 1727666265, size = "Midsize", img = "vgui/maps/octagon.png", type = "hl2" }
 
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
@@ -58,15 +53,27 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	--[ "dm_9rooms_b16" ] = { id = 1642035717, size = "Small", img = "vgui/maps/9rooms.png", type = "hl2" }, --Not popular
 	--[ "dm_resident" ] = { id = 1623087187, size = "Midsize", img = "vgui/maps/resident.png", type = "hl2" }, --Too hard to balance
 	--[ "gm_blackbrook_asylum" ] = { id = 903842886, size = "Small", img = "vgui/maps/blackbrook.png" } --Seems to be crashing the server
+	--[ "dm_laststop" ] = { id = 513311726, size = "Midsize", img = "vgui/maps/laststop.png", type = "hl2" }, --Unbalanced and unpopular
+	--[ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png", type = "hl2" }, --A copy of a map we already have
+	--[ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png", type = "hl2" }, --Unpopular
+	--[ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png", type = "ins2" }, --Unbalanced/unfun
+	--[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png", type = "hl2" }, --Need better spawns
 	
 	--[ "" ] = { id = 0, size = "", img = "vgui/maps/.png", type = "" },
 	--More maps: de_secretcamp
 }
 
 GM.TeamNames = {
-    [ "mw2" ] = { [ "red" ] = { "Spetsnaz", "OpFor"--[[, "Milita"]] }, [ "blue" ] = { "TF 141", "Rangers", "Seals" }},
-    [ "hl2" ] = { [ "red" ] = { "Rebels" }, [ "blue" ] = { "Combine" } },
-    [ "ins2" ] = { [ "red" ] = { "Insurgents" }, [ "blue" ] = { "Security" } }
+    mw2 = { red = { "Spetsnaz", "OpFor"--[[, "Milita"]] }, blue = { "TF 141", "Rangers", "Seals" }},
+    hl2 = { red = { "Rebels" }, blue = { "Combine" } },
+    ins2 = { red = { "Insurgents" }, blue = { "Security" } }
+}
+
+GM.TeamDownloads = {
+	ins2 = {
+		1196565715, --Security Playermodels
+		1202342807 --Insurgent Playermodels
+	}
 }
 
 if SERVER then
@@ -84,17 +91,25 @@ if SERVER then
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )
 
-	--[[if GM.MapTable[ game.GetMap() ] then --Commented out until there are MW2 and INS2 playermodels for the teams
-		if GM.MapTable[ game.GetMap() ].type then
-			local redOptions = #GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].red
-			local blueOptions = #GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].blue
+	if GM.MapTable[ game.GetMap() ] then --Commented out until there are MW2 and INS2 playermodels for the teams
+		local mapType = GM.MapTable[ game.GetMap() ].type
+		if mapType and mapType != "mw2" then
+			local redOptions = #GM.TeamNames[ mapType ].red
+			local blueOptions = #GM.TeamNames[ mapType ].blue
 
-			GM.redTeamName = GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].red[ math.random( redOptions ) ]
-			GM.blueTeamName = GM.TeamNames[ GM.MapTable[ game.GetMap() ].type ].blue[ math.random( blueOptions ) ]
+			GM.redTeamName = GM.TeamNames[ mapType ].red[ math.random( redOptions ) ]
+			GM.blueTeamName = GM.TeamNames[ mapType ].blue[ math.random( blueOptions ) ]
+
+			if GM.TeamDownloads[ mapType ] then
+				for k, v in pairs( GM.TeamDownloads[ mapType ] ) do
+					resource.AddWorkshop( v )
+				end
+			end
+		else --To be removed when mw2 models are added
+			GM.redTeamName = "Rebels" --To be removed when mw2 models are added
+			GM.blueTeamName = "Combine" --To be removed when mw2 models are added
 		end
-	end]]
-	GM.redTeamName = "Rebels" --To be removed when the above is added back
-	GM.blueTeamName = "Combine" --To be removed when the above is added back
+	end
 	
 	team.SetUp( 0, "Spectators", Color( 0, 0, 0 ) )
 	team.SetUp( 1, GM.redTeamName, Color( 255, 0, 0 ) )

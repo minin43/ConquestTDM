@@ -6,13 +6,13 @@ hook.Add( "PlayerDeath", "Leech", function( vic, inf, att )
 	end
 end )
 
---// Currently unused
+--//Used in sv_feed in the assist calculation block
 function VampirismAssist( ply, value )
 	if CheckPerk( ply ) == "leech" then
 		if ply:Alive() then
-			ply:SetHealth( ply:Health() + ( ( ( 100 - ply:Health() ) / 3 ) * value / 100 ) )
+			ply:SetHealth( ply:Health() + ( ( ( ply:GetMaxHealth() - ply:Health() ) / 3 ) * value / ply:GetMaxHealth() ) )
 		end
 	end
 end
 
-RegisterPerk( "Leech", "leech", 37, "Killing an enemy will restore 1/3 of your missing health." )
+RegisterPerk( "Leech", "leech", 37, "Kills and assists on enemies restore 1/3 and % 1/3 of missing health." )

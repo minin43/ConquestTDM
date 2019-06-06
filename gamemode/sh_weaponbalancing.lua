@@ -324,8 +324,8 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_official_m249" )
         wep.Slot = 0
         wep.Damage = 32
-        wep.FireDelay = 0.075
-        wep.Recoil = 1.75
+        wep.FireDelay = 0.085
+        wep.Recoil = 1.8
         wep.HipSpread = 0.18
         wep.AimSpread = 0.006
         wep.VelocitySensitivity = 1.0
@@ -346,8 +346,8 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_amr2_mk46" )
         wep.Slot = 0
         wep.Damage = 36
-        wep.FireDelay = 0.08
-        wep.Recoil = 1.65
+        wep.FireDelay = 0.09
+        wep.Recoil = 1.75
         wep.HipSpread = 0.18
         wep.AimSpread = 0.008
         wep.VelocitySensitivity = 1.0
@@ -388,8 +388,8 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_amr2_rpk74" )
         wep.Slot = 0
         wep.Damage = 30
-        wep.FireDelay = 0.085
-        wep.Recoil = 1.6
+        wep.FireDelay = 0.093
+        wep.Recoil = 1.7
         wep.HipSpread = 0.18
         wep.AimSpread = 0.003
         wep.VelocitySensitivity = 1.1

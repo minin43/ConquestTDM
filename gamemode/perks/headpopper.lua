@@ -12,6 +12,8 @@ hook.Add( "DoPlayerDeath", "HEAD-POPPER", function( vic, att, dmginfo )
                 explosion:Fire( "Explode", 0, 0 )
                 util.BlastDamage( att:GetActiveWeapon(), att, vic:GetPos(), explosionRadius * 2, explosionRadius ) --Since an explosion entity doesn't do damage
             end )
+
+            
         end
     end
 end )

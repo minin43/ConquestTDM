@@ -9,7 +9,7 @@ lvl = {}
 
 lvl.levels = {}
 	
-lvl.expmul = 400
+lvl.expmul = 500
 
 lvl.VIPGroups = { --To adjust
 	{ "vip", .10 },
@@ -20,18 +20,13 @@ lvl.VIPGroups = { --To adjust
 	{ "creator", .5 }
 }
 	
-for i = 1, 50 do
+for i = 1, 51 do
 	lvl.levels[ i ] = i * lvl.expmul
-end
-
--- "prestige"
-for i = 51, 100 do --To remove, we want to cap at 50, and force players to prestige
-	lvl.levels[ i ] = 30000 * ( ( i - 100 ) ^ 2 )
 end
 
 lvl.maxlevel = #lvl.levels
 lvl.maxlevelexp = lvl.levels[ lvl.maxlevel ]
-	
+
 function lvl.GetLevel( ply )
 	return tonumber( ply:GetPData( "level" ) )
 end
@@ -150,11 +145,9 @@ hook.Add( "lvl.OnLevelUp", "lvl.OnLevelUp", function( ply, newlv )
 	if lvl.GetLevel( ply ) >= 100 then
 		GlobalChatPrintColor( color_green, ply:Nick(), color_white, " leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
 		for k, v in next, player.GetAll() do
-			--v:ChatPrint( tostring( ply:Nick() ) .. " leveled up to level " .. tostring( newlv ) )
 			v:SendLua([[surface.PlaySound( "ui/UX_InGame_Unlock_Promotion_Wave.mp3" )]])
 		end
 	else
-		--ply:ChatPrint( "You leveled up to level " .. tostring( newlv ) )
 		ply:ChatPrintColor( color_green, "You ", color_white, "leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
 		ply:SendLua([[surface.PlaySound( "ui/UI_Awards_Basic_wav.mp3" )]])
 	end

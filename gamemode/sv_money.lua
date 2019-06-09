@@ -41,6 +41,10 @@ function SendUpdate( ply )
 	net.Send( ply )
 end
 
+function ResetMoney( ply )
+	SetMoney( ply, 0 )
+end
+
 hook.Add( "PlayerSpawn", "tdm_initialspawn", function( ply ) --updates the client on their money when they spawn
 	net.Start( "SendInitialMoney" )
 		net.WriteString( GetMoney( ply ) )

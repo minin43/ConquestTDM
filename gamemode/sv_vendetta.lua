@@ -24,7 +24,6 @@ function GM:VendettaKillRegen( ply )
         self.VendettaList.RegenTable[ id( ply:SteamID() ) ] = math.Round( ( self.VendettaList.RegenTable[ id( ply:SteamID() ) ] or 0 ) + ( ( ply:GetMaxHealth() - ply:Health() ) / 2 ) )
         timer.Create( "VendettaRegen" .. ply:SteamID(), 0.5, 0, function()
             if ply:Alive() then 
-                print("VENDETTA HEALTH REGEN DEBUG: ", self.VendettaList.RegenTable[ id( ply:SteamID() ) ] )
                 if self.VendettaList.RegenTable[ id( ply:SteamID() ) ] > 0 then
                     ply:SetHealth( math.Clamp( ply:Health() + 1, 0, ply:GetMaxHealth() ) )
                     self.VendettaList.RegenTable[ id( ply:SteamID() ) ] = self.VendettaList.RegenTable[ id( ply:SteamID() ) ] - 1
@@ -77,6 +76,7 @@ hook.Add( "EntityTakeDamage", "ScaleVendettaDamage", function( vic, dmginfo )
         if GAMEMODE.VendettaList[ id( vic:SteamID() ) ].ActiveSaves then
             if GAMEMODE.VendettaList[ id( vic:SteamID() ) ].ActiveSaves[ id( dmginfo:GetAttacker():SteamID() ) ] then
                 dmginfo:ScaleDamage( 0.7 )
+                GAMEMODE:QueueIcon( dmginfo:GetAttacker(), "vendetta", 0.5 )
             end
         end
     end

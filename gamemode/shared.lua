@@ -15,36 +15,60 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png", type = "ins2" },
 	[ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png", type = "ins2" },]]
 	
-    [ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2" },
-    [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png", type = "hl2" },
-    [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png", type = "hl2" },
-    [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png", type = "hl2" },
-    [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png", type = "ins2" },
-    [ "de_star" ] = { id = 296000772, size = "Midsize", img = "vgui/maps/star.png", type = "ins2" },
-    [ "sh_lockdown_v2" ] = { id = 423308835, size = "Large", img = "vgui/maps/lockdown2.png", type = "ins2" },
-    [ "sh_smalltown_c" ] = { id = 865967849, size = "Large", img = "vgui/maps/smalltown.png", type = "ins2" },
-	[ "ttt_mw2_terminal" ] = { id = 176887855, size = "Large", img = "vgui/maps/terminal.png", type = "mw2" },
-    [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png", type = "hl2" },
-    [ "dm_powerstation" ] = { id = 446026985, size = "Small", img = "vgui/maps/powerstation.png", type = "hl2" },
-    [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png", type = "hl2" },
-    [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png", type = "ins2" },
-    [ "de_joint" ] = { id = 1689260841, size = "Large", img = "vgui/maps/joint.png", type = "ins2" },
-    [ "dm_avalon" ] = { id = 1669465120, size = "Midsize", img = "vgui/maps/avalon.png", type = "hl2", extra = { "NoFall" } },
-    [ "dm_bounce" ] = { id = 1645391828, size = "Small", img = "vgui/maps/bounce.png", type = "hl2", extra = { "NoFall" } },
-    [ "ttt_mw2_highrise" ] = { id = 290247692, size = "Large", img = "vgui/maps/highrise.png", type = "mw2" },
-	[ "ttt_mw2_scrapyard" ] = { id = 294363438, size = "Large", img = "vgui/maps/scrapyard.png", type = "mw2" },
+	[ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2",
+		tags = { } },
+    [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png", type = "hl2",
+    [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png", type = "hl2",
+		tags = { } },
+    [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png", type = "hl2",
+		tags = { } },
+    [ "de_asia" ] = { id = 872474392, size = "Midsize", img = "vgui/maps/asia.png", type = "ins2",
+		tags = { } },
+    [ "de_star" ] = { id = 296000772, size = "Midsize", img = "vgui/maps/star.png", type = "ins2",
+		tags = { } },
+    [ "sh_lockdown_v2" ] = { id = 423308835, size = "Massive", img = "vgui/maps/lockdown2.png", type = "ins2",
+    [ "sh_smalltown_c" ] = { id = 865967849, size = "Large", img = "vgui/maps/smalltown.png", type = "ins2",
+		tags = { } },
+	[ "ttt_mw2_terminal" ] = { id = 176887855, size = "Large", img = "vgui/maps/terminal.png", type = "mw2",
+		tags = { } },
+    [ "dm_basebunker" ] = { id = 812797510, size = "Small", img = "vgui/maps/bunker.png", type = "hl2",
+		tags = { } },
+    [ "dm_powerstation" ] = { id = 446026985, size = "Small", img = "vgui/maps/powerstation.png", type = "hl2",
+		tags = { } },
+    [ "dm_plaza17" ] = { id = 1689260918, size = "Large", img = "vgui/maps/plaza17.png", type = "hl2",
+		tags = { } },
+    [ "de_corse" ] = { id = 1689260682, size = "Midsize", img = "vgui/maps/corse.png", type = "ins2",
+		tags = { } },
+    [ "de_joint" ] = { id = 1689260841, size = "Massive", img = "vgui/maps/joint.png", type = "ins2",
+		tags = { } },
+    [ "dm_avalon" ] = { id = 1669465120, size = "Midsize", img = "vgui/maps/avalon.png", type = "hl2", extra = { "NoFall" },
+		tags = { } },
+    [ "dm_bounce" ] = { id = 1645391828, size = "Small", img = "vgui/maps/bounce.png", type = "hl2", extra = { "NoFall" },
+		tags = { } },
+    [ "ttt_mw2_highrise" ] = { id = 290247692, size = "Large", img = "vgui/maps/highrise.png", type = "mw2",
+		tags = { } },
+	[ "ttt_mw2_scrapyard" ] = { id = 294363438, size = "Large", img = "vgui/maps/scrapyard.png", type = "mw2",
+		tags = { } },
 	--//Update 1.6
-	[ "de_crash" ] = { id = 671482026, size = "Large", img = "vgui/maps/crash.png", type = "mw2" },
-	[ "dm_mines" ] = { id = 660390276, size = "Midsize", img = "vgui/maps/mines.png", type = "hl2" },
-	[ "de_boston" ] = { id = 296008620, size = "Large", img = "vgui/maps/boston.png", type = "ins2" },
+	[ "de_crash" ] = { id = 671482026, size = "Large", img = "vgui/maps/crash.png", type = "mw2",
+		tags = { } },
+	[ "dm_mines" ] = { id = 660390276, size = "Small", img = "vgui/maps/mines.png", type = "hl2",
+		tags = { } },
+	[ "de_boston" ] = { id = 296008620, size = "Large", img = "vgui/maps/boston.png", type = "ins2",
+		tags = { } },
 	--//Update 1.7
-	[ "ttt_cwoffice2019" ] = { id = 1659123269, size = "Large", img = "vgui/maps/cwoffice2019.png", type = "ins2" },
-	[ "ba_stadium" ] = { id = 1721873165, size = "Small", img = "vgui/maps/stadium.png", type = "hl2" },
-	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png" },
-	[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2" },
-	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png" },
+	[ "ttt_cwoffice2019" ] = { id = 1659123269, size = "Large", img = "vgui/maps/cwoffice2019.png", type = "ins2",
+		tags = { } },
+	[ "ba_stadium" ] = { id = 1721873165, size = "Small", img = "vgui/maps/stadium.png", type = "hl2",
+		tags = { } },
+	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png",
+		tags = { } },
+	[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2",
+	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png",
+		tags = { } },
 	--[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Needs better prop spawns
-	[ "dm_octagon" ] = { id = 1727666265, size = "Midsize", img = "vgui/maps/octagon.png", type = "hl2" }
+	[ "dm_octagon" ] = { id = 1727666265, size = "Midsize", img = "vgui/maps/octagon.png", type = "hl2",
+		tags = { } }
 
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
 	--[ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" }, --Seems to be crashing clients
@@ -63,13 +87,14 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	--More maps: de_secretcamp
 }
 
+--//Team names - randomized if more than 1
 GM.TeamNames = {
     mw2 = { red = { "Spetsnaz", "OpFor"--[[, "Milita"]] }, blue = { "TF 141", "Rangers", "Seals" }},
     hl2 = { red = { "Rebels" }, blue = { "Combine" } },
     ins2 = { red = { "Insurgents" }, blue = { "Security" } }
 }
 
-GM.TeamDownloads = {
+GM.DependentDownloads = {
 	ins2 = {
 		1196565715, --Security Playermodels
 		1202342807 --Insurgent Playermodels
@@ -100,8 +125,8 @@ if SERVER then
 			GM.redTeamName = GM.TeamNames[ mapType ].red[ math.random( redOptions ) ]
 			GM.blueTeamName = GM.TeamNames[ mapType ].blue[ math.random( blueOptions ) ]
 
-			if GM.TeamDownloads[ mapType ] then
-				for k, v in pairs( GM.TeamDownloads[ mapType ] ) do
+			if GM.DependentDownloads[ mapType ] then
+				for k, v in pairs( GM.DependentDownloads[ mapType ] ) do
 					resource.AddWorkshop( v )
 				end
 			end

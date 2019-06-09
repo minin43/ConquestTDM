@@ -60,6 +60,7 @@ AddCSLuaFile( "cl_stattrack.lua" )
 AddCSLuaFile( "cl_vendetta.lua" )
 AddCSLuaFile( "cl_teamselect.lua" )
 AddCSLuaFile( "cl_character_interaction.lua" )
+AddCSLuaFile( "cl_perks.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -82,6 +83,8 @@ include( "sv_teamselect.lua" )
 include( "sv_character_interaction.lua" )
 include( "sv_spectator.lua" )
 include( "sv_custommaps.lua" )
+include( "sv_perks.lua" )
+include( "sv_prestige.lua" )
 include( "sh_weaponbalancing.lua" )
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do

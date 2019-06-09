@@ -133,6 +133,14 @@ function lvl.AddEXP( ply, num )
 		lvl.LevelUp( ply )		
 	end
 end
+
+function lvl.ResetPlayer( ply )
+	v:RemovePData( "level" )
+	v:RemovePData( "exp" )
+	lvl.SetLevel( ply, 1 )
+	lvl.SetEXP( ply, 0 )
+	lvl.SendUpdate( ply )	
+end
 	
 hook.Add( "PlayerInitialSpawn", "lvl.SendInitialLevel", function( ply )
 	timer.Simple( 5, function()

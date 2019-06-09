@@ -4,6 +4,7 @@ hook.Add( "EntityTakeDamage", "VultureDamage", function( ply, dmginfo )
 		if ply and ply:IsPlayer() and att and att:IsPlayer() then
 			if (ply:Health() - dmginfo:GetDamage()) < 11 then
 				dmginfo:AddDamage(10)
+				GAMEMODE:QueueIcon( dmginfo:GetAttacker(), "vulture" )
 			end
 		end
 	end

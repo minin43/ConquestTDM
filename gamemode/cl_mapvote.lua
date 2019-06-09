@@ -1,8 +1,13 @@
 surface.CreateFont( "MapFont", { font = "BF4 Numbers", size = 25, weight = 600, antialias = true } )
 surface.CreateFont( "HeaderFont", { font = "BF4 Numbers", size = 70, weight = 600, antialias = true } )
 
+GM.IconExplanations = {
+    flags = "indicates the map has conquest flags",
+    snipers = "indicates the map heavily promotes sniping"
+}
+
 net.Receive( "BeginMapvote", function()
-    GAMEMODE.MapList = net.ReadTable() --Keys are the map name, values are tables containing map ID, map size, and screenshot directory
+    GAMEMODE.MapList = net.ReadTable() --Keys are the map name, values are table containing map ID, map size, and screenshot directory
     GAMEMODE.MapvoteTimeLeft = 10
     GAMEMODE.PlayerVotes = { } --Used to record each player's vote
     GAMEMODE.MapvoteOptions = { } --Contains the custom button vgui elements
@@ -89,30 +94,69 @@ function GM:DrawMapvote()
     end
 
     local positions = {
-        { x = ( ScrW() / 4 ) - 6, y = ScrH() / 3 },
-        { x = ( ScrW() / 2 ), y = ScrH() / 3 },
-        { x = ( ScrW() / 4 ) * 3 + 6, y = ScrH() / 3 },
-        { x = ( ScrW() / 4 ) - 6, y = ( ScrH() / 3 ) * 2 },
-        { x = ( ScrW() / 2 ), y = ( ScrH() / 3 ) * 2 },
-        { x = ( ScrW() / 4 ) * 3 + 6, y = ( ScrH() / 3 ) * 2 }
+        { x = ( ScrW() / 4 ) - 6, y = ScrH() / 4 },
+        { x = ( ScrW() / 2 ), y = ScrH() / 4 },
+        { x = ( ScrW() / 4 ) * 3 + 6, y = ScrH() / 4 },
+        { x = ( ScrW() / 4 ) - 6, y = ( ScrH() / 4 ) * 2 },
+        { x = ( ScrW() / 2 ), y = ( ScrH() / 4 ) * 2 },
+        { x = ( ScrW() / 4 ) * 3 + 6, y = ( ScrH() / 4 ) * 2 },
+        { x = ( ScrW() / 4 ) - 6, y = ( ScrH() / 4 ) * 3 },
+        { x = ( ScrW() / 2 ), y = ( ScrH() / 4 ) * 3 },
+        { x = ( ScrW() / 4 ) * 3 + 6, y = ( ScrH() / 4 ) * 3 }
     }
+
     local counter = 0
     for k, v in pairs( self.MapList ) do
         counter = counter + 1
-        local dumby = vgui.Create( "MapOption", self.MapvoteMain )
-        dumby:SetFont( "MapFont" )
-        dumby:SetMapName( k )
-        dumby:SetMapSize( v.size )
-        dumby:SetMapImage( v.img )
-        dumby:SetVotes( 0 )
-        dumby:SetFlags( v.flags )
-        dumby:SetSize( ScrW() / 4, ScrH() / 4 ) --1/4 the size of 1080p
-        dumby:SetPos( positions[ counter ].x - ( dumby:GetWide() / 2 ), positions[ counter ].y - ( dumby:GetTall() / 2 ) )
+        if v.custom then
+            if k == "random" then
+                local dumby = vgui.Create( "RandomOption", self.MapvoteMain )
+                dumby:SetFont( "MapFont" )
+                dumby:SetMapName( "random" )
+                dumby:SetVotes( 0 )
+                dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                dumby:SetPos( positions[ counter ].x - ( dumby:GetWide() / 2 ), positions[ counter ].y - ( dumby:GetTall() / 2 ) )
 
-        self.MapvoteOptions[ k ] = dumby
+                self.MapvoteOptions[ k ] = dumby
+            elseif k == "repeat" and self.MapTable[ game.GetMap() ] then
+                local dumby = vgui.Create( "RepeatOption", self.MapvoteMain )
+                dumby:SetFont( "MapFont" )
+                dumby:SetMapName( "repeat" )
+                dumby:SetVotes( 0 )
+                dumby:SetMapImage( self.MapTable[ game.GetMap() ].img )
+                dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                dumby:SetPos( positions[ counter ].x - ( dumby:GetWide() / 2 ), positions[ counter ].y - ( dumby:GetTall() / 2 ) )
+
+                self.MapvoteOptions[ k ] = dumby
+            elseif k == "legend" then
+                local dumby = vgui.Create( "DPanel", self.MapvoteMain )
+                dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                dumby:SetPos( positions[ counter ].x - ( dumby:GetWide() / 2 ), positions[ counter ].y - ( dumby:GetTall() / 2 ) )
+                dumby.Paint = function()
+                    --[[surface.SetMaterial( flagimg )
+                    surface.SetDrawColor( 76, 175, 80 )
+                    surface.DrawTexturedRect( 10, 10, 40, 40 )
+                    draw.SimpleText( "means the map has Conquest flags", "MapFont", 54, self.MapvoteInfo:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )]]                    
+                end
+
+                self.MapvoteOptions[ k ] = dumby
+            end
+        else
+            local dumby = vgui.Create( "MapOption", self.MapvoteMain )
+            dumby:SetFont( "MapFont" )
+            dumby:SetMapName( k )
+            dumby:SetMapSize( v.size )
+            dumby:SetMapImage( v.img )
+            dumby:SetVotes( 0 )
+            dumby:SetTags( v.tags )
+            dumby:SetSize( ScrW() / 4, ScrH() / 4 ) --1/4 the size of 16:9 resolutions
+            dumby:SetPos( positions[ counter ].x - ( dumby:GetWide() / 2 ), positions[ counter ].y - ( dumby:GetTall() / 2 ) )
+
+            self.MapvoteOptions[ k ] = dumby
+        end
     end
 
-    self.MapvoteInfo = vgui.Create( "DPanel", self.MapvoteMain )
+    --[[self.MapvoteInfo = vgui.Create( "DPanel", self.MapvoteMain )
     self.MapvoteInfo:SetSize( 400, 50 )
     self.MapvoteInfo:SetPos( self.MapvoteMain:GetWide() / 2 - self.MapvoteInfo:GetWide() / 2, self.MapvoteMain:GetTall() - self.MapvoteInfo:GetTall() - 6 )
     self.MapvoteInfo.Paint = function()
@@ -120,17 +164,5 @@ function GM:DrawMapvote()
         surface.SetDrawColor( 76, 175, 80 )
         surface.DrawTexturedRect( 10, 10, 40, 40 )
         draw.SimpleText( "means the map has Conquest flags", "MapFont", 54, self.MapvoteInfo:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-    end
+    end]]
 end
-
---[[net.Receive( "StartRTV", function()
-
-end )
-
-net.Receive( "ReceivedRTVVote", function()
-
-end )
-
-net.Receive( "UpdateRTVVotes", function()
-
-end )]]

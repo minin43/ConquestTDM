@@ -63,6 +63,10 @@ GM.Icons = {
 	},
 	Perks = {
 		
+	},
+	Mapvote = { --//Any icons for the tags found in MapTable
+		snipers = Material( "" ) --same material as GAMEMODE.Icons.Weapons.Sniper
+		flags = Material( "vgui/flagIcon.png", "smooth" )
 	}
 }
 
@@ -86,6 +90,7 @@ include( "cl_stattrack.lua" )
 include( "cl_vendetta.lua" )
 include( "cl_teamselect.lua" )
 include( "cl_character_interaction.lua" )
+include( "cl_perks.lua" )
 include( "sh_weaponbalancing.lua" )
 
 function unid( steamid )

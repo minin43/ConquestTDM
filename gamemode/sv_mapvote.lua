@@ -3,15 +3,14 @@ util.AddNetworkString( "MapvoteFinished" )
 util.AddNetworkString( "PlayerVotedUpdate" )
 util.AddNetworkString( "UpdateCountdown" )
 util.AddNetworkString( "PlayerSelectedMap" )
---[[util.AddNetworkString( "StartRTV" )
-util.AddNetworkString( "ReceivedRTVVote" )
-util.AddNetworkString( "UpdateRTVVotes" )]]
 
 GM.Votes = { } --The table that records the total tallies as well as all individual votes
 GM.VoteOptions = { } --The table we send to clients, contains the 6 map options
 GM.MapvoteTime = 20
 GM.RTVCooldown = 120
 GM.RTVTime = 60
+
+--//Map table has been moved to shared.lua
 
 local CSSMaps = { 
 	[ "cs_assault" ] = true,
@@ -46,9 +45,9 @@ end
 
 for k, v in pairs( GM.MapTable ) do
     if flags[ k ] then --found in sv_flags
-        v.flags = true
-    else
-        v.flags = false
+        v.tags[ #v.tags + 1 ] = "flags" 
+    --[[else
+        v.flags = false]]
     end
 end
 
@@ -68,8 +67,11 @@ function EndMapvote()
         end
     end
 
-    if winningMap == "" then --If no votes then re-do last map, I guess
+    if winningMap == "" or winningMap == "repeat" or winningMap == "legend" then
         winningMap = file.Read( "tdm/lastmap.txt", "DATA" )
+    elseif winningMap == "random" then
+        local tab, map = table.Random( GAMEMODE.MapTable )
+        winningMap = map
     end
 
     net.Start( "MapvoteFinished" )
@@ -101,7 +103,6 @@ hook.Add( "StartMapvote", "RunMapvote", function( winner )
     if file.Exists( "tdm/lastmap.txt", "DATA" ) then
         lastmap = file.Read( "tdm/lastmap.txt", "DATA" )
         GAMEMODE.MapTable[ lastmap ] = nil
-        print( "Lastmap detected", lastmap, GAMEMODE.MapTable[ lastmap ] )
     end
     
     local key
@@ -109,16 +110,17 @@ hook.Add( "StartMapvote", "RunMapvote", function( winner )
         if table.Count( GAMEMODE.MapTable ) != 0 then
             local mapTable, mapName = table.Random( GAMEMODE.MapTable )
             GAMEMODE.VoteOptions[ mapName ] = mapTable
-            print(" Selecting map randomly: ", mapName )
             GAMEMODE.MapTable[ mapName ] = nil
         end
     end
+    GAMEMODE.VoteOptions[ "repeat" ] = { custom = true, img = GAMEMODE.MapTable[ game.GetMap() ].img }
+    GAMEMODE.VoteOptions[ "random" ] = { custom = true, img = "" }
+    GAMEMODE.VoteOptions[ "legend" ] = { custom = true }
     
     for k, v in pairs( GAMEMODE.VoteOptions ) do
         GAMEMODE.Votes[ k ] = 0
     end
 
-    print( "Start Net Message BeginMapVote..." )
     net.Start( "BeginMapvote" )
         net.WriteTable( GAMEMODE.VoteOptions ) --The 6 maps we want to be sending to all clients
     net.Broadcast()
@@ -172,14 +174,18 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
 
                 GlobalChatPrintColor( "[RTV] Rock The Vote has been called, total votes necessary: " .. GAMEMODE.NecessaryRTVVotes )
                 GlobalChatPrintColor( "[RTV] Type \"rtv\" in chat to cast your vote" )
-                GlobalChatPrintColor( "[RTV] Time to cast your vote: " .. GAMEMODE.RTVTime .. " seconds" )
-                GlobalChatPrintColor( "[RTV] " .. ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
+                timer.Simple( 0.25, function()
+                    GlobalChatPrintColor( "[RTV] Time to cast your vote: " .. GAMEMODE.RTVTime .. " seconds" )
+                end )
+                timer.Simple( 0.5, function()
+                    GlobalChatPrintColor( "[RTV] " .. ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
+                end )
             else
                 if !GAMEMODE.RTVVotes[ id( ply:SteamID() ) ] then
                     GAMEMODE.RTVVotes[ id( ply:SteamID() ) ] = true
                     GAMEMODE.TotalRTVVotes = GAMEMODE.TotalRTVVotes + 1
                     
-                    GlobalChatPrintColor( ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
+                    GlobalChatPrintColor( "[RTV] " .. ply:Nick() .. " has voted, " .. GAMEMODE.NecessaryRTVVotes - GAMEMODE.TotalRTVVotes .. " more vote(s) necessary" )
 
                     if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
                         GlobalChatPrintColor( "[RTV] Enough votes have been cast, rocking the vote..." )

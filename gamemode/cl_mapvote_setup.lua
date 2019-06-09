@@ -5,11 +5,10 @@ local MapOptionButton = {}
 MapOptionButton.font = "DermaLarge"
 MapOptionButton.mapname = "Unknown Map"
 MapOptionButton.mapsize = "Uknown Size"
-MapOptionButton.hasflags = false
+--MapOptionButton.hasflags = false
 MapOptionButton.votes = 0
 MapOptionButton.infospace = 25
-MapOptionButton.img = Material( "vgui/maps/noimage.png", "smooth" ) --Should be a default "no image selected" image
-MapOptionButton.flagimg = Material( "vgui/flagIcon.png", "smooth" )
+MapOptionButton.img = Material( "vgui/maps/noimage.png", "smooth" ) --//Defaults to "no image selected"
 --MapOptionButton.w, MapOptionButton.h = 480, 270 + MapOptionButton.infospace --Add a 20 pixel buffer along the bottom of the image for text
 
 function MapOptionButton:SetFont(font)
@@ -32,10 +31,8 @@ function MapOptionButton:SetVotes(text)
     self.votes = text
 end
 
-function MapOptionButton:SetFlags(bool)
-    if bool then
-        self.hasflags = true
-    end
+function MapOptionButton:SetTags(tab)
+    self.tags = tab
 end
 
 function MapOptionButton:AddVotes(text)
@@ -84,14 +81,11 @@ function MapOptionButton:Paint()
     surface.DrawTexturedRect( 0, 0, w, h - self.infospace )
     draw.NoTexture()
 
-    if self.hasflags then
-        surface.SetMaterial( self.flagimg )
-        --[[surface.SetDrawColor( 0, 0, 0, 255 )
-        surface.DrawTexturedRect( 4, 4, 34, 34 )]]
+    for k, v in pairs( self.tags ) do
+        surface.SetMaterial( GAMEMODE.Icons.Mapvote[ k ] )
         surface.SetDrawColor( 76, 175, 80, 255 )
-        surface.DrawTexturedRect( 4, 4, 34, 34 )
+        surface.DrawTexturedRect( 4 + ( 34 * ( k - 1 ) ), 4, 34 + ( 34 * ( k - 1 ) ), 34 )
         draw.NoTexture()
-
     end
 
     surface.SetDrawColor( 255, 255, 255 )
@@ -130,3 +124,95 @@ function MapOptionButton:Paint()
 end
 
 vgui.Register( "MapOption", MapOptionButton, "DButton" )
+
+local RandomOption = table.Copy( MapOptionButton )
+
+function RandomOption:Paint()
+    local w, h = self:GetSize()
+
+    surface.SetDrawColor( 255, 255, 255 )
+    surface.SetMaterial( self.img )
+    surface.DrawTexturedRect( 0, 0, w, h - self.infospace )
+    draw.NoTexture()
+
+    surface.SetDrawColor( 255, 255, 255 )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
+    surface.SetDrawColor( 60, 60, 60, 160 )
+    surface.DrawRect( 0, ( h / 2 ) - ( self.infospace / 2 ), w, self.infospace )
+    draw.SimpleText( "- RANDOM MAP -", self.font, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+    local rightTriangle = {
+        { x = w, y = 0 }, --Top right corner
+        { x = w, y = 45 }, --Bottom corner
+        { x = w - 70, y = 0 } --Left corner
+    }
+    surface.SetDrawColor( 76, 175, 80, 190 )
+    surface.DrawPoly( rightTriangle )
+    draw.SimpleText( self.votes, "VoteFont", w - 18, 15, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+    if self.cursorEntered then
+        if GAMEMODE.CurrentSelection == self.mapname then
+            surface.SetDrawColor( 180, 180, 180, 60 )
+            surface.DrawRect( 0, 0, w, h )
+            draw.SimpleText( "Voted!", self.font, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        else
+            surface.SetDrawColor( 76, 175, 80 )
+            surface.DrawOutlinedRect( 0, 0, w, h )
+        end
+    end
+    if GAMEMODE.CurrentSelection == self.mapname then
+        surface.SetDrawColor( 76, 175, 80 )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
+
+    return true
+end
+
+vgui.Register( "RandomOption", RandomOption, "DButon" )
+
+local RepeatOption = table.Copy( MapOptionButton )
+
+function RepeatOption:Paint()
+    local w, h = self:GetSize()
+
+    surface.SetDrawColor( 255, 255, 255 )
+    surface.SetMaterial( self.img )
+    surface.DrawTexturedRect( 0, 0, w, h - self.infospace )
+    draw.NoTexture()
+
+    surface.SetDrawColor( 255, 255, 255 )
+    surface.DrawOutlinedRect( 0, 0, w, h )
+
+    surface.SetDrawColor( 60, 60, 60, 160 )
+    surface.DrawRect( 0, ( h / 2 ) - ( self.infospace / 2 ), w, self.infospace )
+    draw.SimpleText( "- REPEAT CURRENT MAP -", self.font, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+    local rightTriangle = {
+        { x = w, y = 0 }, --Top right corner
+        { x = w, y = 45 }, --Bottom corner
+        { x = w - 70, y = 0 } --Left corner
+    }
+    surface.SetDrawColor( 76, 175, 80, 190 )
+    surface.DrawPoly( rightTriangle )
+    draw.SimpleText( self.votes, "VoteFont", w - 18, 15, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+    if self.cursorEntered then
+        if GAMEMODE.CurrentSelection == self.mapname then
+            surface.SetDrawColor( 180, 180, 180, 60 )
+            surface.DrawRect( 0, 0, w, h )
+            draw.SimpleText( "Voted!", self.font, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        else
+            surface.SetDrawColor( 76, 175, 80 )
+            surface.DrawOutlinedRect( 0, 0, w, h )
+        end
+    end
+    if GAMEMODE.CurrentSelection == self.mapname then
+        surface.SetDrawColor( 76, 175, 80 )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
+
+    return true
+end
+
+vgui.Register( "RepeatOption", RepeatOption, "DButon" )

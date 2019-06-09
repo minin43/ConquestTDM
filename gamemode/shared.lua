@@ -18,6 +18,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	[ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2",
 		tags = { } },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png", type = "hl2",
+		tags = { "snipers" } },
     [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png", type = "hl2",
 		tags = { } },
     [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png", type = "hl2",
@@ -27,6 +28,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_star" ] = { id = 296000772, size = "Midsize", img = "vgui/maps/star.png", type = "ins2",
 		tags = { } },
     [ "sh_lockdown_v2" ] = { id = 423308835, size = "Massive", img = "vgui/maps/lockdown2.png", type = "ins2",
+		tags = { "snipers" } },
     [ "sh_smalltown_c" ] = { id = 865967849, size = "Large", img = "vgui/maps/smalltown.png", type = "ins2",
 		tags = { } },
 	[ "ttt_mw2_terminal" ] = { id = 176887855, size = "Large", img = "vgui/maps/terminal.png", type = "mw2",
@@ -64,6 +66,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png",
 		tags = { } },
 	[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2",
+		tags = { "snipers" } },
 	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png",
 		tags = { } },
 	--[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Needs better prop spawns
@@ -94,6 +97,7 @@ GM.TeamNames = {
     ins2 = { red = { "Insurgents" }, blue = { "Security" } }
 }
 
+--//SteamDLs dependent on map type - currently used for playermodel downloads only when they're necessary
 GM.DependentDownloads = {
 	ins2 = {
 		1196565715, --Security Playermodels

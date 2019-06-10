@@ -16,33 +16,6 @@ hook.Add( "PostGiveLoadout", "LifelineSpawn", function( ply )
 	end
 end )
 
---[[hook.Add( "PlayerDeath", "LifelineKill", function( ply, wep, att )
-	if CheckPerk( att ) == "lifeline" and ply != att then
-		if att:Health() <= 20 or ply:LastHitGroup() == HITGROUP_HEAD then
-			GAMEMODE.PerkTracking[ id( att:SteamID() ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( att:SteamID() ) ].LifelineBonus + 10
-			--att:SetMaxHealth( att:GetMaxHealth() + 10 ) --If this ends up being too strong, we can set the max health to be temporary
-			att:SetHealth( math.Clamp( att:Health() + 50, 0, att:GetMaxHealth() ) )
-
-			if timer.Exists( "LifelineEffectTimer" ) then
-				timer.Adjust( "LifelineEffectTimer", 2, 1, function()
-					net.Start( "EndLifeline" )
-					net.Send( att )
-					timer.Remove( "LifelineEffectTimer" )
-				end )
-			else
-				net.Start( "Lifeline" )
-				net.Send( att )
-				
-				timer.Create( "LifelineEffectTimer", 2, 1, function()
-					net.Start( "EndLifeline" )
-					net.Send( att )
-					timer.Remove( "LifelineEffectTimer" )
-				end )
-			end
-		end
-	end
-end )]]
-
 --//A bit expensive
 hook.Add( "Think", "LifelineMovementSetting", function()
 	for k, v in pairs( GAMEMODE.PerkTracking.LifelineList ) do
@@ -59,8 +32,7 @@ end )
 hook.Add( "EntityTakeDamage", "LifelineDamageReduction", function( ply, dmginfo )
     if ply:IsValid() and ply:IsPlayer() then
 		if CheckPerk( ply ) == "lifeline" then
-			dmginfo:ScaleDamage( math.Clamp( 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 150 ), 0, 1 ) ) --//Not very complicated scaling, might make this mechanic too strong
-			--print( "Lifeline Scaling: ", 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 150 ) )
+			dmginfo:ScaleDamage( math.Clamp( 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 120 ), 0, 1 ) ) --//Not very complicated scaling, might make this mechanic too strong
 		end
 	end
 end )

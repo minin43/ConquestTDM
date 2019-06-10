@@ -38,6 +38,8 @@ GM.DefaultModels = {
 		"models/player/ins_security_standard.mdl"
 	}
 }
+GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
+GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
 
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )

@@ -664,7 +664,6 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 	end
 end )
 
-
 local function GetPrintName( wep )
     if wep == nil || wep == NULL then return end
     if weapons.Get(wep) == nil then return "" end 

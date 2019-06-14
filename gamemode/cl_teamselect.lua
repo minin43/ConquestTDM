@@ -48,12 +48,12 @@ function GM:TeamMenu()
 	self.TeamMain:MakePopup()
 	self.TeamMain:Center()
 	self.TeamMain.Think = function()
-		if #team.GetPlayers( 1 ) - #team.GetPlayers( 2 ) >= 2 then
+		if #team.GetPlayers( 1 ) - #team.GetPlayers( 2 ) >= 1 then
 			self.CanJoinRed = false
 		else 
 			self.CanJoinRed = true
 		end
-		if #team.GetPlayers( 2 ) - #team.GetPlayers( 1 ) >= 2 then
+		if #team.GetPlayers( 2 ) - #team.GetPlayers( 1 ) >= 1 then
 			self.CanJoinBlue = false
 		else
 			self.CanJoinBlue = true

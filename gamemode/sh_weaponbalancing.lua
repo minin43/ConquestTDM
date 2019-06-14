@@ -160,6 +160,44 @@ function weapons.OnLoaded()
         wep.SpeedDec = 60
     end
 
+    if weapons.Get( "cw_tac338" ) then
+        local wep = weapons.GetStored( "cw_tac338" )
+        wep.Slot = 0
+        wep.Damage = 110
+        wep.FireDelay = 1.9
+        wep.Recoil = 2.5
+        wep.HipSpread = 0.35
+        wep.AimSpread = 0.001
+        wep.VelocitySensitivity = 2.8
+        wep.MaxSpreadInc = 0.4
+        wep.SpreadPerShot = 0.1
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 5
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = wep.FireDelay + 0.01
+        wep.SpeedDec = 60
+    end
+
+    if weapons.Get( "cw_wf_m200" ) then
+        local wep = weapons.GetStored( "cw_wf_m200" )
+        wep.Slot = 0
+        wep.Damage = 115
+        wep.FireDelay = 1.62
+        wep.Recoil = 3.5
+        wep.HipSpread = 0.35
+        wep.AimSpread = 0.001
+        wep.VelocitySensitivity = 3.2
+        wep.MaxSpreadInc = 0.4
+        wep.SpreadPerShot = 0.1
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 5
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = wep.FireDelay + 0.01
+        wep.SpeedDec = 60
+    end
+
     if weapons.Get( "cw_m14" ) then
         local wep = weapons.GetStored( "cw_m14" )
         wep.Slot = 0
@@ -176,25 +214,6 @@ function weapons.OnLoaded()
         wep.Primary.ClipSize = 15
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.12
-        wep.SpeedDec = 60
-    end
-
-    if weapons.Get( "cw_l115" ) then
-        local wep = weapons.GetStored( "cw_l115" )
-        wep.Slot = 0
-        wep.Damage = 110
-        wep.FireDelay = 1.5
-        wep.Recoil = 3.5
-        wep.HipSpread = 0.35
-        wep.AimSpread = 0.001
-        wep.VelocitySensitivity = 3.5
-        wep.MaxSpreadInc = 0.4
-        wep.SpreadPerShot = 0.1
-        wep.ClumpSpread = 0
-        wep.Shots = 1
-        wep.Primary.ClipSize = 5
-        wep.Primary.DefaultClip	= wep.Primary.ClipSize
-        wep.SpreadCooldown = wep.FireDelay + 0.01
         wep.SpeedDec = 60
     end
 
@@ -645,3 +664,38 @@ function weapons.OnLoaded()
     end
 
 end
+
+hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
+	local wepbase = weapons.GetStored( "cw_base" )
+    function wepbase:unloadWeapon()
+        return
+    end
+
+	function wepbase:hasAttachment(ply, att, lookIn) --This really oughta be given to Spy
+        if not self.useAttachmentPossessionSystem then
+            return true
+        end
+        
+        lookIn = lookIn or ply.CWAttachments
+        
+        local has = hook.Call("CW20HasAttachment", nil, ply, att, lookIn)
+        
+        if (lookIn and lookIn[att]) or has then
+            return true
+        end
+        
+        return false
+	end
+	
+	function wepbase:decodeAttachmentString(str)
+		self.CWAttachments = self.CWAttachments or {}
+		
+		local result = string.Explode(space, str)
+		
+		for k, v in pairs(result) do
+			if v then
+				self.CWAttachments[v] = true
+			end
+		end
+	end
+end )

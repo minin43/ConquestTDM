@@ -15,4 +15,4 @@ hook.Add( "EntityTakeDamage", "Thornmail", function( ply, dmginfo )
 	end
 end )
 
-RegisterPerk( "Thornmail", "thornmail", 28, "Reflects 10% of bullet damage back to the attacker, causing disorientation." )
+RegisterPerk( "Thornmail", "thornmail", 30, "Reflects 10% of bullet damage back to the attacker, causing disorientation." )

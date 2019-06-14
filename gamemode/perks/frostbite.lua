@@ -62,4 +62,4 @@ hook.Add( "DoPlayerDeath", "TurnOffIceOverlay", function( ply, att, dmginfo )
     net.Send( ply )
 end )
 
-RegisterPerk( "Frostbite", "frostbite", 20, "Enemies you shoot are chilled, slowing down movement & jump power 20-40% for 1-2 seconds, scaling with damage done." )
+RegisterPerk( "Frostbite", "frostbite", 13, "Enemies you shoot are chilled, slowing down movement & jump power 20-40% for 1-2 seconds, scaling with damage done." )

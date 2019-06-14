@@ -13,7 +13,7 @@ hook.Add( "PlayerHurt", "Regen", function( ply, att )
 				end )
 			else
 				timer.Create( "delay_" .. ply:SteamID(), 3, 1, function()
-					timer.Create( "regen_" .. ply:SteamID(), 0.4, 0, function()
+					timer.Create( "regen_" .. ply:SteamID(), 0.2, 0, function()
 						if ply:Alive() then
 							local hp = ply:Health()
 							if hp < ply:GetMaxHealth() then
@@ -37,4 +37,4 @@ hook.Add( "PlayerDeath", "removeregen", function( ply )
 	end
 end )
 
-RegisterPerk( "Regeneration", "regen", 13, "Slowly regenerate health after 3 seconds of taking damage" )
+RegisterPerk( "Regeneration", "regen", 26, "Regenerate health 3 seconds after taking damage" )

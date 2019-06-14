@@ -1501,101 +1501,95 @@ function LoadoutMenu()
 		main:Close()
 	end
     
+    --//Inserting temporary prestige button...
 
-
-
-	local presets = vgui.Create( "DButton", main )
-	presets.Hover = false
-	presets.Click = false
-	presets:SetSize( 64, 36 )
-	presets:SetPos( main:GetWide() - 230, main:GetTall() - presets:GetTall() - 8 )
-	
-	function PaintPresets()
+	local prestige = vgui.Create( "DButton", main )
+	prestige.Hover = false
+	prestige.Click = false
+	prestige:SetSize( 64, 36 )
+	prestige:SetPos( main:GetWide() - 230, main:GetTall() - prestige:GetTall() - 8 )
+	prestige.Paint = function()
 		if not main then return end
-		if presets.Hover then
-			draw.RoundedBox( 4, 0, 0, presets:GetWide(), presets:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+		if prestige.Hover then
+			draw.RoundedBox( 4, 0, 0, prestige:GetWide(), prestige:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
 		end
-		if presets.Click then
-			draw.RoundedBox( 4, 0, 0, presets:GetWide(), presets:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+		if prestige.Click then
+			draw.RoundedBox( 4, 0, 0, prestige:GetWide(), prestige:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
 		end
-		draw.SimpleText( "PRESETS", "Exo 2 Button", presets:GetWide() / 2, presets:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "PRESTIGE", "Exo 2 Button", prestige:GetWide() / 2, prestige:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return true
 	end
-	presets.Paint = PaintPresets
-
-	presets.OnCursorEntered = function()
-		presets.Hover = true
+	prestige.OnCursorEntered = function()
+		prestige.Hover = true
 	end
-	presets.OnCursorExited = function()
-		presets.Hover = false
+	prestige.OnCursorExited = function()
+		prestige.Hover = false
 	end
-
-	presets.OnMousePressed = function()
+	prestige.OnMousePressed = function()
 		LocalPlayer():EmitSound( "buttons/button22.wav" )
-		presets.Click = true
+		prestige.Click = true
 	end
     
-    
-    local presetsui;
-	presets.OnMouseReleased = function()
-		presets.Click = false
+    local confirmationpanel;
+	prestige.OnMouseReleased = function()
+		prestige.Click = false
 		-- Presets UI
-        if presetsui then 
+        if confirmationpanel then 
             return 
         end
-        local x, y, w, h = main:GetBounds();
-        main:MoveTo( x - 130, y, 0.15, 0, 3, OpenPresetsWindow )
+        --Run function to open confirmation window here
+        --Then it should do something fancy, like maybe play a noise or some shit.
 	end
     
     function OpenPresetsWindow()
         local x, y, w, h = main:GetBounds();
-        presetsui = vgui.Create( "DFrame", main )
-        presetsui:SetSize( 250, main:GetTall() )
-        presetsui:SetTitle( "" )
-        presetsui:SetVisible( true )
-        presetsui:SetDraggable( false )
-        presetsui:ShowCloseButton( true )
-        presetsui:MakePopup()
-        presetsui:SetPos(x + main:GetWide() + 10, y);
-        presetsui.btnMaxim:Hide()
-        presetsui.btnMinim:Hide() 
-        presetsui.btnClose.Paint = function()
+        confirmationpanel = vgui.Create( "DFrame", main )
+        confirmationpanel:SetSize( 250, main:GetTall() )
+        confirmationpanel:SetTitle( "" )
+        confirmationpanel:SetVisible( true )
+        confirmationpanel:SetDraggable( false )
+        confirmationpanel:ShowCloseButton( true )
+        confirmationpanel:MakePopup()
+        confirmationpanel:SetPos(x + main:GetWide() + 10, y);
+        confirmationpanel.btnMaxim:Hide()
+        confirmationpanel.btnMinim:Hide() 
+        confirmationpanel.btnClose.Paint = function()
             surface.SetTextColor(color_white)
             surface.SetTextPos(13, 0)
             surface.DrawText("x");
         end
         
-        presetsui.Paint = function()
-            //Derma_DrawBackgroundBlur( presetsui, CurTime() )
+        confirmationpanel.Paint = function()
+            //Derma_DrawBackgroundBlur( confirmationpanel, CurTime() )
             surface.SetDrawColor( 255, 255, 255, 255 )
-            surface.DrawRect( 0, 0, presetsui:GetWide(), presetsui:GetTall() )
+            surface.DrawRect( 0, 0, confirmationpanel:GetWide(), confirmationpanel:GetTall() )
             surface.SetDrawColor( GetTeamColor() )
-            surface.DrawRect( 0, 0, presetsui:GetWide(), 56 )
+            surface.DrawRect( 0, 0, confirmationpanel:GetWide(), 56 )
             surface.SetFont( "Exo 2" )
             surface.SetTextColor( FontColor )
-            surface.SetTextPos( presetsui:GetWide() / 2 - surface.GetTextSize("Presets") / 2, 16 )
+            surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Presets") / 2, 16 )
             surface.DrawText( "Presets" )
             surface.SetTexture( gradient )
         end
 
-        presetsui.PaintOver = function()
+        confirmationpanel.PaintOver = function()
             surface.SetTexture( gradient )
             surface.SetDrawColor( 0, 0, 0, 164 )
-            surface.DrawTexturedRectRotated( presetsui:GetWide() / 2, 56 + 4, 8, presetsui:GetWide(), 270 )
+            surface.DrawTexturedRectRotated( confirmationpanel:GetWide() / 2, 56 + 4, 8, confirmationpanel:GetWide(), 270 )
         end
         
-        presetsui.OnClose = function()
+        confirmationpanel.OnClose = function()
             local x, y, w, h = main:GetBounds();
             main:MoveTo( x + 130, y, 0.15, 0, 3 )
-            presetsui:Remove();
-            presetsui = nil
+            confirmationpanel:Remove();
+            confirmationpanel = nil
         end
         
         
         local function DoNothing() end
-        local pcontainer = vgui.Create( "DScrollPanel", presetsui )
+        local pcontainer = vgui.Create( "DScrollPanel", confirmationpanel )
         pcontainer:SetPos(0, 56);
-        pcontainer:SetSize(presetsui:GetWide(), presetsui:GetTall() - 56)
+        pcontainer:SetSize(confirmationpanel:GetWide(), confirmationpanel:GetTall() - 56)
         local sBar = pcontainer:GetVBar()
         sBar.Paint = DoNothing()
         sBar.btnUp.Paint = DoNothing()
@@ -1608,7 +1602,7 @@ function LoadoutMenu()
         
         local function LoadPresets()
             if !file.Exists("conquest_tdm_presets.txt", "DATA") then 
-                file.Write("conquest_tdm_presets.txt", table.ToString({}, "presets", false));
+                file.Write("conquest_tdm_presets.txt", table.ToString({}, "prestige", false));
             end
             local tab = util.JSONToTable(file.Read("conquest_tdm_presets.txt")) or {};
             for k, v in next, tab do
@@ -1621,7 +1615,7 @@ function LoadoutMenu()
             table.insert(presetstable, #presetstable - 1, {name, p, s, e, pk[1]}) -- pk[2] is the display name
             local tab = presetstable;
             table.remove(tab, #tab);
-            local str = util.TableToJSON(tab, "presets", false)
+            local str = util.TableToJSON(tab, "prestige", false)
             file.Write("conquest_tdm_presets.txt", str);
             hook.Run("PresetAdded");
         end

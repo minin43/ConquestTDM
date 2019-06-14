@@ -184,6 +184,7 @@ hook.Add( "EntityTakeDamage", "SpawnProtection", function( ply, dmginfo )
 		net.Send( ply )
 		dmginfo:ScaleDamage( 0.1 ) --// 90% damage reduced
 
+        GAMEMODE:QueueIcon( dmginfo:GetAttacker(), "spawn", 0.5 )
 		--return dmginfo
 	end
 	

@@ -80,18 +80,21 @@ function MapOptionButton:Paint()
     surface.SetMaterial( self.img )
     surface.DrawTexturedRect( 0, 0, w, h - self.infospace )
     draw.NoTexture()
+    
+    draw.RoundedBox( 8, -4, -4, 8 + ( 36 * #self.tags ), 8 + 36, Color( 60, 60, 60, 240 ) )
+    draw.NoTexture()
 
     for k, v in pairs( self.tags ) do
-        surface.SetMaterial( GAMEMODE.Icons.Mapvote[ k ] )
+        surface.SetMaterial( GAMEMODE.Icons.Mapvote[ v ] )
         surface.SetDrawColor( 76, 175, 80, 255 )
-        surface.DrawTexturedRect( 4 + ( 34 * ( k - 1 ) ), 4, 34 + ( 34 * ( k - 1 ) ), 34 )
+        surface.DrawTexturedRect( ( 4 * k ) + ( 32 * ( k - 1 ) ), 4, 32, 32 )
         draw.NoTexture()
     end
 
     surface.SetDrawColor( 255, 255, 255 )
     surface.DrawOutlinedRect( 0, 0, w, h )
 
-    surface.SetDrawColor( 60, 60, 60, 160 )
+    surface.SetDrawColor( 60, 60, 60, 240 )
     surface.DrawRect( 0, h - self.infospace, w, h )
     draw.SimpleText( "Name: " .. self.mapname, self.font, 5, h - ( self.infospace / 2 ) - 2, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
     draw.SimpleText( "Size: " .. self.mapsize, self.font, w - 5, h - ( self.infospace / 2 ) - 2, Color(255, 255, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
@@ -126,6 +129,19 @@ end
 vgui.Register( "MapOption", MapOptionButton, "DButton" )
 
 local RandomOption = table.Copy( MapOptionButton )
+RandomOption.imglist = {}
+
+for k, v in pairs( GM.MapTable ) do
+    RandomOption.imglist[ #RandomOption.imglist + 1 ] = Material( v.img, "smooth" )
+end
+
+function RandomOption:Think()
+    if not self.NextPicUpdate or self.NextPicUpdate < CurTime() then
+        self.NextPicUpdate = CurTime() + 1
+
+        self.img = self.imglist[ math.random( #self.imglist ) ]
+    end
+end
 
 function RandomOption:Paint()
     local w, h = self:GetSize()
@@ -139,8 +155,8 @@ function RandomOption:Paint()
     surface.DrawOutlinedRect( 0, 0, w, h )
 
     surface.SetDrawColor( 60, 60, 60, 160 )
-    surface.DrawRect( 0, ( h / 2 ) - ( self.infospace / 2 ), w, self.infospace )
-    draw.SimpleText( "- RANDOM MAP -", self.font, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    surface.DrawRect( 0, h - self.infospace, w, h )
+    draw.SimpleText( "- RANDOM MAP -", self.font, w / 2, h - ( self.infospace / 2 ) - 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
     local rightTriangle = {
         { x = w, y = 0 }, --Top right corner
@@ -169,7 +185,7 @@ function RandomOption:Paint()
     return true
 end
 
-vgui.Register( "RandomOption", RandomOption, "DButon" )
+vgui.Register( "RandomOption", RandomOption, "DButton" )
 
 local RepeatOption = table.Copy( MapOptionButton )
 
@@ -185,8 +201,8 @@ function RepeatOption:Paint()
     surface.DrawOutlinedRect( 0, 0, w, h )
 
     surface.SetDrawColor( 60, 60, 60, 160 )
-    surface.DrawRect( 0, ( h / 2 ) - ( self.infospace / 2 ), w, self.infospace )
-    draw.SimpleText( "- REPEAT CURRENT MAP -", self.font, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    surface.DrawRect( 0, h - self.infospace, w, h )
+    draw.SimpleText( "- REPEAT CURRENT MAP -", self.font, w / 2, h - ( self.infospace / 2 ) - 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
     local rightTriangle = {
         { x = w, y = 0 }, --Top right corner
@@ -215,4 +231,4 @@ function RepeatOption:Paint()
     return true
 end
 
-vgui.Register( "RepeatOption", RepeatOption, "DButon" )
+vgui.Register( "RepeatOption", RepeatOption, "DButton" )

@@ -65,7 +65,7 @@ GM.Icons = {
 		
 	},
 	Mapvote = { --//Any icons for the tags found in MapTable
-		snipers = Material( "" ) --same material as GAMEMODE.Icons.Weapons.Sniper
+		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.Sniper
 		flags = Material( "vgui/flagIcon.png", "smooth" )
 	}
 }

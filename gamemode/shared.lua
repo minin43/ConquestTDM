@@ -63,16 +63,21 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 		tags = { } },
 	[ "ba_stadium" ] = { id = 1721873165, size = "Small", img = "vgui/maps/stadium.png", type = "hl2",
 		tags = { } },
-	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png",
+	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png", type = "ins2",
 		tags = { } },
 	[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2",
 		tags = { "snipers" } },
 	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png",
 		tags = { } },
-	--[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Needs better prop spawns
 	[ "dm_octagon" ] = { id = 1727666265, size = "Midsize", img = "vgui/maps/octagon.png", type = "hl2",
-		tags = { } }
+        tags = { } },
+    --//Update 1.9
+    [ "de_halo_battlecreek" ] = { id = 1769486134, size = "Small", img = "vgui/maps/battlecreek.png",
+        tags = { } },
+    [ "de_stad" ] = { id = 1751765989, size = "Large", img = "vgui/maps/stad.png", type = "ins2",
+        tags = { } }
 
+    --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
 	--[ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" }, --Seems to be crashing clients
 	--[ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png", type = "ins2" }, --To big/open
@@ -86,7 +91,8 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	--[ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png", type = "ins2" }, --Unbalanced/unfun
 	--[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png", type = "hl2" }, --Need better spawns
 	
-	--[ "" ] = { id = 0, size = "", img = "vgui/maps/.png", type = "" },
+	--[[[ "" ] = { id = 0, size = "", img = "vgui/maps/.png", type = "",
+        tags = { } },]]
 	--More maps: de_secretcamp
 }
 
@@ -115,7 +121,8 @@ if SERVER then
 	resource.AddWorkshop( "1698026320" ) --The 6 new guns
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
-	resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons
+    resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons
+    resource.AddWorkshop( "1555980538" ) --Sniper pack
 
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )

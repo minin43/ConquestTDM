@@ -799,41 +799,6 @@ hook.Add( "PlayerDeath", "DamageIndicatorClear", function( vic )
 	umsg.End()
 end )
 
-hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
-	local wepbase = weapons.GetStored( "cw_base" )
-    function wepbase:unloadWeapon()
-        return
-    end
-
-	function CustomizableWeaponry:hasAttachment(ply, att, lookIn) --This really oughta be given to Spy
-        if not self.useAttachmentPossessionSystem then
-            return true
-        end
-        
-        lookIn = lookIn or ply.CWAttachments
-        
-        local has = hook.Call("CW20HasAttachment", nil, ply, att, lookIn)
-        
-        if (lookIn and lookIn[att]) or has then
-            return true
-        end
-        
-        return false
-	end
-	
-	function CustomizableWeaponry:decodeAttachmentString(str)
-		self.CWAttachments = self.CWAttachments or {}
-		
-		local result = string.Explode(space, str)
-		
-		for k, v in pairs(result) do
-			if v then
-				self.CWAttachments[v] = true
-			end
-		end
-	end
-end )
-
 --[[hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )
 	if ply:IsValid() and ply:IsPlayer() and dmginfo:IsBulletDamage() and ply:Team() != dmginfo:GetAttacker():Team() then
 		local dmg = dmginfo:GetDamage()

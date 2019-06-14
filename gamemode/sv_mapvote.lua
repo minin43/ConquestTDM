@@ -6,7 +6,7 @@ util.AddNetworkString( "PlayerSelectedMap" )
 
 GM.Votes = { } --The table that records the total tallies as well as all individual votes
 GM.VoteOptions = { } --The table we send to clients, contains the 6 map options
-GM.MapvoteTime = 20
+GM.MapvoteTime = 30
 GM.RTVCooldown = 120
 GM.RTVTime = 60
 
@@ -67,15 +67,18 @@ function EndMapvote()
         end
     end
 
+    local sendtoclient
     if winningMap == "" or winningMap == "repeat" or winningMap == "legend" then
+        sendtoclient = "repeat"
         winningMap = file.Read( "tdm/lastmap.txt", "DATA" )
     elseif winningMap == "random" then
         local tab, map = table.Random( GAMEMODE.MapTable )
         winningMap = map
+        sendtoclient = "random"
     end
 
     net.Start( "MapvoteFinished" )
-        net.WriteString( winningMap )
+        net.WriteString( sendtoclient or winningMap )
     net.Broadcast()
 
     timer.Simple( 5, function()
@@ -99,26 +102,28 @@ hook.Add( "StartMapvote", "RunMapvote", function( winner )
 
     file.Write( "tdm/lastmap.txt", game.GetMap() )
 
-    local lastmap = ""
+    local lastmap, lastmapimg = "", ""
     if file.Exists( "tdm/lastmap.txt", "DATA" ) then
         lastmap = file.Read( "tdm/lastmap.txt", "DATA" )
+        if GAMEMODE.MapTable[ lastmap ] then
+            lastmapimg = GAMEMODE.MapTable[ lastmap ].img
+        end
         GAMEMODE.MapTable[ lastmap ] = nil
     end
     
-    local key
     for counter = 1, 6 do
         if table.Count( GAMEMODE.MapTable ) != 0 then
             local mapTable, mapName = table.Random( GAMEMODE.MapTable )
-            GAMEMODE.VoteOptions[ mapName ] = mapTable
+            GAMEMODE.VoteOptions[ counter ] = { name = mapName, info = mapTable }
             GAMEMODE.MapTable[ mapName ] = nil
         end
     end
-    GAMEMODE.VoteOptions[ "repeat" ] = { custom = true, img = GAMEMODE.MapTable[ game.GetMap() ].img }
-    GAMEMODE.VoteOptions[ "random" ] = { custom = true, img = "" }
-    GAMEMODE.VoteOptions[ "legend" ] = { custom = true }
+    GAMEMODE.VoteOptions[ 7 ] = { name = "repeat", info = { custom = true, img = lastmapimg } }
+    GAMEMODE.VoteOptions[ 8 ] = { name = "random", info = { custom = true } }
+    GAMEMODE.VoteOptions[ 9 ] = { name = "legend", info = { custom = true } }
     
     for k, v in pairs( GAMEMODE.VoteOptions ) do
-        GAMEMODE.Votes[ k ] = 0
+        GAMEMODE.Votes[ v.name ] = 0
     end
 
     net.Start( "BeginMapvote" )

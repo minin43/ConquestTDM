@@ -5,7 +5,7 @@ util.AddNetworkString( "PlayerAttemptPrestige" )
 prestige = {}
 
 function prestige.GetTokens( ply )
-    return math.round( tonumber( ply:GetPData( "prestigetokens" ) ) )
+    return math.Round( tonumber( ply:GetPData( "prestigetokens" ) ) )
 end
 
 function prestige.AddTokens( ply, amt )
@@ -17,24 +17,57 @@ function prestige.SetTokens( ply, amt )
     ply:SetPData( "prestigetokens", amt )
 end
 
---//Granted 1 token per regular prestige, more if specific criteria are met
+--//This resets ALL weapon information, attachments & purchases - call with care
+function prestige.ResetPlayer( ply )
+    local playerfile = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
+    local boughtguns = playerfile[ 2 ]
+    local searchedguns = {}
+
+    for k, v in pairs( boughtguns ) do
+        ply:SetPData( v, 0 )
+        searchedguns[ v ] = true
+    end
+    for k, v in pairs( primaries ) do
+        if !searchedguns[ v[ 1 ] ] then
+            ply:SetPData( v, 0 )
+            searchedguns[ v[ 1 ] ] = true
+        end
+    end
+    for k, v in pairs( secondaries ) do
+        if !searchedguns[ v[ 1 ] ] then
+            ply:SetPData( v, 0 )
+            searchedguns[ v[ 1 ] ] = true
+        end
+    end
+    for k, v in pairs( extras ) do
+        if !searchedguns[ v[ 1 ] ] then
+            ply:SetPData( v, 0 )
+            searchedguns[ v[ 1 ] ] = true
+        end
+    end
+
+	file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { playerfile[ 1 ], { } } ) )
+end
+
+--//Granted 1 token per regular prestige, more if desired
 function prestige.AttemptPrestige( ply )
     if lvl.GetLevel( ply ) < lvl.maxlevel then return false end
-    local tally = 1
+    --[[local tally = 1
 
     if _ then
         tally = tally + 1
-    end
+    end]]
     
-    self:ActuallyPrestige( ply, tally )
+    self:ActuallyPrestige( ply, 1 )
 end
 
 --//Does the actual prestiging, money/weapon resetting, runs assuming it was ran through AttemptPrestige
 function prestige.ActuallyPrestige( ply, amt )
     lvl.ResetPlayer( ply )
     ResetMoney( ply )
-    --Need a way to reset all weapon information, probably need to run a SQL script
-    prestige.AddTokens( amt )
+    prestige.ResetPlayer( ply )
+
+    prestige.AddTokens( ply, amt )
 end
 
 net.Receive( "GetPrestigeTokens", function( len, ply )

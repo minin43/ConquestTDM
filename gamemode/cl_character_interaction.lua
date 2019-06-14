@@ -32,7 +32,7 @@ GM.AvailableTypes = {
         [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
         [ "musicStart" ] = true,
-        [ "announcerStart" ] = true,
+        [ "announcerStart" ] = false,
         [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "hl2/combine/"
@@ -47,7 +47,8 @@ GM.AvailableTypes = {
         [ "announcerStart" ] = true,
         [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
-        [ "path" ] = "ins2/security/"
+        [ "path" ] = "ins2/security/",
+        [ "level" ] = 50
     },
     [ "insurgent" ] = {
         [ "musicWin" ] = true,
@@ -58,7 +59,8 @@ GM.AvailableTypes = {
         [ "announcerStart" ] = true,
         [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
-        [ "path" ] = "ins2/insurgent/"
+        [ "path" ] = "ins2/insurgent/",
+        [ "level" ] = 50
     },
     --//MW2 Sounds
     [ "opfor" ] = {
@@ -148,7 +150,7 @@ function GM:DoGameSound( soundName, isVoice, numVariance )
 
     if !self.PlayedSounds[ self.AnnouncerType ][ soundName ] then
         self.PlayedSounds[ self.AnnouncerType ][ soundName ] = CreateSound( LocalPlayer(), self.AvailableTypes[ self.AnnouncerType ].path .. soundName .. ".ogg" )
-        self.PlayedSounds[ self.AnnouncerType ][ soundName ]:SetSoundLevel( 45 )
+        self.PlayedSounds[ self.AnnouncerType ][ soundName ]:SetSoundLevel( self.AvailableTypes[ self.AnnouncerType ].level or 45 )
     end
 
     self.PlayedSounds[ self.AnnouncerType ][ soundName ]:Play()

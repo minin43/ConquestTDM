@@ -12,6 +12,6 @@ function GM:QueueIcon( player, perk, duration )
 
     net.Start( "QueueUpIcon" )
         net.WriteString( str )
-        net.WriteInt( dur, 16 ) --2^16 is probably overkill, but it's better safe than sorry
+        net.WriteFloat( dur ) --2^16 is probably overkill, but it's better safe than sorry
     net.Send( ply )
 end

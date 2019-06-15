@@ -2,37 +2,18 @@ Perks w/ special effects should notify the player when they're activated/used
     Applicable perks:
         HUD/Screen effect:
             - Excited -on kill                  - Do an FOV change and play some sound effect
-            - Lifeline -on low HP kill          - Would like a screen effect & sound
-            - Vengeance -damage against & MAYBE damage from target
             - Thornmail -on attacker when victim has it         - Would like screen effect, no sound
-        Crosshair Icon
-            - Headpopper -on headshot
-            - Leech -on kill
-            - Pyromancer -on fire & explosion
-            - Vulture -on finish
-----
 Character Interaction Sounds
-    on HL2 maps (dm_, some gm_)                         DONE
-        - Combine (can maybe use my sounds from PTP)
-        - HL2 Rebels
     on MW2 maps (ttt_mw2_ mostly)                       MISSING PLAYERMODELS, CONVERT SOUNDS
         - SEALs, Rangers, TF141
         - Spetsnaz, OpFor, Militia
-    on CS maps (de_, cs_)                               MISSING PLAYERMODELS, CONVERT SOUNDS
-        - Terrorists (INS2 insurgents)
-        - Counter-terrorists (INS2 security)
 ----
 New Loadout Menu
     Shop Menu
         - Will include a system for weapon skins
-        - Lord Tyler suggested all information should be in a shared file - makes setting loadouts easier to handle
     Team Selection
         - Actively allows/disallows team join when there are too many players
         - Team join is right on click, not after entire loadout selection    
-----
-Global Stats Counting for Level Prestige and Weapon Mastery
-    - Prestige by level
-    - Mastery by weapon
 ----
 Fix Net Messaging Exploits
     - Buy weapons
@@ -40,9 +21,54 @@ Fix Net Messaging Exploits
 ----
 Rework weapon pickup & inventory system
 ----
-----
-MCFX Suggestions
-    - Clean up colors on all client files
-    - Team shuffle (command/vote)
-        - Rewrite autobalancing
-    - Fix exploitable net messaging on buy and loadout
+
+1.9 Changelog:
+
+    New Content:
+    - New team roster joins: Security & Insurgent forces from Insurgency
+        - Includes new playermodels, music, and character interactions
+        - Available on de_, sh_, and some ttt_ maps
+    - Crosshair icons added for when the following affect gameplay:
+        - Vendetta (when damage is reduced)
+        - Spawn protection (when damage is reduced)
+        - Headpopper (on headshot kill)
+        - Leech (on life back)
+        - Pyromancer (on explosion)
+        - Vulture (on finisher)
+    - New Prestige button
+        - Unlocks at level 51, resets all player progress (level, money, unlocks, and attachments)
+        - Grants 1 prestige token - while currently unable to be spent, will be the currency in the upcoming prestige shop
+    - 2 New Maps
+        - de_halo_battlecreek (extremely similar to ba_halo_beavercreek, but set at night and with alternative routes)
+        - de_stad (thanks to the community member who suggested this map, I quite like it)
+    - 2 New Snipers
+        - TAC .338, new sniper offering an inbetween between the L96 and the sniper replacing the L115
+        - M200, replacing the L115 (it's the intervention from MW2)
+
+    Removed Content:
+    - Removed maps: ttt_lazertag, ttt_gunkanjima, sh_lockdown (we had 2 versions), dm_laststop, ba_halo_beavercreek
+    
+    Updates:
+    - Leech now restores life on assists, health back = the assist % of the standard 1/3
+    - Thornmail damage reflection now only occurs against bullet damage (removed explosive damage)
+    - Mapvote received small overhaul
+        - Two new options available to select: random & repeat
+        - Minor rework of the corner icons, a legend is displayed explaining what icons mean
+            - System is very modular so more are easily added in the future, as needed
+        - Time to select map now 30 seconds, up from 20
+    - Added additional flavor text functionality to the Rock The Vote system, messages are now a bit buffered
+    - Increased XP requirement per level, up to 500 xp per additional level from 400 xp
+    - Max level now capped at 51
+    - Restructured Weapon & Perk unlocking
+        - Level unlock and weapon cost may have changed across all weapons & perks
+        - L96 is now given for free at level 1, along with the AR-15
+    - Auto-balancing now activates at a difference of 2 players, which was previously 3 (thanks, MC)
+
+    Balancing:
+    - Vendetta protection buffed to 30% from 20%
+    - Lifeline damage reduction buffed to 0.83% per 1 hp lost from 0.67%
+    - L115 (/the gun replacing it) damage buffed to 115 from 110
+
+    Bugfixes:
+    - Fixed more issues with earning attachments from assists
+    - Cleaned up back-end code relating to leveling & money, needed for the prestige implementation

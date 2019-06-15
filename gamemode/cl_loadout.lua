@@ -1537,56 +1537,48 @@ function LoadoutMenu()
         if confirmationpanel then 
             return 
         end
-        --Run function to open confirmation window here
+        OpenConfirmationPanel()
         --Then it should do something fancy, like maybe play a noise or some shit.
 	end
     
     function OpenPresetsWindow()
-        local x, y, w, h = main:GetBounds();
         confirmationpanel = vgui.Create( "DFrame", main )
-        confirmationpanel:SetSize( 250, main:GetTall() )
+        confirmationpanel:SetSize( 250, 250 )
         confirmationpanel:SetTitle( "" )
         confirmationpanel:SetVisible( true )
         confirmationpanel:SetDraggable( false )
         confirmationpanel:ShowCloseButton( true )
-        confirmationpanel:MakePopup()
-        confirmationpanel:SetPos(x + main:GetWide() + 10, y);
-        confirmationpanel.btnMaxim:Hide()
-        confirmationpanel.btnMinim:Hide() 
-        confirmationpanel.btnClose.Paint = function()
-            surface.SetTextColor(color_white)
-            surface.SetTextPos(13, 0)
-            surface.DrawText("x");
+        confirmationpanel.Think = function()
+            confirmationpanel:MakePopup()
         end
-        
         confirmationpanel.Paint = function()
-            //Derma_DrawBackgroundBlur( confirmationpanel, CurTime() )
+            Derma_DrawBackgroundBlur( confirmationpanel, CurTime() )
             surface.SetDrawColor( 255, 255, 255, 255 )
             surface.DrawRect( 0, 0, confirmationpanel:GetWide(), confirmationpanel:GetTall() )
             surface.SetDrawColor( GetTeamColor() )
             surface.DrawRect( 0, 0, confirmationpanel:GetWide(), 56 )
             surface.SetFont( "Exo 2" )
-            surface.SetTextColor( FontColor )
+            surface.SetTextColor( Color( 255, 255, 255 ) )
             surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Presets") / 2, 16 )
             surface.DrawText( "Presets" )
             surface.SetTexture( gradient )
         end
-
         confirmationpanel.PaintOver = function()
             surface.SetTexture( gradient )
             surface.SetDrawColor( 0, 0, 0, 164 )
             surface.DrawTexturedRectRotated( confirmationpanel:GetWide() / 2, 56 + 4, 8, confirmationpanel:GetWide(), 270 )
         end
-        
         confirmationpanel.OnClose = function()
-            local x, y, w, h = main:GetBounds();
-            main:MoveTo( x + 130, y, 0.15, 0, 3 )
-            confirmationpanel:Remove();
+            confirmationpanel:Remove()
             confirmationpanel = nil
         end
+
+        local acceptbutton = vgui.Create( "DButton", confirmationpanel )
+        acceptbutton:SetPos
         
+        local cancelbutton = vgui.Create( "DButton", confirmationpanel )
         
-        local function DoNothing() end
+        --[[local function DoNothing() end
         local pcontainer = vgui.Create( "DScrollPanel", confirmationpanel )
         pcontainer:SetPos(0, 56);
         pcontainer:SetSize(confirmationpanel:GetWide(), confirmationpanel:GetTall() - 56)
@@ -1700,7 +1692,7 @@ function LoadoutMenu()
             end
         end
         refresh();
-        hook.Add("PresetAdded", "addPreset", refresh)
+        hook.Add("PresetAdded", "addPreset", refresh)]]
     end
 
 

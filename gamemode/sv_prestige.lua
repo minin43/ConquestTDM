@@ -58,7 +58,8 @@ function prestige.AttemptPrestige( ply )
         tally = tally + 1
     end]]
     
-    self:ActuallyPrestige( ply, 1 )
+    prestige.ActuallyPrestige( ply, 1 )
+    return true
 end
 
 --//Does the actual prestiging, money/weapon resetting, runs assuming it was ran through AttemptPrestige
@@ -82,7 +83,6 @@ net.Receive( "PlayerAttemptPrestige", function( len, ply )
             net.WriteInt( prestige.GetTokens( ply ), 16 ) --//16 is probably overkill, but there's technically no cap, so better safe than sorry
         net.Send( ply )
     end
-
 end )
 
 hook.Add( "PlayerInitialSpawn", "SetupPrestigePData", function( ply )

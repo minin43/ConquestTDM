@@ -130,8 +130,8 @@ function lvl.AddEXP( ply, num )
 end
 
 function lvl.ResetPlayer( ply )
-	ply:RemovePData( "level" )
-	ply:RemovePData( "exp" )
+	ply:SetPData( "level", 0 )
+	ply:SetPData( "exp", 0 )
 	lvl.SetLevel( ply, 1 )
 	lvl.SetEXP( ply, 0 )
 	lvl.SendUpdate( ply )	

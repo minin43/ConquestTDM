@@ -1503,6 +1503,9 @@ function LoadoutMenu()
     
     --//Inserting temporary prestige button...
 
+    local canPrestige = false
+    if currentlvl >= 51 then canPrestige = true end
+
 	local prestige = vgui.Create( "DButton", main )
 	prestige.Hover = false
 	prestige.Click = false
@@ -1510,13 +1513,17 @@ function LoadoutMenu()
 	prestige:SetPos( main:GetWide() - 230, main:GetTall() - prestige:GetTall() - 8 )
 	prestige.Paint = function()
 		if not main then return end
-		if prestige.Hover then
+		if prestige.Hover and canPrestige then
 			draw.RoundedBox( 4, 0, 0, prestige:GetWide(), prestige:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
 		end
-		if prestige.Click then
+		if prestige.Click and canPrestige then
 			draw.RoundedBox( 4, 0, 0, prestige:GetWide(), prestige:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
-		end
-		draw.SimpleText( "PRESTIGE", "Exo 2 Button", prestige:GetWide() / 2, prestige:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        if canPrestige then
+            draw.SimpleText( "PRESTIGE", "Exo 2 Button", prestige:GetWide() / 2, prestige:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        else
+            draw.SimpleText( "PRESTIGE", "Exo 2 Button", prestige:GetWide() / 2, prestige:GetTall() / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
 		return true
 	end
 	prestige.OnCursorEntered = function()
@@ -1534,20 +1541,21 @@ function LoadoutMenu()
 	prestige.OnMouseReleased = function()
 		prestige.Click = false
 		-- Presets UI
-        if confirmationpanel then 
+        if confirmationpanel or !canPrestige then 
             return 
         end
         OpenConfirmationPanel()
-        --Then it should do something fancy, like maybe play a noise or some shit.
+        main:Close()
 	end
     
-    function OpenPresetsWindow()
-        confirmationpanel = vgui.Create( "DFrame", main )
-        confirmationpanel:SetSize( 250, 250 )
+    function OpenConfirmationPanel()
+        confirmationpanel = vgui.Create( "DFrame" )
+        confirmationpanel:SetSize( 450, 180 )
         confirmationpanel:SetTitle( "" )
         confirmationpanel:SetVisible( true )
         confirmationpanel:SetDraggable( false )
-        confirmationpanel:ShowCloseButton( true )
+        confirmationpanel:ShowCloseButton( false )
+        confirmationpanel:Center()
         confirmationpanel.Think = function()
             confirmationpanel:MakePopup()
         end
@@ -1559,9 +1567,12 @@ function LoadoutMenu()
             surface.DrawRect( 0, 0, confirmationpanel:GetWide(), 56 )
             surface.SetFont( "Exo 2" )
             surface.SetTextColor( Color( 255, 255, 255 ) )
-            surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Presets") / 2, 16 )
-            surface.DrawText( "Presets" )
+            surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Prestige") / 2, 16 )
+            surface.DrawText( "Prestige" )
             surface.SetTexture( gradient )
+
+            draw.SimpleText( "Are you sure you wish to prestige?", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 - 5, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "This cannot be undone!", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 + 20, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
         confirmationpanel.PaintOver = function()
             surface.SetTexture( gradient )
@@ -1574,9 +1585,103 @@ function LoadoutMenu()
         end
 
         local acceptbutton = vgui.Create( "DButton", confirmationpanel )
-        acceptbutton:SetPos
+        acceptbutton:SetSize( 64, 36 )
+        acceptbutton:SetPos( 32, confirmationpanel:GetTall() - acceptbutton:GetTall() - 8 )
+        acceptbutton:SetText( "" )
+        acceptbutton.Paint = function()
+            if acceptbutton.Hover then
+                draw.RoundedBox( 4, 0, 0, acceptbutton:GetWide(), acceptbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+            end
+            if acceptbutton.Click then
+                draw.RoundedBox( 4, 0, 0, acceptbutton:GetWide(), acceptbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+            end
+            draw.SimpleText( "CONFIRM", "Exo 2 Button", acceptbutton:GetWide() / 2, acceptbutton:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            return true
+        end
+        acceptbutton.OnCursorEntered = function()
+            acceptbutton.Hover = true
+        end
+        acceptbutton.OnCursorExited = function()
+            acceptbutton.Hover = false
+        end
+        acceptbutton.OnMousePressed = function()
+            --LocalPlayer():EmitSound( "buttons/button22.wav" )
+            acceptbutton.Click = true
+        end
+        acceptbutton.OnMouseReleased = function()
+            acceptbutton.Click = false
+
+            if acceptbutton.once then return end
+            acceptbutton.once = true
+            net.Start( "PlayerAttemptPrestige" )
+            net.SendToServer()
+            
+            net.Receive( "GetPrestigeTokensCallback", function()
+                local tokens = net.ReadInt( 16 )
+                DoClientPrestige( tokens )
+            end )
+        end
         
         local cancelbutton = vgui.Create( "DButton", confirmationpanel )
+        cancelbutton:SetSize( 64, 36 )
+        cancelbutton:SetPos( confirmationpanel:GetWide() - cancelbutton:GetWide() - 32, confirmationpanel:GetTall() - cancelbutton:GetTall() - 8 )
+        cancelbutton:SetText( "" )
+        cancelbutton.Paint = function()
+            if cancelbutton.Hover then
+                draw.RoundedBox( 4, 0, 0, cancelbutton:GetWide(), cancelbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+            end
+            if cancelbutton.Click then
+                draw.RoundedBox( 4, 0, 0, cancelbutton:GetWide(), cancelbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+            end
+            draw.SimpleText( "CANCEL", "Exo 2 Button", cancelbutton:GetWide() / 2, cancelbutton:GetTall() / 2, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            return true
+        end
+        cancelbutton.OnCursorEntered = function()
+            cancelbutton.Hover = true
+        end
+        cancelbutton.OnCursorExited = function()
+            cancelbutton.Hover = false
+        end
+        cancelbutton.OnMousePressed = function()
+            LocalPlayer():EmitSound( "buttons/button22.wav" )
+            cancelbutton.Click = true
+        end
+        cancelbutton.OnMouseReleased = function()
+            cancelbutton.Click = false
+            confirmationpanel:Close()
+            confirmationpanel = nil
+        end
+
+        function DoClientPrestige( Tokens )
+            acceptbutton:Remove()
+            cancelbutton:Remove()
+            --timer.Simple( 1, function()
+                confirmationpanel.Paint = function()
+                    Derma_DrawBackgroundBlur( confirmationpanel, CurTime() )
+                    surface.SetDrawColor( 255, 255, 255, 255 )
+                    surface.DrawRect( 0, 0, confirmationpanel:GetWide(), confirmationpanel:GetTall() )
+                    surface.SetDrawColor( GetTeamColor() )
+                    surface.DrawRect( 0, 0, confirmationpanel:GetWide(), 56 )
+                    surface.SetFont( "Exo 2" )
+                    surface.SetTextColor( Color( 255, 255, 255 ) )
+                    surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Prestige") / 2, 16 )
+                    surface.DrawText( "Prestige" )
+                    surface.SetTexture( gradient )
+
+                    draw.SimpleText( "Prestige Succesful!", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 - 5, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                    draw.SimpleText( "You have: " .. Tokens .. " prestige token(s)!", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 + 35, GetTeamColor(), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                end
+
+                surface.PlaySound( "ui/challengecomplete.wav" )
+            --end )
+
+            timer.Simple( 2, function()
+                ply:ConCommand( "tdm_setteam 0" )
+            end )
+            timer.Simple( 3, function()
+                confirmationpanel:Remove()
+            end )
+        end
         
         --[[local function DoNothing() end
         local pcontainer = vgui.Create( "DScrollPanel", confirmationpanel )

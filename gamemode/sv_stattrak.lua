@@ -122,6 +122,38 @@ wep_att[ "cw_b196" ] = {
 	{ "am_matchgrade", 120 }
 }
 
+wep_att[ "cw_tac338" ] = {
+    { "md_nightforce_nxs", 0 },
+	{ "md_rmr", 10 },
+	{ "md_saker", 20 },
+	{ "bg_tac338_short_barrel", 30 },
+	{ "md_anpeq15", 40 },
+	{ "md_bipod", 50 },
+	{ "md_microt1", 60 },
+	{ "md_aimpoint", 70 },
+	{ "md_eotech", 80 },
+	{ "md_schmidt_shortdot", 90 },
+	{ "md_acog", 100 },
+	{ "am_magnum", 110 },
+	{ "am_matchgrade", 120 }
+}
+
+wep_att[ "cw_wf_m200" ] = {
+    { "md_nightforce_nxs", 0 },
+	{ "md_rmr", 10 },
+	{ "md_saker", 20 },
+	{ "bg_cheytac_short_barrel", 30 },
+	{ "bg_Cheytac_Bipod", 40 },
+	{ "bg_snip_Cheytac_no_stock", 50 },
+	{ "md_microt1", 60 },
+	{ "md_aimpoint", 70 },
+	{ "md_eotech", 80 },
+	{ "md_schmidt_shortdot", 90 },
+	{ "md_acog", 100 },
+	{ "am_magnum", 110 },
+	{ "am_matchgrade", 120 }
+}
+
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
 function ConstructAttachmentLists()
 	print( "(Re)constructing attachment lists..." )

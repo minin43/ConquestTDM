@@ -38,7 +38,7 @@ primaries = {
 	{ "G36C", 				"cw_g36c", 				10, "models/weapons/cw20_g36c.mdl", 			15000, { 0, 0, 0 } },
     { "CZ Scorpion EVO", 	"cw_scorpin_evo3", 		12, "models/weapons/scorpion/w_ev03.mdl", 		15000, { 0, 0, 0 } },
 	{ "M249", 				"cw_m249_official", 	15, "models/weapons/cw2_0_mach_para.mdl", 		15000, { 0, 0, 0 } },
-    { "TAC .338,", 			"cw_tac338", 			17, "models/weapons/w_snip_TAC338.mdl", 		20000, { 0, 0, 0 } },
+    { "TAC .338", 			"cw_tac338", 			17, "models/weapons/w_snip_TAC338.mdl", 		20000, { 0, 0, 0 } },
 	{ "P90", 				"cw_ber_p90", 			20, "models/weapons/w_dber_p9.mdl", 			20000, { 0, 0, 0 } },
     { "FAMAS FELIN", 		"cw_ber_famas_felin", 	22, "models/weapons/w_rif_galil.mdl", 			20000, { 0, 0, 0 } },
     { "SPAS-12", 			"cw_ber_spas12", 		25, "models/weapons/w_dber_franchi12.mdl", 		20000, { 0, 0, 0 } },

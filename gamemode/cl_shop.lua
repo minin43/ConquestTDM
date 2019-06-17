@@ -21,11 +21,18 @@ function GM:OpenShop()
 
 		surface.SetDrawColor( Color( 255, 255, 255 ) )
 		surface.DrawRect( 0, self.ShopMainTitleBar, self.ShopMain:GetWide(), self.ShopMain:GetTall() )
+
+		surface.SetDrawColor( self.TeamColor )
+		surface.DrawRect( 0, self:GetTall() - ( self.ShopMainTitleBar / 2 ), self:GetWide(), self:GetTall() )
+
+		draw.SimpleText( "Money: " .. a .. "", "ExoTitleFont", 4, self:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Level: " .. b, "ExoTitleFont", self:GetWide() / 2, self:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Prestige Tokens: " .. c, "ExoTitleFont", self:GetWide() - 4, self:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
     end
     
-    self.ShopMainParentFrame = vgui.Create( "DPanel", self.ShopMain )
+    --[[self.ShopMainParentFrame = vgui.Create( "DPanel", self.ShopMain )
     self.ShopMainParentFrame:SetSize( self.ShopMain:GetWide(), self.ShopMain:GetTall() - self.ShopMainTitleBar )
-    self.ShopMainParentFrame:SetPos( 0, self.ShopMainTitleBar )
+    self.ShopMainParentFrame:SetPos( 0, self.ShopMainTitleBar )]]
 
     --self.
 end

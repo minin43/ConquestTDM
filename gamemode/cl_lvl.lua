@@ -1,3 +1,4 @@
+GM.MyLevel = 0
 currentlvl = -1
 currentexp = -1
 nextlvlexp = -1
@@ -6,7 +7,8 @@ net.Receive( "SendUpdate", function()
 	local lv = tonumber( net.ReadString() )
 	local exp = tonumber( net.ReadString() )
 	local nextlvl = tonumber( net.ReadString() )
-	currentlvl = lv
+    currentlvl = lv
+    GAMEMODE.MyLevel = lv
 	currentexp = exp
 	nextlvlexp = nextlvl
 end )	

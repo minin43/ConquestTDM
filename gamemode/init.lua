@@ -63,6 +63,8 @@ AddCSLuaFile( "cl_vendetta.lua" )
 AddCSLuaFile( "cl_teamselect.lua" )
 AddCSLuaFile( "cl_character_interaction.lua" )
 AddCSLuaFile( "cl_perks.lua" )
+AddCSLuaFile( "cl_shop.lua" )
+AddCSLuaFile( "cl_shop_setup.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -88,6 +90,14 @@ include( "sv_custommaps.lua" )
 include( "sv_perks.lua" )
 include( "sv_prestige.lua" )
 include( "sh_weaponbalancing.lua" )
+
+local col = {}
+col[0] = Vector( 0, 0, 0 )
+col[1] = Vector( 1.0, .2, .2 )
+col[2] = Vector( .2, .2, 1.0 )
+
+load = load or {}
+preload = preload or {}
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
@@ -132,9 +142,6 @@ CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
 CreateConVar( "tdm_xpmulti", 0, FCVAR_NOTIFY, "0 to disable." )
 CreateConVar( "tdm_devmode", 0, FCVAR_NOTIFY, "1 to disable ending of round... or something" )
---[[if GetConVarNumber( "cl_deathview" ) == 0 then
- 	cl_deathview:SetInt( 1 )
-end]]
 
 if not file.Exists( "tdm", "DATA" ) then
 	file.CreateDir( "tdm" )
@@ -286,25 +293,6 @@ function GM:Initialize()
 	
 	game.ConsoleCommand( "cw_keep_attachments_post_death 0\n" )
 	
-	-- remove hl2:dm weapons / ammo
-	timer.Simple( 0, function()
-		for k, v in pairs( ents.FindByClass( "weapon_*" ) ) do
-			SafeRemoveEntity( v )
-		end
-		for k, v in pairs( ents.FindByClass( "item_*" ) ) do
-			if v ~= "item_healthcharger" then
-				SafeRemoveEntity( v )
-			end
-		end
-
-		for k, v in pairs( ents.FindByClass( "func_breakable" ) ) do
-			SafeRemoveEntity( v )
-		end
-		for k, v in pairs( ents.FindByClass( "prop_dynamic" ) ) do
-			SafeRemoveEntity( v )
-		end
-	end )
-	
 	timer.Create( "RoundTimer", 1, 0, function()
 		local cur = GetGlobalInt( "RoundTime" )
 		if cur - 1 > 0 then
@@ -347,7 +335,7 @@ end
 
 function GM:PlayerConnect( name, ip )
 	for k, v in pairs( player.GetAll() ) do
-		v:ChatPrint( "Player " .. name .. " has joined the game." )
+		v:ChatPrint( "Player " .. name .. " has begun connection to the server." )
 	end
 end
 
@@ -496,14 +484,6 @@ function GM:PlayerShouldTakeDamage( ply, attacker )
 	return true
 end
 
-local col = {}
-col[0] = Vector( 0, 0, 0 )
-col[1] = Vector( 1.0, .2, .2 )
-col[2] = Vector( .2, .2, 1.0 )
-
-load = load or {}
-preload = preload or {}
-
 net.Receive( "tdm_loadout", function( len, pl )
 	local p = net.ReadString() // primary
 	local s = net.ReadString() // secondary
@@ -524,18 +504,6 @@ net.Receive( "tdm_loadout", function( len, pl )
 				perk = perks
 			}
 		end
-	end
-end )
-
-hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )
-	local pl = preload[ ply ]
-	if ( pl ) then
-		load[ ply ] = {
-			primary = pl.primary,
-			secondary = pl.secondary,
-			extra = pl.extra,
-			perk = pl.perk
-		}
 	end
 end )
 
@@ -594,32 +562,6 @@ function giveLoadout( ply )
 	end
 	hook.Call( "PostGiveLoadout", nil, ply )
 end
-
-hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
-	--//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
-	if GAMEMODE.ValidModels[ ply:GetModel() ] then
-		GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
-		net.Start( "SetInteractionGroup" )
-			net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] )
-		net.Send( ply )
-	end
-
-	if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] then
-		if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] != ply:Team() then
-			timer.Simple( 0.5, function()
-				net.Start( "DoStart" )
-				net.Send( ply )
-			end )
-			GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
-		end
-	else
-		timer.Simple( 0.5, function()
-			net.Start( "DoStart" )
-			net.Send( ply )
-		end )
-		GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
-	end
-end )
 
 local dontgive = {
 	"fas2_ammobox",
@@ -785,6 +727,39 @@ function GM:GetFallDamage( ply, speed )
 	return ( speed * ( 100 / ( 1024 - 580 ) ) )
 end
 
+hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )
+	local pl = preload[ ply ]
+	if ( pl ) then
+		load[ ply ] = {
+			primary = pl.primary,
+			secondary = pl.secondary,
+			extra = pl.extra,
+			perk = pl.perk
+		}
+	end
+end )
+
+hook.Add( "InitPostEntity", "RemoveDMEntities", function()
+    -- remove hl2:dm weapons / ammo
+	timer.Simple( 0, function()
+		for k, v in pairs( ents.FindByClass( "weapon_*" ) ) do
+			SafeRemoveEntity( v )
+		end
+		for k, v in pairs( ents.FindByClass( "item_*" ) ) do
+			if v ~= "item_healthcharger" then
+				SafeRemoveEntity( v )
+			end
+		end
+
+		for k, v in pairs( ents.FindByClass( "func_breakable" ) ) do
+			SafeRemoveEntity( v )
+		end
+		for k, v in pairs( ents.FindByClass( "prop_dynamic" ) ) do
+			SafeRemoveEntity( v )
+		end
+	end )
+end )
+
 hook.Add( "EntityTakeDamage", "DamageIndicator", function( vic, dmg )
 	local ply = dmg:GetAttacker()
 	if vic:IsValid() and vic:IsPlayer() and ply:IsValid() and ply:IsPlayer() and ply:Team() ~= vic:Team() then
@@ -797,6 +772,32 @@ end )
 hook.Add( "PlayerDeath", "DamageIndicatorClear", function( vic )
 	umsg.Start( "damage_death", vic )
 	umsg.End()
+end )
+
+hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
+	--//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
+	if GAMEMODE.ValidModels[ ply:GetModel() ] then
+		GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
+		net.Start( "SetInteractionGroup" )
+			net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] )
+		net.Send( ply )
+	end
+
+	if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] then
+		if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] != ply:Team() then
+			timer.Simple( 0.5, function()
+				net.Start( "DoStart" )
+				net.Send( ply )
+			end )
+			GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
+		end
+	else
+		timer.Simple( 0.5, function()
+			net.Start( "DoStart" )
+			net.Send( ply )
+		end )
+		GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
+	end
 end )
 
 --[[hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )

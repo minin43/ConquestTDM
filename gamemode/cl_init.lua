@@ -91,6 +91,8 @@ include( "cl_vendetta.lua" )
 include( "cl_teamselect.lua" )
 include( "cl_character_interaction.lua" )
 include( "cl_perks.lua" )
+include( "cl_shop.lua" )
+include( "cl_shop_setup.lua" )
 include( "sh_weaponbalancing.lua" )
 
 function unid( steamid )

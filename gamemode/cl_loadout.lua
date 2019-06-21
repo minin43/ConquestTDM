@@ -470,7 +470,7 @@ function LoadoutMenu()
 	perksbutton:SetSize( choose:GetWide() / 4, 48 )
 	perksbutton:SetPos( choose:GetWide() / 4 * 3, 56 )
 	perksbutton.Paint = function()
-		draw.SimpleText( "CLASSES", "Exo 2 Tab", perksbutton:GetWide() / 2, perksbutton:GetTall() / 2, FontColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "PERKS", "Exo 2 Tab", perksbutton:GetWide() / 2, perksbutton:GetTall() / 2, FontColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return true
 	end
 	perksbutton.DoClick = function()
@@ -1876,12 +1876,12 @@ function GM:MenuMain()
 	self.ChooseShop:SetText( "Shop" )
 	self.ChooseShop:SetFont( "ExoInfoFont" )
 	self.ChooseShop:SetIcon( GAMEMODE.ShopIcon )
-	self.ChooseShop:Disable( true ) --to be removed when shop is finished
+	--self.ChooseShop:Disable( true ) --to be removed when shop is finished
 	self.ChooseShop.DoClick = function()
 		if self.ChooseShop.Disabled then return end --Always returns true, to be removed when shop is finished
 		--surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
-		self:OpenShop()
+		GAMEMODE:OpenShop()
 	end
 
 	self.ChooseTeam = vgui.Create( "ChooseMainButton", self.ChooseMain )

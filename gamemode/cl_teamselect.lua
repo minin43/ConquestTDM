@@ -16,26 +16,10 @@ surface.CreateFont( "Exo 2 Button", {
 	weight = 700
 } )
 
---[[GM.Icons = {
-	[ "Red Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	[ "Blue Team" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Default = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Rebels = Material( "vgui/rebelIcon.png", "smooth" ),
-	Combine = Material( "vgui/combineIcon.png", "smooth" ),
-	Insurgents = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Security = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Spetsnaz = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	OpFor = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Milita = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	[ "TF 141" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Rangers = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-	Seals = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
-}]]
-
 GM.TeamIcon = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
 GM.GradientTexture = surface.GetTextureID( "gui/gradient" )
 GM.FirstSelect = true
-GM.TeamColor = Color( 76, 175, 80 )
+--GM.TeamColor = Color( 76, 175, 80 )
 
 function GM:TeamMenu()
 	if ( main and main:IsValid() ) or ( self.main and self.main:IsValid() ) or ( self.TeamMain and self.TeamMain:IsValid() ) then return end
@@ -48,6 +32,7 @@ function GM:TeamMenu()
 	self.TeamMain:MakePopup()
 	self.TeamMain:Center()
 	self.TeamMain.Think = function()
+		Derma_DrawBackgroundBlur( self.TeamMain, CurTime() )
 		if #team.GetPlayers( 1 ) - #team.GetPlayers( 2 ) >= 2 then
 			self.CanJoinRed = false
 		else 

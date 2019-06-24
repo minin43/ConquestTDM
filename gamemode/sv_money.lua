@@ -66,24 +66,6 @@ net.Receive( "GetMoney", function( len, ply )
 	net.Send( ply )	
 end )
 
-net.Receive( "BuyShit", function( len, ply )
-	local wep = net.ReadString()
-	local num = tonumber( net.ReadString() )
-	num = -num
-	AddMoney( ply, num )
-	local fil = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
-	local ttab = fil[ 2 ]
-	table.insert( ttab, wep )
-	local new = util.TableToJSON( { fil[ 1 ], ttab } )
-	file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", new )
-	timer.Simple( 0.1, function()
-		local cur = GetMoney( ply )
-		net.Start( "BuyShitCallback" )
-			net.WriteString( tostring( cur ) )
-		net.Send( ply )
-	end )
-end )
-
 hook.Add( "PlayerDeath", "tdm_playerdeath_money", function( ply, _, att )
 	if ply:IsValid() and ply:IsPlayer() and att:IsValid() and att:IsPlayer() then
 		AddMoney( att, 100 )

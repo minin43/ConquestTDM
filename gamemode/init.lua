@@ -89,6 +89,7 @@ include( "sv_spectator.lua" )
 include( "sv_custommaps.lua" )
 include( "sv_perks.lua" )
 include( "sv_prestige.lua" )
+include( "sv_shop.lua" )
 include( "sh_weaponbalancing.lua" )
 
 local col = {}

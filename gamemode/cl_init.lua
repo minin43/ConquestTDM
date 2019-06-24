@@ -59,7 +59,13 @@ GM.Icons = {
 		Seals = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
 	},
 	Weapons = {
-
+		primary = Material( "vgui/primary_icon.png", "smooth" ),
+		secondary = Material( "vgui/secondary_icon.png", "smooth" ),
+		equipment = Material( "vgui/equipment_icon.png", "smooth" ),
+		[1] = Material( "vgui/primary_icon.png", "smooth" ),
+		[2] = Material( "vgui/secondary_icon.png", "smooth" ),
+		[3] = Material( "vgui/equipment_icon.png", "smooth" ),
+		snipers = Material( "vgui/sniper_icon.png", "smooth" )
 	},
 	Perks = {
 		

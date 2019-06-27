@@ -146,11 +146,12 @@ end
 vgui.Register( "WeaponsShopButton", weaponsshopbutton, "DButton" )
 
 local weaponsshop = { }
+weaponsshop.font = "ExoTitleFont"
 weaponsshop.tabs = { "ar", "smgs", "sg", "sr", "lmg", "pt", "mn", "eq" }
 weaponsshop.wepinfosetup = {
-    --//Scale up means higher is better, scale down means lower is better - use for color calculation
+--//Scale up means higher is better, scale down means lower is better - use for color calculation
     { value = "Damage", display = "Damage", min = 0, max = 100, scale = "up" },
-    { value = "FireDelay", display = "Firerate", min = , max = , scale = "up" }, --To figure out, should find it as rpm values
+    { value = "FireDelay", display = "Firerate", min = 0.5, max = 2, scale = "up" },
     { value = "AimSpread", display = "Aimspread", min = 0.001, max = 0.03, scale = "down" },
     { value = "HipSpread", display = "Hipspread", min = 0.01, max = 0.5, scale = "down" },
     { value = "Recoil", display = "Recoil", min = 0.5, max = 5, scale = "down" },
@@ -162,41 +163,50 @@ weaponsshop.wepinfosetup = {
 }
 weaponsshop.wepinfo = {
     Damage = weaponsshop.wepinfosetup[ 1 ].min,
+    DamageColor = Color( 0, 0, 0 ),
     FireDelay = weaponsshop.wepinfosetup[ 2 ].min,
+    FireDelayColor = Color( 0, 0, 0 ),
     AimSpread = weaponsshop.wepinfosetup[ 3 ].min,
+    AimSpreadColor = Color( 0, 0, 0 ),
     HipSpread = weaponsshop.wepinfosetup[ 4 ].min,
+    HipSpreadColor = Color( 0, 0, 0 ),
     Recoil = weaponsshop.wepinfosetup[ 5 ].min,
+    RecoilColor = Color( 0, 0, 0 ),
     VelocitySensitivity = weaponsshop.wepinfosetup[ 6 ].min,
+    VelocitySensitivityColor = Color( 0, 0, 0 ),
     MaxSpread = weaponsshop.wepinfosetup[ 7 ].min,
+    MaxSpreadColor = Color( 0, 0, 0 ),
     ClipSize = weaponsshop.wepinfosetup[ 8 ].min,
+    ClipSizeColor = Color( 0, 0, 0 ),
     SpeedDec = weaponsshop.wepinfosetup[ 9 ].min,
-    SpreadCooldown = weaponsshop.wepinfosetup[ 10 ].min
+    SpeedDecColor = Color( 0, 0, 0 ),
+    SpreadCooldown = weaponsshop.wepinfosetup[ 10 ].min,
+    SpreadCooldownColor = Color( 0, 0, 0 )
 }
 
-function weaponsshop:Init()
+function weaponsshop:DoSetup()
     net.Start( "RequestLockedWeapons" )
     net.SendToServer()
 
     net.Receive( "RequestLockedWeaponsCallback", function()
         --//Table received with meaningless keys and and values as the keys to the locked guns in GAMEMODE.WeaponsList
-        weaponsshop.lockedweapons = net.ReadTable()
-        if not weaponsshop.Reset then
+        self.lockedweapons = net.ReadTable()
+        if not self.Reset then
             timer.Simple( 0, function()
-                weaponsshop:Reset( "ar" )
+                self:Reset( "ar" )
             end )
         else
-            weaponsshop:Reset( "ar" )
+            self:Reset( "ar" )
         end
-        --[[if self.delayresetwithtype then
-            weaponsshop:Reset( self.delayresetwithtype )
-        end]]
     end )
     
     for k, v in pairs( self.tabs ) do
         local rowoffset = 0
+        --print( k, v )
         if k > 4 then rowoffset = 56 end
 
         local throwaway = vgui.Create( "WeaponsShopButton", self )
+        print( self:GetWide(), self:GetTall(), self )
         throwaway:SetSize( self:GetWide() / 4, 56 )
         throwaway:SetPos( throwaway:GetWide() * ( k - 1 - rowoffset ), rowoffset )
         throwaway:SetText( v )
@@ -204,7 +214,7 @@ function weaponsshop:Init()
             throwaway:DoGradient()
         end
 
-        self.tabs[ v ] = throwaway
+        --self.tabs[ v ] = throwaway
     end
 
     function self:Reset( type )
@@ -256,7 +266,7 @@ function weaponsshop:Init()
                         surface.SetTexture(  )
                         surface.SetDrawColor( 0, 255, 0 )
                     end
-                    surface.DrawTexturedRect(  )]]
+                    surface.DrawTexturedRect(  ) ]]
                 end
                 throwaway.DoClick = function()
                     if throwaway.unlocked then
@@ -315,11 +325,11 @@ function weaponsshop:SelectWeapon( wep )
 
     for k, v in pairs( self.wepinfosetup ) do
         if v.value == "ClipSize" then
-            self.wepinfo[ v.value ] = math.Clamp( wep.Primary.[ v.value ], v.min, v.max )
+            self.wepinfo[ v.value ] = math.Clamp( wep.Primary[ v.value ], v.min, v.max )
         elseif v.value == "Damage" and wep.Shots > 1 then
             self.wepinfo.Damage = math.Clamp( wep.Damage * wep.Shots, v.mix, v.max )
         elseif v.value == "HipSpread" and v.Shots > 1 then
-            local newtab = { value = "ClumpSpread", display = "Clumpspread", min = 0.02, max = 0.05, scale = "down" },
+            local newtab = { value = "ClumpSpread", display = "Clumpspread", min = 0.02, max = 0.05, scale = "down" }
             self.wepinfosetup[ k ] = newtab
             v = newtab
             self.wepinfo.ClumpSpread = math.Clamp( wep.ClumpSpread, v.min, v.max )
@@ -345,17 +355,17 @@ function weaponsshop:Paint()
         surface.SetTextColor( GAMEMODE.TeamColor )
         surface.SetFont( self.font )
 
-        local textwide, texttall = surface.GetTextSize( v.Display )
+        local textwide, texttall = surface.GetTextSize( v.display )
         self.longesttext = self.longesttext or textwide
         if textwide > self.longesttext then self.longesttext = textwide end
         
         if k <= ( #self.wepinfosetup / 2 ) then
-            --draw.SimpleText( v.Display )
+            --draw.SimpleText( v.display )
             surface.SetTextPos( self:GetWide() / 3 + 2, ( self:GetTall() / 2 ) + ( self.infotall * ( k ) ) )
         else
             surface.SetTextPos( self:GetWide() - 2 - textwide, ( self:GetTall() / 2 ) + ( self.infotall * ( k - 1 ) ) )
         end
-        surface.DrawText( v.Display )
+        surface.DrawText( v.display )
 
         --//Box drawing
 
@@ -369,11 +379,13 @@ function weaponsshop:Paint()
     end
 end
 
-vgui.Create( "WeaponsShopPanel", weaponsshop, "DPanel" )
+vgui.Register( "WeaponsShopPanel", weaponsshop, "DPanel" )
 
 --//
 
 local skinsshop = { }
+
+vgui.Register( "SkinsShopPanel", skinsshop, "DButton" )
 
 --//
 

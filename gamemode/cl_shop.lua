@@ -70,12 +70,16 @@ function GM:OpenShop()
     self.ShopParentSheet:SetSize( self.ShopMain:GetWide() + 16, self.ShopMain:GetTall() - ( self.ShopMainTitleBar * 1.5 ) - 12 )
     self.ShopParentSheet.Paint = function() return true end
 
-    self.ShopWeaponsSheet = vgui.Create( "DPanel", self.ShopParentSheet )
-    self.ShopWeaponsSheet.Paint = function()
+    self.ShopWeaponsSheet = vgui.Create( "WeaponsShopPanel", self.ShopParentSheet )
+    self.ShopWeaponsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
+    self.ShopWeaponsSheet:SetPos( 0, 0 )
+    print( self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall(), "\n" )
+    self.ShopWeaponsSheet:DoSetup()
+    --[[self.ShopWeaponsSheet.Paint = function()
         --draw.RoundedBox( 8, 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall(), Color( 255, 0, 0 ) )
         surface.SetDrawColor( Color( 255, 0, 0 ) )
         surface.DrawRect( 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall() )
-    end
+    end]]
     local WeaponsSheetTable = self.ShopParentSheet:AddSheet( "Weapons", self.ShopWeaponsSheet )
 
     self.ShopWeaponsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
@@ -87,9 +91,12 @@ function GM:OpenShop()
     self.ShopWeaponsButton:SetFont( "ExoTitleFont" )
 
     self.ShopSkinsSheet = vgui.Create( "DPanel", self.ShopParentSheet )
+    self.ShopSkinsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
+    self.ShopSkinsSheet:SetPos( 0, 0 )
     self.ShopSkinsSheet.Paint = function()
         draw.RoundedBox( 8, 0, 0, self.ShopSkinsSheet:GetWide(), self.ShopSkinsSheet:GetTall(), Color( 0, 255, 0 ) )
     end
+    print( self.ShopSkinsSheet:GetWide(), self.ShopSkinsSheet:GetTall() )
     local ShopSheetTable = self.ShopParentSheet:AddSheet( "Skins", self.ShopSkinsSheet )
 
     self.ShoSkinsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
@@ -101,9 +108,14 @@ function GM:OpenShop()
     self.ShoSkinsButton:SetFont( "ExoTitleFont" )
 
     self.ShopModelsSheet = vgui.Create( "DPanel", self.ShopParentSheet )
+    self.ShopModelsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
+    self.ShopModelsSheet:SetPos( 0, 0 )
     self.ShopModelsSheet.Paint = function()
-        draw.RoundedBox( 8, 0, 0, self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall(), Color( 0, 0, 255 ) )
+        --draw.RoundedBox( 8, 0, 0, self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall(), Color( 0, 0, 255 ) )
+        surface.SetDrawColor( Color( 0, 0, 255 ) )
+        surface.DrawRect( 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall() )
     end
+    print( self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall() )
     local ModelSheetTable = self.ShopParentSheet:AddSheet( "Playermodels", self.ShopModelsSheet )
 
     self.ShopModelsButton = vgui.Create( "PropertySheetButton", self.ShopMain )

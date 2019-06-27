@@ -65,6 +65,7 @@ AddCSLuaFile( "cl_character_interaction.lua" )
 AddCSLuaFile( "cl_perks.lua" )
 AddCSLuaFile( "cl_shop.lua" )
 AddCSLuaFile( "cl_shop_setup.lua" )
+AddCSLuaFile( "sh_loadout.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -90,6 +91,7 @@ include( "sv_custommaps.lua" )
 include( "sv_perks.lua" )
 include( "sv_prestige.lua" )
 include( "sv_shop.lua" )
+include( "sh_loadout.lua" )
 include( "sh_weaponbalancing.lua" )
 
 local col = {}

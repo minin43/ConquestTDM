@@ -639,7 +639,7 @@ function GM:PlayerSpawn( ply )
 					end
 				end
 				if give == true then
-					ply:GiveAmmo( ( y * 5 ), x, true )
+					ply:GiveAmmo( ( y * 3 ), x, true )
 				end
 			end
 			ply:GiveAmmo( 2, "40MM", true )

@@ -89,7 +89,7 @@ weaponsshopbutton.gradient = false
 
 function weaponsshopbutton:DoClick()
     self:GetParent().selected = self.text
-    self:GetParent():Reset()
+    self:GetParent():Reset( self.text )
     --//Maybe do a sound
 end
 
@@ -112,7 +112,7 @@ function weaponsshopbutton:Paint()
     if self.gradient then
         surface.SetTexture( GAMEMODE.GradientTexture )
         surface.SetDrawColor( 0, 0, 0, 164 )
-        surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), 270 ) --self.TeamMain:GetWide() / 2, self.TeamMainTitleSize + 4, 8, self.TeamMain:GetWide(), 270
+        surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide() + 3, 270 ) --self.TeamMain:GetWide() / 2, self.TeamMainTitleSize + 4, 8, self.TeamMain:GetWide(), 270
     end
 
     surface.SetFont( self.font )
@@ -146,8 +146,9 @@ end
 vgui.Register( "WeaponsShopButton", weaponsshopbutton, "DButton" )
 
 local weaponsshop = { }
+weaponsshop.weaponname = "Nothing Selected"
 weaponsshop.font = "ExoTitleFont"
-weaponsshop.tabs = { "ar", "smgs", "sg", "sr", "lmg", "pt", "mn", "eq" }
+weaponsshop.tabs = { "ar", "smg", "sg", "sr", "lmg", "pt", "mn", "eq" }
 weaponsshop.wepinfosetup = {
 --//Scale up means higher is better, scale down means lower is better - use for color calculation
     { value = "Damage", display = "Damage", min = 0, max = 100, scale = "up" },
@@ -156,7 +157,7 @@ weaponsshop.wepinfosetup = {
     { value = "HipSpread", display = "Hipspread", min = 0.01, max = 0.5, scale = "down" },
     { value = "Recoil", display = "Recoil", min = 0.5, max = 5, scale = "down" },
     { value = "VelocitySensitivity", display = "Aim Sensitivity", min = 1, max = 3, scale = "down" },
-    { value = "MaxSpread", display = "Max Spread", min = 0.01, max = 0.4, scale = "down" },
+    { value = "MaxSpreadInc", display = "Max Spread", min = 0.01, max = 0.4, scale = "down" },
     { value = "ClipSize", display = "Clipsize", min = 1, max = 100, scale = "up" },
     { value = "SpeedDec", display = "Weight", min = 10, max = 70, scale = "down" },
     { value = "SpreadCooldown", display = "Spread Cooldown", min = 0.01, max = 2, scale = "down" }
@@ -174,8 +175,8 @@ weaponsshop.wepinfo = {
     RecoilColor = Color( 0, 0, 0 ),
     VelocitySensitivity = weaponsshop.wepinfosetup[ 6 ].min,
     VelocitySensitivityColor = Color( 0, 0, 0 ),
-    MaxSpread = weaponsshop.wepinfosetup[ 7 ].min,
-    MaxSpreadColor = Color( 0, 0, 0 ),
+    MaxSpreadInc = weaponsshop.wepinfosetup[ 7 ].min,
+    MaxSpreadIncColor = Color( 0, 0, 0 ),
     ClipSize = weaponsshop.wepinfosetup[ 8 ].min,
     ClipSizeColor = Color( 0, 0, 0 ),
     SpeedDec = weaponsshop.wepinfosetup[ 9 ].min,
@@ -190,7 +191,8 @@ function weaponsshop:DoSetup()
 
     net.Receive( "RequestLockedWeaponsCallback", function()
         --//Table received with meaningless keys and and values as the keys to the locked guns in GAMEMODE.WeaponsList
-        self.lockedweapons = net.ReadTable()
+        GAMEMODE.lockedweapons = net.ReadTable()
+
         if not self.Reset then
             timer.Simple( 0, function()
                 self:Reset( "ar" )
@@ -202,15 +204,19 @@ function weaponsshop:DoSetup()
     
     for k, v in pairs( self.tabs ) do
         local rowoffset = 0
-        --print( k, v )
-        if k > 4 then rowoffset = 56 end
+        local columnoffset = 0
+        
+        if k > 4 then 
+            rowoffset = 56 
+            columnoffset = 4
+        end
 
         local throwaway = vgui.Create( "WeaponsShopButton", self )
-        print( self:GetWide(), self:GetTall(), self )
         throwaway:SetSize( self:GetWide() / 4, 56 )
-        throwaway:SetPos( throwaway:GetWide() * ( k - 1 - rowoffset ), rowoffset )
+        throwaway:SetPos( throwaway:GetWide() * ( k - 1 - columnoffset ), rowoffset )
         throwaway:SetText( v )
-        if k > 4 then
+
+        if k < 5 then
             throwaway:DoGradient()
         end
 
@@ -218,17 +224,32 @@ function weaponsshop:DoSetup()
     end
 
     function self:Reset( type )
-        if !IsValid( self.lockedweapons ) then return end
-
-        self.scrollpanel = vgui.Create( "DScrollPanel", self )
+        --//It should check active table here, and if mismatched, set it correct
+        if GAMEMODE.lockedweapons == nil then return end
+        
+        self.scrollpanel = self.scrollpanel or vgui.Create( "DScrollPanel", self )
         self.scrollpanel:SetPos( 0, 56 * 2 )
         self.scrollpanel:SetSize( self:GetWide() / 3, self:GetTall() - ( 56 * 2 ) )
 
+        local sBar = self.scrollpanel:GetVBar()
+        sBar.Paint = function() return end
+        sBar.btnUp.Paint = function() return end
+        sBar.btnDown.Paint = function() return end
+        function sBar.btnGrip:Paint( w, h )
+            draw.RoundedBox( 4, 7, 0, w / 2, h, Color( 0, 0, 0, 128 ) )
+        end
+
+        if self.scrollpanelbuttons then
+            for k, v in pairs( self.scrollpanelbuttons ) do
+                if v:IsValid() then v:Remove() end
+            end
+        end
+
         self.scrollpanelbuttons = {}
-        for k, v in pairs( self.lockedweapons ) do
-            if GAMEMODE.WeaponsList[ v ].type == type then
+        for k, v in pairs( GAMEMODE.lockedweapons ) do
+            if GAMEMODE.WeaponsList[ v ].type == type and GAMEMODE.WeaponsList[ v ][ 3 ] != 0 and GAMEMODE.WeaponsList[ v ][ 5 ] != 0 then
                 local sloticon = GAMEMODE.Icons.Weapons[ GAMEMODE.WeaponsList[ v ].slot ]
-                local sloticonsize = 16
+                local sloticonsize = 8
 
                 --//This should probably be a custom vgui element, but fuckit, the custom elements are only to keep cl_shop clean, not this file
                 local throwaway = vgui.Create( "DButton", self.scrollpanel )
@@ -237,13 +258,13 @@ function weaponsshop:DoSetup()
                 throwaway:SetText( "" )
                 throwaway.Paint = function()
                     surface.SetDrawColor( GAMEMODE.TeamColor )
-                    surface.DrawLine( 4, 1, throwaway:GetWide() - 4, 1 )
+                    surface.DrawLine( -1, 0, throwaway:GetWide() + 1, 0 )
                     --surface.DrawLine( 4, throwaway:GetTall(), throwaway:GetWide() - 4, throwaway:GetTall() )
 
-                    surface.SetTexture( sloticon )
-                    surface.SetDrawColor( GAMEMODE.TeamColor )
-                    surface.DrawTexturedRect( sloticonsize, throwaway:GetTall() / 2 - ( sloticonsize / 2 ), sloticonsize, sloticonsize )
-                    draw.SimpleText( GAMEMODE.WeaponsList[ v ][ 1 ], self.font, ( sloticonsize * 2 ) + 4, throwaway:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+                    --surface.SetTexture( sloticon )
+                    --surface.SetDrawColor( GAMEMODE.TeamColor )
+                    --surface.DrawTexturedRect( sloticonsize, throwaway:GetTall() / 2 - ( sloticonsize / 2 ), sloticonsize, sloticonsize )
+                    draw.SimpleText( GAMEMODE.WeaponsList[ v ][ 1 ], self.font, ( sloticonsize * 2 ) + 4, throwaway:GetTall() / 2, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 
                     if ( !throwaway.hover and !throwaway.selected ) or !throwaway.unlocked then
                         surface.SetTexture( GAMEMODE.GradientTexture )
@@ -307,9 +328,10 @@ function weaponsshop:DoSetup()
 end
 
 function weaponsshop:SelectWeapon( wep )
+    print( "Selected weapon: ", wep )
     self.selectedweapon = wep
     local wep = weapons.GetStored( wep )
-    self.modelpanel = vgui.Create( "DModelPanel", self )
+    self.modelpanel = self.modelpanel or vgui.Create( "DModelPanel", self )
     self.modelpanel:SetSize( self:GetWide() / 3 * 2, ( self:GetTall() - ( 56 * 2 ) ) / 2 )
     self.modelpanel:SetPos( self:GetWide() / 3, 56 * 2 )
     self.modelpanel:SetModel( wep.WorldModel )
@@ -321,14 +343,14 @@ function weaponsshop:SelectWeapon( wep )
     self.modelpanel:SetAmbientLight( Color( 255, 255, 255 ) )
     self.modelpanel.LayoutEntity = function() return true end --Disables rotation
 
-    self.weaponname = wep.DisplayName
+    self.weaponname = wep.PrintName or "Nothing Selected"
 
     for k, v in pairs( self.wepinfosetup ) do
         if v.value == "ClipSize" then
             self.wepinfo[ v.value ] = math.Clamp( wep.Primary[ v.value ], v.min, v.max )
         elseif v.value == "Damage" and wep.Shots > 1 then
             self.wepinfo.Damage = math.Clamp( wep.Damage * wep.Shots, v.mix, v.max )
-        elseif v.value == "HipSpread" and v.Shots > 1 then
+        elseif v.value == "HipSpread" and wep.Shots > 1 then
             local newtab = { value = "ClumpSpread", display = "Clumpspread", min = 0.02, max = 0.05, scale = "down" }
             self.wepinfosetup[ k ] = newtab
             v = newtab
@@ -337,7 +359,9 @@ function weaponsshop:SelectWeapon( wep )
             self.wepinfo[ v.value ] = math.Clamp( wep[ v.value ], v.min, v.max )
         end
         
-        local newcolor, scale, val = Color( 0, 0, 0 ), v.max - v.min, self.wepinfo[ v.value ] - v.min
+        self.wepinfo[ v.value .. "Scale" ] = v.max - v.min
+        self.wepinfo[ v.value .. "BoxLength" ] = self.wepinfo[ v.value ] - v.min
+        local newcolor, scale, val = Color( 0, 0, 0 ), self.wepinfo[ v.value .. "Scale" ], self.wepinfo[ v.value .. "BoxLength" ]
         if v.scale == "up" then
             newcolor = Color( ( ( scale - val ) / scale ) * 255, ( val / scale ) * 255, 0 )
         else
@@ -350,32 +374,57 @@ end
 function weaponsshop:Paint()
     self.infotall = ( self:GetTall() - ( 56 * 2 ) ) / 2 / ( #self.wepinfosetup / 2 + 1 )
 
-    draw.SimpleText( self.weaponname, self.font, self:GetWide() / 3 + 12, self:GetTall() / 2, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+    draw.SimpleText( self.weaponname, self.font, self:GetWide() / 3 + 24, self:GetTall() / 2 + 4, Color( 0, 0, 0 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
     for k, v in pairs( self.wepinfosetup ) do
         surface.SetTextColor( GAMEMODE.TeamColor )
         surface.SetFont( self.font )
 
         local textwide, texttall = surface.GetTextSize( v.display )
-        self.longesttext = self.longesttext or textwide
-        if textwide > self.longesttext then self.longesttext = textwide end
+        self.leftlongesttext = self.leftlongesttext or textwide
+        self.rightlongesttext = self.rightlongesttext or textwide
+
+        if k <= ( #self.wepinfosetup / 2 ) then
+            if textwide > self.leftlongesttext then
+                self.leftlongesttext = textwide
+            end
+        else
+            if textwide > self.rightlongesttext then
+                self.rightlongesttext = textwide
+            end
+        end
+        self.boxwide = ( ( self:GetWide() / 3 * 2 ) - ( self.leftlongesttext + self.rightlongesttext ) - ( 2 * 2 ) ) / 2
         
         if k <= ( #self.wepinfosetup / 2 ) then
-            --draw.SimpleText( v.display )
-            surface.SetTextPos( self:GetWide() / 3 + 2, ( self:GetTall() / 2 ) + ( self.infotall * ( k ) ) )
+            surface.SetTextPos( self:GetWide() / 3 + 2 + ( self.leftlongesttext - textwide ), ( self:GetTall() / 2 ) + ( self.infotall * ( k + 1 ) ) )
         else
-            surface.SetTextPos( self:GetWide() - 2 - textwide, ( self:GetTall() / 2 ) + ( self.infotall * ( k - 1 ) ) )
+            surface.SetTextPos( self:GetWide() - 2 - self.rightlongesttext, ( self:GetTall() / 2 ) + ( self.infotall * ( k - 4 ) ) )
         end
         surface.DrawText( v.display )
 
         --//Box drawing
 
-        surface.SetDrawColor( self.wepinfo[ v.value .. "Color" ] )
-        surface.DrawRect( 0, 0, 0, 0 )
+        local boxfill
+        if self.wepinfo[ v.value .. "BoxLength" ] then
+            boxfill = self.wepinfo[ v.value .. "BoxLength" ] / self.wepinfo[ v.value .. "Scale" ]
+        end
 
-        surface.SetDrawColor( GAMEMODE.TeamColor )
-        surface.DrawOutlinedRect( 0, 0, 0, 0 )
-
-        draw.SimpleTextOutlined( self.wepinfo[ v.value ], self.font, 0, 0, GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, Color( 255, 255, 255 ) )
+        if k <= ( #self.wepinfosetup / 2 ) then
+            if boxfill then
+                surface.SetDrawColor( self.wepinfo[ v.value .. "Color" ] )
+                surface.DrawRect( self:GetWide() / 3 + 2 + self.leftlongesttext + 2, ( self:GetTall() / 2 ) + ( self.infotall * ( k + 1 ) ), boxfill * self.boxwide, texttall )
+            end
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawOutlinedRect( self:GetWide() / 3 + 2 + self.leftlongesttext + 2, ( self:GetTall() / 2 ) + ( self.infotall * ( k + 1 ) ), self.boxwide, texttall )
+            --draw.SimpleTextOutlined( self.wepinfo[ v.value ], self.font, self:GetWide() / 3 + 2 + self.leftlongesttext + 2 + 2, ( self:GetTall() / 2 ) + ( self.infotall * ( k + 1 ) ), GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 255, 255, 255 ) )
+        else
+            if boxfill then
+                surface.SetDrawColor( self.wepinfo[ v.value .. "Color" ] )
+                surface.DrawRect( self:GetWide() / 3 + 2 + self.leftlongesttext + 2 + self.boxwide, ( self:GetTall() / 2 ) + ( self.infotall * ( k - 4 ) ), boxfill * self.boxwide, texttall )
+            end
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawOutlinedRect( self:GetWide() / 3 + 2 + self.leftlongesttext + 2 + self.boxwide, ( self:GetTall() / 2 ) + ( self.infotall * ( k - 4 ) ), self.boxwide, texttall )
+            --draw.SimpleTextOutlined( self.wepinfo[ v.value ], self.font, self:GetWide() / 3 + 2 + self.leftlongesttext + 2 + 2, ( self:GetTall() / 2 ) + ( self.infotall * ( k + 1 ) ), GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 255, 255, 255 ) )
+        end
     end
 end
 

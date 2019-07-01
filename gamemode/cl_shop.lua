@@ -19,7 +19,7 @@ function GM:OpenShop()
     end )
 
 	self.ShopMain = vgui.Create( "DFrame" )
-	self.ShopMain:SetSize( 750, 500 )
+	self.ShopMain:SetSize( 750, 600 )
 	self.ShopMain:SetTitle( "" )
 	self.ShopMain:SetVisible( true )
 	self.ShopMain:SetDraggable( false )

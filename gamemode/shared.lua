@@ -67,8 +67,8 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 		tags = { } },
 	[ "de_keystone_beta" ] = { id = 508986899, size = "Large", img = "vgui/maps/keystone.png", type = "ins2",
 		tags = { "snipers" } },
-	[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png",
-		tags = { } },
+	--[[[ "gm_devruins" ] = { id = 748863203, size = "Midsize", img = "vgui/maps/devruins.png",
+		tags = { } },]] --//Removed until a more balanced spawn file can be found
 	[ "dm_octagon" ] = { id = 1727666265, size = "Midsize", img = "vgui/maps/octagon.png", type = "hl2",
         tags = { } },
     --//Update 1.9

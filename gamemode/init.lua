@@ -66,6 +66,7 @@ AddCSLuaFile( "cl_perks.lua" )
 AddCSLuaFile( "cl_shop.lua" )
 AddCSLuaFile( "cl_shop_setup.lua" )
 AddCSLuaFile( "sh_loadout.lua" )
+AddCSLuaFile( "sh_shop.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
@@ -92,6 +93,7 @@ include( "sv_perks.lua" )
 include( "sv_prestige.lua" )
 include( "sv_shop.lua" )
 include( "sh_loadout.lua" )
+include( "sh_shop.lua" )
 include( "sh_weaponbalancing.lua" )
 
 local col = {}
@@ -154,8 +156,20 @@ if not file.Exists( "tdm/users", "DATA" ) then
 	file.CreateDir( "tdm/users" )
 end
 
+if not file.Exists( "tdm/users/skins", "DATA" ) then
+	file.CreateDir( "tdm/users/skins" )
+end
+
+if not file.Exists( "tdm/users/models", "DATA" ) then
+	file.CreateDir( "tdm/users/models" )
+end
+
 if not file.Exists( "tdm/class", "DATA" ) then
 	file.CreateDir( "tdm/class" )
+end
+
+if not file.Exists( "tdm/cheaters" "DATA" ) then
+	file.CreateDir( "tdm/cheaters" )
 end
 
 local color_red = Color( 255, 0, 0 )
@@ -384,6 +398,24 @@ function GM:PlayerInitialSpawn( ply )
 		local contents = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt" ) )
 		if ply:Name() ~= contents[ 1 ] then
 			file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), contents[ 2 ] } ) )
+		end
+	end
+
+	if not file.Exists( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
+		file.Write( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), {} } ) )
+	else
+		local contents = util.JSONToTable( file.Read( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt" ) )
+		if ply:Name() ~= contents[ 1 ] then
+			file.Write( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), contents[ 2 ] } ) )
+		end
+	end
+
+	if not file.Exists( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
+		file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), {} } ) )
+	else
+		local contents = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt" ) )
+		if ply:Name() ~= contents[ 1 ] then
+			file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), contents[ 2 ] } ) )
 		end
 	end
 
@@ -728,6 +760,24 @@ function GM:GetFallDamage( ply, speed )
 	if self.PreventFallDamage then return 0 end
 	speed = speed - 540
 	return ( speed * ( 100 / ( 1024 - 580 ) ) )
+end
+
+--//Used in server-side menu code to check for players running net messages with values the player set - cheaters
+function CaughtCheater( ply, reason )
+	if ply:IsValid() and ply:IsPlayer() then
+		local id = ply:SteamID()
+		local datetime = os.date( "%H:%M:%S - %d/%m/%Y", os.time() ) --This is a string
+		local currentname = ply:Nick()
+
+		if not file.Exists( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", "DATA" ) then
+			file.Write( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", util.TableToJSON( { datetime = { id, currentname, reason } } ) )
+		else
+			local contents = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt" ) )
+			contents[ datetime ] = { id, currentname, reason }
+			file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( contents ) )
+		end
+		--//Maybe do some kind of update even or something - notify superadmins to check the file
+	end
 end
 
 hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )

@@ -64,15 +64,8 @@ GM.Icons = {
 		equipment = Material( "vgui/equipment_icon.png", "smooth" ),
 		[1] = Material( "vgui/primary_icon.png", "smooth" ),
 		[2] = Material( "vgui/secondary_icon.png", "smooth" ),
-        [3] = Material( "vgui/equipment_icon.png", "smooth" ),
-        ar = Material( "vgui/ar_icon.png", "smooth" ),
-        smg = Material( "vgui/smg_icon.png", "smooth" ),
-        sg = Material( "vgui/shotgun_icon.png", "smooth" ),
-        sr = Material( "vgui/sniper_icon.png", "smooth" ),
-        lmg = Material( "vgui/lmg_icon.png", "smooth" ),
-        pt = Material( "vgui/pistol_icon.png", "smooth" ),
-        mn = Material( "vgui/magnum_icon.png", "smooth" ),
-        eq = Material( "vgui/equipment_icon.png", "smooth" )
+		[3] = Material( "vgui/equipment_icon.png", "smooth" ),
+		snipers = Material( "vgui/sniper_icon.png", "smooth" )
 	},
 	Perks = {
 		
@@ -80,13 +73,7 @@ GM.Icons = {
 	Mapvote = { --//Any icons for the tags found in MapTable
 		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.Sniper
 		flags = Material( "vgui/flagIcon.png", "smooth" )
-    },
-    Menu = {
-        moneylocked = Material( "vgui/money_locked.png", "smooth" ),
-        moneyunlocked = Material( "vgui/money_unlocked.png", "smooth" ),
-        levellocked = Material( "vgui/level_locked.png", "smooth" ),
-        levelunlocked = Material( "vgui/level_unlocked.png", "smooth" )
-    }
+	}
 }
 
 include( "shared.lua" )

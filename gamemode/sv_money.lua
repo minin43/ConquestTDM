@@ -29,6 +29,12 @@ function AddMoney( ply, amt )
 	end
 end
 
+function SubtractMoney( ply, amt )
+	if ply and IsValid( ply ) then
+		SetMoney( ply, GetMoney( ply ) - math.abs( amt ) )
+	end
+end
+
 function SetMoney( ply, num )
 	ply:SetPData( "tdm_money", math.Round( num ) )
 

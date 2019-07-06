@@ -126,3 +126,21 @@ function GM:OpenShop()
         v.Tab.DoClick = function() return true end --May need to remove - may unintentionally disable desired functionality
 	end
 end
+
+function GM:AttemptBuyWeapon( wepclass )
+    if not self.lockedweapons then
+        net.Start( "RequestLockedWeapons" )
+        net.SendToServer()
+        return false
+    end
+
+    for k, v in pairs( self.WeaponsList ) do
+        if v[ 2 ] == wepclass then
+            net.Start( "BuyWeapon" )
+                net.WriteInt( k, 16 )
+            net.SendToServer()
+            return true
+        end
+    end
+    return false
+end

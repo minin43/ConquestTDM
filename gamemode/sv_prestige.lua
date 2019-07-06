@@ -17,6 +17,10 @@ function prestige.SetTokens( ply, amt )
     ply:SetPData( "prestigetokens", amt )
 end
 
+function prestige.SubtractTokens( ply, amt )
+    ply:SetPData( "prestigetokens", prestige.GetTokens( ply ) - math.abs( amt ) )
+end
+
 --//This resets ALL weapon information, attachments & purchases - call with care
 function prestige.ResetPlayer( ply )
     local playerfile = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )

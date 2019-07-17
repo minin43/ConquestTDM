@@ -12,12 +12,13 @@ util.AddNetworkString( "BuySkinCallback")
 util.AddNetworkString( "BuyModel" )
 util.AddNetworkString( "BuyModelCallback" )
 
---[[GM.WeaponSkins = {
-	{ name = "", texture = Material( "" ), price = 1 },
+--[[ Found in sh_shop, this is just how the tables are structured - WeaponsList found in sh_loadout
+GM.WeaponSkins = {
+	{ name = "", directory = "", texture = Material( "" ), tokens = 1, cash = 0, credits = 0 },
 }
 
 GM.PlayerModels = {
-	{ name = "", model = "", price = 1, voiceovers = false },
+	{ name = "", model = "", price = 1, cash = 0, credits = 0, voiceovers = false },
 }]]
 
 --//Request locked crap
@@ -50,7 +51,7 @@ net.Receive( "RequestLockedSkins", function( len, ply )
     end
 
     for k, v in pairs( GAMEMODE.WeaponSkins ) do
-        if !throwaway[ v.name ] then
+        if !throwaway[ v.directory ] then --//Have to save by texture, since name can be changed
             lockedskins[ #lockedskins + 1 ] = k
         end
     end
@@ -69,7 +70,7 @@ net.Receive( "RequestLockedModels", function( len, ply )
     end
 
     for k, v in pairs( GAMEMODE.PlayerModels ) do
-        if !throwaway[ v.name ] then
+        if !throwaway[ v.model ] then --//Have to save by model, since naming can be changed
             lockedmodels[ #lockedmodels + 1 ] = k
         end
     end
@@ -114,7 +115,7 @@ net.Receive( "BuyWeapon", function( len, ply )
 
 	local fil = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
 	local ttab = fil[ 2 ]
-	table.insert( ttab, wep )
+	table.insert( ttab, wep[ 2 ] )
 	local new = util.TableToJSON( { fil[ 1 ], ttab } )
 	file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", new )
 
@@ -123,16 +124,56 @@ net.Receive( "BuyWeapon", function( len, ply )
 end )
 
 net.Receive( "BuySkin", function( len, ply )
+	local num = net.ReadInt( 16 )
+	local currency = net.ReadString()
+	local skin = GAMEMODE.WeaponSkins[ num ]
+	
+	local price = skin[ currency ]
+	if currency == "tokens" then --Prestige Tokens
+		if price > prestige.GetTokens( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
+		prestige.SubtractTokens( ply, price )
+	elseif currency == "credits" then --Donator Credits
+		if price > ( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
+		donations.SubtractCredits( ply, price )
+	elseif currency == "cash" then --Standard cash
+		if price > GetMoney( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
+		SubtractMoney( ply, price )
+	else Error( "Function for net message BuySkin ran with bad currency type" ) return end
+
+	local fil = util.JSONToTable( file.Read( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
+	local ttab = fil[ 2 ]
+	table.insert( ttab, skin.directory )
+	local new = util.TableToJSON( { id( ply:SteamID() ), ttab } )
+	file.Write( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", new )
 
 	net.Start( "BuySkinCallback" )
-		net.Write
 	net.Send( ply )
 end )
 
 
 net.Receive( "BuyModel", function( len, ply )
+	local num = net.ReadInt( 16 )
+	local currency = net.ReadString()
+	local pmodel = GAMEMODE.PlayerModels[ num ]
+	
+	local price = PlayerModels[ currency ]
+	if currency == "tokens" then --Prestige Tokens
+		if price > prestige.GetTokens( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
+		prestige.SubtractTokens( ply, price )
+	elseif currency == "credits" then --Donator Credits
+		if price > ( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
+		donations.SubtractCredits( ply, price )
+	elseif currency == "cash" then --Standard cash
+		if price > GetMoney( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
+		SubtractMoney( ply, price )
+	else Error( "Function for net message BuyModel ran with bad currency type" ) return end
+
+	local fil = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
+	local ttab = fil[ 2 ]
+	table.insert( ttab, pmodel.model )
+	local new = util.TableToJSON( { id( ply:SteamID() ), ttab } )
+	file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", new )
 
 	net.Start( "BuyModelCallback" )
-		net.Write
 	net.Send( ply )
 end )

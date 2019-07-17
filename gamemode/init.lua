@@ -92,6 +92,8 @@ include( "sv_custommaps.lua" )
 include( "sv_perks.lua" )
 include( "sv_prestige.lua" )
 include( "sv_shop.lua" )
+include( "sv_donations.lua" )
+include( "sv_weapon_submaterials.lua")
 include( "sh_loadout.lua" )
 include( "sh_shop.lua" )
 include( "sh_weaponbalancing.lua" )
@@ -168,7 +170,7 @@ if not file.Exists( "tdm/class", "DATA" ) then
 	file.CreateDir( "tdm/class" )
 end
 
-if not file.Exists( "tdm/cheaters" "DATA" ) then
+if not file.Exists( "tdm/cheaters", "DATA" ) then
 	file.CreateDir( "tdm/cheaters" )
 end
 

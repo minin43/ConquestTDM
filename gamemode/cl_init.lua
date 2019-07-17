@@ -115,6 +115,14 @@ include( "cl_shop_setup.lua" )
 include( "sh_loadout.lua" )
 include( "sh_weaponbalancing.lua" )
 
+if not file.Exists( "tdm", "DATA" ) then
+	file.CreateDir( "tdm" )
+end
+
+if not file.Exists( "tdm/saves", "DATA" ) then
+	file.CreateDir( "tdm/saves" )
+end
+
 function unid( steamid )
     local x = string.gsub( steamid, "x", ":" )
     return string.upper( x )

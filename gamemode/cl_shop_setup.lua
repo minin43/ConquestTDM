@@ -1,4 +1,5 @@
 --//This file is strictly for creating custom vgui elements for the shop
+--//DAMN YE ALL WHO ENTER HERE
 
 --[[local function ScalingColor( low, high, val, scale )
     low = low or 0
@@ -122,6 +123,7 @@ weaponsshopbutton.gradient = false
 weaponsshopbutton.display = { ar = "Assault Rifle", smg = " Submachine Gun", sg = "Shotgun", sr = "Sniper Rifle", lmg = "Light Machine Gun", pt = "Pistol", mn = "Magnum", eq = "Equipment"}
 
 function weaponsshopbutton:DoClick()
+    if self.disabled then return end
     self:GetParent().selected = self.text
     self:GetParent():Reset( self.text )
     surface.PlaySound( uisoundtable[ math.random( #uisoundtable ) ] )
@@ -132,6 +134,11 @@ function weaponsshopbutton:Think()
         self.selected = true
     else
         self.selected = false
+    end
+    if self.empty then
+        self.disabled = true
+    else
+        self.disabled = false
     end
 end
 
@@ -152,12 +159,16 @@ function weaponsshopbutton:Paint()
     surface.SetFont( self.font )
     local twide, ttall = surface.GetTextSize( self.display[ self.text ] )
     surface.SetTextPos( self:GetWide() / 2 - ( twide / 2 ), self:GetTall() / 2 - ( ttall / 2) )
-    surface.SetTextColor( 255, 255, 255 )
+    if self.disabled then
+        surface.SetTextColor( 80, 80, 80, 170 )
+    else
+        surface.SetTextColor( 255, 255, 255 )
+    end
     surface.DrawText( self.display[ self.text ] )
     --draw.SimpleText( self.text, self.font, self:GetWide() / 2, self:GetTall() / 2, Color( 255,255,255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
     self.lerp = self.lerp or 0
-    if self.hover or self.selected then
+    if ( self.hover or self.selected ) and !self.disabled then
         self.lerp = math.Clamp( self.lerp + 3, 0, self:GetWide() / 3 )
         if self.selected then
             surface.SetDrawColor( colorScheme[LocalPlayer():Team()]["ButtonIndicator"] )
@@ -190,7 +201,7 @@ weaponsshop.weaponname = "Nothing Selected"
 weaponsshop.font = "ExoTitleFont"
 weaponsshop.tabs = { "ar", "smg", "sg", "sr", "lmg", "pt", "mn", "eq" }
 weaponsshop.wepinfosetup = {
---//Scale up means higher is better, scale down means lower is better - use for color calculation
+    --//Scale up means higher is better, scale down means lower is better - use for color calculation
     { value = "Damage", display = "Damage", min = 0, max = 120, scale = "up" },
     { value = "FireDelay", display = "RPM", min = 30, max = 1200, scale = "up" },
     { value = "AimSpread", display = "Aimspread", min = 0.001, max = 0.03, scale = "down" },
@@ -224,6 +235,37 @@ weaponsshop.wepinfo = {
     SpreadCooldown = weaponsshop.wepinfosetup[ 10 ].min,
     SpreadCooldownColor = Color( 0, 0, 0 )
 }
+weaponsshop.modeloffsets = { --FOR MOST GUNS: pos = Vector( x coord (reversed), z coord (+ closer), y coord )
+    --[ "cw_ar15" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ak74" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 2, 12, -4 ) },
+    [ "cw_g3a3" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 4, 12, -7 ) },
+    [ "cw_scarh" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -7, 11, -3 ) },
+    [ "cw_g36c" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -2 ) },
+    [ "cw_mp5" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2, 12, -6 ) },
+    [ "cw_deagle" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -3.5, 13.5, -4 ) },
+    [ "cw_l85a2" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -22, 13, -9 ) },
+    [ "cw_m14" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -11, 13.5, -1.5 ) },
+    [ "cw_m1911" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_m249_official" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -8, 8, -2 ) },
+    [ "cw_m3super90" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -9, 11, -1.5 ) },
+    [ "cw_mac11" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -7, 13.5, -2 ) },
+    [ "cw_mr96" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ump45" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 2, 12, -4 ) },
+    [ "cw_makarov" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_shorty" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -9, 13.5, -2 ) },
+    [ "cw_vss" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_b196" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_scorpin_evo3" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_tac338" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_p90" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_famas_felin" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_spas12" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_amr2_rpk74" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_wf_m200" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_hkmp7" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_amr2_mk46" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_fiveseven" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2.5, 13.5, -3.5 ) }
+}
 
 function weaponsshop:DoSetup()
     net.Start( "RequestLockedWeapons" )
@@ -233,12 +275,44 @@ function weaponsshop:DoSetup()
         --//Table received with ordered numeric keys and and values as the keys to the locked guns in GAMEMODE.WeaponsList
         GAMEMODE.lockedweapons = net.ReadTable()
 
+        --[[ I'd like for the menu to notify players of new unlocks, but I'd need to incorporate highlighting into the shop tabs, and that's too much for now
+        if file.Exists( "tdm/saves/lockedweps.txt", "DATA" ) then
+            fil = util.JSONToTable( file.Read( "tdm/saves/lockedweps.txt", "DATA" ) )
+            local  = {}
+            for k, v in pairs( fil ) do
+                if 
+            end
+        end]]
+
+        if #GAMEMODE.lockedweapons == 0 then
+            function self:Paint()
+                draw.DrawText( "All weapons purchased!", self.font, self:GetWide() / 2, self:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            return
+        end
+
+        --//We need to check if any weapon types are empty, and if they are, disable their respective buttons
+        local throwawaytypecount = {}
+        for k, v in pairs( self.tabs ) do
+            throwawaytypecount[ v ] = 0
+        end
+        for k, v in pairs( GAMEMODE.lockedweapons ) do
+            throwawaytypecount[ GAMEMODE.WeaponsList[ v ].type ] = throwawaytypecount[ GAMEMODE.WeaponsList[ v ].type ] + 1
+        end
+        for k, v in pairs( self.tabs ) do
+            if throwawaytypecount[ v ] == 0 then
+                self.WeaponsShopButtons[ v ].empty = true
+            elseif !self.nextopenmenu or throwawaytypecount[ self.nextopenmenu ] == 0 then
+                self.nextopenmenu = v
+            end
+        end
+
         if not self.Reset then
             timer.Simple( 0, function()
-                self:Reset( "ar" )
+                self:Reset( self.nextopenmenu or "ar" )
             end )
         else
-            self:Reset( "ar" )
+            self:Reset( self.nextopenmenu or "ar" )
         end
     end )
     
@@ -251,7 +325,7 @@ function weaponsshop:DoSetup()
             columnoffset = 4
         end
 
-        self.WeaponsShopButtons = {}
+        self.WeaponsShopButtons = self.WeaponsShopButtons or {}
         local throwaway = vgui.Create( "WeaponsShopButton", self )
         throwaway:SetSize( self:GetWide() / 4, 56 )
         throwaway:SetPos( throwaway:GetWide() * ( k - 1 - columnoffset ), rowoffset )
@@ -268,6 +342,7 @@ function weaponsshop:DoSetup()
     function self:Reset( type )
         if GAMEMODE.lockedweapons == nil then return end
         self.selected = type
+        self:SelectWeapon() --//Resets DModelPanel and other crap, if we're swapping tabs
         
         self.scrollpanel = self.scrollpanel or vgui.Create( "DScrollPanel", self )
         self.scrollpanel:SetPos( 0, 56 * 2 )
@@ -306,7 +381,7 @@ function weaponsshop:DoSetup()
             if GAMEMODE.WeaponsList[ v ].type == type and GAMEMODE.WeaponsList[ v ][ 3 ] != 0 and GAMEMODE.WeaponsList[ v ][ 5 ] != 0 then
                 local sloticon = GAMEMODE.Icons.Weapons[ GAMEMODE.WeaponsList[ v ].slot ]
                 local sloticonsizelarge = 32
-                local sloticonsizesmall = 32
+                local sloticonsizesmall = 32 --Didn't I set this to 16?
 
                 --//This should probably be a custom vgui element too, but fuckit, the custom elements are only to keep cl_shop clean, not this file
                 local throwaway = vgui.Create( "DButton", self.scrollpanel )
@@ -362,6 +437,7 @@ function weaponsshop:DoSetup()
                     if throwaway.unlocked then
                         self:SelectWeapon( GAMEMODE.WeaponsList[ v ][ 2 ] )
                         surface.PlaySound( uisoundtable[ math.random( #uisoundtable ) ] )
+                        self.weaponprice = GAMEMODE.WeaponsList[ v ][ 5 ]
                     end
                 end
                 throwaway.OnCursorEntered = function()
@@ -385,36 +461,71 @@ function weaponsshop:DoSetup()
 
                     if self.selectedweapon == GAMEMODE.WeaponsList[ v ][ 2 ] then
                         throwaway.selected = true
-                        self.selectedweaponx, self.selectedweapony = throwaway:GetPos()
-                        self.selectedweaponsize = throwaway:GetSize()
                     else
                         throwaway.selected = false
                     end
                 end
-                self.scrollpanelbuttons[ GAMEMODE.WeaponsList[ v ] ] = throwaway
+                self.scrollpanelbuttons[ GAMEMODE.WeaponsList[ v ][ 2 ] ] = throwaway
                 self.scrollpanelbuttonscount = self.scrollpanelbuttonscount + 1
             end
         end
     end
-
 end
 
 function weaponsshop:SelectWeapon( wep )
+    if wep == nil then 
+        self.selectedweapon = nil
+        if self.modelpanel then self.modelpanel:Remove() end
+        self.modelpanel = nil
+        self.DisplayStats = false
+        self.weaponname = "Nothing Selected"
+        self.weaponprice = 0
+        return
+    end
+
     self.selectedweapon = wep
     local wep = weapons.GetStored( wep )
+    if !wep then return end
     self.modelpanel = self.modelpanel or vgui.Create( "DModelPanel", self )
     self.modelpanel:SetSize( self:GetWide() / 3 * 2, ( self:GetTall() - ( 56 * 2 ) ) / 2 )
     self.modelpanel:SetPos( self:GetWide() / 3, 56 * 2 )
     self.modelpanel:SetModel( wep.WorldModel )
-    self.modelpanel:SetCamPos( Vector( 0, 35, 0 ) ) --Courtesy of Spy
-    self.modelpanel:SetLookAt( Vector( 0, 0, 0 ) ) --Courtesy of Spy
+    if self.modeloffsets[ self.selectedweapon ] then
+        self.modelpanel:SetCamPos( self.modeloffsets[ self.selectedweapon ].cam )
+        self.modelpanel:SetLookAt( self.modeloffsets[ self.selectedweapon ].lookat )
+        self.modelpanel:GetEntity():SetPos( self.modeloffsets[ self.selectedweapon ].pos )
+    else
+        self.modelpanel:SetCamPos( Vector( 0, 35, 0 ) ) --Courtesy of Spy
+        self.modelpanel:SetLookAt( Vector( 0, 0, 0 ) ) --Courtesy of Spy    
+        self.modelpanel:GetEntity():SetPos( Vector( -6, 13.5, -1 ) )
+    end
+    self.modelpanel:SetCamPos( self.modeloffsets[ self.selectedweapon ].cam or Vector( 0, 35, 0 ) ) --Courtesy of Spy
+    self.modelpanel:SetLookAt( self.modeloffsets[ self.selectedweapon ].lookat or Vector( 0, 0, 0 ) ) --Courtesy of Spy
     self.modelpanel:SetFOV( 90 ) --Courtesy of Spy
     --self.modelpanel:GetEntity():SetAngles
-    self.modelpanel:GetEntity():SetPos( Vector( -6, 13.5, -1) )
     self.modelpanel:SetAmbientLight( Color( 255, 255, 255 ) )
     self.modelpanel.LayoutEntity = function() return true end --Disables rotation
+    surface.CreateFont( "InsufficientFunds", { font = "Exo 2", size = 32 } )
+    self.modelpanel.PaintOver = function( _, w, h )
+        if self.scrollpanelbuttons[ self.selectedweapon ] == nil then return end
+        if !self.scrollpanelbuttons[ self.selectedweapon ].canbuy then
+            local diff = 6
+            surface.SetDrawColor( 0, 0, 0, 190 )
+            surface.DrawRect( diff, diff, w - ( diff * 2 ), h - ( diff  ) )
+            --surface.DrawRect( 0, 0, w, h)
+            surface.SetTextColor( 255, 255, 255 )
+            surface.SetFont( "InsufficientFunds" )
+            local textw, textt = surface.GetTextSize("Insufficient")
+            surface.SetTextPos( w / 2 - ( textw / 2 ), h / 2 - textt - 2 )
+            surface.DrawText( "Insufficient" )
+            local textw, textt = surface.GetTextSize("Funds")
+            surface.SetTextPos( w / 2 - ( textw / 2 ), h / 2 + 2 )
+            surface.DrawText( "Funds" )
+        end
+    end
 
     self.weaponname = wep.PrintName or "Nothing Selected"
+    self.weaponprice = self.weaponprice or 0
 
     if wep.Base == "cw_base" then
         self.DisplayStats = true
@@ -466,6 +577,45 @@ function weaponsshop:SelectWeapon( wep )
         self.DisplayStats = false
     end
 
+    
+    self.buybutton = self.buybutton or vgui.Create( "DButton", self )
+    self.buybutton:SetSize( 120 + 8, ( self:GetTall() - ( 56 * 2 ) ) / 2 / ( #self.wepinfosetup / 2 + 1 ) - 6 )
+    self.buybutton:SetPos( self:GetWide() - self.buybutton:GetWide() - 6, ( self:GetTall() - ( 56 * 2 ) ) / 2 + 4 + ( 56 * 2 ) )
+    self.buybutton:SetText( "" )
+    self.buybutton.DoClick = function()
+        if self.buybutton.canbuy and self.weaponprice != 0 then
+            surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            local success = GAMEMODE:AttemptBuyWeapon( self.selectedweapon )
+            if success then
+                net.Start( "RequestLockedWeapons" )
+                net.SendToServer()
+                self.nextopenmenu = self.selected
+            end
+        else
+            surface.PlaySound( "buttons/combine_button_locked.wav" )
+        end
+    end
+    self.buybutton.Paint = function()
+        if self.buybutton.hover then
+            draw.RoundedBox( 4, 0, 0, self.buybutton:GetWide(), self.buybutton:GetTall(), Color( 0, 0, 0, 120 ) )
+        end
+        --if self.weaponprice then
+            draw.SimpleText( "Buy for $" .. self.weaponprice, self.font, self.buybutton:GetWide() / 2, self.buybutton:GetTall() / 2 - 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        --end           --Exo 2 Button
+    end
+    self.buybutton.Think = function()
+        if self.weaponprice < GAMEMODE.MyMoney then
+            self.buybutton.canbuy = true
+        else
+            self.buybutton.canbuy = false
+        end
+    end
+    self.buybutton.OnCursorEntered = function()
+        self.buybutton.hover = true
+    end
+    self.buybutton.OnCursorExited = function()
+        self.buybutton.hover = false
+    end
 end
 
 function weaponsshop:Paint()
@@ -482,10 +632,10 @@ function weaponsshop:Paint()
 
     local texty = ( self:GetTall() - ( 56 * 2 ) ) / 2 + 4 + ( 56 * 2 )
     surface.SetTextColor( 255, 255, 255 )
-    surface.SetTextPos( self:GetWide() / 3 + 24, texty )
+    surface.SetTextPos( self:GetWide() / 3 + 16, texty )
     surface.SetFont( self.font )
     surface.DrawText( self.weaponname )
-
+    
     for k, v in pairs( self.wepinfosetup ) do
 
         surface.SetTextColor( GAMEMODE.TeamColor )
@@ -558,10 +708,86 @@ vgui.Register( "WeaponsShopPanel", weaponsshop, "DPanel" )
 
 --//
 
-local skinsshop = { }
+local skinsshopbutton = {}
+skinsshopbutton.texture = Material( "" )
+skinsshopbutton.option = ""
 
-vgui.Register( "SkinsShopPanel", skinsshop, "DButton" )
+function skinsshopbutton:SetSkin( dir )
+    self.option = dir
+    self.material = Material( dir )
+end
+
+function skinsshopbutton:DoClick()
+    self:GetParent():SelectOption( self.option )
+end
+
+function skinsshopbutton:Paint()
+    surface.SetMaterial( self.material )
+    surface.DrawTexturedRect( 0, 0, self:GetWide(), self:GetTall() )
+end
+
+function skinsshopbutton:OnCursorEntered()
+    self.hover = true
+end
+
+function skinsshopbutton:OnCursorExited()
+    self.hover = false
+end
+
+function skinsshopbutton:Think()
+    if self:GetParent().selected == self.option then
+        self.selected = true
+    else
+        self.selected = false
+    end
+end
+
+vgui.Register( "SkinsShopButton", skinsshopbutton, "DButton" )
+
+--//
+
+--How should the buttons be oriented? Vertically or horizontally?
+--How should we organize the buttons? By pricing options?
+
+local skinsshop = { }
+skinsshop.skins = { }
+skinsshop.skinbuttons = { }
+
+function skinsshop:Init()
+    self.scrollpanel = self.scrollpanel or vgui.Create( "DScrollPanel", self )
+end
+
+function skinsshop:AddSkin( dir )
+    self.skins[ #self.skins + 1 ] = dir
+    self:ResetList()
+end
+
+function skinsshop:SelectOption( dir )
+    self.selected = dir
+    --self.skinbuttons[ dir ]:DoClick()
+    --Draw a model with the selected skin, display pricing
+end
+
+function skinsshop:ResetList()
+    for k, v in pairs( self.skins ) do
+        self.skinbuttons[ v ] = self.skinbuttons[ v ] or vgui.Create( "SkinsShopButton", self )
+        self.skinbuttons[ v ]:SetSkin( v )
+        --Create all of the buttons here
+    end
+end
+
+function skinsshop:Paint()
+
+end
+
+vgui.Register( "SkinsShopPanel", skinsshop, "DPanel" )
+
+--//
+
+local modelsshopbutton = table.Copy( skinsshopbutton )
 
 --//
 
 local modelsshop = { }
+
+vgui.Register( "ModelsShopPanel", modelsshop, "DPanel" )

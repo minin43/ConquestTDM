@@ -1105,6 +1105,8 @@ end )
  hook.Add( "CalcView", "CalcView:GmodDeathView", function( player, origin, angles, fov )
     if( IsValid(player:GetRagdollEntity()) ) then 
 		local CameraPos = player:GetRagdollEntity():GetAttachment( player:GetRagdollEntity():LookupAttachment( "eyes" ) )  
-		return { origin = CameraPos.Pos, angles = CameraPos.Ang, fov = 90 }
+		if CameraPos and CameraPos.Pos and CameraPos.Ang then
+			return { origin = CameraPos.Pos, angles = CameraPos.Ang, fov = 90 }
+		end
 	end
 end)

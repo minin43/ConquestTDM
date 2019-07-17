@@ -645,6 +645,18 @@ flags[ "de_stad" ] = {
     { "C", Vector( -2034.625, 1962.3125, -0.5938 ), 420.0, 0.0 }
 }
 
+flags[ "dm_corrugated" ] = {
+    { "", Vector( 0, 0, 0 ), 0, 0 }
+}
+
+flags[ "dm_nescessity" ] = {
+	{ "", Vector( 0, 0, 0 ), 0, 0 }
+}
+
+flags[ "dm_torque" ] = {
+	{ "", Vector( 0, 0, 0 ), 0, 0 }
+}
+
 --[[flags[ "" ] = {
 	{ "", Vector( 0, 0, 0 ), 0, 0 }
 }]]

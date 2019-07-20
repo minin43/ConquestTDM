@@ -2,7 +2,7 @@ GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Cobalt, Whuppo, Logan"
 GM.Email = "lobsterlogan43@yahoo.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.9"
+GM.Version = "Conquest Team Deathmatch V. 1.10"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
@@ -75,6 +75,31 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_halo_battlecreek" ] = { id = 1769486134, size = "Small", img = "vgui/maps/battlecreek.png",
         tags = { } },
     [ "de_stad" ] = { id = 1751765989, size = "Large", img = "vgui/maps/stad.png", type = "ins2",
+        tags = { } },
+    --//Update 1.10
+    [ "cs_siege_csgo" ] = { id = 1745687579, size = "Massive", img = "vgui/maps/siege.png", type = "ins2",
+        tags = { } },
+    [ "de_donya" ] = { id = 1741751353, size = "Midsize", img = "vgui/maps/donya.png", type = "ins2",
+        tags = { } },
+    [ "de_ruins" ] = { id = 1746629314, size = "Large", img = "vgui/maps/ruins.png", type = "ins2",
+        tags = { } },
+    [ "de_wellness" ] = { id = 1740206351, size = "Large", img = "vgui/maps/wellness.png", type = "ins2",
+        tags = { } },
+    [ "dm_corrugated" ] = { id = 284612461, size = "Large", img = "vgui/maps/corrugated.png", type = "hl2",
+        tags = { } },
+    [ "dm_crossfire" ] = { id = 1759999305, size = "Midsize", img = "vgui/maps/crossfire.png", type = "hl2",
+        tags = { } },
+    [ "dm_necessity" ] = { id = 836130258, size = "Small", img = "vgui/maps/necessity.png", type = "hl2",
+        tags = { } },
+    [ "dm_torque" ] = { id = 442990905, size = "Midsize", img = "vgui/maps/torque.png", type = "hl2",
+        tags = { } },
+    [ "dm_torrent" ] = { id = 831949808, size = "Massive", img = "vgui/maps/torrent.png", type = "hl2",
+        tags = { } },
+    [ "gm_thepit" ] = { id = 1808461048, size = "Large", img = "vgui/maps/thepit.png", type = "hl2",
+        tags = { } },
+    [ "ttt_trinity_church" ] = { id = 1796051616, size = "Large", img = "vgui/maps/trinitychurch.png", type = "ins2",
+        tags = { } },
+    [ "zs_abstractum_v1" ] = { id = 1708763559, size = "Small", img = "vgui/maps/abstractum.png", type = "ins2",
         tags = { } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced

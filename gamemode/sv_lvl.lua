@@ -10,15 +10,6 @@ lvl = {}
 lvl.levels = {}
 	
 lvl.expmul = 500
-
-lvl.VIPGroups = { --To adjust
-	{ "vip", .10 },
-	{ "vip+", .25 },
-	{ "ultravip", .25 },
-	{ "coowner", .5 },
-	{ "owner", .5 },
-	{ "creator", .5 }
-}
 	
 for i = 1, 51 do
 	lvl.levels[ i ] = i * lvl.expmul
@@ -106,16 +97,6 @@ function lvl.LevelUp( ply, diff )
 end
 	
 function lvl.AddEXP( ply, num )
-	local group = ply:GetUserGroup()
-	for k, v in next, lvl.VIPGroups do
-		if v[ 1 ] == group then
-			if ( GetConVarNumber( "tdm_xpmulti" ) == 0 ) then
-				num = num + ( num * v[ 2 ] )
-			else
-				num = num + ( num * ( tonumber( GetConVarNumber( "tdm_xpmulti" ) ) + v[ 2 ] ) )
-			end
-		end
-	end
 	local n = lvl.GetNeededEXP( ply )
 	local c = lvl.GetEXP( ply )
 	if n > num then

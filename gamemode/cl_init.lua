@@ -112,8 +112,12 @@ include( "cl_character_interaction.lua" )
 include( "cl_perks.lua" )
 include( "cl_shop.lua" )
 include( "cl_shop_setup.lua" )
+include( "cl_titles.lua" )
+include( "cl_help.lua" )
 include( "sh_loadout.lua" )
+include( "sh_shop.lua" )
 include( "sh_weaponbalancing.lua" )
+include( "sh_titles.lua" )
 
 if not file.Exists( "tdm", "DATA" ) then
 	file.CreateDir( "tdm" )

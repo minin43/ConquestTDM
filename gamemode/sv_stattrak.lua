@@ -235,19 +235,30 @@ function UpdateAttKillTracking( ply, wepclass )
 		net.WriteString( tostring( ply:GetPData( wepclass ) ) )
 	net.Send( ply )
 		
-	local num = GetStatTrak( ply, wepclass )
+	local totalKills = GetStatTrak( ply, wepclass )
 	local togive = {}
 	
-	--for k, v in pairs( wep_att ) do
-	for q, w in next, wep_att do
-		if q == wepclass then
-			for a, s in next, w do
-				if num == s[ 2 ] then
-					table.insert( togive, s[ 1 ] )
+	for k, v in pairs( GAMEMODE.WeaponsList ) do
+		if wepclass = v[ 2 ] then
+			local masteryamount = GAMEMODE.MasteryRequirements[ v.type ] or 1000
+			if totalKills == masteryamount then
+				hook.Call( "WeaponMasteryAchieved", GAMEMODE, ply, wepclass )
+				return
+			end
+		end
+	end
+
+	for k, v in pairs( wep_att ) do
+		if k == wepclass then
+			for k2, v2 in pairs( v ) do
+				--//If this new kill has a reaching a new attachment unlock...
+				if totalKills = v2[ 2 ] then
+					togive[ #togive + 1 ] = v2[ 1 ]
 				end
 			end
 		end
 	end
+
 	if next(togive) ~= nil then CustomizableWeaponry.giveAttachments( ply, togive ) end
 end
 

@@ -167,14 +167,10 @@ vip = {
 }
 
 net.Receive( "GetUserGroupRank", function( len, ply )
-	local rank = 0
-	for k, v in next, vip do
-		if ply:IsUserGroup( v[ 1 ] ) then
-			rank = v[ 2 ]
-		end
-	end
+	--if vip.Groups[ ply:GetUserGroup() ] then
+
+	--This functionality has been neutered while the new loadout menu is being rewritten
 	net.Start( "GetUserGroupRankCallback" )
-		net.WriteString( rank )
 	net.Send( ply )
 end)
 

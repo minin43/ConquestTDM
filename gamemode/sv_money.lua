@@ -17,12 +17,6 @@ end
 
 function AddMoney( ply, amt )
 	if ply and IsValid( ply ) then
-		local group = ply:GetNWString( "usergroup" )
-		for k, v in next, lvl.VIPGroups do
-			if v[ 1 ]:lower() == group:lower() then
-				amt = amt + ( amt * v[ 2 ] )
-			end
-		end
 		ply:SetPData( "tdm_money", math.Round( GetMoney( ply ) + amt ) )
 
 		SendUpdate( ply )
@@ -70,13 +64,6 @@ net.Receive( "GetMoney", function( len, ply )
 	net.Start( "GetMoneyCallback" )
 		net.WriteString( tostring( num ) )
 	net.Send( ply )	
-end )
-
-hook.Add( "PlayerDeath", "tdm_playerdeath_money", function( ply, _, att )
-	if ply:IsValid() and ply:IsPlayer() and att:IsValid() and att:IsPlayer() then
-		AddMoney( att, 100 )
-		att:AddScore( 100 )
-	end
 end )
 
 --[[

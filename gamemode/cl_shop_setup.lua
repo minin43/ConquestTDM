@@ -755,11 +755,19 @@ skinsshop.skinbuttons = { }
 
 function skinsshop:Init()
     self.scrollpanel = self.scrollpanel or vgui.Create( "DScrollPanel", self )
+    self.scrollpanel:SetPos( 0, 0 )
+    self.scrollpanel:SetSize( self:GetWide(), self:GetTall() / 2 )
 end
 
 function skinsshop:AddSkin( dir )
     self.skins[ #self.skins + 1 ] = dir
-    self:ResetList()
+    --self:ResetList()
+    for k, v in pairs( self.skins ) do
+        self.skinbuttons[ v ] = self.skinbuttons[ v ] or vgui.Create( "SkinsShopButton", self.scrollpanel )
+        self.skinbuttons[ v ]:SetSkin( v )
+        --self.skinbuttons[ v ]:SetSize(  )
+        --Create all of the buttons here
+    end
 end
 
 function skinsshop:SelectOption( dir )
@@ -768,13 +776,8 @@ function skinsshop:SelectOption( dir )
     --Draw a model with the selected skin, display pricing
 end
 
-function skinsshop:ResetList()
-    for k, v in pairs( self.skins ) do
-        self.skinbuttons[ v ] = self.skinbuttons[ v ] or vgui.Create( "SkinsShopButton", self )
-        self.skinbuttons[ v ]:SetSkin( v )
-        --Create all of the buttons here
-    end
-end
+--[[function skinsshop:ResetList()
+end]]
 
 function skinsshop:Paint()
 

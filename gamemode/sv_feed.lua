@@ -49,17 +49,18 @@ SCORECOUNTS = {
     ROUND_TIED = 250
 }
 
-function AddNotice(ply, text, score, type, color, suppressrewards)
+function AddNotice(ply, text, score, type, color)
     if !color then color = Color(255, 255, 255, 255) end
-    if !suppressrewards then suppressrewards = false end
+    
     score = score * GetGlobalInt("ctdm_global_xp_multiplier")
+
     net.Start("KillFeed")
         net.WriteString(text)
         net.WriteInt(score, 16) -- short type
         net.WriteInt(type, 16)
         net.WriteColor(color)
     net.Send(ply)
-    if suppressrewards then return end
+    
     AddRewards(ply, score)
 end
 
@@ -97,26 +98,34 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     if !att:IsPlayer() or !att:IsValid() or !vic:IsValid() or att == vic or att:GetActiveWeapon() == NULL or att:GetActiveWeapon() == NULL then
         return
     end
+
+    local totalpointcount = 0
     
     --Standard Kill Notice
     AddNotice( att, vic:Name(), SCORECOUNTS.KILL, NOTICETYPES.KILL, Color(255, 0, 83) )
+    totalpointcount = totalpointcount + SCORECOUNTS.KILL
     GAMEMODE.KillInfoTracking[ attID ].KillsThisLife = GAMEMODE.KillInfoTracking[ attID ].KillsThisLife + 1
     GAMEMODE.KillInfoTracking[ attID ].KillSpree = GAMEMODE.KillInfoTracking[ attID ].KillSpree + 1
     local SoundToSend
+    hook.Call( "KillFeedStandard", GAMEMODE, att )
 
     --//First Blood Check
     if not GAMEMODE.FirstBloodCheck then
         AddNotice( att, "FIRST BLOOD", SCORECOUNTS.FIRSTBLOOD, NOTICETYPES.EXTRA )
+        totalpointcount = totalpointcount + SCORECOUNTS.FIRSTBLOOD
         GAMEMODE.FirstBloodCheck = true
         SoundToSend = "firstblood"
+        hook.Call( "KillfeedFirstBlood", GAMEMODE, att )
     end
 
     --//Payback Check
     GAMEMODE.KillInfoTracking[ vicID ].LastKiller = attID
     if vicID == GAMEMODE.KillInfoTracking[ attID ].LastKiller then
         AddNotice( att, "PAYBACK", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA )
+        totalpointcount = totalpointcount + SCORECOUNTS.HEADSHOT
         GAMEMODE.KillInfoTracking[ attID ].LastKiller = ""
         SoundToSend = "payback"
+        hook.Call( "KillFeedPayback", GAMEMODE, att )
     end
 
     --//Vendetta Checks
@@ -125,22 +134,33 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --//When you're their vendetta, and kill them anyway
     if GAMEMODE.VendettaList[ vicID ].ActiveSaves[ attID ] then --and GAMEMODE.VendettaList[ vicID ][ attID ] > self:GetVendettaRequirement( vic ) then
         AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
+        totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION
         SoundToSend = "eradication"
+        hook.Call( "KillFeedHumiliator", GAMEMODE, att )
+        hook.Call( "KillFeedHumiliated", GAMEMODE, vic )
     --//When they're your vendetta
     elseif GAMEMODE.VendettaList[ attID ].ActiveSaves[ vicID ] then
         AddNotice( att, "RETRIBUTION", SCORECOUNTS.VENDETTA, NOTICETYPES.EXTRA )
+        totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA
         SoundToSend = "retribution"
+        hook.Call( "KillFeedRevenger", GAMEMODE, att )
     end
 
     --//Marksman Bonus Check
     shotDistance = math.Round(att:GetPos():Distance(vic:GetPos()) / 39) -- Converts to meters
     if vic:LastHitGroup() == HITGROUP_HEAD and shotDistance < 50 then
         AddNotice(att, "HEADSHOT", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.HEADSHOT
         SoundToSend = "headshot"
+        hook.Call( "KillFeedHeadshot", GAMEMODE, att )
     elseif shotDistance >= 50 and shotDistance < 100 and vic:LastHitGroup() == HITGROUP_HEAD then
         AddNotice(att, "BULLSYE", shotDistance, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.shotDistance
         AddNotice(att, "HEADSHOT", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.HEADSHOT
         SoundToSend = "bullseye"
+        hook.Call( "KillFeedHeadshot", GAMEMODE, att )
+        --//Longest Distance Headshot
         local data = att:GetPData("g_headshot")
         if not data then
             att:SetPData("g_headshot", shotDistance)
@@ -151,34 +171,48 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         end
     elseif shotDistance >= 50 and vic:LastHitGroup() ~= HITGROUP_HEAD then
         AddNotice(att, "EAGLE EYE", SCORECOUNTS.LONGSHOT, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.LONGSHOT
         SoundToSend = "eagleeye"
     elseif shotDistance >= 100 and vic:LastHitGroup() == HITGROUP_HEAD then
         AddNotice(att, "HEAD HUNTER", SCORECOUNTS.LONGSHOT, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.LONGSHOT
         AddNotice(att, "HEADSHOT", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.HEADSHOT
         SoundToSend = "headhunter"
+        hook.Call( "KillFeedHeadhunter", GAMEMODE, att )
     end
 
     --//Low Health Check
     if att:Health() <= 20 then
         AddNotice(att, "LOW HEALTH", SCORECOUNTS.LOW_HEALTH, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.LOW_HEALTH
+        hook.Call( "KillFeedLowHealth", GAMEMODE, att )
     end
     
     --//Flags Offense/Defense Check
     if tab[vic] ~= 0 then
         AddNotice(att, "FLAG ATTACK", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
+        hook.Call( "KillFeedFlagAttack", GAMEMODE, att )
     end
     if tab[att] ~= 0 then
         AddNotice(att, "FLAG DEFENSE", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
+        hook.Call( "KillFeedFlagDefend", GAMEMODE, att )
     end
     
     --//Afterlife Check
     if not att:Alive() then
         AddNotice(att, "AFTERLIFE", SCORECOUNTS.AFTERLIFE, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.AFTERLIFE
+        hook.Call( "KillFeedAfterlife", GAMEMODE, att )
     end
     
     --//End Game Kill Check
     if GetGlobalBool("RoundFinished") then
         AddNotice(att, "END GAME KILL", SCORECOUNTS.END_GAME, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.END_GAME
+        hook.Call( "KillFeedEGK", GAMEMODE, att )
     end
     
     --//Assist Shit
@@ -202,11 +236,12 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
 
                 attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
                 if attacker.AttFromAssist >= 400 then 
-                    attacker:ChatPrintColor( "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your attachment due to assists" )
+                    attacker:ChatPrintColor( Color( 0, 0, 0 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your attachment due to assists" )
                     UpdateAttKillTracking( attacker, attacker:GetActiveWeapon():GetClass() ) 
                     attacker.AttFromAssist = attacker.AttFromAssist - 400
                 end
 
+                hook.Call( "KillFeedAssist", GAMEMODE, att )
             end
         end
     end
@@ -215,10 +250,14 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --//Killspree & Killstreak End Check
     if GAMEMODE.KillInfoTracking[ vicID ].KillSpree >= 2 then --If the victim has reached a double kill, but hasn't timed the spree out yet
         AddNotice(att, "DENIED KILLSPREE", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.DENIED
         SoundToSend = "denied"
+        hook.Call( "KillFeedEndKillspree", GAMEMODE, att )
     elseif GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife >= 5 then --If the victim has hit a DOMINATING killstreak
         AddNotice(att, "REJECTED KILLSTREAK", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
+        totalpointcount = totalpointcount + SCORECOUNTS.DENIED
         SoundToSend = "rejected"
+        hook.Call( "KillFeedEndKillstreak", GAMEMODE, att )
     end
     GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife = 0
 
@@ -236,21 +275,27 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     if GAMEMODE.KillInfoTracking[ attID ].KillSpree > 1 then
         if GAMEMODE.KillInfoTracking[ attID ].KillSpree == 2 then
             AddNotice(att, "DOUBLE KILL", SCORECOUNTS.DOUBLE_KILL, NOTICETYPES.SPECIAL, Color( 200, 0, 0 ))
+            totalpointcount = totalpointcount + SCORECOUNTS.DOUBLE_KILL
             SoundToSend = "doublekill"
         elseif GAMEMODE.KillInfoTracking[ attID ].KillSpree == 3 then
             AddNotice(att, "MULTI KILL", SCORECOUNTS.MULTI_KILL, NOTICETYPES.SPECIAL, Color( 200, 0, 0 ))
+            totalpointcount = totalpointcount + SCORECOUNTS.MULTI_KILL
             SoundToSend = "multikill"
         elseif GAMEMODE.KillInfoTracking[ attID ].KillSpree == 4 then
             AddNotice(att, "MEGA KILL", SCORECOUNTS.MEGA_KILL, NOTICETYPES.SPECIAL, Color( 200, 0, 0 ))
+            totalpointcount = totalpointcount + SCORECOUNTS.MEGA_KILL
             SoundToSend = "megakill"
 		elseif GAMEMODE.KillInfoTracking[ attID ].KillSpree == 5 then
             AddNotice(att, "ULTRA KILL", SCORECOUNTS.ULTRA_KILL, NOTICETYPES.SPECIAL, Color( 200, 0, 0 ))
+            totalpointcount = totalpointcount + SCORECOUNTS.ULTRA_KILL
             SoundToSend = "ultrakill"
         elseif GAMEMODE.KillInfoTracking[ attID ].KillSpree >= 6 then
             sc = SCORECOUNTS.UNREAL_KILL_MULTIPLIER * (GAMEMODE.KillInfoTracking[ attID ].KillSpree - 6) + SCORECOUNTS.MULTI_KILL
             AddNotice(att, "UNREAL", sc, NOTICETYPES.SPECIAL, Color( 200, 0, 0 ))
+            totalpointcount = totalpointcount + sc
 			SoundToSend = "unreal"
         end
+        hook.Call( "KillFeedKillspree", GAMEMODE, att, SoundToSend )
         timer.Simple(0.1, function() 
             net.Start("tdm_killcountnotice")
                 net.WriteEntity(att)
@@ -274,8 +319,10 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
 
     local throwaway = GAMEMODE.KillInfoTracking[ attID ].KillsThisLife
     if KillstreakNotices[ throwaway ] then
-        AddNotice( att, KillstreakNotices[ throwaway ], SCORECOUNTS["KILLSTREAK".. throwaway ], NOTICETYPES.SPECIAL, Color( 200, 0, 0 ) )
+        AddNotice( att, KillstreakNotices[ throwaway ], SCORECOUNTS[ "KILLSTREAK".. throwaway ], NOTICETYPES.SPECIAL, Color( 200, 0, 0 ) )
+        totalpointcount = totalpointcount + SCORECOUNTS.SCORECOUNTS[ "KILLSTREAK" .. throwaway ]
         SoundToSend = KillstreakNotices[ throwaway ]
+        hook.Call( "KillFeedKillstreak", GAMEMODE, att, SoundToSend )
         for k, v in pairs( player.GetAll() ) do
             v:ChatPrint( att:Nick() .. " is on a " .. throwaway .. " killstreak!" )
         end
@@ -287,8 +334,11 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         net.Send( att )
     end
 
-    GAMEMODE:UpdateVendetta( vic, att )
+    if vip.Groups[ ply:GetUserGroup() ] then
+        AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA, )
+    end
 
+    GAMEMODE:UpdateVendetta( vic, att )
 end)
 
 GM.AssistTable = { }
@@ -302,4 +352,8 @@ hook.Add( "PlayerHurt", "CalculateAssists", function( victim, attacker, healthRe
         --//will be enough to warrant giving the attacker assist points anyway
         GAMEMODE.AssistTable[ vicID ][ attacker ] = ( GAMEMODE.AssistTable[ vicID ][ attacker ] or 0 ) + damageTaken
     end
-end)
+end )
+
+hook.Add( "", "CountHeadshots", function( ply ) 
+
+end )

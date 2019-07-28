@@ -239,7 +239,7 @@ function UpdateAttKillTracking( ply, wepclass )
 	local togive = {}
 	
 	for k, v in pairs( GAMEMODE.WeaponsList ) do
-		if wepclass = v[ 2 ] then
+		if wepclass == v[ 2 ] then
 			local masteryamount = GAMEMODE.MasteryRequirements[ v.type ] or 1000
 			if totalKills == masteryamount then
 				hook.Call( "WeaponMasteryAchieved", GAMEMODE, ply, wepclass )
@@ -252,14 +252,24 @@ function UpdateAttKillTracking( ply, wepclass )
 		if k == wepclass then
 			for k2, v2 in pairs( v ) do
 				--//If this new kill has a reaching a new attachment unlock...
-				if totalKills = v2[ 2 ] then
+				if totalKills == v2[ 2 ] then
 					togive[ #togive + 1 ] = v2[ 1 ]
 				end
 			end
 		end
 	end
 
-	if next(togive) ~= nil then CustomizableWeaponry.giveAttachments( ply, togive ) end
+	if next(togive) ~= nil then 
+		CustomizableWeaponry.giveAttachments( ply, togive ) 
+		local green = Color( 102, 255, 51 )
+		local white = Color( 255, 255, 255 )
+		local tab = {}
+		for k, v in pairs( togive ) do 
+			tab[ #tab + 1 ] = CustomizableWeaponry.registeredAttachmentsSKey[ v ].displayName
+			if k != #togive then tab[ #tab + 1 ] = "," end
+		end
+		ply:ChatPrintColor( white, "You have unlocked ", green, tab, white, " for reaching ", green, ply:GetPData( wepclass ), white, " kills with the ", white, RetrieveWeaponName( wepclass ), "." )
+	end
 end
 
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )

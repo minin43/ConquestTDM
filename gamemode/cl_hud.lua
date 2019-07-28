@@ -378,7 +378,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( colorScheme[0]["GamemodeVersionText"] )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( GAMEMODE.Version .. " Release 071919" )
+	surface.DrawText( GAMEMODE.Version .. " Release 060219" )
 end )
 
 --//Draws the damage indicator 

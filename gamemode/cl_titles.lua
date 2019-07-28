@@ -1,14 +1,18 @@
 --//Normally I do setup files for menus, but I think this'll be simple enough I shouldn't need to bother with it.
 
+surface.CreateFont( "TitleTitle" , { font = "Exo 2", size = 24, weight = 400 } )
+surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 500 } )
+surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 12, weight = 400 } )
+
 function GM:OpenTitles()
     if self.TitleMain and self.TitleMain:IsValid() then return end
 
     self.TitleMain = vgui.Create( "DFrame" )
-    self.TitleMain:SetSize( 450, 300 )
+    self.TitleMain:SetSize( 600, 500 )
 	self.TitleMain:SetTitle( "" )
 	self.TitleMain:SetVisible( true )
 	self.TitleMain:SetDraggable( false )
-	--self.TitleMain:ShowCloseButton( false )
+	self.TitleMain:ShowCloseButton( false )
 	self.TitleMain:Center()
 	self.TitleMain:MakePopup()
 	self.TitleMain.Think = function()
@@ -27,19 +31,105 @@ function GM:OpenTitles()
 
 		surface.SetDrawColor( Color( 255, 255, 255 ) )
 		surface.DrawRect( 0, self.TitleMainTitleBar, self.TitleMain:GetWide(), self.TitleMain:GetTall() )
+
+        surface.SetDrawColor( self.TeamColor )
+        surface.DrawLine( self.TitleMain:GetWide() / 2, self.TitleMainTitleBar + 4, self.TitleMain:GetWide() / 2, self.TitleMain:GetTall() - 4 )
+    
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.SetDrawColor( 0, 0, 0, 164 )
+        surface.DrawTexturedRectRotated( self.TitleMain:GetWide() / 2, self.TitleMainTitleBar + 4, 8, self.TitleMain:GetWide(), 270 )
+    end
+
+    local back = vgui.Create( "DButton", self.TitleMain )
+    back:SetSize( 40, 40 )
+    back:SetPos( 8, 8 )
+    back:SetText( "" )
+    back.DoClick = function()
+        self.TitleMain:Close()
+        GAMEMODE:MenuMain()
+    end
+    back.Paint = function()
+        if back.hover then
+            surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
+        else
+            surface.SetDrawColor( 0, 0, 0, 220 )
+        end
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
+    end
+    back.OnCursorEntered = function()
+        back.hover = true
+    end
+    back.OnCursorExited = function()
+        back.hover = false
+    end
+
+    local close = vgui.Create( "DButton", self.TitleMain )
+    close:SetSize( 40, 40 )
+    close:SetPos( self.TitleMain:GetWide() - 8 - close:GetWide(), 8 )
+    close:SetText( "" )
+    close.DoClick = function()
+        self.TitleMain:Close()
+    end
+    close.Paint = function()
+        if close.hover then
+            surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
+        else
+            surface.SetDrawColor( 0, 0, 0, 220 )
+        end
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.DrawTexturedRect( 0, 0, close:GetWide(), close:GetTall() )
+    end
+    close.OnCursorEntered = function()
+        close.hover = true
+    end
+    close.OnCursorExited = function()
+        close.hover = false
     end
 
     self.TitleUnlockedList = vgui.Create( "DScrollPanel", self.TitleMain )
-    self.TitleUnlockedList:SetPos( 0, self.TitleMainTitleBar )
-    self.TitleUnlockedList:SetSize( self.TitleMain:GetWide() / 2, self.TitleMain:GetTall() - self.TitleMainTitleBar )
+    self.TitleUnlockedList:SetPos( 2, self.TitleMainTitleBar )
+    self.TitleUnlockedList:SetSize( self.TitleMain:GetWide() / 2 - 4, self.TitleMain:GetTall() - self.TitleMainTitleBar )
 
-    self.TitleUnlockedList = vgui.Create( "DScrollPanel", self.TitleMain )
-    self.TitleUnlockedList:SetPos( 0, self.TitleMainTitleBar )
-    self.TitleUnlockedList:SetSize( self.TitleMain:GetWide() / 2, self.TitleMain:GetTall() - self.TitleMainTitleBar )
+    self.TitleLockedList = vgui.Create( "DScrollPanel", self.TitleMain )
+    self.TitleLockedList:SetPos( self.TitleMain:GetWide() / 2 + 2, self.TitleMainTitleBar )
+    self.TitleLockedList:SetSize( self.TitleMain:GetWide() / 2 - 4, self.TitleMain:GetTall() - self.TitleMainTitleBar )
 
-    --//Bad programming habbit to get into, this below
+    local ScrollBar = self.TitleUnlockedList:GetVBar()
+	ScrollBar.Paint = function() end
+	ScrollBar.btnUp.Paint = function() end
+	ScrollBar.btnDown.Paint = function() end
+	function ScrollBar.btnGrip:Paint( w, h )
+		draw.RoundedBox( 4, 7, 0, w / 2, h, Color( 0, 0, 0, 128 ) )
+	end
+
+    ScrollBar = self.TitleLockedList:GetVBar()
+	ScrollBar.Paint = function() end
+	ScrollBar.btnUp.Paint = function() end
+	ScrollBar.btnDown.Paint = function() end
+	function ScrollBar.btnGrip:Paint( w, h )
+		draw.RoundedBox( 4, 7, 0, w / 2, h, Color( 0, 0, 0, 128 ) )
+	end
+
+    --//Bad programming habbit to get into, doing this below, these should be custom elements. Laziness just prevails
     local function SetupLists()
         for k, v in pairs( self.UnlockedTitles ) do
+            if k == 1 then
+                local titlepanel = vgui.Create( "DPanel", self.TitleLockedList )
+                titlepanel:SetSize( self.TitleLockedList:GetWide(), 32 )
+                titlepanel:Dock( TOP )
+                titlepanel.Paint = function()
+                    surface.SetTextColor( GAMEMODE.TeamColor )
+                    surface.SetFont( "TitleTitle" )
+                    local wide, tall = surface.GetTextSize("UNLOCKED TITLES")
+                    surface.SetTextPos( titlepanel:GetWide() / 2 - ( wide / 2 ), titlepanel:GetTall() / 2 - ( tall / 2 ) )
+                    surface.DrawText( "UNLOCKED TITLES" )
+
+                    surface.SetDrawColor( GAMEMODE.TeamColor )
+                    surface.DrawLine( titlepanel:GetWide() / 2 - ( wide / 2 ) - 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2, titlepanel:GetWide() / 2 + ( wide / 2 ) + 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2 )
+                end
+            end
+
             local pan = vgui.Create( "DPanel", self.TitleUnlockedList )
             pan:SetSize( self.TitleUnlockedList:GetWide(), 50 )
             pan:Dock( TOP )
@@ -50,12 +140,11 @@ function GM:OpenTitles()
                     pan.equipped = false
                 end
             end
-            surface.CreateFont( "TitleTitle" , { font = "Exo 2", size = 24, weight = 400 } )
-            surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 400 } )
             pan.Paint = function()
                 if pan.equipped then
                     --//Icon should be sized 32, 8 space buffer
                 end
+                surface.SetTextColor( GAMEMODE.TeamColor )
                 surface.SetFont( "TitleTitle" )
                 surface.SetTextPos( 48, 4 )
                 surface.DrawText( v.title )
@@ -94,23 +183,72 @@ function GM:OpenTitles()
                 but.hover = false
             end
         end
+        if #self.UnlockedTitles == 0 then
+            local nothinghere = vgui.Create( "DPanel", self.TitleUnlockedList )
+            nothinghere:SetSize( self.TitleUnlockedList:GetWide(), 32 )
+            nothinghere:SetPos( 0, self.TitleUnlockedList:GetTall() / 2 - ( nothinghere:GetTall() / 2 ) )
+            nothinghere.Paint = function()
+                surface.SetTextColor( GAMEMODE.TeamColor )
+                surface.SetFont( "TitleTitle" )
+                local wide, tall = surface.GetTextSize("NOTHING HERE")
+                surface.SetTextPos( nothinghere:GetWide() / 2 - ( wide / 2 ), nothinghere:GetTall() / 2 - ( tall / 2 ) )
+                surface.DrawText( "NOTHING HERE" )
+            end
+        end
 
         for k, v in pairs( self.LockedTitles ) do
-            local pan = vgui.Create( "DPanel", self.TitleUnlockedList )
-            pan:SetSize( self.TitleUnlockedList:GetWide(), 50 )
+            if k == 1 then
+                local titlepanel = vgui.Create( "DPanel", self.TitleLockedList )
+                titlepanel:SetSize( self.TitleLockedList:GetWide(), 32 )
+                titlepanel:Dock( TOP )
+                titlepanel.Paint = function()
+                    surface.SetTextColor( GAMEMODE.TeamColor )
+                    surface.SetFont( "TitleTitle" )
+                    local wide, tall = surface.GetTextSize("LOCKED TITLES")
+                    surface.SetTextPos( titlepanel:GetWide() / 2 - ( wide / 2 ), titlepanel:GetTall() / 2 - ( tall / 2 ) )
+                    surface.DrawText( "LOCKED TITLES" )
+                    
+                    surface.SetDrawColor( GAMEMODE.TeamColor )
+                    surface.DrawLine( titlepanel:GetWide() / 2 - ( wide / 2 ) - 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2, titlepanel:GetWide() / 2 + ( wide / 2 ) + 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2 )
+                end
+            end
+
+            local pan = vgui.Create( "DPanel", self.TitleLockedList )
+            local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() )
+            local tall = markupobj:GetHeight()
+            pan:SetSize( self.TitleLockedList:GetWide(), 56 + tall )
             pan:Dock( TOP )
             pan.Paint = function()
+                surface.SetTextColor( GAMEMODE.TeamColor )
                 surface.SetFont( "TitleTitle" )
                 surface.SetTextPos( 8, 4 )
                 surface.DrawText( v.title )
 
+                --[[surface.SetFont( "DescTitle" )
+                surface.SetTextPos( 12, pan:GetTall() - 4 - 16 - 2 - 14 )
+                surface.DrawText( v.description .. "." )]]
+                markupobj:Draw( 12, 4 + 24 + 4, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+
                 surface.SetFont( "SubTitleTitle" )
                 surface.SetTextPos( 16, pan:GetTall() - 4 - 16 )
                 surface.DrawText( v.cur .. " of " .. v.req .. "." )
+
                 surface.SetDrawColor( self.TeamColor )
                 local wide = surface.GetTextSize( v.cur .. " of " .. v.req .. "." )
                 surface.DrawOutlinedRect( 16 + wide + 8, pan:GetTall() - 4 - 16, pan:GetWide() - 16 - wide - 16, 16 )
                 surface.DrawRect( 16 + wide + 8, pan:GetTall() - 4 - 16, math.Clamp( v.cur / v.req, 0, 1) * ( pan:GetWide() - 16 - wide - 16 ), 16 )
+            end
+        end
+        if #self.LockedTitles == 0 then
+            local nothinghere = vgui.Create( "DPanel", self.TitleLockedList )
+            nothinghere:SetSize( self.TitleLockedList:GetWide(), 32 )
+            nothinghere:SetPos( 0, self.TitleLockedList:GetTall() / 2 - ( nothinghere:GetTall() / 2 ) )
+            nothinghere.Paint = function()
+                surface.SetTextColor( GAMEMODE.TeamColor )
+                surface.SetFont( "TitleTitle" )
+                local wide, tall = surface.GetTextSize("NOTHING HERE")
+                surface.SetTextPos( nothinghere:GetWide() / 2 - ( wide / 2 ), nothinghere:GetTall() / 2 - ( tall / 2 ) )
+                surface.DrawText( "NOTHING HERE" )
             end
         end
     end

@@ -50,11 +50,12 @@ else
 			fil[ k ] = { }
 		end
 	end
+end
 
 function vip.SetVip( ply, group )
 
 end
 
 hook.Add( "PlayerInitialSpawn", "SetUserGroup", function( ply )
-	fil = 
+	--fil = 
 end )

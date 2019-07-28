@@ -78,14 +78,21 @@ GM.Icons = {
 		
 	},
 	Mapvote = { --//Any icons for the tags found in MapTable
-		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.Sniper
+		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.sr
 		flags = Material( "vgui/flagIcon.png", "smooth" )
     },
     Menu = {
         moneylocked = Material( "vgui/money_locked.png", "smooth" ),
         moneyunlocked = Material( "vgui/money_unlocked.png", "smooth" ),
         levellocked = Material( "vgui/level_locked.png", "smooth" ),
-        levelunlocked = Material( "vgui/level_unlocked.png", "smooth" )
+        levelunlocked = Material( "vgui/level_unlocked.png", "smooth" ),
+		shopIcon = Material( "vgui/shopIcon.png", "noclamp smooth" ),
+		loadoutIcon = Material( "vgui/backpackIcon.png", "noclamp smooth" ),
+		teamChangeIcon = Material( "vgui/two-shadowsIcon.png", "noclamp smooth" ),
+		cancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" ),
+		titleIcon = Material( "vgui/", "noclamp smooth" ),
+		helpIcon = Material( "vgui/", "noclamp smooth" ),
+		backIcon = Material( "vgui/", "noclamp smooth" )
     }
 }
 
@@ -141,17 +148,23 @@ hook.Add( "Think", "SetColors", function()
 	end
 end )
 
+--//This function opens up the initial menu for selecting teams, the net.Start can be found in shared.lua
 net.Receive( "RequestTeamsCallback", function()
 	GAMEMODE.ReceivedTeams = true
 	GAMEMODE.redTeamName = net.ReadString()
 	GAMEMODE.blueTeamName = net.ReadString()
+	local firstJoin = net.ReadBool()
 
 	team.SetUp( 0, "Spectators", Color( 0, 0, 0 ) )
 	team.SetUp( 1, GAMEMODE.redTeamName, Color( 255, 0, 0 ) )
 	team.SetUp( 2, GAMEMODE.blueTeamName, Color( 0, 0, 255 ) )
 	team.SetUp( 3, "deathSelf", Color( 158, 253, 56 ) )
 
-	LocalPlayer():ConCommand( "tdm_spawnmenu" )
+	if firstJoin then
+		GAMEMODE:OpenHelp( true )
+	else
+		LocalPlayer():ConCommand( "tdm_spawnmenu" )
+	end
 end )
 
 net.Receive( "GlobalChatColor", function()

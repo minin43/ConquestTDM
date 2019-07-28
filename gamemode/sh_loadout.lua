@@ -58,3 +58,14 @@ GM.WeaponsList = {
     Pyromancer -Misc		- 46
     Lifeline -Misc	        - 50
 ]]
+
+if SERVER then
+	function RetrieveWeaponName( wepclass )
+		for k, v in pairs( GAMEMODE.WeaponsList ) do
+			if v[ 2 ] == wepclass then
+				return v[ 1 ]
+			end
+		end
+		return nil
+	end
+end

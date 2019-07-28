@@ -23,7 +23,7 @@ function GM:OpenShop()
 	self.ShopMain:SetTitle( "" )
 	self.ShopMain:SetVisible( true )
 	self.ShopMain:SetDraggable( false )
-	--self.ShopMain:ShowCloseButton( false )
+	self.ShopMain:ShowCloseButton( false )
 	self.ShopMain:Center()
 	self.ShopMain:MakePopup()
 	self.ShopMain.Think = function()
@@ -64,6 +64,53 @@ function GM:OpenShop()
         surface.SetDrawColor( 0, 0, 0, 164 )
         surface.DrawTexturedRectRotated( self.ShopMain:GetWide() / 2, self.ShopMain:GetTall() - 4, 8, self.ShopMain:GetWide(), 90 )
     end
+
+    local back = vgui.Create( "DButton", self.ShopMain )
+    back:SetSize( 40, 40 )
+    back:SetPos( 8, 8 )
+    back:SetText( "" )
+    back.DoClick = function()
+        self.ShopMain:Close()
+        GAMEMODE:MenuMain()
+    end
+    back.Paint = function()
+        if back.hover then
+            surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
+        else
+            surface.SetDrawColor( 0, 0, 0, 220 )
+        end
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
+    end
+    back.OnCursorEntered = function()
+        back.hover = true
+    end
+    back.OnCursorExited = function()
+        back.hover = false
+    end
+
+    local close = vgui.Create( "DButton", self.ShopMain )
+    close:SetSize( 40, 40 )
+    close:SetPos( self.ShopMain:GetWide() - 8 - close:GetWide(), 8 )
+    close:SetText( "" )
+    close.DoClick = function()
+        self.ShopMain:Close()
+    end
+    close.Paint = function()
+        if close.hover then
+            surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
+        else
+            surface.SetDrawColor( 0, 0, 0, 220 )
+        end
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.DrawTexturedRect( 0, 0, close:GetWide(), close:GetTall() )
+    end
+    close.OnCursorEntered = function()
+        close.hover = true
+    end
+    close.OnCursorExited = function()
+        close.hover = false
+    end
     
     self.ShopParentSheet = vgui.Create( "DPropertySheet", self.ShopMain )
     self.ShopParentSheet:SetPos( -8, self.ShopMainTitleBar + 20 )
@@ -87,9 +134,10 @@ function GM:OpenShop()
     self.ShopSkinsSheet = vgui.Create( "SkinsShopPanel", self.ShopParentSheet )
     self.ShopSkinsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
     self.ShopSkinsSheet:SetPos( 0, 0 )
-    --[[self.ShopSkinsSheet.Paint = function()
-        draw.RoundedBox( 8, 0, 0, self.ShopSkinsSheet:GetWide(), self.ShopSkinsSheet:GetTall(), Color( 0, 255, 0 ) )
-    end]]
+    self.ShopSkinsSheet.Paint = function()
+        draw.SimpleText( "UNDER CONSTRUCTION", "ExoTitleFont", self.ShopSkinsSheet:GetWide() / 2, self.ShopSkinsSheet:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        --draw.RoundedBox( 8, 0, 0, self.ShopSkinsSheet:GetWide(), self.ShopSkinsSheet:GetTall(), Color( 0, 255, 0 ) )
+    end
     local ShopSheetTable = self.ShopParentSheet:AddSheet( "Skins", self.ShopSkinsSheet )
 
     self.ShoSkinsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
@@ -105,10 +153,10 @@ function GM:OpenShop()
     self.ShopModelsSheet:SetPos( 0, 0 )
     self.ShopModelsSheet.Paint = function()
         --draw.RoundedBox( 8, 0, 0, self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall(), Color( 0, 0, 255 ) )
-        surface.SetDrawColor( Color( 0, 0, 255 ) )
-        surface.DrawRect( 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall() )
+        --surface.SetDrawColor( Color( 0, 0, 255 ) )
+        --surface.DrawRect( 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall() )
+        draw.SimpleText( "UNDER CONSTRUCTION", "ExoTitleFont", self.ShopModelsSheet:GetWide() / 2, self.ShopModelsSheet:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
-    print( self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall() )
     local ModelSheetTable = self.ShopParentSheet:AddSheet( "Playermodels", self.ShopModelsSheet )
 
     self.ShopModelsButton = vgui.Create( "PropertySheetButton", self.ShopMain )

@@ -149,6 +149,7 @@ util.AddNetworkString( "DoStart" )
 util.AddNetworkString( "StartAttTrack" )
 util.AddNetworkString( "GlobalChatColor" )
 util.AddNetworkString( "PlayerChatColor" )
+util.AddNetworkString( "AcceptedHelp" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
@@ -177,6 +178,21 @@ end
 
 if not file.Exists( "tdm/cheaters", "DATA" ) then
 	file.CreateDir( "tdm/cheaters" )
+end
+
+if not file.Exists( "tdm/users/extra", "DATA" ) then
+	file.CreateDir( "tdm/users/extra" )
+end
+
+if not file.Exists( "tdm/users/extra/helpmenu.txt", "DATA" ) then
+	file.Write( "tdm/users/extra/helpmenu.txt", util.TableToJSON( {} ) )
+	GM.AcceptedHelp = {}
+else
+	GM.AcceptedHelp = {}
+	local tab = util.JSONToTable( file.Read( "tdm/users/extra/helpmenu.txt" ) )
+	for k, v in pairs( tab ) do
+		GM.AcceptedHelp[ v ] = true
+	end
 end
 
 local color_red = Color( 255, 0, 0 )
@@ -358,9 +374,7 @@ function GM:Initialize()
 end
 
 function GM:PlayerConnect( name, ip )
-	for k, v in pairs( player.GetAll() ) do
-		v:ChatPrint( "Player " .. name .. " has begun connection to the server." )
-	end
+	GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", Color( 76, 175, 80 ), name, Color( 255, 255, 255 ), " has begun connection to the server." )
 end
 
 function GM:ShowHelp( ply )
@@ -399,6 +413,8 @@ end
 
 
 function GM:PlayerInitialSpawn( ply )
+	--//If you're looking for any logic related to finishing loading in, what little code there is can be found in shared.lua in the "if SERVER then" chunk
+	--//In the net.Receive for "RequestTeams." The server receives this net message as soon as the client has fully loaded in, as the spawnmenu requires it.
 	if not file.Exists( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
 		file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), {} } ) )
 	else
@@ -447,7 +463,12 @@ function GM:PlayerInitialSpawn( ply )
 
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
-	--ply:ConCommand( "tdm_spawnmenu" ) --//Only called on initial spawn
+	--//Opening menu has been moved to a net.Receive in cl_init, now opens a special menu dependent on player's team (which is why it was necessary for it to be rewritten how it is)
+	--ply:ConCommand( "tdm_spawnmenu" )
+
+	if not self.AcceptedHelp[ id( ply:SteamID() ) ] then
+		self.AcceptedHelp[ id( ply:SteamID() ) ] = false
+	end
 
 	self.PerkTracking[ id( ply:SteamID() ) ] = {}
 	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
@@ -503,9 +524,8 @@ timer.Create( "Tickets", 5, 0, function()
 end )
 
 function GM:PlayerDisconnected( ply )
-	for k, v in pairs( player.GetAll() ) do
-		v:ChatPrint( "Player " .. ply:Nick() .. " has disconnected (" .. ply:SteamID() .. ")." )
-	end
+	GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", Color( 76, 175, 80 ), ply:Nick(), Color( 255, 255, 255 ), " has disconnected (SteamID: ", ply:SteamID(), ")." )
+	print( ply:Nick(), " disconnected ", ply:SteamID(), ply:SteamID64() )
 end
 
 function GM:PlayerShouldTakeDamage( ply, attacker )
@@ -867,3 +887,10 @@ end )
 		ply:SetHealth( ply:Health() - dmg )
 	end
 end )]]
+
+net.Receive( "AcceptedHelp", function( len, ply )
+	GAMEMODE.AcceptedHelp[ id( ply:SteamID() ) ] = true
+	local fil = util.JSONToTable( file.Read( "tdm/users/extra/helpmenu.txt" ) )
+	fil[ #fil + 1 ] = id( ply:SteamID() )
+	file.Write( "tdm/users/extra/helpmenu.txt", util.TableToJSON( fil ) )
+end )

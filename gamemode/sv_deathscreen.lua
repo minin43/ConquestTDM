@@ -91,6 +91,8 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 		wasVendetta = true
 	end
 
+	local title = GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] or ""
+
 	--//Flavor timer
 	timer.Simple( 1.5, function()
 		ply.num = 3
@@ -104,6 +106,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 			umsg.String( wepused )
 			umsg.String( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
 			umsg.String( damagedone )
+			umsg.String( title )
 			umsg.Bool( wasVendetta )
 		umsg.End()
 		

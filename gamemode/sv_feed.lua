@@ -335,7 +335,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     end
 
     if vip.Groups[ ply:GetUserGroup() ] then
-        AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA, )
+        AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA )
     end
 
     GAMEMODE:UpdateVendetta( vic, att )

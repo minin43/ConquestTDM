@@ -42,6 +42,39 @@ timer.Create( "tdm_timerecord", 60, 0, function()
 			else
 				local num = tonumber( v:GetPData( "g_time" ) )
 				v:SetPData( "g_time", tostring( num + 1 ) )
+
+				local tab = GAMEMODE:GetTitleTable( "freshmeat" )
+				if v:GetPData( "g_time" ) == tab.req then
+					GAMEMODE:GivePlayerTitle( v, tab.id )
+				elseif v:GetPData( "g_time" ) > tab.req then
+					if not GAMEMODE:CheckTitleOwnership( v, tab.id ) then
+						GAMEMODE:GivePlayerTitle( v, tab.id )
+					end
+				end
+				local tab = GAMEMODE:GetTitleTable( "commfriend" ) --//CommunistFriend, obviously what this means
+				if v:GetPData( "g_time" ) == tab.req then
+					GAMEMODE:GivePlayerTitle( v, tab.id )
+				elseif v:GetPData( "g_time" ) > tab.req then
+					if not GAMEMODE:CheckTitleOwnership( v, tab.id ) then
+						GAMEMODE:GivePlayerTitle( v, tab.id )
+					end
+				end
+				local tab = GAMEMODE:GetTitleTable( "veteran" )
+				if v:GetPData( "g_time" ) == tab.req then
+					GAMEMODE:GivePlayerTitle( v, tab.id )
+				elseif v:GetPData( "g_time" ) > tab.req then
+					if not GAMEMODE:CheckTitleOwnership( v, tab.id ) then
+						GAMEMODE:GivePlayerTitle( v, tab.id )
+					end
+				end
+				local tab = GAMEMODE:GetTitleTable( "nolife" )
+				if v:GetPData( "g_time" ) == tab.req then
+					GAMEMODE:GivePlayerTitle( v, tab.id )
+				elseif v:GetPData( "g_time" ) > tab.req then
+					if not GAMEMODE:CheckTitleOwnership( v, tab.id ) then
+						GAMEMODE:GivePlayerTitle( v, tab.id )
+					end
+				end
 			end
 		end
 	end

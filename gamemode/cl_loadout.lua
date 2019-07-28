@@ -1809,16 +1809,9 @@ GM.playerLevel = 1
 GM.playerMoney = 0
 GM.playerRank = 0
 
-GM.ShopIcon = Material( "vgui/shopIcon.png", "noclamp smooth" )
-GM.LoadoutIcon = Material( "vgui/backpackIcon.png", "noclamp smooth" )
-GM.TeamChangeIcon = Material( "vgui/two-shadowsIcon.png", "noclamp smooth" )
-GM.CancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" )
-GM.TitleIcon = Material( "", "noclamp smooth" )
-GM.HelpIcon = Material( "", "noclamp smooth" )
-
 GM.FirstLoadout = true
 function GM:MenuMain()
-	if (self.ChooseMain and self.ChooseMain:IsValid()) or (main and main:IsValid() ) or (self.LoadoutMain and self.LoadoutMain:IsValid()) or (self.ShopMain and self.ShopMain:IsValid()) then
+	if (self.ChooseMain and self.ChooseMain:IsValid()) or (main and main:IsValid() ) or (self.LoadoutMain and self.LoadoutMain:IsValid()) or (self.ShopMain and self.ShopMain:IsValid()) or (self.HelpMain and self.HelpMain:IsValid()) or (self.TitleMain and self.TitleMain:IsValid()) then
 		return
 	end
 
@@ -1846,7 +1839,7 @@ function GM:MenuMain()
 	self.ChooseLoadout:SetPos( 0, self.ChooseMainTitleBar )
 	self.ChooseLoadout:SetText( "Loadout" )
 	self.ChooseLoadout:SetFont( "ExoInfoFont" )
-	self.ChooseLoadout:SetIcon( GAMEMODE.LoadoutIcon )
+	self.ChooseLoadout:SetIcon( GAMEMODE.Icons.Menu.loadoutIcon )
 	if LocalPlayer():Team() == 0 then self.ChooseLoadout:Disable( true ) end
 	self.ChooseLoadout.DoClick = function()
 		if self.ChooseLoadout.Disabled then return end
@@ -1861,7 +1854,7 @@ function GM:MenuMain()
 	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 6, self.ChooseMainTitleBar )
 	self.ChooseShop:SetText( "Shop" )
 	self.ChooseShop:SetFont( "ExoInfoFont" )
-	self.ChooseShop:SetIcon( GAMEMODE.ShopIcon )
+	self.ChooseShop:SetIcon( GAMEMODE.Icons.Menu.shopIcon )
 	--self.ChooseShop:Disable( true ) --to be removed when shop is finished
 	self.ChooseShop.DoClick = function()
 		if self.ChooseShop.Disabled then return end --Always returns true, to be removed when shop is finished
@@ -1875,7 +1868,7 @@ function GM:MenuMain()
 	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 6 * 2, self.ChooseMainTitleBar )
 	self.ChooseTeam:SetText( "Change\nTeams" )
 	self.ChooseTeam:SetFont( "ExoInfoFont" )
-	self.ChooseTeam:SetIcon( GAMEMODE.TeamChangeIcon )
+	self.ChooseTeam:SetIcon( GAMEMODE.Icons.Menu.teamChangeIcon )
 	self.ChooseTeam.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
@@ -1885,25 +1878,26 @@ function GM:MenuMain()
 	self.ChooseTag = vgui.Create( "ChooseMainButton", self.ChooseMain )
 	self.ChooseTag:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
 	self.ChooseTag:SetPos( self.ChooseMain:GetWide() / 6 * 3, self.ChooseMainTitleBar )
-	self.ChooseTag:SetText( "Titles" )
+	self.ChooseTag:SetText( "Achievement\nTitles" )
 	self.ChooseTag:SetFont( "ExoInfoFont" )
-	self.ChooseTag:SetIcon( GAMEMODE.TitleIcon )
+	self.ChooseTag:SetIcon( GAMEMODE.Icons.Menu.titleIcon )
 	self.ChooseTag.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
-		self:OpenTitles()
+		GAMEMODE:OpenTitles()
 	end
 
 	self.ChooseHelp = vgui.Create( "ChooseMainButton", self.ChooseMain )
 	self.ChooseHelp:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
 	self.ChooseHelp:SetPos( self.ChooseMain:GetWide() / 6 * 4, self.ChooseMainTitleBar )
-	self.ChooseHelp:SetText( "Titles" )
+	self.ChooseHelp:SetText( "Help" )
 	self.ChooseHelp:SetFont( "ExoInfoFont" )
-	self.ChooseHelp:SetIcon( GAMEMODE.HelpIcon )
+	self.ChooseHelp:SetIcon( GAMEMODE.Icons.Menu.helpIcon )
+	--self.ChooseHelp:Disable( true )
 	self.ChooseHelp.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
-		self:OpenHelp()
+		GAMEMODE:OpenHelp()
 	end
 
 	self.ChooseCancel = vgui.Create( "ChooseMainButton", self.ChooseMain )
@@ -1911,7 +1905,7 @@ function GM:MenuMain()
 	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 6 * 5, self.ChooseMainTitleBar )
 	self.ChooseCancel:SetText( "Cancel" )
 	self.ChooseCancel:SetFont( "ExoInfoFont" )
-	self.ChooseCancel:SetIcon( GAMEMODE.CancelIcon )
+	self.ChooseCancel:SetIcon( GAMEMODE.Icons.Menu.cancelIcon )
 	self.ChooseCancel.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?

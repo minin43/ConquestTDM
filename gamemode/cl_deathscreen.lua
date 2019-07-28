@@ -41,6 +41,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	local wep = um:ReadString() --weapon used
 	local killstreak = um:ReadString() --Killstreak
 	local damagedone = um:ReadString() --Damage you did to attacker their & your life
+	local title = um:ReadString()
 	local wasVendetta = um:ReadBool() --If your killer was vendetta'd against you
 	local Vendetta = false --For when your killer becomes your vendetta
 	
@@ -57,7 +58,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	GAMEMODE.VendettaList = GAMEMODE.VendettaList or { }
 	
 	Main = vgui.Create( "DFrame" )
-	Main:SetSize( 750, 125 )
+	Main:SetSize( 775, 125 )
 	Main:Center()
 	Main:SetTitle( "" )
 	Main:ShowCloseButton( false )
@@ -97,7 +98,11 @@ usermessage.Hook( "DeathScreen", function( um )
 		name:SetText( "World" )
 	else
 		if att and att:IsPlayer() and att:Name() and vic != att then
-			name:SetText( att:Name() )
+			if title == "" then
+				name:SetText( att:Name() )
+			else
+				name:SetText( "[" .. GAMEMODE:GetTitleTable( title ) .. "] " .. att:Name() )
+			end
 		elseif vic == att then
 			name:SetText( "Yourself")
 		else

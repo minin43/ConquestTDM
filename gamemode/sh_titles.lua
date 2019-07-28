@@ -1,10 +1,14 @@
 --//UNDER NO CIRCUMSTANCES ARE THE ID'S TO BE CHANGED EVER - THEY ARE UNIQUE TO THE TITLE AND USED INTERNALLY
 --//ONCE THE GAMEMODE HAS GONE LIVE WITH NEW TITLES, A CHANGE IN ID CAUSES PLAYERS TO LOSE ALL PROGRESS
 GM.TitleMasterTable = {
+    { id = "freshmeat", title = "Fresh Meat", description = "Play on the server for 10 minutes", req = 10 },
+    { id = "commfriend", title = "Community Friend", description = "Play on the server for 10 hours", req = 600 },
+    { id = "veteran", title = "The Veteran", description = "Play on the server for 20 hours", req = 1200 },
+    { id = "nolife", title = "The No-Life", description = "Play on the server for 50 hours", req = 6000 },
     { id = "2fer", title = "The Two-fer", description = "Achieve \"Double Kill\" (2 kill killspree) 30 times", req = 30 },
-    { id = "3threat", title = "The Triple Threat", description = "Achieve \"Multi kill\" (3 kill killlspree) 20 times", req = 20 },
+    { id = "3threat", title = "The Triple Threat", description = "Achieve \"Multi Kill\" (3 kill killlspree) 20 times", req = 20 },
     { id = "4killer", title = "The Quad Killer", description = "Achieve \"Mega Kill\" (4 kill killspree) 15 times", req = 15 },
-    { id = "5", id = "", title = "", description = "Achieve \"Ultra Kill\" (5 kill killspree) 10 times", req = 10 },
+    { id = "5up", title = "The Pent-Up", description = "Achieve \"Ultra Kill\" (5 kill killspree) 10 times", req = 10 },
     { id = "thegod", title = "The God", description = "Achieve \"Unreal\" (6 kill killspree) 10 times", req = 10 },
     { id = "thedominator", title = "The Dominator", description = "Achieve \"Dominating\" (5 kill killstreak) 10 times", req = 10 },
     { id = "bog", title = "Blaze of Glory", description = "Achieve \"Blaze Of Glory\" (10 kill killstreak) 5 times", req = 5 },
@@ -51,7 +55,7 @@ if SERVER then
         net.Receive( v.id .. "Status", function ( len, ply )
             net.Start( v.id .. "StatusCallback" )
                 net.WriteInt( ply:GetPData( v.id .. "count" ), 16 )
-            net.Sent( ply )
+            net.Send( ply )
         end )
     end
 end
@@ -60,5 +64,5 @@ function GM:GetTitleTable( str )
     for k, v in pairs( self.TitleMasterTable ) do
         if v.id == str then return v end
     end
-    Error( "GetTitleTable called with invalid title ID" )
+    Error( "GetTitleTable called with invalid title ID: " .. str )
 end

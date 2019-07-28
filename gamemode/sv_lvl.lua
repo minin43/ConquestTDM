@@ -131,17 +131,10 @@ hook.Add( "PlayerInitialSpawn", "lvl.SendInitialLevel", function( ply )
 end )
 	
 hook.Add( "lvl.OnLevelUp", "lvl.OnLevelUp", function( ply, newlv )
-	if lvl.GetLevel( ply ) >= 100 then
-		GlobalChatPrintColor( color_green, ply:Nick(), color_white, " leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
-		for k, v in next, player.GetAll() do
-			v:SendLua([[surface.PlaySound( "ui/UX_InGame_Unlock_Promotion_Wave.mp3" )]])
-		end
-	else
-		ply:ChatPrintColor( color_green, "You ", color_white, "leveled up to ", color_green, "Level " .. tostring( newlv ), color_white, "." )
-		ply:SendLua([[surface.PlaySound( "ui/UI_Awards_Basic_wav.mp3" )]])
-	end
+	ply:ChatPrintColor( "You have leveled up to ", color_green, "level " .. tostring( newlv ), color_white )--, ". You unlocked: ", color_green )
+	ply:SendLua([[surface.PlaySound( "ui/UI_Awards_Basic_wav.mp3" )]])
 end )
-	
+
 concommand.Add( "lvl_refresh", function( ply )
 	lvl.SendUpdate( ply )
 end )

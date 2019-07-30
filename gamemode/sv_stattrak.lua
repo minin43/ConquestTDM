@@ -263,12 +263,12 @@ function UpdateAttKillTracking( ply, wepclass )
 		CustomizableWeaponry.giveAttachments( ply, togive ) 
 		local green = Color( 102, 255, 51 )
 		local white = Color( 255, 255, 255 )
-		local tab = {}
+		--[[local tab = {}
 		for k, v in pairs( togive ) do 
 			tab[ #tab + 1 ] = CustomizableWeaponry.registeredAttachmentsSKey[ v ].displayName
 			if k != #togive then tab[ #tab + 1 ] = "," end
-		end
-		ply:ChatPrintColor( white, "You have unlocked ", green, tab, white, " for reaching ", green, ply:GetPData( wepclass ), white, " kills with the ", white, RetrieveWeaponName( wepclass ), "." )
+		end]]
+		ply:ChatPrintColor( white, "You have unlocked a new attachment for reaching ", green, ply:GetPData( wepclass ), white, " kills with the ", white, RetrieveWeaponName( wepclass ), "!" )
 	end
 end
 

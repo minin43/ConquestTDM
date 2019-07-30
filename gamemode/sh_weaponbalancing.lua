@@ -80,6 +80,8 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.15
         wep.SpeedDec = 50
+
+        wep.WorldModel = "models/weapons/w_rif_famas.mdl"
     end
 
     if weapons.Get( "cw_ak74" ) then

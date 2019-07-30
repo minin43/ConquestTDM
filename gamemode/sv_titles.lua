@@ -35,7 +35,7 @@ hook.Add( "PlayerInitialSpawn", "SetupTitles", function( ply )
 end )
 
 --//Since total kills, deaths, flag captures, and time played have is all information which has been saved since before this title implementation, we could very easily
---//run into players who are already over some of the titles - this checks ownership and saves previous ownership checks, so checking amount overages isn't constantly
+--//run into players who are already over some of the title's requirements - this checks ownership and saves previous ownership checks, so checking amount overages isn't constantly
 --//reading new files every kill, flag capture, and minute
 function GM:CheckTitleOwnership( ply, titleid )
     self.CheckedTitles[ id( ply:SteamID() ) ] = self.CheckedTitles[ id( ply:SteamID() ) ] or {}
@@ -70,7 +70,7 @@ function GM:GivePlayerTitle( ply, titleid )
     local color_green = Color( 102, 255, 51 )
     local color_white = Color( 255, 255, 255 )
     ply:ChatPrintColor( color_white, "You have reached an achievement! You have received the title ", color_green, "[" .. GAMEMODE:GetTitleTable( titleid ).title .. "]", color_white, " which asked you to: ", GAMEMODE:GetTitleTable( titleid ).description )
-    ply:SendLua([[surface.PlaySound( "ui/UX_InGame_Unlock_Promotion_Wave.mp3" )]])
+    ply:SendLua([[surface.PlaySound( "ui/levelup.wav" )]])
 end
 
 --//Any time a new title is equipped, saves the list of all currently equipped, so players who re-join are greeted to the same title being equipped
@@ -104,13 +104,22 @@ end )
 hook.Add( "PlayerSay", "ChatTag", function( ply, msg, teamOnly )
     if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
         local tab = GAMEMODE:GetTitleTable( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
-        --//May be implement color into the messages, run if-then statements dependent on special chat addons, run GlobalChatPrint instead
+        --//May be able to implement color into the messages, run if-then statements dependent on special chat addons, run GlobalChatPrint instead
         return "[" .. tab.title .. "] " .. msg
+    end
+end )
+
+hook.Add( "PlayerLoadedIn", "SendLastTitle", function( ply )
+    if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
+        net.Start( "EquipTitleCallback" )
+            net.WriteString( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
+        net.Send( ply )
     end
 end )
 
 --//Hooks for titles
 --//GivePlayerTitle is NOT called exclusively in this file
+--//When implementing future title tracking, keep in mind GetPData returns the value as a STRING. Simple comparisons for if-then statements will SILENTLY FAIL
 
 hook.Add( "WeaponMasteryAchieved", "KillsByWeapon", function( ply, wep )
     GAMEMODE:GivePlayerTitle( ply, wep .. "_mastery" )
@@ -120,7 +129,7 @@ hook.Add( "KillFeedHeadshot", "CountLifetimeHeadshots", function( ply )
     local tab = GAMEMODE:GetTitleTable( "headshot" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -129,7 +138,7 @@ hook.Add( "KillfeedFirstBlood", "FirstBloodCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "fastestdraw" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -138,7 +147,7 @@ hook.Add( "KillFeedPayback", "PaybackCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "bsc" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -147,7 +156,7 @@ hook.Add( "KillFeedHumiliator", "HumiliatorCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "humiliator" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -156,7 +165,7 @@ hook.Add( "KillFeedHumiliated", "HumiliatedCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "humiliated" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -165,7 +174,7 @@ hook.Add( "KillFeedRevenger", "RevengerCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "revenger" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -174,7 +183,7 @@ hook.Add( "KillFeedHeadhunter", "HeadhunterCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "headhunter" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -183,7 +192,7 @@ hook.Add( "KillFeedLowHealth", "BulletProofCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "bulletproof" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -192,7 +201,7 @@ hook.Add( "KillFeedAfterlife", "AfterlifeCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "necromancer" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -201,7 +210,7 @@ hook.Add( "KillFeedEndKillspree", "DenierCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "denier" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -210,7 +219,7 @@ hook.Add( "KillFeedEndKillstreak", "RejectorCounting", function( ply )
     local tab = GAMEMODE:GetTitleTable( "rejector" )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -220,7 +229,7 @@ hook.Add( "KillFeedKillspree", "KillspreeCounting", function( ply, level )
     local tab = GAMEMODE:GetTitleTable( throwaway[ level ] )
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )
@@ -231,7 +240,7 @@ hook.Add( "KillFeedKillstreak", "KillstreakCounting", function( ply, level )
         local tab = GAMEMODE:GetTitleTable( throwaway[ level ] )
         ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
-        if ply:GetPData( tab.id .. "count" ) == tab.req then
+        if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
             GAMEMODE:GivePlayerTitle( ply, tab.id )
         end
     end
@@ -241,7 +250,7 @@ end )
     local tab = GAMEMODE:GetTitleTable( "" )
     ply:SetPData( "count", ply:GetPData( "count" ) + 1 )
 
-    if ply:GetPData( tab.id .. "count" ) == tab.req then
+    if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
         GAMEMODE:GivePlayerTitle( ply, tab.id )
     end
 end )]]

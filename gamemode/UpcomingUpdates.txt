@@ -21,18 +21,11 @@ Fix Net Messaging Exploits
 Rework weapon pickup & inventory system
 ----
 What needs done for next update:
-    - Test tracking on all titles, and unlocking a few different ones, equipping them
     - Get pictures to be used for the help menu
         - Will all need to be the same size
-    - Get the last 3 icons for menu set up
-    - Fix problems with maps community has reported
-    - Restructure the server content addons
-    - Fix the missing model problem with the FAMAS
-    - Test new messages for unlocking attachments and leveling up
-        - May want to play with the sounds, too
     - Consider button sounds
-    - Finish the weapons part of the shop, and make sure nothing shows up for the skins or models part
-        - Should ideally just say "UNDER CONSTRUCTION"
     - Note about achievement titles - needs to be made to the community
         Tracking for new title progression only begins when it's been added to the game, total time played, total kills, total deaths, and flag captures
         are the only exclusions to this rule. If anyone has a good idea for new titles, suggest them sooner rather than later
+    - Players want a gun overhaul
+    - Need to finish weapon position in shop menu

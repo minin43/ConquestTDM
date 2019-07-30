@@ -79,7 +79,7 @@ function GM:OpenShop()
         else
             surface.SetDrawColor( 0, 0, 0, 220 )
         end
-        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.backIcon )
         surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
     end
     back.OnCursorEntered = function()

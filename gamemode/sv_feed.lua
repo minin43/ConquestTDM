@@ -76,6 +76,8 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     if vic:IsWorld() or att:IsWorld() or att:IsWorld() then return end
     if att == "entityflame" or att:GetClass() == "entityflame" then
         att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
+    elseif att == "cw_40mm_explosive" or att:GetClass() == "cw_40mm_explosive" or att == "cw_40mm_smoke" or att:GetClass() == "cw_40mm_smoke" then
+        att = att:GetOwner()
     end
     
     local vicID = id( vic:SteamID() )
@@ -155,7 +157,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         hook.Call( "KillFeedHeadshot", GAMEMODE, att )
     elseif shotDistance >= 50 and shotDistance < 100 and vic:LastHitGroup() == HITGROUP_HEAD then
         AddNotice(att, "BULLSYE", shotDistance, NOTICETYPES.EXTRA)
-        totalpointcount = totalpointcount + SCORECOUNTS.shotDistance
+        totalpointcount = totalpointcount + shotDistance
         AddNotice(att, "HEADSHOT", SCORECOUNTS.HEADSHOT, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.HEADSHOT
         SoundToSend = "bullseye"
@@ -320,7 +322,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     local throwaway = GAMEMODE.KillInfoTracking[ attID ].KillsThisLife
     if KillstreakNotices[ throwaway ] then
         AddNotice( att, KillstreakNotices[ throwaway ], SCORECOUNTS[ "KILLSTREAK".. throwaway ], NOTICETYPES.SPECIAL, Color( 200, 0, 0 ) )
-        totalpointcount = totalpointcount + SCORECOUNTS.SCORECOUNTS[ "KILLSTREAK" .. throwaway ]
+        totalpointcount = totalpointcount + SCORECOUNTS[ "KILLSTREAK" .. throwaway ]
         SoundToSend = KillstreakNotices[ throwaway ]
         hook.Call( "KillFeedKillstreak", GAMEMODE, att, SoundToSend )
         for k, v in pairs( player.GetAll() ) do
@@ -334,7 +336,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         net.Send( att )
     end
 
-    if vip.Groups[ ply:GetUserGroup() ] then
+    if vip.Groups[ att:GetUserGroup() ] then
         AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA )
     end
 

@@ -26,8 +26,8 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
                 timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix", 0.5, 1, function() end )
 			elseif num < 200 then
                 GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = dmginfo:GetAttacker()
-				ply:Ignite( 2 )
-                timer.Simple( 2.5, function()
+				ply:Ignite( 3 )
+                timer.Simple( 3.5, function()
                     GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = nil
                 end)
                 timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix", 0.5, 1, function() end )

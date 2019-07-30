@@ -2,7 +2,7 @@
 
 surface.CreateFont( "TitleTitle" , { font = "Exo 2", size = 24, weight = 400 } )
 surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 500 } )
-surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 12, weight = 400 } )
+surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 16, weight = 550 } )
 
 function GM:OpenTitles()
     if self.TitleMain and self.TitleMain:IsValid() then return end
@@ -54,7 +54,7 @@ function GM:OpenTitles()
         else
             surface.SetDrawColor( 0, 0, 0, 220 )
         end
-        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.backIcon )
         surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
     end
     back.OnCursorEntered = function()
@@ -115,8 +115,8 @@ function GM:OpenTitles()
     local function SetupLists()
         for k, v in pairs( self.UnlockedTitles ) do
             if k == 1 then
-                local titlepanel = vgui.Create( "DPanel", self.TitleLockedList )
-                titlepanel:SetSize( self.TitleLockedList:GetWide(), 32 )
+                local titlepanel = vgui.Create( "DPanel", self.TitleUnlockedList )
+                titlepanel:SetSize( self.TitleUnlockedList:GetWide(), 32 )
                 titlepanel:Dock( TOP )
                 titlepanel.Paint = function()
                     surface.SetTextColor( GAMEMODE.TeamColor )
@@ -141,22 +141,23 @@ function GM:OpenTitles()
                 end
             end
             pan.Paint = function()
-                if pan.equipped then
+                --[[if pan.equipped then
                     --//Icon should be sized 32, 8 space buffer
-                end
+                end]]
                 surface.SetTextColor( GAMEMODE.TeamColor )
                 surface.SetFont( "TitleTitle" )
-                surface.SetTextPos( 48, 4 )
+                surface.SetTextPos( 8, 4 )
                 surface.DrawText( v.title )
 
                 surface.SetFont( "SubTitleTitle" )
-                surface.SetTextPos( 56, pan:GetTall() - 4 - 16 )
+                surface.SetTextPos( 16, pan:GetTall() - 4 - 16 )
                 surface.DrawText( v.req .. " of " .. v.req .. " completed!" )
             end
 
-            but = vgui.Create( "DButton", pan )
-            but:SetSize( 60, pan:GetTall() / 2 )
-            but:SetPos( pan:GetWide() - but:GetWide() - 8, pan:GetTall() / 2 - ( but:GetTall() / 2 ) )
+            local but = vgui.Create( "DButton", pan )
+            but:SetSize( 90, pan:GetTall() / 2 )
+            but:SetPos( pan:GetWide() - but:GetWide() - 16, pan:GetTall() / 2 - ( but:GetTall() / 2 ) )
+            but:SetText( "" )
             but.Paint = function()
                 if pan.equipped then
                     but.displaytext = "EQUIPPED"
@@ -214,7 +215,7 @@ function GM:OpenTitles()
             end
 
             local pan = vgui.Create( "DPanel", self.TitleLockedList )
-            local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() )
+            local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() - 24 )
             local tall = markupobj:GetHeight()
             pan:SetSize( self.TitleLockedList:GetWide(), 56 + tall )
             pan:Dock( TOP )

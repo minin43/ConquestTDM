@@ -1,10 +1,10 @@
 --//UNDER NO CIRCUMSTANCES ARE THE ID'S TO BE CHANGED EVER - THEY ARE UNIQUE TO THE TITLE AND USED INTERNALLY
 --//ONCE THE GAMEMODE HAS GONE LIVE WITH NEW TITLES, A CHANGE IN ID CAUSES PLAYERS TO LOSE ALL PROGRESS
 GM.TitleMasterTable = {
-    { id = "freshmeat", title = "Fresh Meat", description = "Play on the server for 10 minutes", req = 10 },
-    { id = "commfriend", title = "Community Friend", description = "Play on the server for 10 hours", req = 600 },
-    { id = "veteran", title = "The Veteran", description = "Play on the server for 20 hours", req = 1200 },
-    { id = "nolife", title = "The No-Life", description = "Play on the server for 50 hours", req = 6000 },
+    { id = "freshmeat", title = "Fresh Meat", description = "Play on the server for 10 minutes", req = 10, pdata = "g_time" },
+    { id = "commfriend", title = "Community Friend", description = "Play on the server for 10 hours", req = 600, pdata = "g_time" },
+    { id = "veteran", title = "The Veteran", description = "Play on the server for 20 hours", req = 1200, pdata = "g_time" },
+    { id = "nolife", title = "The No-Life", description = "Play on the server for 50 hours", req = 6000, pdata = "g_time" },
     { id = "2fer", title = "The Two-fer", description = "Achieve \"Double Kill\" (2 kill killspree) 30 times", req = 30 },
     { id = "3threat", title = "The Triple Threat", description = "Achieve \"Multi Kill\" (3 kill killlspree) 20 times", req = 20 },
     { id = "4killer", title = "The Quad Killer", description = "Achieve \"Mega Kill\" (4 kill killspree) 15 times", req = 15 },
@@ -42,7 +42,7 @@ GM.MasteryRequirements = {
 for k, v in pairs( GM.WeaponsList ) do
     if GM.MasteryRequirements[ v.type ] then
         local req = GM.MasteryRequirements[ v.type ]
-        local newtitle = { id = v[ 2 ] .. "_mastery", title = v[ 1 ] .. " Mastery", description = "Achieve " .. req .. " kills with this weapon", req = req }
+        local newtitle = { id = v[ 2 ] .. "_mastery", title = v[ 1 ] .. " Mastery", description = "Achieve " .. req .. " kills with this weapon", req = req, pdata = v[ 2 ] }
         GM.TitleMasterTable[ #GM.TitleMasterTable + 1 ] = newtitle
     end
 end
@@ -54,7 +54,11 @@ if SERVER then
 
         net.Receive( v.id .. "Status", function ( len, ply )
             net.Start( v.id .. "StatusCallback" )
-                net.WriteInt( ply:GetPData( v.id .. "count" ), 16 )
+                if v.pdata and ply:GetPData( v.pdata ) then
+                    net.WriteInt( ply:GetPData( v.pdata ), 16 )
+                else
+                    net.WriteInt( ply:GetPData( v.id .. "count" ), 16 )
+                end
             net.Send( ply )
         end )
     end

@@ -125,8 +125,21 @@ function _Ply:ChatPrintColor( ... )
 	local args = { ... }
 	local tab = {}
 
-	for k, v in pairs( args ) do
-		tab[ #tab + 1 ] = v
+    for k, v in pairs( args ) do
+        --//We can be sent tables
+        --[[if istable( v ) then
+            --//Only numerically-indexed tables
+            for k2, v2 in ipairs( v ) do
+                --//If there are multiple items in the table, add a comma to the end of all except the last
+                if k2 == #v then
+                    tab[ #tab + 1 ] = v2
+                else
+                    tab[ #tab + 1 ] = v2 .. ","
+                end
+            end
+        else]]
+            tab[ #tab + 1 ] = v
+        --end
 	end
 
 	net.Start( "PlayerChatColor" )

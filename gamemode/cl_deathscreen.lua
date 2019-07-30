@@ -101,7 +101,7 @@ usermessage.Hook( "DeathScreen", function( um )
 			if title == "" then
 				name:SetText( att:Name() )
 			else
-				name:SetText( "[" .. GAMEMODE:GetTitleTable( title ) .. "] " .. att:Name() )
+				name:SetText( "[" .. GAMEMODE:GetTitleTable( title ).title .. "] " .. att:Name() )
 			end
 		elseif vic == att then
 			name:SetText( "Yourself")

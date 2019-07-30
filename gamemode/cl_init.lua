@@ -75,7 +75,7 @@ GM.Icons = {
         eq = Material( "vgui/equipment_icon.png", "smooth" )
 	},
 	Perks = {
-		
+		--//Was originally gonna have the Material calls in cl_perks here
 	},
 	Mapvote = { --//Any icons for the tags found in MapTable
 		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.sr
@@ -90,9 +90,9 @@ GM.Icons = {
 		loadoutIcon = Material( "vgui/backpackIcon.png", "noclamp smooth" ),
 		teamChangeIcon = Material( "vgui/two-shadowsIcon.png", "noclamp smooth" ),
 		cancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" ),
-		titleIcon = Material( "vgui/", "noclamp smooth" ),
-		helpIcon = Material( "vgui/", "noclamp smooth" ),
-		backIcon = Material( "vgui/", "noclamp smooth" )
+		titleIcon = Material( "vgui/achievement.png", "noclamp smooth" ),
+		helpIcon = Material( "vgui/help.png", "noclamp smooth" ),
+		backIcon = Material( "vgui/back.png", "noclamp smooth" )
     }
 }
 
@@ -185,7 +185,11 @@ net.Receive( "PlayerChatColor", function()
 
 	for k, v in pairs( tab ) do
 		if isstring( v ) or IsColor( v ) then
-			fixedtab[ #fixedtab + 1 ] = v
+            fixedtab[ #fixedtab + 1 ] = v
+        --[[elseif istable( v ) then
+            for k, v in ipairs( v ) do
+                fixedtab[ #fixedtab + 1 ] = v
+            end]]
 		end
 	end
 	chat.AddText( unpack( fixedtab ) )

@@ -28,7 +28,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	ply:SendLua( [[surface.PlaySound( "ui/UI_HUD_OutOfBounds_Count_Wave.mp3" )]] )
 	
 	--//If what you died to wasn't a player, defaulting to your own fault (this includes trigger_hurt, trigger_kill, worldspawn, and more)
-	if !att:IsPlayer() then att = ply end
+	if !att:IsPlayer() then att = ply elseif ply:IsBot() then return true end
 
 	--//Killer's perk
 	local perk = GAMEMODE.PerkTracking[ id( att:SteamID() ) ].ActivePerk or "none"

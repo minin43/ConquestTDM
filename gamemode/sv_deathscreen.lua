@@ -91,7 +91,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 		wasVendetta = true
 	end
 
-	local title = GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] or ""
+	local title = GAMEMODE.EquippedTitles[ id( attacker:SteamID() ) ] or ""
 
 	--//Flavor timer
 	timer.Simple( 1.5, function()

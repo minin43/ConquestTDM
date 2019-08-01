@@ -21,11 +21,5 @@ Fix Net Messaging Exploits
 Rework weapon pickup & inventory system
 ----
 What needs done for next update:
-    - Get pictures to be used for the help menu
-        - Will all need to be the same size
-    - Consider button sounds
-    - Note about achievement titles - needs to be made to the community
-        Tracking for new title progression only begins when it's been added to the game, total time played, total kills, total deaths, and flag captures
-        are the only exclusions to this rule. If anyone has a good idea for new titles, suggest them sooner rather than later
     - Players want a gun overhaul
     - Need to finish weapon position in shop menu

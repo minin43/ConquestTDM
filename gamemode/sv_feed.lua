@@ -18,6 +18,8 @@ SCORECOUNTS = {
     DENIED = 100,
     VENDETTA = 50,
     VENDETTA_HUMILIATION = 200,
+    MIDAIR = 100
+    SKEET = 100
     
     DOUBLE_KILL = 50,
     MULTI_KILL = 100,
@@ -76,6 +78,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     if vic:IsWorld() or att:IsWorld() or att:IsWorld() then return end
     if att == "entityflame" or att:GetClass() == "entityflame" then
         att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
+        if not att then return end
     elseif att == "cw_40mm_explosive" or att:GetClass() == "cw_40mm_explosive" or att == "cw_40mm_smoke" or att:GetClass() == "cw_40mm_smoke" then
         att = att:GetOwner()
     end
@@ -109,7 +112,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     GAMEMODE.KillInfoTracking[ attID ].KillsThisLife = GAMEMODE.KillInfoTracking[ attID ].KillsThisLife + 1
     GAMEMODE.KillInfoTracking[ attID ].KillSpree = GAMEMODE.KillInfoTracking[ attID ].KillSpree + 1
     local SoundToSend
-    hook.Call( "KillFeedStandard", GAMEMODE, att )
+    hook.Call( "KillFeedStandard", GAMEMODE, att, vic, inf )
 
     --//First Blood Check
     if not GAMEMODE.FirstBloodCheck then
@@ -216,6 +219,16 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
         totalpointcount = totalpointcount + SCORECOUNTS.END_GAME
         hook.Call( "KillFeedEGK", GAMEMODE, att )
     end
+
+    --//Mid-air check
+    --//Entity:OnGround() may not work properly on a player that's dead
+    --//Are there any announcer sounds we could play for this?
+    if not vic:OnGround() then
+        AddNotice( att, "SKEET SHOOTING", SCORECOUNTS.SKEET, NOTICETYPES.EXTRA )
+    end
+    if not att:OnGround() then
+        AddNotice( att, "MID-AIR", SCORECOUNTS.MIDAIR, NOTICETYPES.EXTRA )
+    end
     
     --//Assist Shit
     if GAMEMODE.AssistTable[ vicID ] then
@@ -238,7 +251,7 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
 
                 attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
                 if attacker.AttFromAssist >= 400 then 
-                    attacker:ChatPrintColor( Color( 0, 0, 0 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your attachment due to assists" )
+                    attacker:ChatPrintColor( Color( 255, 255, 255 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your current attachment due to assists!" )
                     UpdateAttKillTracking( attacker, attacker:GetActiveWeapon():GetClass() ) 
                     attacker.AttFromAssist = attacker.AttFromAssist - 400
                 end

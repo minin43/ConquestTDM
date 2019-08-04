@@ -198,46 +198,48 @@ function GM:OpenTitles()
         end
 
         for k, v in pairs( self.LockedTitles ) do
-            if k == 1 then
-                local titlepanel = vgui.Create( "DPanel", self.TitleLockedList )
-                titlepanel:SetSize( self.TitleLockedList:GetWide(), 32 )
-                titlepanel:Dock( TOP )
-                titlepanel.Paint = function()
+            if not v.noshow then
+                if k == 1 then
+                    local titlepanel = vgui.Create( "DPanel", self.TitleLockedList )
+                    titlepanel:SetSize( self.TitleLockedList:GetWide(), 32 )
+                    titlepanel:Dock( TOP )
+                    titlepanel.Paint = function()
+                        surface.SetTextColor( GAMEMODE.TeamColor )
+                        surface.SetFont( "TitleTitle" )
+                        local wide, tall = surface.GetTextSize("LOCKED TITLES")
+                        surface.SetTextPos( titlepanel:GetWide() / 2 - ( wide / 2 ), titlepanel:GetTall() / 2 - ( tall / 2 ) )
+                        surface.DrawText( "LOCKED TITLES" )
+                        
+                        surface.SetDrawColor( GAMEMODE.TeamColor )
+                        surface.DrawLine( titlepanel:GetWide() / 2 - ( wide / 2 ) - 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2, titlepanel:GetWide() / 2 + ( wide / 2 ) + 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2 )
+                    end
+                end
+
+                local pan = vgui.Create( "DPanel", self.TitleLockedList )
+                local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() - 24 )
+                local tall = markupobj:GetHeight()
+                pan:SetSize( self.TitleLockedList:GetWide(), 56 + tall )
+                pan:Dock( TOP )
+                pan.Paint = function()
                     surface.SetTextColor( GAMEMODE.TeamColor )
                     surface.SetFont( "TitleTitle" )
-                    local wide, tall = surface.GetTextSize("LOCKED TITLES")
-                    surface.SetTextPos( titlepanel:GetWide() / 2 - ( wide / 2 ), titlepanel:GetTall() / 2 - ( tall / 2 ) )
-                    surface.DrawText( "LOCKED TITLES" )
-                    
-                    surface.SetDrawColor( GAMEMODE.TeamColor )
-                    surface.DrawLine( titlepanel:GetWide() / 2 - ( wide / 2 ) - 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2, titlepanel:GetWide() / 2 + ( wide / 2 ) + 2, titlepanel:GetTall() / 2 + ( tall / 2 ) + 2 )
+                    surface.SetTextPos( 8, 4 )
+                    surface.DrawText( v.title )
+
+                    --[[surface.SetFont( "DescTitle" )
+                    surface.SetTextPos( 12, pan:GetTall() - 4 - 16 - 2 - 14 )
+                    surface.DrawText( v.description .. "." )]]
+                    markupobj:Draw( 12, 4 + 24 + 4, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+
+                    surface.SetFont( "SubTitleTitle" )
+                    surface.SetTextPos( 16, pan:GetTall() - 4 - 16 )
+                    surface.DrawText( v.cur .. " of " .. v.req .. "." )
+
+                    surface.SetDrawColor( self.TeamColor )
+                    local wide = surface.GetTextSize( v.cur .. " of " .. v.req .. "." )
+                    surface.DrawOutlinedRect( 16 + wide + 8, pan:GetTall() - 4 - 16, pan:GetWide() - 16 - wide - 16, 16 )
+                    surface.DrawRect( 16 + wide + 8, pan:GetTall() - 4 - 16, math.Clamp( v.cur / v.req, 0, 1) * ( pan:GetWide() - 16 - wide - 16 ), 16 )
                 end
-            end
-
-            local pan = vgui.Create( "DPanel", self.TitleLockedList )
-            local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() - 24 )
-            local tall = markupobj:GetHeight()
-            pan:SetSize( self.TitleLockedList:GetWide(), 56 + tall )
-            pan:Dock( TOP )
-            pan.Paint = function()
-                surface.SetTextColor( GAMEMODE.TeamColor )
-                surface.SetFont( "TitleTitle" )
-                surface.SetTextPos( 8, 4 )
-                surface.DrawText( v.title )
-
-                --[[surface.SetFont( "DescTitle" )
-                surface.SetTextPos( 12, pan:GetTall() - 4 - 16 - 2 - 14 )
-                surface.DrawText( v.description .. "." )]]
-                markupobj:Draw( 12, 4 + 24 + 4, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-
-                surface.SetFont( "SubTitleTitle" )
-                surface.SetTextPos( 16, pan:GetTall() - 4 - 16 )
-                surface.DrawText( v.cur .. " of " .. v.req .. "." )
-
-                surface.SetDrawColor( self.TeamColor )
-                local wide = surface.GetTextSize( v.cur .. " of " .. v.req .. "." )
-                surface.DrawOutlinedRect( 16 + wide + 8, pan:GetTall() - 4 - 16, pan:GetWide() - 16 - wide - 16, 16 )
-                surface.DrawRect( 16 + wide + 8, pan:GetTall() - 4 - 16, math.Clamp( v.cur / v.req, 0, 1) * ( pan:GetWide() - 16 - wide - 16 ), 16 )
             end
         end
         if #self.LockedTitles == 0 then

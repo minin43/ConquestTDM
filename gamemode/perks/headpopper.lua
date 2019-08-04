@@ -8,6 +8,7 @@ hook.Add( "DoPlayerDeath", "HEAD-POPPER", function( vic, att, dmginfo )
             explosion:SetOwner( att )
             explosion:Spawn()
             explosion:SetKeyValue( "iMagnitude", explosionRadius )
+            explosion.headpopper = true
             timer.Simple( 0, function()
                 explosion:Fire( "Explode", 0, 0 )
                 util.BlastDamage( att:GetActiveWeapon(), att, vic:GetPos(), explosionRadius * 2, explosionRadius ) --Since an explosion entity doesn't do damage
@@ -26,4 +27,4 @@ hook.Add( "EntityTakeDamage", "ExtraHeadshotDamage", function( ply, dmginfo )
     end
 end )
 
-RegisterPerk( "Headpopper", "headpopper", 18, "Increased headshot damage, killing an enemy with a headshot blows them up.")
+RegisterPerk( "Headpopper", "headpopper", 18, "Increased headshot damage, killing an enemy with a headshot blows them and surrounding enemies up.")

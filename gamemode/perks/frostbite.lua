@@ -1,6 +1,7 @@
 util.AddNetworkString( "IceScreen" )
 util.AddNetworkString( "EndIceScreen" )
 GM.SlawBackups = GM.SlawBackups or {}
+GM.ChilledPlayers = {}
 
 function SlowDown( ply, damage )
 
@@ -10,6 +11,8 @@ function SlowDown( ply, damage )
     local MovementSlow = math.Round( math.Clamp( 20 + ( scale * 20 ), 20, 40 ) )
     local JumpSlow = MovementSlow--math.Round( math.Clamp( 40 + ( scale * 20 ), 40, 60 ) )
     local Timer = math.Round( math.Clamp( 1 + scale, 1, 2 ), 1 )
+
+    GAMEMODE.ChilledPlayers[ ply ] = true
 
     if not timer.Exists( "frostbite_" .. ply:SteamID() ) then
 
@@ -31,6 +34,8 @@ function SlowDown( ply, damage )
             ply:SetRunSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].run )
             ply:SetJumpPower( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].jump )
 
+            GAMEMODE.ChilledPlayers[ ply ] = false
+
             net.Start( "EndIceScreen" )
             net.Send( ply )
         end )
@@ -40,6 +45,8 @@ function SlowDown( ply, damage )
             ply:SetWalkSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].walk )
             ply:SetRunSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].run )
             ply:SetJumpPower( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].jump )
+
+            GAMEMODE.ChilledPlayers[ ply ] = false
 
             net.Start( "EndIceScreen" )
             net.Send( ply )

@@ -277,11 +277,12 @@ function GM:DoTie()
 end
 
 function GM:EndRound( win )
+	print("ENDROUND DEBUG - function EndRound called")
 	if !timer.Exists( "RoundTimer" ) then return end
 	timer.Destroy( "RoundTimer" )
 	timer.Destroy( "Tickets" )
 	SetGlobalBool( "RoundFinished", true )
-
+	print("provided win condition: ", win)
 	if win == 1 then
 		self:DoRedWin()
 	elseif win == 2 then
@@ -356,18 +357,24 @@ function GM:Initialize()
 				local bl = GetGlobalInt( "BlueTickets" )
 				local re = GetGlobalInt( "RedTickets" )
 				if bl > re then
+					print("ENDROUND DEBUG - calling EndRound from RoundTimer in ticketmode, blue wins")
 					GAMEMODE:EndRound( 2 )
 				elseif re > bl then
+					print("ENDROUND DEBUG - calling EndRound from RoundTimer in ticketmode, red wins")
 					GAMEMODE:EndRound( 1 )
 				elseif re == bl then
+					print("ENDROUND DEBUG - calling EndRound from RoundTimer in ticketmode, tie win")
 					GAMEMODE:EndRound( 0 )
 				end
 			else
 				if GetGlobalInt( "RedKills" ) > GetGlobalInt( "BlueKills" ) then
+					print("ENDROUND DEBUG - calling EndRound from RoundTimer in tdm mode, red wins")
 					GAMEMODE:EndRound( 1 )
 				elseif GetGlobalInt( "RedKills" ) < GetGlobalInt( "BlueKills" ) then
+					print("ENDROUND DEBUG - calling EndRound from RoundTimer in tdm mode, blue wins")
 					GAMEMODE:EndRound( 2 )
 				else
+					print("ENDROUND DEBUG - calling EndRound from RoundTimer in tdm mode, tie win")
 					GAMEMODE:EndRound( 0 )
 				end
 				--[[
@@ -512,11 +519,13 @@ timer.Create( "Tickets", 5, 0, function()
 			if GetGlobalInt( "allcontrol" ) == 1 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 2 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
+					print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, red wins")
 					GAMEMODE:EndRound( 1 )
 				end
 			else
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
+					print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, blue wins")
 					GAMEMODE:EndRound( 2 )
 				end
 			end
@@ -524,12 +533,14 @@ timer.Create( "Tickets", 5, 0, function()
 			if GetGlobalInt( "allcontrol" ) == 2 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 2 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
+					print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, blue wins")
 					GAMEMODE:EndRound( 2 )
 				end			
 			else
-				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
-				if GetGlobalInt( "RedTickets" ) <= 0 then
-					GAMEMODE:EndRound( 2 )
+				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
+				if GetGlobalInt( "BlueTickets" ) <= 0 then
+					print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, red wins")
+					GAMEMODE:EndRound( 1 )
 				end					
 			end
 		end
@@ -741,12 +752,16 @@ function GM:PlayerDeath( vic, inf, att )
 			if t == 1 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
+					print("ENDROUND DEBUG - calling EndRound from player death, blue wins")
 					GAMEMODE:EndRound( 2 )
+					hook.Run( "GameWinningKill", att )
 				end
 			elseif t == 2 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
+					print("ENDROUND DEBUG - calling EndRound from player death, red wins")
 					GAMEMODE:EndRound( 1 )
+					hook.Run( "GameWinningKill", att )
 				end
 			end
 		else

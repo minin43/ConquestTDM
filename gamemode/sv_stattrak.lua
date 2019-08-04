@@ -242,32 +242,40 @@ function UpdateAttKillTracking( ply, wepclass )
 		if wepclass == v[ 2 ] then
 			local masteryamount = GAMEMODE.MasteryRequirements[ v.type ] or 1000
 			if totalKills == masteryamount then
-				hook.Call( "WeaponMasteryAchieved", GAMEMODE, ply, wepclass )
+				hook.Run( "WeaponMasteryAchieved", ply, wepclass )
 				return
 			end
 		end
 	end
 
-	for k, v in pairs( wep_att ) do
-		if k == wepclass then
-			for k2, v2 in pairs( v ) do
-				--//If this new kill has a reaching a new attachment unlock...
-				if totalKills == v2[ 2 ] then
-					togive[ #togive + 1 ] = v2[ 1 ]
+	--//If we have a new attachment to give the player
+	if wep_att[ wepclass ] then
+		for k, v in pairs( wep_att[ wepclass ] ) do
+			if totalKills == v[ 2 ] then
+				togive[ #togive + 1 ] = v[ 1 ]
+				--//If it's the final attachment to unlock
+				if k == #wep_att[ wepclass ] then
+					hook.Run( "AllAttachmentsUnlocked", ply, wepclass )
 				end
 			end
 		end
 	end
 
+	--[[for k, v in pairs( wep_att ) do
+		if k == wepclass then
+			for k2, v2 in pairs( v ) do
+				--//If this kill has reached a new attachment unlock...
+				if totalKills == v2[ 2 ] then
+					togive[ #togive + 1 ] = v2[ 1 ]
+				end
+			end
+		end
+	end]]
+
 	if next(togive) ~= nil then 
 		CustomizableWeaponry.giveAttachments( ply, togive ) 
 		local green = Color( 102, 255, 51 )
 		local white = Color( 255, 255, 255 )
-		--[[local tab = {}
-		for k, v in pairs( togive ) do 
-			tab[ #tab + 1 ] = CustomizableWeaponry.registeredAttachmentsSKey[ v ].displayName
-			if k != #togive then tab[ #tab + 1 ] = "," end
-		end]]
 		ply:ChatPrintColor( white, "You have unlocked a new attachment for reaching ", green, ply:GetPData( wepclass ), white, " kills with the ", white, RetrieveWeaponName( wepclass ), "!" )
 	end
 end

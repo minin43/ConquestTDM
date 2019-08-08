@@ -18,8 +18,8 @@ SCORECOUNTS = {
     DENIED = 100,
     VENDETTA = 50,
     VENDETTA_HUMILIATION = 200,
-    MIDAIR = 100
-    SKEET = 100
+    MIDAIR = 100,
+    SKEET = 100,
     
     DOUBLE_KILL = 50,
     MULTI_KILL = 100,
@@ -73,7 +73,7 @@ function AddRewards(ply, score)
 end
 
 --//All point distribution is done in this hook
-hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
+hook.Add("PlayerDeath", "AddNotices", function(vic, wep, att)
     --Include checks for bots
     if vic:IsWorld() or att:IsWorld() or att:IsWorld() then return end
     if att == "entityflame" or att:GetClass() == "entityflame" then
@@ -112,8 +112,8 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     GAMEMODE.KillInfoTracking[ attID ].KillsThisLife = GAMEMODE.KillInfoTracking[ attID ].KillsThisLife + 1
     GAMEMODE.KillInfoTracking[ attID ].KillSpree = GAMEMODE.KillInfoTracking[ attID ].KillSpree + 1
     local SoundToSend
-    hook.Call( "KillFeedStandard", GAMEMODE, att, vic, inf )
-
+    hook.Call( "KillFeedStandard", GAMEMODE, att, vic )
+    
     --//First Blood Check
     if not GAMEMODE.FirstBloodCheck then
         AddNotice( att, "FIRST BLOOD", SCORECOUNTS.FIRSTBLOOD, NOTICETYPES.EXTRA )
@@ -223,6 +223,8 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, inf, att)
     --//Mid-air check
     --//Entity:OnGround() may not work properly on a player that's dead
     --//Are there any announcer sounds we could play for this?
+    --//Consider doing one for explosions that kill yourself and others?
+    --//Maybe one for bottomfeeder?
     if not vic:OnGround() then
         AddNotice( att, "SKEET SHOOTING", SCORECOUNTS.SKEET, NOTICETYPES.EXTRA )
     end

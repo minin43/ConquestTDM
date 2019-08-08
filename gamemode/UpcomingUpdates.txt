@@ -23,3 +23,28 @@ Rework weapon pickup & inventory system
 What needs done for next update:
     - Players want a gun overhaul
     - Need to finish weapon position in shop menu
+    - Regenerate ammo idea: standing by friendly flags regenerates ammo
+    - Death to fire from pyro should give kill
+    - Status on the new titles:
+        Blood Money - not set up
+        Brainiac - needs testing on actual players
+        Airborne - needs testing
+        Skeet Shooter - works
+        Elements - needs testing
+        Unkillable - not being given???
+        Infected - needs testing
+        Low Profile - not set up
+        BHopAsshole - not set up
+        Blinged - ran into error
+        JOAT - ran into error
+    - Feedback on the menu
+        Should be 2x3 instead of 1x6
+        Players need the font downloaded
+        F1 menu buttons should be given color on hover
+        Weapon stats in the shop can be colored black instead of doing the highlighted text
+        Audio cues to be added for the buttons in the shop, especially on denial
+        Change level limit icon
+    - Map changes
+        The new train map needs the vent area blocked off
+    Need to ways to get more ammo
+    Increase level limit to 100?

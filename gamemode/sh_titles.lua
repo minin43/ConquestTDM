@@ -1,5 +1,7 @@
 --//UNDER NO CIRCUMSTANCES ARE THE ID'S TO BE CHANGED EVER - THEY ARE UNIQUE TO THE TITLE AND USED INTERNALLY
 --//ONCE THE GAMEMODE HAS GONE LIVE WITH NEW TITLES, A CHANGE IN ID CAUSES PLAYERS TO LOSE ALL PROGRESS
+--//Format: id = unique string of characters, title = displayed tag, description = how to earn the title/tag, req = the number of times the task must be accomplished
+--//pdata = the pdata string if the information was already saved, noshow = whether the title should show up in the "locked" side of the menu
 GM.TitleMasterTable = {
     { id = "freshmeat", title = "Fresh Meat", description = "Play on the server for 10 minutes", req = 10, pdata = "g_time" },
     { id = "commfriend", title = "Community Friend", description = "Play on the server for 10 hours", req = 600, pdata = "g_time" },
@@ -27,10 +29,10 @@ GM.TitleMasterTable = {
     { id = "rejector", title = "The Rejector", description = "Earn \"Rejected\" (end a player's killstreak) 20 times", req = 20 },
     --{ id = "bloodmoney", title = "Blood Money", description = "Earn \"Payback\" and \"Headshot\" in the same kill 5 times", req = 10 },
     { id = "brainiac", title = "The Brainiac", description = "Earn 5 additional kills from Headpopper's explosion", req = 5 },
-    { id = "airborne", title = "The Airborne", description = "Earn 20 kills while flying through the air after the second jump of double jump", req = 0 },
+    { id = "airborne", title = "The Airborne", description = "Earn 20 kills while flying through the air after the second jump of double jump", req = 20 },
     { id = "skeetshoot", title = "Skeet Shooter", description = "Earn 10 kills on players who are flying through the air", req = 10 },
     { id = "elements", title = "The Elements", description = "Earn 2 kills with pryomancer's generated fire while the enemy is slowed by Frostbite", req = 2 },
-    { id = "unkillble", title = "The Unkillable", description = "Restore 200 hp in a single life", req = 1 },
+    { id = "unkillable", title = "The Unkillable", description = "Restore 200 hp in a single life", req = 1 },
     { id = "infected", title = "Infected", description = "???????????????", req = 1, noshow = true }, --//I know this is technically a SECRET tag, but it's the ONLY ONE
     --{ id = "lowprofile", title = "Low Profile", description = "Earn 30 kills while crouching", req = 30 },
     --{ id = "bhopasshole", title = "BHopping Asshole", description = "Get 10 kills while crouching in the air", req = 10 }    

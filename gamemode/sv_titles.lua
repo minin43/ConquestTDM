@@ -130,7 +130,7 @@ end )
 --//When implementing future title tracking, keep in mind GETPData returns the value as a STRING. Simple comparisons for if-then statements will SILENTLY FAIL
 
 function IncrementTitleCounting( ply, tab )
-    if isstring( tab ) then tab = GAMEMODE.GetTitleTable( tab ) end --//I got lazy, see if you can deduce at what point
+    --if isstring( tab ) then tab = GAMEMODE.GetTitleTable( tab ) end --//I got lazy, see if you can deduce at what point
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
     if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then
@@ -145,15 +145,16 @@ hook.Add( "WeaponMasteryAchieved", "KillsByWeapon", function( ply, wep )
 end )
 
 hook.Add( "AllAttachmentsUnlocked", "AttachmentCounting", function( ply, wep )
-    IncrementTitleCounting( ply, "blinged" )
-    IncrementTitleCounting( ply, "joat" )
+    IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "blinged" ) )
+    IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "joat" ) )
 
     if not GAMEMODE:CheckTitleOwnership( ply,  wep .. "_attmastery" ) then
         GAMEMODE:GivePlayerTitle( ply,  wep .. "_attmastery" )
     end
 end )
 
-hook.Add( "KillFeedStandard", "GeneralDeathCounting", function( att, vic, dmginfo )
+hook.Add( "DoPlayerDeath", "CTakeDamageInfoCounting", function( att, vic, dmginfo )
+    print("test DoPlayerDeath")
     if dmginfo:IsDamageType( DMG_SLASH ) or dmginfo:IsDamageType( DMG_CLUB ) or dmginfo:GetInflictor() == "weapon_fists" then --or dmginfo:GetInflictor() == "" then
         if GAMEMODE:CheckEquippedTitle( att ) == "infected" then
             if not GAMEMODE:CheckTitleOwnership( vic, "infected" ) then
@@ -163,8 +164,11 @@ hook.Add( "KillFeedStandard", "GeneralDeathCounting", function( att, vic, dmginf
     end
 
     --//NEEDS TESTING
+    print("test damage type: explosion", dmginfo:GetInflictor():GetClass(), dmginfo:GetInflictor():GetClass() == "env_explosion")
     if dmginfo:GetInflictor():GetClass() == "env_explosion" then
+        print(dmginfo:GetInflictor():GetClass())
         local expent = dmginfo:GetInflictor():GetClass()
+        print( expent, expent.headpopper )
         if expent.headpopper then
             IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "brainiac" ) )
         end
@@ -229,14 +233,16 @@ end )
 hook.Add( "KillFeedKillstreak", "KillstreakCounting", function( ply, level )
     local throwaway = { DOMINATING = "thedominator", [ "BLAZE OF GLORY" ] = "bog", [ "TOP GUN" ] = "topgun", [ "SHAFT-MASTER" ] = "shaftmaster" }
     if throwaway[ level ] then
-        IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( throwaway[ level ] )
+        IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( throwaway[ level ] ) )
     end
 end )
 
 GM.HealthTracking = { lasthp = {} }
 hook.Add( "Think", "HealthTracking", function()
-    local tab = GAMEMODE:GetTitleTable( "unkillble" )
+    local tab = GAMEMODE:GetTitleTable( "unkillable" )
     for k, v in pairs( player.GetAll() ) do
+        GAMEMODE.HealthTracking.lasthp[ v ] = GAMEMODE.HealthTracking.lasthp[ v ] or 100
+        GAMEMODE.HealthTracking[ v ] = GAMEMODE.HealthTracking[ v ] or 0
         if not v:Alive() then
             GAMEMODE.HealthTracking[ v ] = 0
             GAMEMODE.HealthTracking.lasthp[ v ] = 100 --//Start tracking at full life

@@ -4,6 +4,13 @@ surface.CreateFont( "TitleTitle" , { font = "Exo 2", size = 24, weight = 400 } )
 surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 500 } )
 surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 16, weight = 550 } )
 
+local ColorRarities = {
+    Color( 0, 0, 0, 164 ), --Black/dark gray
+    Color( 87, 139, 235, 164 ), --//Light blue
+    Color( 153, 102, 204, 164 ), --//Amethyst purple
+    Color( 255, 215, 0, 164 ) --//Gold
+}
+
 function GM:OpenTitles()
     if self.TitleMain and self.TitleMain:IsValid() then return end
 
@@ -221,6 +228,11 @@ function GM:OpenTitles()
                 pan:SetSize( self.TitleLockedList:GetWide(), 56 + tall )
                 pan:Dock( TOP )
                 pan.Paint = function()
+                    surface.SetTexture( GAMEMODE.GradientTexture )
+                    surface.SetDrawColor( ColorRarities[ v.rare ] )
+                    surface.DrawTexturedRectRotated( pan:GetWide() - 8, pan:GetTall() / 2, 16, pan:GetTall() - 4, 180 )
+                    --surface.DrawTexturedRectRotated(number x, number y, number width, number height, number rotation)
+                    
                     surface.SetTextColor( GAMEMODE.TeamColor )
                     surface.SetFont( "TitleTitle" )
                     surface.SetTextPos( 8, 4 )

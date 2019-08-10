@@ -167,7 +167,7 @@ hook.Add( "DoPlayerDeath", "CTakeDamageInfoCounting", function( att, vic, dmginf
     print("test damage type: explosion", dmginfo:GetInflictor():GetClass(), dmginfo:GetInflictor():GetClass() == "env_explosion")
     if dmginfo:GetInflictor():GetClass() == "env_explosion" then
         print(dmginfo:GetInflictor():GetClass())
-        local expent = dmginfo:GetInflictor():GetClass()
+        local expent = dmginfo:GetInflictor()
         print( expent, expent.headpopper )
         if expent.headpopper then
             IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "brainiac" ) )
@@ -177,6 +177,15 @@ hook.Add( "DoPlayerDeath", "CTakeDamageInfoCounting", function( att, vic, dmginf
     if dmginfo:IsDamageType( DMG_BURN ) then
         if GAMEMODE.ChilledPlayers[ vic ] then
             IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "elements" ) )
+        end
+    end
+end )
+
+hook.Add( "KillFeedStandard", "CountMiscellaneous", function( att, vic )
+    if att:Crouching() then
+        IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "lowprofile" ) )
+        if !att:OnGround() then
+            IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "bhopasshole" ) )
         end
     end
 end )

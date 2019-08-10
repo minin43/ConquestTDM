@@ -3,8 +3,6 @@ util.AddNetworkString( "FlagCapped" )
 	
 flags = flags or {}
 
--- Pasting this in console gets everyone's current location: lua_run for k, v in pairs(player.GetAll()) do print(v, v:GetPos())end
-
 flags[ "gm_construct" ] = {
 	{ "W", Vector( -2402, -1560, -143 ), 300, 0 },
 	{ "H", Vector( -2250, -2786, 256 ), 400, 0 },

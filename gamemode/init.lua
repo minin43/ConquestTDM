@@ -813,8 +813,13 @@ end
 
 function GM:GetFallDamage( ply, speed )
 	if self.PreventFallDamage then return 0 end
-	speed = speed - 540
-	return ( speed * ( 100 / ( 1024 - 580 ) ) )
+
+	--//old fall damage calculation
+	--[[speed = speed - 540
+	return ( speed * ( 100 / ( 1024 - 580 ) ) )]]
+
+	--//suggested fall damage calclulation
+	return ( speed / 8 )
 end
 
 --//Used in server-side menu code to check for players running net messages with values the player set - cheaters

@@ -131,6 +131,10 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, wep, att)
         GAMEMODE.KillInfoTracking[ attID ].LastKiller = ""
         SoundToSend = "payback"
         hook.Call( "KillFeedPayback", GAMEMODE, att )
+
+        if vic:LastHitGroup() == HITGROUP_HEAD then
+            IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "bloodmoney" ) )
+        end
     end
 
     --//Vendetta Checks

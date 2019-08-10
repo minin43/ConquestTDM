@@ -23,20 +23,22 @@ Rework weapon pickup & inventory system
 What needs done for next update:
     - Players want a gun overhaul
     - Need to finish weapon position in shop menu
-    - Regenerate ammo idea: standing by friendly flags regenerates ammo
+    - Bipods should freeze the player in place and prevent outside movement
+    - Regenerate ammo idea: standing on friendly flags regenerates ammo - alternative idea: only on capture?
     - Death to fire from pyro should give kill
     - Status on the new titles:
-        Blood Money - not set up
-        Brainiac - needs testing on actual players
-        Airborne - needs testing
+        Blood Money - TO TEST
+        Brainiac - TO TEST on actual players
+        Airborne - TO TEST
         Skeet Shooter - works
-        Elements - needs testing
+        Elements - TO TEST on actual players
         Unkillable - not being given???
-        Infected - needs testing
-        Low Profile - not set up
-        BHopAsshole - not set up
+        Infected - TO TEST on actual players
+        Low Profile - TO TEST
+        BHopAsshole - TO TEST
         Blinged - ran into error
         JOAT - ran into error
+    - Titles should show color-coded "rarity" via colored gradients
     - Feedback on the menu
         Should be 2x3 instead of 1x6
         Players need the font downloaded
@@ -48,3 +50,4 @@ What needs done for next update:
         The new train map needs the vent area blocked off
     Need to ways to get more ammo
     Increase level limit to 100?
+    Check the server and see if anyone's been spoofing net messages

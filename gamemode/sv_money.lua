@@ -8,11 +8,13 @@ util.AddNetworkString( "BuyShit" )
 util.AddNetworkString( "BuyShitCallback" )
 
 function GetMoney( ply )
-	if not ply:GetPData( "tdm_money" ) then
-		ply:SetPData( "tdm_money", "0" )
-	end
-	
-	return tonumber( math.Round( ply:GetPData( "tdm_money" ) ) )
+    if ply and ply:IsValid() then
+        if not ply:GetPData( "tdm_money" ) then
+            ply:SetPData( "tdm_money", "0" )
+        end
+        
+        return tonumber( math.Round( ply:GetPData( "tdm_money" ) ) )
+    end
 end
 
 function AddMoney( ply, amt )

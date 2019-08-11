@@ -96,6 +96,24 @@ GM.Icons = {
     }
 }
 
+GM.ButtonSounds = {
+    Accept = { 
+        "ambient/machines/keyboard2_clicks.wav",
+        "ambient/machines/keyboard3_clicks.wav",
+        "ambient/machines/keyboard1_clicks.wav",
+        "ambient/machines/keyboard4_clicks.wav",
+        "ambient/machines/keyboard5_clicks.wav",
+        "ambient/machines/keyboard6_clicks.wav",
+        "ambient/machines/keyboard7_clicks_enter.wav"
+    },
+    Deny = {
+        "buttons/combine_button_locked.wav"
+    },
+    Buy = {
+        "ambient/levels/labs/coinslot1.wav"
+    }
+}
+
 include( "shared.lua" )
 include( "cl_hud.lua" )
 --include( "cl_spawnmenu.lua" )

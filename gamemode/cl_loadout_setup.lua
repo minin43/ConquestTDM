@@ -72,18 +72,23 @@ function ChooseMainButton:Paint()
     surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
 
     self.MarkupObject:Draw( self:GetWide() / 2, 24, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-    surface.SetDrawColor( 0, 0, 0, 220 )
+    if self.color then
+        surface.SetDrawColor( self.color )
+    else
+        surface.SetDrawColor( 0, 0, 0, 220 )
+    end
     surface.SetMaterial( self.Icon )
     surface.DrawTexturedRect( self:GetWide() / 2 - ( self.IconSize / 2 ), self:GetTall() / 2 - ( self.IconSize / 2 ), self.IconSize, self.IconSize )
 
     if !self.Hover then
+        self.color = Color( 0, 0, 0, 220 )
         surface.SetTexture( gradient )
         surface.SetDrawColor( 0, 0, 0, 164 )
         surface.DrawTexturedRectRotated( self:GetWide() - 10, self:GetTall() / 2, 20, self:GetTall(), 180 )
         surface.DrawTexturedRectRotated( 10, self:GetTall() / 2, 20, self:GetTall(), 0 )
         surface.DrawTexturedRectRotated( self:GetWide() / 2, 10, 20, self:GetWide(), 270 )
     else
-
+        self.color = GAMEMODE.TeamColor
     end
 
     if self.Disabled then

@@ -32,7 +32,7 @@ end )
 hook.Add( "EntityTakeDamage", "LifelineDamageReduction", function( ply, dmginfo )
     if ply:IsValid() and ply:IsPlayer() then
 		if CheckPerk( ply ) == "lifeline" then
-			dmginfo:ScaleDamage( math.Clamp( 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 120 ), 0, 1 ) ) --//Not very complicated scaling, might make this mechanic too strong
+			dmginfo:ScaleDamage( math.Clamp( 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 105 ), 0, 1 ) ) --//Not very complicated scaling, might make this mechanic too strong
 		end
 	end
 end )

@@ -23,16 +23,6 @@
     return Color( red, green, blue, 255 )
 end]]
 
-local uisoundtable = {
-    "ambient/machines/keyboard2_clicks.wav",
-    "ambient/machines/keyboard3_clicks.wav",
-    "ambient/machines/keyboard1_clicks.wav",
-    "ambient/machines/keyboard4_clicks.wav",
-    "ambient/machines/keyboard5_clicks.wav",
-    "ambient/machines/keyboard6_clicks.wav",
-    "ambient/machines/keyboard7_clicks_enter.wav"
-}
-
 local psheetbutton = { }
 psheetbutton.text = ""
 psheetbutton.font = "DermaDefault"
@@ -67,7 +57,7 @@ end
 function psheetbutton:DoClick()
     self.psheet:SetActiveTab( self.tab )
     self.selected = true
-    surface.PlaySound( uisoundtable[ math.random( #uisoundtable ) ] )
+    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
 end
 
 function psheetbutton:Paint()
@@ -126,7 +116,7 @@ function weaponsshopbutton:DoClick()
     if self.disabled then return end
     self:GetParent().selected = self.text
     self:GetParent():Reset( self.text )
-    surface.PlaySound( uisoundtable[ math.random( #uisoundtable ) ] )
+    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
 end
 
 function weaponsshopbutton:Think()
@@ -264,7 +254,11 @@ weaponsshop.modeloffsets = { --FOR MOST GUNS: pos = Vector( x coord (reversed), 
     [ "cw_wf_m200" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     [ "cw_ber_hkmp7" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     [ "cw_amr2_mk46" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
-    [ "cw_fiveseven" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2.5, 13.5, -3.5 ) }
+    [ "cw_fiveseven" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2.5, 13.5, -3.5 ) }--[[,
+    [ "cw_flash_grenade" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },]]
 }
 
 function weaponsshop:DoSetup()
@@ -436,8 +430,10 @@ function weaponsshop:DoSetup()
                 throwaway.DoClick = function()
                     if throwaway.unlocked then
                         self:SelectWeapon( GAMEMODE.WeaponsList[ v ][ 2 ] )
-                        surface.PlaySound( uisoundtable[ math.random( #uisoundtable ) ] )
+                        surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
                         self.weaponprice = GAMEMODE.WeaponsList[ v ][ 5 ]
+                    else
+                        surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
                     end
                 end
                 throwaway.OnCursorEntered = function()
@@ -499,8 +495,6 @@ function weaponsshop:SelectWeapon( wep )
         self.modelpanel:SetLookAt( Vector( 0, 0, 0 ) ) --Courtesy of Spy    
         self.modelpanel:GetEntity():SetPos( Vector( -6, 13.5, -1 ) )
     end
-    self.modelpanel:SetCamPos( self.modeloffsets[ self.selectedweapon ].cam or Vector( 0, 35, 0 ) ) --Courtesy of Spy
-    self.modelpanel:SetLookAt( self.modeloffsets[ self.selectedweapon ].lookat or Vector( 0, 0, 0 ) ) --Courtesy of Spy
     self.modelpanel:SetFOV( 90 ) --Courtesy of Spy
     --self.modelpanel:GetEntity():SetAngles
     self.modelpanel:SetAmbientLight( Color( 255, 255, 255 ) )

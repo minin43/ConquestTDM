@@ -1110,3 +1110,21 @@ hook.Add( "Think", "SetFlagStatuses", function()
 		end
 	end
 end )
+
+--//Some of Logan's shit - damn Whuppo this file is messy as fuck...
+
+hook.Add( "tdm_FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
+    for k, v in pairs( plytable ) do
+        for k2, v2 in pairs( v:GetWeapons() ) do
+            v:GiveAmmo( v2:Clip1(), v2:GetPrimaryAmmoType(), true )
+        end
+    end
+end )
+
+hook.Add( "tdm_FlagNeutral", "GiveAmmoNeutral", function( _, _, plytable )
+    for k, v in pairs( plytable ) do
+        for k2, v2 in pairs( v:GetWeapons() ) do
+            v:GiveAmmo( v2:Clip1(), v2:GetPrimaryAmmoType(), true )
+        end
+    end
+end )

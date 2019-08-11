@@ -13,7 +13,7 @@ hook.Add( "PlayerHurt", "Regen", function( ply, att )
 				end )
 			else
 				timer.Create( "delay_" .. ply:SteamID(), 3, 1, function()
-					timer.Create( "regen_" .. ply:SteamID(), 0.4, 0, function()
+					timer.Create( "regen_" .. ply:SteamID(), 0.8, 0, function()
 						if ply:Alive() then
 							local hp = ply:Health()
 							if hp < ply:GetMaxHealth() then

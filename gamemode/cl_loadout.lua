@@ -1816,7 +1816,7 @@ function GM:MenuMain()
 	end
 
 	self.ChooseMain = vgui.Create( "DFrame" )
-	self.ChooseMain:SetSize( 1200, 250 )
+	self.ChooseMain:SetSize( 600, 500 )
 	self.ChooseMain:SetTitle( "" )
 	self.ChooseMain:SetVisible( true )
 	self.ChooseMain:SetDraggable( false )
@@ -1826,7 +1826,7 @@ function GM:MenuMain()
 	self.ChooseMainTitleBar = 56 --The originally-sized title bar height - to be kept consistent as an homage to the old menu
     self.ChooseMain.Paint = function()
         Derma_DrawBackgroundBlur( self.ChooseMain, CurTime() )
-		surface.SetDrawColor( GetTeamColor() )
+		surface.SetDrawColor( GAMEMODE.TeamColor )
 		surface.DrawRect( 0, 0, self.ChooseMain:GetWide(), self.ChooseMainTitleBar )
 
 		draw.SimpleText( "Select An Option", "ExoTitleFont", self.ChooseMain:GetWide() / 2, self.ChooseMainTitleBar / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -1836,7 +1836,7 @@ function GM:MenuMain()
 	end
 
 	self.ChooseLoadout = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseLoadout:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
+	self.ChooseLoadout:SetSize( self.ChooseMain:GetWide() / 3, ( self.ChooseMain:GetTall() - self.ChooseMainTitleBar ) / 2 )
 	self.ChooseLoadout:SetPos( 0, self.ChooseMainTitleBar )
 	self.ChooseLoadout:SetText( "Loadout" )
 	self.ChooseLoadout:SetFont( "ExoInfoFont" )
@@ -1851,8 +1851,8 @@ function GM:MenuMain()
 	end
 
 	self.ChooseShop = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseShop:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
-	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 6, self.ChooseMainTitleBar )
+	self.ChooseShop:SetSize( self.ChooseMain:GetWide() / 3, ( self.ChooseMain:GetTall() - self.ChooseMainTitleBar ) / 2 )
+	self.ChooseShop:SetPos( self.ChooseMain:GetWide() / 3, self.ChooseMainTitleBar )
 	self.ChooseShop:SetText( "Shop" )
 	self.ChooseShop:SetFont( "ExoInfoFont" )
 	self.ChooseShop:SetIcon( GAMEMODE.Icons.Menu.shopIcon )
@@ -1865,8 +1865,8 @@ function GM:MenuMain()
 	end
 
 	self.ChooseTeam = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseTeam:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
-	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 6 * 2, self.ChooseMainTitleBar )
+	self.ChooseTeam:SetSize( self.ChooseMain:GetWide() / 3, ( self.ChooseMain:GetTall() - self.ChooseMainTitleBar ) / 2 )
+	self.ChooseTeam:SetPos( self.ChooseMain:GetWide() / 3 * 2, self.ChooseMainTitleBar )
 	self.ChooseTeam:SetText( "Change\n Teams" )
 	self.ChooseTeam:SetFont( "ExoInfoFont" )
 	self.ChooseTeam:SetIcon( GAMEMODE.Icons.Menu.teamChangeIcon )
@@ -1877,8 +1877,8 @@ function GM:MenuMain()
 	end
 
 	self.ChooseTag = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseTag:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
-	self.ChooseTag:SetPos( self.ChooseMain:GetWide() / 6 * 3, self.ChooseMainTitleBar )
+	self.ChooseTag:SetSize( self.ChooseMain:GetWide() / 3, ( self.ChooseMain:GetTall() - self.ChooseMainTitleBar ) / 2 )
+	self.ChooseTag:SetPos( 0, self.ChooseMainTitleBar + self.ChooseTag:GetTall() )
 	self.ChooseTag:SetText( "Achievement\n        Titles" )
 	self.ChooseTag:SetFont( "ExoInfoFont" )
 	self.ChooseTag:SetIcon( GAMEMODE.Icons.Menu.titleIcon )
@@ -1889,8 +1889,8 @@ function GM:MenuMain()
 	end
 
 	self.ChooseHelp = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseHelp:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
-	self.ChooseHelp:SetPos( self.ChooseMain:GetWide() / 6 * 4, self.ChooseMainTitleBar )
+	self.ChooseHelp:SetSize( self.ChooseMain:GetWide() / 3, ( self.ChooseMain:GetTall() - self.ChooseMainTitleBar ) / 2 )
+	self.ChooseHelp:SetPos( self.ChooseMain:GetWide() / 3, self.ChooseMainTitleBar + self.ChooseTag:GetTall() )
 	self.ChooseHelp:SetText( "Help" )
 	self.ChooseHelp:SetFont( "ExoInfoFont" )
 	self.ChooseHelp:SetIcon( GAMEMODE.Icons.Menu.helpIcon )
@@ -1902,8 +1902,8 @@ function GM:MenuMain()
 	end
 
 	self.ChooseCancel = vgui.Create( "ChooseMainButton", self.ChooseMain )
-	self.ChooseCancel:SetSize( self.ChooseMain:GetWide() / 6, self.ChooseMain:GetTall() - self.ChooseMainTitleBar )
-	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 6 * 5, self.ChooseMainTitleBar )
+	self.ChooseCancel:SetSize( self.ChooseMain:GetWide() / 3, ( self.ChooseMain:GetTall() - self.ChooseMainTitleBar ) / 2 )
+	self.ChooseCancel:SetPos( self.ChooseMain:GetWide() / 3 * 2, self.ChooseMainTitleBar + self.ChooseTag:GetTall() )
 	self.ChooseCancel:SetText( "Cancel" )
 	self.ChooseCancel:SetFont( "ExoInfoFont" )
 	self.ChooseCancel:SetIcon( GAMEMODE.Icons.Menu.cancelIcon )

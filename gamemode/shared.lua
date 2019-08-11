@@ -59,8 +59,8 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	[ "de_boston" ] = { id = 296008620, size = "Large", img = "vgui/maps/boston.png", type = "ins2",
 		tags = { } },
 	--//Update 1.7
-	[ "ttt_cwoffice2019" ] = { id = 1659123269, size = "Large", img = "vgui/maps/cwoffice2019.png", type = "ins2",
-		tags = { } },
+	--[[[ "ttt_cwoffice2019" ] = { id = 1659123269, size = "Large", img = "vgui/maps/cwoffice2019.png", type = "ins2",
+		tags = { } },]]
 	[ "ba_stadium" ] = { id = 1721873165, size = "Small", img = "vgui/maps/stadium.png", type = "hl2",
 		tags = { } },
 	[ "de_westwood" ] = { id = 1721873240, size = "Midsize", img = "vgui/maps/westwood.png", type = "ins2",
@@ -79,16 +79,16 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     --//Update 1.10
     [ "cs_siege_csgo" ] = { id = 1745687579, size = "Massive", img = "vgui/maps/siege.png", type = "ins2",
         tags = { } },
-    [ "de_donya" ] = { id = 1741751353, size = "Midsize", img = "vgui/maps/donya.png", type = "ins2",
-        tags = { } },
+    --[[[ "de_donya" ] = { id = 1741751353, size = "Midsize", img = "vgui/maps/donya.png", type = "ins2",
+        tags = { } },]]
     [ "de_ruins" ] = { id = 1746629314, size = "Large", img = "vgui/maps/ruins.png", type = "ins2",
         tags = { } },
     [ "de_wellness" ] = { id = 1740206351, size = "Large", img = "vgui/maps/wellness.png", type = "ins2",
         tags = { } },
     [ "dm_corrugated" ] = { id = 284612461, size = "Large", img = "vgui/maps/corrugated.png", type = "hl2",
         tags = { } },
-    [ "dm_crossfire" ] = { id = 1759999305, size = "Midsize", img = "vgui/maps/crossfire.png", type = "hl2",
-        tags = { } },
+    --[[[ "dm_crossfire" ] = { id = 1759999305, size = "Midsize", img = "vgui/maps/crossfire.png", type = "hl2",
+        tags = { } },]]
     [ "dm_necessity" ] = { id = 836130258, size = "Small", img = "vgui/maps/necessity.png", type = "hl2",
         tags = { } },
     [ "dm_torque" ] = { id = 442990905, size = "Midsize", img = "vgui/maps/torque.png", type = "hl2",
@@ -149,6 +149,7 @@ if SERVER then
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
     resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons
     resource.AddWorkshop( "1555980538" ) --Sniper pack
+    --resource.AddWorkshop( "236113181" ) --Real error hide
 
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )

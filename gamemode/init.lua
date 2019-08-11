@@ -460,7 +460,12 @@ function GM:PlayerInitialSpawn( ply )
 		if ply:Name() ~= contents[ 1 ] then
 			file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { ply:Name(), contents[ 2 ] } ) )
 		end
-	end
+    end
+    
+    self.PerkTracking[ id( ply:SteamID() ) ] = {}
+	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
+	self.KillInfoTracking[ id( ply:SteamID() ) ].KillsThisLife = 0
+	self.DamageSaving[ id( ply:SteamID() ) ] = { lifeCount = 0 }
 
 	if ply:IsBot() then
 		ply:SetTeam( 1 )
@@ -489,11 +494,6 @@ function GM:PlayerInitialSpawn( ply )
 	if not self.AcceptedHelp[ id( ply:SteamID() ) ] then
 		self.AcceptedHelp[ id( ply:SteamID() ) ] = false
 	end
-
-	self.PerkTracking[ id( ply:SteamID() ) ] = {}
-	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
-	self.KillInfoTracking[ id( ply:SteamID() ) ].KillsThisLife = 0
-	self.DamageSaving[ id( ply:SteamID() ) ] = { lifeCount = 0 }
 end
 
 function GM:PlayerDeathSound()

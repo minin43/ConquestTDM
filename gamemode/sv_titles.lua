@@ -147,28 +147,22 @@ end )
 hook.Add( "AllAttachmentsUnlocked", "AttachmentCounting", function( ply, wep )
     IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "blinged" ) )
     IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "joat" ) )
+    IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( wep .. "_attmastery" ) )
 
-    if not GAMEMODE:CheckTitleOwnership( ply,  wep .. "_attmastery" ) then
+    --[[if not GAMEMODE:CheckTitleOwnership( ply,  wep .. "_attmastery" ) then
         GAMEMODE:GivePlayerTitle( ply,  wep .. "_attmastery" )
-    end
+    end]]
 end )
 
-hook.Add( "DoPlayerDeath", "CTakeDamageInfoCounting", function( att, vic, dmginfo )
-    print("test DoPlayerDeath")
-    if dmginfo:IsDamageType( DMG_SLASH ) or dmginfo:IsDamageType( DMG_CLUB ) or dmginfo:GetInflictor() == "weapon_fists" then --or dmginfo:GetInflictor() == "" then
+hook.Add( "DoPlayerDeath", "CTakeDamageInfoCounting", function( vic, att, dmginfo )
+    if dmginfo:IsDamageType( DMG_SLASH ) or dmginfo:IsDamageType( DMG_CLUB ) or dmginfo:GetInflictor():GetClass() == "weapon_fists" then --or dmginfo:GetInflictor() == "" then
         if GAMEMODE:CheckEquippedTitle( att ) == "infected" then
-            if not GAMEMODE:CheckTitleOwnership( vic, "infected" ) then
-                GAMEMODE:GivePlayerTitle( vic, "infected" )
-            end
+            IncrementTitleCounting( vic, GAMEMODE:GetTitleTable( "infected" ) )
         end
     end
 
-    --//NEEDS TESTING
-    print("test damage type: explosion", dmginfo:GetInflictor():GetClass(), dmginfo:GetInflictor():GetClass() == "env_explosion")
-    if dmginfo:GetInflictor():GetClass() == "env_explosion" then
-        print(dmginfo:GetInflictor():GetClass())
+    if dmginfo:IsDamageType( DMG_BLAST ) then
         local expent = dmginfo:GetInflictor()
-        print( expent, expent.headpopper )
         if expent.headpopper then
             IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "brainiac" ) )
         end
@@ -184,10 +178,11 @@ end )
 hook.Add( "KillFeedStandard", "CountMiscellaneous", function( att, vic )
     if att:Crouching() then
         IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "lowprofile" ) )
-        if !att:OnGround() then
-            IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "bhopasshole" ) )
-        end
     end
+    --[[print( att:GetAbsVelocity() )
+    if !att:OnGround() and att:GetAbsVelocity() > 350 and CheckPerk( att ) != "hunter" then
+        IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "bhopasshole" ) )
+    end]]
 end )
 
 hook.Add( "KillFeedHeadshot", "CountLifetimeHeadshots", function( ply )
@@ -261,9 +256,11 @@ hook.Add( "Think", "HealthTracking", function()
             end
             GAMEMODE.HealthTracking.lasthp[ v ] = v:Health()
             if GAMEMODE.HealthTracking[ v ] >= 200 then
-                if not GAMEMODE:CheckTitleOwnership( v, tab.id ) then
+                --[[if not GAMEMODE:CheckTitleOwnership( v, tab.id ) then
                     GAMEMODE:GivePlayerTitle( v, tab.id )
-                end
+                end]]
+                GAMEMODE.HealthTracking[ v ] = 0
+                IncrementTitleCounting( v, tab )
             end
         end
     end
@@ -276,7 +273,7 @@ hook.Add( "DoPlayerDeath", "IsInAir?", function( vic, att, dmginfo )
 
     --//CanDoubleJump should ONLY be "false" after the second jump
     if not att:OnGround() and att.CanDoubleJump == false then
-        IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "brainiac" ) )
+        IncrementTitleCounting( att, GAMEMODE:GetTitleTable( "airborne" ) )
     end
 end )
 

@@ -11,7 +11,7 @@ hook.Add( "DoPlayerDeath", "HEAD-POPPER", function( vic, att, dmginfo )
             explosion.headpopper = true
             timer.Simple( 0, function()
                 explosion:Fire( "Explode", 0, 0 )
-                util.BlastDamage( att:GetActiveWeapon(), att, vic:GetPos(), explosionRadius * 2, explosionRadius ) --Since an explosion entity doesn't do damage
+                util.BlastDamage( explosion, att, vic:GetPos(), explosionRadius * 2, explosionRadius ) --Since an explosion entity doesn't do damage
             end )
 
             GAMEMODE:QueueIcon( att, "headpopper" )

@@ -19,11 +19,17 @@ lvl.maxlevel = #lvl.levels
 lvl.maxlevelexp = lvl.levels[ lvl.maxlevel ]
 
 function lvl.GetLevel( ply )
-	return tonumber( ply:GetPData( "level" ) )
+    if ply and ply:IsValid() then
+        return tonumber( ply:GetPData( "level" ) )
+    else
+        error( "Bad entity in argument for lvl.GetLevel", 1 )
+    end
 end
 	
 function lvl.GetEXP( ply )
-	return tonumber( ply:GetPData( "exp" ) )
+    if ply and ply:IsValid() then
+        return tonumber( ply:GetPData( "exp" ) )
+    end
 end
 	
 function lvl.GetAmountForLevel( num )

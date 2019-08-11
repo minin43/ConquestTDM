@@ -5,10 +5,10 @@ surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 500 
 surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 16, weight = 550 } )
 
 local ColorRarities = {
-    Color( 0, 0, 0, 164 ), --Black/dark gray
-    Color( 87, 139, 235, 164 ), --//Light blue
-    Color( 153, 102, 204, 164 ), --//Amethyst purple
-    Color( 255, 215, 0, 164 ) --//Gold
+    [ 0 ] = Color( 20, 20, 20, 200 ), --Black/dark gray
+    [ 1 ] = Color( 87, 139, 235 ), --//Light blue
+    [ 2 ] = Color( 153, 102, 204 ), --//Amethyst purple
+    [ 3 ] = Color( 255, 215, 0 ) --//Gold
 }
 
 function GM:OpenTitles()
@@ -138,7 +138,10 @@ function GM:OpenTitles()
             end
 
             local pan = vgui.Create( "DPanel", self.TitleUnlockedList )
-            pan:SetSize( self.TitleUnlockedList:GetWide(), 50 )
+            local markupobj = markup.Parse( "<font=DescTitle><colour=0,0,0>" .. v.description .. ".", self.TitleLockedList:GetWide() - 110 )
+            local tall = markupobj:GetHeight()
+            pan:SetSize( self.TitleLockedList:GetWide(), 50 + tall )
+            --pan:SetSize( self.TitleUnlockedList:GetWide(), 50 )
             pan:Dock( TOP )
             pan.Think = function()
                 if self.CurrentTitle == v.id then
@@ -151,18 +154,20 @@ function GM:OpenTitles()
                 --[[if pan.equipped then
                     --//Icon should be sized 32, 8 space buffer
                 end]]
+                surface.SetTexture( GAMEMODE.GradientTexture )
+                surface.SetDrawColor( ColorRarities[ v.rare ] )
+                surface.DrawTexturedRectRotated( pan:GetWide() / 2, pan:GetTall() / 2, pan:GetWide(), pan:GetTall() - 4, 180 )
+
                 surface.SetTextColor( GAMEMODE.TeamColor )
                 surface.SetFont( "TitleTitle" )
                 surface.SetTextPos( 8, 4 )
                 surface.DrawText( v.title )
 
-                surface.SetFont( "SubTitleTitle" )
-                surface.SetTextPos( 16, pan:GetTall() - 4 - 16 )
-                surface.DrawText( v.req .. " of " .. v.req .. " completed!" )
+                markupobj:Draw( 12, 4 + 24 + 4, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
             end
 
             local but = vgui.Create( "DButton", pan )
-            but:SetSize( 90, pan:GetTall() / 2 )
+            but:SetSize( 90, pan:GetTall() / 3 )
             but:SetPos( pan:GetWide() - but:GetWide() - 16, pan:GetTall() / 2 - ( but:GetTall() / 2 ) )
             but:SetText( "" )
             but.Paint = function()
@@ -173,13 +178,13 @@ function GM:OpenTitles()
                 end
 
                 if but.hover and not pan.equipped then
-                    draw.RoundedBox( 4, 0, 0, but:GetWide(), but:GetTall(), Color( 0, 0, 0, 51 ) )
+                    draw.RoundedBox( 4, 2, 2, but:GetWide() - 4, but:GetTall() - 4, Color( 0, 0, 0, 51 ) )
                 end
-                draw.SimpleText( but.displaytext, "SubTitleTitle", but:GetWide() / 2, but:GetTall() / 2, self.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( but.displaytext, "SubTitleTitle", but:GetWide() / 2, but:GetTall() / 2, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             end
             but.DoClick = function()
                 if pan.equipped then return end
-                --surface.PlaySound( "" )
+                surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
                 net.Start( "EquipTitle" )
                     net.WriteString( v.id )
                 net.SendToServer()
@@ -223,14 +228,15 @@ function GM:OpenTitles()
                 end
 
                 local pan = vgui.Create( "DPanel", self.TitleLockedList )
-                local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() - 24 )
+                --local markupobj = markup.Parse( "<font=DescTitle><colour=" .. GAMEMODE.TeamColor.r .. "," .. GAMEMODE.TeamColor.g .. "," .. GAMEMODE.TeamColor.b .. ">" .. v.description .. ".", self.TitleLockedList:GetWide() - 24 )
+                local markupobj = markup.Parse( "<font=DescTitle><colour=0,0,0>" .. v.description .. ".", self.TitleLockedList:GetWide() - 24 )
                 local tall = markupobj:GetHeight()
                 pan:SetSize( self.TitleLockedList:GetWide(), 56 + tall )
                 pan:Dock( TOP )
                 pan.Paint = function()
                     surface.SetTexture( GAMEMODE.GradientTexture )
                     surface.SetDrawColor( ColorRarities[ v.rare ] )
-                    surface.DrawTexturedRectRotated( pan:GetWide() - 8, pan:GetTall() / 2, 16, pan:GetTall() - 4, 180 )
+                    surface.DrawTexturedRectRotated( pan:GetWide() / 2, pan:GetTall() / 2, pan:GetWide(), pan:GetTall() - 4, 180 )
                     --surface.DrawTexturedRectRotated(number x, number y, number width, number height, number rotation)
                     
                     surface.SetTextColor( GAMEMODE.TeamColor )
@@ -247,10 +253,11 @@ function GM:OpenTitles()
                     surface.SetTextPos( 16, pan:GetTall() - 4 - 16 )
                     surface.DrawText( v.cur .. " of " .. v.req .. "." )
 
-                    surface.SetDrawColor( self.TeamColor )
+                    surface.SetDrawColor( 0, 0, 0 )
                     local wide = surface.GetTextSize( v.cur .. " of " .. v.req .. "." )
                     surface.DrawOutlinedRect( 16 + wide + 8, pan:GetTall() - 4 - 16, pan:GetWide() - 16 - wide - 16, 16 )
-                    surface.DrawRect( 16 + wide + 8, pan:GetTall() - 4 - 16, math.Clamp( v.cur / v.req, 0, 1) * ( pan:GetWide() - 16 - wide - 16 ), 16 )
+                    surface.SetDrawColor( self.TeamColor )
+                    surface.DrawRect( 16 + wide + 8 + 1, pan:GetTall() - 4 - 16 + 1, math.Clamp( v.cur / v.req, 0, 1) * ( pan:GetWide() - 16 - wide - 14 ), 14 )
                 end
             end
         end

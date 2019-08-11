@@ -18,7 +18,7 @@ SCORECOUNTS = {
     DENIED = 100,
     VENDETTA = 50,
     VENDETTA_HUMILIATION = 200,
-    MIDAIR = 100,
+    MIDAIR = 50,
     SKEET = 100,
     
     DOUBLE_KILL = 50,
@@ -73,9 +73,10 @@ function AddRewards(ply, score)
 end
 
 --//All point distribution is done in this hook
-hook.Add("PlayerDeath", "AddNotices", function(vic, wep, att)
-    --Include checks for bots
+hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
+
     if vic:IsWorld() or att:IsWorld() or att:IsWorld() then return end
+
     if att == "entityflame" or att:GetClass() == "entityflame" then
         att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
         if not att then return end
@@ -258,7 +259,8 @@ hook.Add("PlayerDeath", "AddNotices", function(vic, wep, att)
                 attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
                 if attacker.AttFromAssist >= 400 then 
                     attacker:ChatPrintColor( Color( 255, 255, 255 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your current attachment due to assists!" )
-                    UpdateAttKillTracking( attacker, attacker:GetActiveWeapon():GetClass() ) 
+                    local wep = attacker:GetActiveWeapon()
+                    if wep then UpdateAttKillTracking( attacker, wep:GetClass() ) end
                     attacker.AttFromAssist = attacker.AttFromAssist - 400
                 end
 

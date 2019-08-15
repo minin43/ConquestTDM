@@ -22,6 +22,35 @@ Rework weapon pickup & inventory system
 ----
 What needs done for next update:
     - Players want a gun overhaul
+        - Remove the LMGs
+        - Add:
+            M1014 (no chambering)
+            AAC Honeybadger (add ammo attachments)
+            RFB (check/remove bad sights)
+            MP9 (remove bad sights)
+            TEC-9
+            Bullpup Pack (all 3 are really high quality - TAR has a bunch of extra sights)
+            Remington R5 - edit reload timing and prevent chambering
+            Tripmine equipment
+            Ammo equipment
     - Need to finish weapon position in shop menu
-    - Bipods should freeze the player in place and prevent outside movement
     Increase level limit to 100?
+    - New Perk ideas
+        - Something with reducing damage for the first second of combat?
+        - Martyrdom
+    - Ammo gained from flag capture needs to be equal to mag capacity, not current mag count
+    - Better balance the M3, SPAS, MP5, and the new guns
+        - Magnum secondaries shouldn't have good hipfire
+    - Title menu should display legacy titles
+    - Fix the cw2.0 base errors
+        - On join
+        - When spectating first person
+    - Still need to rework weapon pickup
+    - Lifeline now TOO good, should probably tone down the speed
+    - Introduce an events system
+    - AR-15 and P99 are not having their kill tracking reset
+    - Flag capturing logic is now fucked up for blue side
+    - Chat tags should be before the user name - requires hooking into hatschat
+    - Fix fall damage, is done inconsistently
+    - Finish the tripwire mine
+    - Buff the full medkit

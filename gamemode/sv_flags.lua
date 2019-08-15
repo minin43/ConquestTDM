@@ -4,13 +4,11 @@ util.AddNetworkString( "FlagCapped" )
 flags = flags or {}
 
 flags[ "gm_construct" ] = {
-	{ "W", Vector( -2402, -1560, -143 ), 300, 0 },
-	{ "H", Vector( -2250, -2786, 256 ), 400, 0 },
-	{ "U", Vector( -845, 564, -160 ), 200, 0 },
-	{ "P", Vector( -4531, 5393, -95 ), 400, 0 },
-	{ "P", Vector( 1399, -1659, -143 ), 300, 0 },
-	{ "O", Vector( 1413, -107, 64 ), 100, 0 },
-	{ "!", Vector( 773, 4239, -31 ), 50, 0 }
+	{ "L", Vector( -2402, -1560, -143 ), 300, 0 },
+	{ "O", Vector( -2250, -2786, 256 ), 400, 0 },
+	{ "G", Vector( -845, 564, -160 ), 200, 0 },
+	{ "A", Vector( -4531, 5393, -95 ), 400, 0 },
+	{ "N", Vector( 1399, -1659, -143 ), 300, 0 }
 }
 flags[ "sh_lockdown" ] = {
 	{ "A", Vector( -1498, -275, -1551 ), 400, 0 },
@@ -1121,10 +1119,62 @@ hook.Add( "tdm_FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
     end
 end )
 
-hook.Add( "tdm_FlagNeutral", "GiveAmmoNeutral", function( _, _, plytable )
+--[[hook.Add( "tdm_FlagNeutral", "GiveAmmoNeutral", function( _, _, plytable )
     for k, v in pairs( plytable ) do
         for k2, v2 in pairs( v:GetWeapons() ) do
             v:GiveAmmo( v2:Clip1(), v2:GetPrimaryAmmoType(), true )
+        end
+    end
+end )]]
+
+--//Moved from init.lua
+timer.Create( "TicketFlagCheck", 5, 0, function()
+    if GetGlobalBool( "RoundFinished" ) then timer.Remove( "TicketFlagCheck" ) return end
+    
+    if not firstcheck then
+        firstcheck = true
+
+        local flagtable = flags[ game.GetMap() ]
+        if flagtable then
+            if #flagtable > 0 then
+                SetGlobalBool( "ticketmode", true )
+            else
+                SetGlobalBool( "ticketmode", false )
+                timer.Remove( "TicketFlagCheck" )
+            end
+        else
+            SetGlobalBool( "ticketmode", false )
+            timer.Remove( "TicketFlagCheck" )
+        end
+    end
+    
+    if GetGlobalInt( "control" ) == 1 then
+        if GetGlobalInt( "allcontrol" ) == 1 then
+            SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 2 )
+            if GetGlobalInt( "BlueTickets" ) <= 0 then
+                print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, red wins")
+                GAMEMODE:EndRound( 1 )
+            end
+        else
+            SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
+            if GetGlobalInt( "BlueTickets" ) <= 0 then
+                print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, blue wins")
+                GAMEMODE:EndRound( 1 )
+            end
+        end
+    elseif GetGlobalInt( "control" ) == 2 then
+        if GetGlobalInt( "allcontrol" ) == 2 then
+            SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 2 )
+            if GetGlobalInt( "RedTickets" ) <= 0 then
+                print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, blue wins")
+                GAMEMODE:EndRound( 2 )
+            end			
+        else
+            SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
+            if GetGlobalInt( "BlueTickets" ) <= 0 then
+                print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, red wins")
+                GAMEMODE:EndRound( 2 )
+            end					
         end
     end
 end )

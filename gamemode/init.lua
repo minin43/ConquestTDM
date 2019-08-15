@@ -500,53 +500,6 @@ function GM:PlayerDeathSound()
 	return true
 end
 
-timer.Create( "Tickets", 5, 0, function()
-	if GetGlobalBool( "RoundFinished" ) then return end
-    local f = flags[game.GetMap()];
-    if f != nil then
-        local numFlags = #f;
-        if numFlags > 0 then
-            SetGlobalBool( "ticketmode", true )
-        else
-            SetGlobalBool( "ticketmode", false )
-        end
-    else
-        SetGlobalBool("ticketmode", false);
-    end -- fixed by cobalt 1/30/2015
-    
-	if GetGlobalBool( "ticketmode" ) == true then
-		if GetGlobalInt( "control" ) == 1 then
-			if GetGlobalInt( "allcontrol" ) == 1 then
-				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 2 )
-				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, red wins")
-					GAMEMODE:EndRound( 1 )
-				end
-			else
-				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
-				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, blue wins")
-					GAMEMODE:EndRound( 2 )
-				end
-			end
-		elseif GetGlobalInt( "control" ) == 2 then
-			if GetGlobalInt( "allcontrol" ) == 2 then
-				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 2 )
-				if GetGlobalInt( "RedTickets" ) <= 0 then
-					print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, blue wins")
-					GAMEMODE:EndRound( 2 )
-				end			
-			else
-				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
-				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, red wins")
-					GAMEMODE:EndRound( 1 )
-				end					
-			end
-		end
-	end
-end )
-
 function GM:PlayerDisconnected( ply )
 	GlobalChatPrintColor( Color( 255, 255, 255 ), "Player ", Color( 76, 175, 80 ), ply:Nick(), Color( 255, 255, 255 ), " has disconnected (SteamID: ", ply:SteamID(), ")." )
 	print( ply:Nick(), " disconnected ", ply:SteamID(), ply:SteamID64() )

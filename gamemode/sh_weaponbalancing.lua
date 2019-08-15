@@ -645,6 +645,8 @@ function weapons.OnLoaded()
     if weapons.Get( "weapon_fists" ) then
         local wep = weapons.GetStored( "weapon_fists" )
         wep.Slot = 2
+        wep.HitDistance = 48 + 15 --48 is the original distance
+        --//Damage is calculated with RNG, will need to re-create the fists weapon and add damage modification
     end
 
     if weapons.Get( "cw_flash_grenade" ) then

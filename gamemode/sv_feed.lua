@@ -260,7 +260,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
                 if attacker.AttFromAssist >= 400 then 
                     attacker:ChatPrintColor( Color( 255, 255, 255 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your current attachment due to assists!" )
                     local wep = attacker:GetActiveWeapon()
-                    if wep then UpdateAttKillTracking( attacker, wep:GetClass() ) end
+                    if wep and wep:GetClass() then UpdateAttKillTracking( attacker, wep:GetClass() ) end
                     attacker.AttFromAssist = attacker.AttFromAssist - 400
                 end
 

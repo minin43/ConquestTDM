@@ -161,7 +161,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
     if #player.GetAll() == 1 then return end
     local stringCheck = string.lower( msg )
     if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
-        local len = string.len( "[" .. GAMEMODE.EquippedTitles .. "]" )
+        local len = string.len( "[" .. GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] .. "]" )
         stringCheck = string.Right( string.lower( msg ), len )
     end
     if string.StartWith( stringCheck, "rtv" ) or string.StartWith( stringCheck, "/rtv" ) or string.StartWith( stringCheck, "!rtv" ) then

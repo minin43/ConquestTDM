@@ -9,9 +9,9 @@ lvl = {}
 
 lvl.levels = {}
 	
-lvl.expmul = 500
+lvl.expmul = 300
 	
-for i = 1, 51 do
+for i = 1, 100 do
 	lvl.levels[ i ] = i * lvl.expmul
 end
 

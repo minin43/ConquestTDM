@@ -58,7 +58,7 @@ GM.MasteryRequirements = {
 }
 
 for k, v in pairs( GM.WeaponsList ) do
-    if GM.MasteryRequirements[ v.type ] then
+    if GM.MasteryRequirements[ v.type ] and weapons.GetStored( v[ 2 ] ) then
         local req = GM.MasteryRequirements[ v.type ]
         local newtitle = { id = v[ 2 ] .. "_attmastery", title = v[ 1 ] .. " Master", description = "Unlock all attachments for this weapon", rare = 2, req = 1 }
         GM.TitleMasterTable[ #GM.TitleMasterTable + 1 ] = newtitle

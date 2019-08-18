@@ -1,14 +1,25 @@
 util.AddNetworkString( "Lifeline" )
 util.AddNetworkString( "EndLifeline" )
 
+local llwalkdiff = 30
+local llrundiff = 50
+local lljumpdiff = 30
+local lldefaultwalk = GM.DefaultWalkSpeed - llwalkdiff
+local lldefaultrun = GM.DefaultRunSpeed - llrundiff
+local lldefaultjump = GM.DefaultJumpPower - lljumpdiff
+
+local healthtracking = {}
+
+local function UpdateMovement( ply )
+	ply:SetWalkSpeed( math.Round( lldefaultwalk + ( ( llwalkdiff * 2 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) ) )
+	ply:SetRunSpeed ( math.Round( lldefaultrun + ( ( llrundiff * 2 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) ) )
+	ply:SetJumpPower( math.Round( lldefaultjump + ( ( lljumpdiff * 2 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) ) )
+end
+
 hook.Add( "PostGiveLoadout", "LifelineSpawn", function( ply )
 	if CheckPerk( ply ) == "lifeline" then
-		--GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus = GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus or 0
 		GAMEMODE.PerkTracking.LifelineList[ ply ] = true
-		--[[timer.Simple( 0.1, function()			
-			ply:SetMaxHealth( 100 + GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus ) 
-			ply:SetHealth( 100 + GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].LifelineBonus )
-		end )]]
+		healthtracking[ ply ] = ply:GetMaxHealth()
 	else
 		if GAMEMODE.PerkTracking.LifelineList[ ply ] then
 			GAMEMODE.PerkTracking.LifelineList[ ply ] = nil
@@ -19,12 +30,11 @@ end )
 --//A bit expensive
 hook.Add( "Think", "LifelineMovementSetting", function()
 	for k, v in pairs( GAMEMODE.PerkTracking.LifelineList ) do
-		if v and k:IsValid() then
-			k:SetWalkSpeed( math.Round( ( GAMEMODE.DefaultWalkSpeed - 30 ) + ( GAMEMODE.DefaultWalkSpeed - 30 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) )
-			k:SetRunSpeed ( math.Round( ( GAMEMODE.DefaultRunSpeed - 50 ) + ( GAMEMODE.DefaultRunSpeed - 50 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) )
-			k:SetJumpPower( math.Round( ( GAMEMODE.DefaultJumpPower - 30 ) + ( GAMEMODE.DefaultJumpPower - 30 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) )
-		else
-			k = nil
+		if v and k:IsValid() and healthtracking[ k ] != k:Health() then
+			UpdateMovement( k )
+			healthtracking[ k ] = k:Health()
+		--[[else
+			k = nil]]
 		end
 	end
 end )
@@ -32,7 +42,7 @@ end )
 hook.Add( "EntityTakeDamage", "LifelineDamageReduction", function( ply, dmginfo )
     if ply:IsValid() and ply:IsPlayer() then
 		if CheckPerk( ply ) == "lifeline" then
-			dmginfo:ScaleDamage( math.Clamp( 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 105 ), 0, 1 ) ) --//Not very complicated scaling, might make this mechanic too strong
+			dmginfo:ScaleDamage( math.Clamp( 1 - ( ( ply:GetMaxHealth() - ply:Health() ) / 115 ), 0, 1 ) ) --//Not very complicated scaling, might make this mechanic too strong
 		end
 	end
 end )

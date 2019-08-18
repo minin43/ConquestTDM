@@ -34,23 +34,25 @@ What needs done for next update:
             Tripmine equipment
             Ammo equipment
     - Need to finish weapon position in shop menu
-    Increase level limit to 100?
+DONE    - Increase level limit to 100?
+        - Increase Prestige requirement to 100
+        - Space unlocks for new level cap
     - New Perk ideas
         - Something with reducing damage for the first second of combat?
-        - Martyrdom
-    - Ammo gained from flag capture needs to be equal to mag capacity, not current mag count
-    - Better balance the M3, SPAS, MP5, and the new guns
-        - Magnum secondaries shouldn't have good hipfire
-    - Title menu should display legacy titles
+TEST        - Martyrdom
+        - Think of ideas from R6 or LoL
+DONE    Ammo gained from flag capture needs to be equal to mag capacity, not current mag count
+TEST    - Better balance the M3, SPAS, MP5, and the new guns
+TEST        - Magnum secondaries shouldn't have good hipfire
     - Fix the cw2.0 base errors
         - On join
         - When spectating first person
     - Still need to rework weapon pickup
-    - Lifeline now TOO good, should probably tone down the speed
+TEST    Lifeline now TOO good, should probably tone down the speed
     - Introduce an events system
     - AR-15 and P99 are not having their kill tracking reset
-    - Flag capturing logic is now fucked up for blue side
-    - Chat tags should be before the user name - requires hooking into hatschat
+TEST MP    - Flag capturing logic is now fucked up for blue side
+TEST    - Chat tags should be before the user name - requires hooking into hatschat
     - Fix fall damage, is done inconsistently
     - Finish the tripwire mine
     - Buff the full medkit

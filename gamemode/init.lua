@@ -25,7 +25,7 @@ GM.DefaultModels = {
 		"models/player/group03/male_09.mdl"
 	},
 	Combine = {
-		"models/player/police.mdl" --//Unfortunately, only the metropolice model works with cw2.0 animations
+		"models/player/police.mdl" --//Unfortunately, only the metropolice model works consistently with cw2.0 animations
 	},
 	Insurgents = {
 		"models/player/ins_insurgent_heavy.mdl",
@@ -98,6 +98,7 @@ include( "sv_shop.lua" )
 include( "sv_donations.lua" )
 include( "sv_weapon_submaterials.lua")
 include( "sv_titles.lua" )
+include( "sv_events.lua" )
 include( "sh_loadout.lua" )
 include( "sh_shop.lua" )
 include( "sh_weaponbalancing.lua" )

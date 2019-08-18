@@ -1,5 +1,7 @@
 --//Normally I do setup files for menus, but I think this'll be simple enough I shouldn't need to bother with it.
 
+GM.EquippedTitles = {}
+
 surface.CreateFont( "TitleTitle" , { font = "Exo 2", size = 24, weight = 400 } )
 surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 500 } )
 surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 16, weight = 550 } )
@@ -302,4 +304,54 @@ net.Receive( "EquipTitleCallback", function()
     if newTitle and newTitle != "" then
         GAMEMODE.CurrentTitle = GAMEMODE:GetTitleTable( newTitle ).id
     end
+end )
+
+net.Receive( "SendClientEquippedTitles", function()
+    local iterations = net.ReadInt( 8 )
+    for _ = 1, iterations do
+        local playerID = net.ReadString()
+        local titleID = net.ReadString()
+        GAMEMODE.EquippedTitles[ playerID ] = titleID
+    end
+end )
+
+hook.Add( "OnPlayerChat", "AppendTitlesBeforeNames", function( ply, msg, isTeam, isDead )
+    local chatmessage = {}
+    
+    if isDead then
+        chatmessage[ #chatmessage + 1 ] = Color( 255, 30, 40 )
+        chatmessage[ #chatmessage + 1 ] = "*DEAD* "
+    end
+
+    if isTeam then
+        chatmessage[ #chatmessage + 1 ] = Color( 30, 160, 40 )
+        chatmessage[ #chatmessage + 1 ] = "( TEAM ) "
+    end
+
+    if ply and IsValid( ply ) then
+        if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
+            local tab = GAMEMODE:GetTitleTable( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
+            chatmessage[ #chatmessage + 1 ] = ColorRarities[ tab.rare ]
+            chatmessage[ #chatmessage + 1 ] = "[ " .. tab.title .. " ] "
+        end
+
+        if isDead then
+            chatmessage[ #chatmessage + 1 ] = Color( 255, 30, 40 )
+        elseif isTeam then
+            chatmessage[ #chatmessage + 1 ] = Color( 30, 160, 40 )
+        else
+            chatmessage[ #chatmessage + 1 ] = Color( 255, 255, 255 )
+        end
+
+        chatmessage[ #chatmessage + 1 ] = ply
+    else
+        chatmessage[ #chatmessage + 1 ] = "Console"
+    end
+
+    chatmessage[ #chatmessage + 1 ] = Color( 255, 255, 255 )
+    chatmessage[ #chatmessage + 1 ] = ": " .. msg
+
+    chat.AddText( unpack( chatmessage ) )
+
+    return true
 end )

@@ -28,7 +28,7 @@ What needs done for next update:
             AAC Honeybadger (add ammo attachments)
             RFB (check/remove bad sights)
             MP9 (remove bad sights)
-            TEC-9
+            TEC-9 (edit reload timer)
             Bullpup Pack (all 3 are really high quality - TAR has a bunch of extra sights)
             Remington R5 - edit reload timing and prevent chambering
             Tripmine equipment

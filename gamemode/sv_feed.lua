@@ -240,7 +240,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     --//Assist Shit
     if GAMEMODE.AssistTable[ vicID ] then
         for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
-            if damageDone > 0 and attacker != att then
+            if damageDone > 0 and attacker:IsValid() and atattacker != att then
                 AddNotice( attacker, "ASSIST", math.Round( damageDone ), NOTICETYPES.KILL )
                 VampirismAssist( attacker, damageDone )
 

@@ -36,7 +36,7 @@ GM.TitleMasterTable = {
     { id = "brainiac", title = "The Brainiac", description = "Earn 5 additional kills from Headpopper's explosion", rare = 2, req = 5 },
     { id = "airborne", title = "The Airborne", description = "Earn 20 kills while flying through the air after the second jump of double jump", rare = 1, req = 20 },
     { id = "skeetshoot", title = "Skeet Shooter", description = "Earn 10 kills on players who are flying through the air", rare = 1, req = 10 },
-    { id = "elements", title = "The Elements", description = "Earn 1 kill with pryomancer's generated fire while the enemy is slowed by Frostbite", rare = 3, req = 1 },
+    { id = "elements", title = "Elementalist", description = "Earn 1 kill with pryomancer's generated fire while the enemy is slowed by Frostbite", rare = 3, req = 1 },
     { id = "unkillable", title = "The Unkillable", description = "Restore 200 hp in a single life", rare = 3, req = 1 },
     { id = "infected", title = "Infected", description = "???????????????", rare = 3, req = 1, noshow = true }, --//I know this is technically a SECRET tag, but it's the ONLY ONE
     { id = "lowprofile", title = "Low Profile", description = "Earn 30 kills while crouching", rare = 0, req = 30 },

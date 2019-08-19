@@ -1,128 +1,134 @@
-flags = {}
-status = {}
-local ang1 = Angle( 0, 0, 0 )
-local up = Vector( 0, 0, 30 )	
+GM.FlagTable = {}
+GM.FlagTableOrdered = {} --Doesn't contain flag information - only numerically indexes the table names for loops that need it
+
+surface.CreateFont( "DrawFlagNames", { font = "Arial", size = 30 } )
+
 local offset = Vector( 0, 0, 85 )
-local cs3d2d = cam.Start3D2D
-local ce3d2d = cam.End3D2D
-local sdc = surface.DrawCircle
-local sdl = surface.DrawLine
-local sstc = surface.SetTextColor
-local sstp = surface.SetTextPos
-local sdt = surface.DrawText
-local drb = draw.RoundedBox
-local ssf = surface.SetFont
-local lp = LocalPlayer
-
-surface.CreateFont( "DrawFlagNames", {
-	font = "Arial",
-	size = 30
-} )
-
 hook.Add( "PostDrawOpaqueRenderables", "DrawFlags", function()
-	for k, v in next, flags do
-		local col = Color( 0, 255, 0 )
-		if status[ v[ 1 ] ] == -1 or v[ 4 ] == -10 then
-			col = Color( 0, 0, 255 )
-		elseif status[ v[ 1 ] ] == 1 or v[ 4 ] == 10 then
+	for flagname, flaginfo in pairs( GAMEMODE.FlagTable ) do
+		local col = Color( 255, 255, 255 )
+		if flaginfo.control == 1 or flaginfo.count == 0 then
 			col = Color( 255, 0, 0 )
-		elseif status[ v[ 1 ] ] == 0 or v[ 4 ] == 0 then
-			col = Color( 255, 255, 255 )
-		else
-			col = Color( 255, 255, 255 )
+		elseif flaginfo.control == 2 or flaginfo.count == 20 then
+			col = Color( 0, 0, 255 )
 		end
 
-		local trace = v[ 2 ]
-		--[[
-		local up = Vector( 0, 0, 50 )
-		
-		cs3d2d( trace + up, ang1, 1 ) 
-			sdc( v[ 3 ], 0, 5, col ) 
-		ce3d2d()
-		]]
-		local ang = lp():EyeAngles()
+		local trace = flaginfo.pos
+		local ang = LocalPlayer():EyeAngles()
 		local pos = trace + offset + ang:Up()
 		
 		ang:RotateAroundAxis( ang:Forward(), 90 )
 		ang:RotateAroundAxis( ang:Right(), 90 )
 		surface.SetDrawColor( col )
-		cs3d2d( pos, Angle( 0, ang.y, 90 ), 0.25 )
-			sdl( 0, -100, 0, 375 )
-			sdl( 0, -100, 70, 20 )
-			sdl( 0, 20, 70, 20 )
-		ce3d2d()
+		cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.25 )
+			surface.DrawLine( 0, -100, 0, 375 )
+			surface.DrawLine( 0, -100, 70, 20 )
+			surface.DrawLine( 0, 20, 70, 20 )
+		cam.End3D2D()
 	end
-	--ang1 = ang1 + Angle( 0, 0.02, 0 )
 end )
 
-
-net.Receive( "SendFlags", function()
-	local f = net.ReadTable()
-	local s = net.ReadTable()
-	flags = f
-	status = s
-end )
-
-local curFlagNumber = nil
+--//Draws the "progress" bar across the bottom
 local progress = vgui.Create( "DPanel" )
-progress:SetSize( 600, 20 )
-progress.Paint = function() --paint progress bar
-	if curFlagNumber then
-		local x = 0 --the point where the red progress meets blue progress (in... pixels?)
-		x = 15 * curFlagNumber + 150 --so, x is basically the red capture progress (relative to the center) (why is it offset by 150?)
-		
-		if(LocalPlayer():Team() == 1) then --red
-			surface.SetDrawColor( 0, 0, 255, 200 )
-			surface.DrawRect( x, 0, 300 - x, progress:GetTall() )
+progress:SetSize( 300, 20 )
+local sectionsize = progress:GetWide() / 20
+progress.Paint = function()
+	if GAMEMODE.CurrentFlag then
+		local flaginfo = GAMEMODE.FlagTable[ GAMEMODE.CurrentFlag ]
+		if LocalPlayer():Team() == 1 then
+			if flaginfo.lastcontrol == 2 and flaginfo.control == 0 and flaginfo.count != 0 then
+				if not fade then fade = 1 end
+				fade = math.Round( math.Clamp( fade - 0.01, 0, 1 ), 2 )
+				surface.SetDrawColor( 50, 50, 50 )
+				surface.DrawRect( 0, 0, progress:GetWide(), progress:GetTall() )
+				surface.SetDrawColor( 0, 0, 255, 255 * fade )
+				surface.DrawRect( 0, 0, progress:GetWide(), progress:GetTall() )
+				surface.SetDrawColor( 0, 0, 255, 200 )
+				surface.SetTexture( GAMEMODE.GradientTexture )
+				surface.DrawTexturedRectRotated( progress:GetWide() - 4, progress:GetTall() / 2, 8, progress:GetTall(), 180 )
+			else
+				fade = 1
+				surface.SetDrawColor( 0, 0, 255 )
+				surface.DrawRect( 0, 0, progress:GetWide(), progress:GetTall() )
+			end
 
-			surface.SetDrawColor( 255, 0, 0, 200 )
-			surface.DrawRect( 0, 0, x, progress:GetTall() )
-		else --not red
-			surface.SetDrawColor( 0, 0, 255, 200 )
-			surface.DrawRect( 0, 0, 300 - x, progress:GetTall() ) --this took me longer to figure than it should have
+			surface.SetDrawColor( 255, 0, 0 )
+			surface.DrawRect( 0, 0, sectionsize * ( 20 - flaginfo.count ), progress:GetTall() )
+		elseif LocalPlayer():Team() == 2 then
+			if flaginfo.lastcontrol == 1 and flaginfo.control == 0 and flaginfo.count != 20 then
+				if not fade then fade = 1 end
+				fade = math.Round( math.Clamp( fade - 0.01, 0, 1 ), 2 )
+				surface.SetDrawColor( 50, 50, 50 )
+				surface.DrawRect( 0, 0, progress:GetWide(), progress:GetTall() )
+				surface.SetDrawColor( 255, 0, 0, 255 * fade )
+				surface.DrawRect( 0, 0, progress:GetWide(), progress:GetTall() )
+				surface.SetDrawColor( 255, 0, 0 )
+				surface.SetTexture( GAMEMODE.GradientTexture )
+				surface.DrawTexturedRectRotated( progress:GetWide() - 4, progress:GetTall() / 2, 8, progress:GetTall(), 180 )
+			else
+				fade = 1
+				surface.SetDrawColor( 255, 0, 0 )
+				surface.DrawRect( 0, 0, progress:GetWide(), progress:GetTall() )
+			end
 
-			surface.SetDrawColor( 255, 0, 0, 200 )
-			surface.DrawRect( 300 - x, 0, x, progress:GetTall() )
+			surface.SetDrawColor( 0, 0, 255 )
+			surface.DrawRect( 0, 0, sectionsize * flaginfo.count, progress:GetTall() )
 		end
 
-		return true --prevents BG from being drawn
+		if flaginfo.count != 20 and flaginfo.count != 0 then --//A visual representation of the "neutralization" spot
+			surface.SetDrawColor( 55, 55, 55 )
+			surface.DrawLine( progress:GetWide() / 2 - 1, 0, progress:GetWide() / 2 + 1, progress:GetTall() )
+			surface.DrawLine( progress:GetWide() / 2, 0, progress:GetWide() / 2, progress:GetTall() )
+			surface.DrawLine( progress:GetWide() / 2 + 1, 0, progress:GetWide() / 2 - 1, progress:GetTall() )
+		end
+
+		return true
 	end
 end
 progress:SetVisible( false )
-progress:SetPos( ScrW() / 2 - 150, ScrH() - 40 )
+progress:SetPos( ScrW() / 2 - ( progress:GetWide() / 2 ), ScrH() - ( progress:GetTall() * 2 ) )
+
 hook.Add( "HUDPaint", "ProgressBar", function()
-	--local flagnum = 0
-	if curFlagNumber then
+	if GAMEMODE.CurrentFlag then
 		progress:SetVisible( true )
 	else
 		progress:SetVisible( false )
 	end
-	--[[
-	drb( 4, 30, ScrH() - 90, #flags * 40, 30, Color( 0, 0, 0, 220 ) )
-	for k, v in next, flags do
-		ssf( "DrawFlagNames" )
-		if status[ v[ 1 ] ] == 1 then
-			sstc( 255, 0, 0 )
-		elseif status[ v[ 1 ] ] == -1 then
-			sstc( 0, 0, 255 )
-		elseif status[ v[ 1 ] ] == 0 then
-			sstc( 255, 255, 255 )
-		end
-		sstp( 40 + ( 40 * flagnum ), ScrH() - 89 )
-		sdt( tostring( v[ 1 ] ) )
-		flagnum = flagnum + 1
-	end
-	flagnum = 0
-	]]
 end )
-usermessage.Hook( "UpdateNumber", function( um )
-	local num = tonumber( um:ReadString() )
-	if num == 69 then
-		curFlagNumber = nil
-	else
-		if progress:IsVisible() and curFlagNumber ~= 9 and curFlagNumber ~= -9 and curFlagNumber ~= 10 and curFlagNumber ~= -10 then
-			surface.PlaySound( "ui/hud_capping_flag_01_wave.mp3" )
-		end
-		curFlagNumber = num			
+
+net.Receive( "UpdateFlagInfo", function()
+	local flag = net.ReadString()
+	local pos = net.ReadVector()
+	local count = net.ReadInt( 6 )
+	local control = net.ReadInt( 3 )
+	local lastcontrol = net.ReadInt( 3 )
+
+	GAMEMODE.FlagTable[ flag ] = { pos = pos, count = count, control = control, lastcontrol = lastcontrol }
+
+	if progress:IsVisible() and count != 0 and count != 20 then
+		surface.PlaySound( "ui/hud_capping_flag_01_wave.mp3" ) --//Standard capture "tick" sound
 	end
+end )
+
+net.Receive( "IsOnFlag", function()
+	local flagname = net.ReadString()
+
+	GAMEMODE.CurrentFlag = flagname
+end )
+
+net.Receive( "IsOffFlag", function()
+	local flagname = net.ReadString()
+	if GAMEMODE.CurrentFlag and flagname == GAMEMODE.CurrentFlag then --//This will be sent every tick
+		GAMEMODE.CurrentFlag = nil
+	end
+end )
+
+net.Start( "RequestInitialFlagStatus" ) --//This is called back as UpdateFlagInfo
+net.SendToServer()
+
+net.Start( "RequestFlagOrder" )
+net.SendToServer()
+
+net.Receive( "RequestFlagOrderCallback", function()
+	GAMEMODE.FlagTableOrdered = net.ReadTable() --//It's generally recommended you don't send tables, since they're expensive, but since this is infreqent, w/e
 end )

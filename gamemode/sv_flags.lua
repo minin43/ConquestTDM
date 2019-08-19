@@ -704,8 +704,8 @@ flags[ "dm_necessity" ] = {
 }
 
 flags[ "dm_corrugated" ] = {
-    { "B", Vector( 191.8125, 510.5, -63.9688 ), 262.0, 0.0 },
-    { "A", Vector( -965.6563, -832.4063, -175.9375 ), 194.0, 0.0 },
+    { "A", Vector( 191.8125, 510.5, -63.9688 ), 262.0, 0.0 },
+    { "B", Vector( -965.6563, -832.4063, -175.9375 ), 194.0, 0.0 },
     { "C", Vector( 1582.625, 1855.0938, -95.9688 ), 143.0, 0.0 }
 }
 
@@ -719,240 +719,8 @@ flags[ "gm_thepit" ] = {
 	{ "", Vector( 0, 0, 0 ), 0, 0 }
 }]]
 
-tab = {}
-for k, v in next, player.GetAll() do
-	tab[ v ] = 0
-end
-hook.Add( "PlayerSpawn", "SetNilValue", function( ply )
-	tab[ ply ] = 0
-	umsg.Start( "UpdateNumber", ply )
-		umsg.String( "69" )
-	umsg.End()		
-end )
-
-local curmap
-if not flags[ game.GetMap() ] then
-	return
-else
-	curmap = flags[ game.GetMap() ]
-end
-
-local status = {}
-for k, v in next, curmap do
-	status[ v[ 1 ] ] = 0
-end
-
-local function updateNumber( a, num )
-	local allplys = {}
-	for t, y in next, player.GetAll() do
-		if tab[ y ] == a then
-			table.insert( allplys, y )
-		end
-	end
-	for k, v in next, allplys do
-		umsg.Start( "UpdateNumber", v )
-			umsg.String( tostring( num ) )
-		umsg.End()
-	end
-	net.Start( "SendFlags" )
-		net.WriteTable( curmap )
-		net.WriteTable( status )
-	net.Broadcast()
-end
-
---prepare yourself
-timer.Create( "CapFlags", 1, 0, function()
-	for k, v in next, curmap do
-		for kk, vv in next, player.GetAll() do
-			if tab[ vv ] == v[ 1 ] then
-				if vv:Team() == 1 then --red team
-					if v[ 4 ] + 1 < 10 and v[ 4 ] + 1 ~= 0 then
-						v[ 4 ] = v[ 4 ] + 1
-						updateNumber( v[ 1 ], v[ 4 ] )
-					elseif v[ 4 ] + 1 > 10 then
-						v[ 4 ] = 10
-						updateNumber( v[ 1 ], v[ 4 ] )					
-					elseif v[ 4 ] + 1 == 10 then
-						if status[ v[ 1 ] ] == 0 then
-							v[ 4 ] = 10
-							local allplys = {}
-							for t, y in next, player.GetAll() do
-								if tab[ y ] == v[ 1 ] and y:Team() == 1 then
-									table.insert( allplys, y )
-								end
-							end
-							hook.Run( "tdm_FlagCaptured", 1, v, allplys )
-							updateNumber( v[ 1 ], v[ 4 ] )	
-							status[ v[ 1 ] ] = 1
-						elseif status[ v[ 1 ] ] == 1 then
-							v[ 4 ] = 10
-							local allplys = {}
-							for t, y in next, player.GetAll() do
-								if tab[ y ] == v[ 1 ] and y:Team() == 1 then
-									table.insert( allplys, y )
-								end
-							end
-							hook.Run( "tdm_FlagSaved", 1, v, allplys )
-							updateNumber( v[ 1 ], v[ 4 ] )			
-						end
-					elseif v[ 4 ] + 1 == 0 then
-						if status[ v[ 1 ] ] ~= 0 then
-							v[ 4 ] = v[ 4 ] + 1
-							local allplys = {}
-							for t, y in next, player.GetAll() do
-								if tab[ y ] == v[ 1 ] and y:Team() == 1 then
-									table.insert( allplys, y )
-								end
-							end
-							hook.Run( "tdm_FlagNeutral", 1, v, allplys )
-							updateNumber( v[ 1 ], v[ 4 ] )
-							status[ v[ 1 ] ] = 0
-						elseif status[ v[ 1 ] ] == 0 then
-							v[ 4 ] = v[ 4 ] + 1
-							updateNumber( v[ 1 ], v[ 4 ] )
-						end
-					end
-				elseif vv:Team() == 2 then --blue team
-					if v[ 4 ] - 1 > -10 and v[ 4 ] - 1 ~= 0 then
-						v[ 4 ] = v[ 4 ] - 1
-						updateNumber( v[ 1 ], v[ 4 ] )					
-					elseif v[ 4 ] - 1 < -10 then
-						v[ 4 ] = -10
-						updateNumber( v[ 1 ], v[ 4 ] )						
-					elseif v[ 4 ] - 1 == -10 then
-						if status[ v[ 1 ] ] == 0 then
-							v[ 4 ] = -10
-							local allplys = {}
-							for t, y in next, player.GetAll() do
-								if tab[ y ] == v[ 1 ] and y:Team() == 2 then
-									table.insert( allplys, y )
-								end
-							end
-							hook.Run( "tdm_FlagCaptured", 2, v, allplys )	
-							updateNumber( v[ 1 ], v[ 4 ] )		
-							status[ v[ 1 ] ] = -1
-						elseif status[ v[ 1 ] ] == -1 then
-							v[ 4 ] = -10
-							local allplys = {}
-							for t, y in next, player.GetAll() do
-								if tab[ y ] == v[ 1 ] and y:Team() == 2 then
-									table.insert( allplys, y )
-								end
-							end
-							hook.Run( "tdm_FlagSaved", 1, v, allplys )
-							updateNumber( v[ 1 ], v[ 4 ] )	
-						end
-					elseif v[ 4 ] - 1 == 0 then
-						if status[ v[ 1 ] ] ~= 0 then
-							v[ 4 ] = v[ 4 ] - 1
-							local allplys = {}
-							for t, y in next, player.GetAll() do
-								if tab[ y ] == v[ 1 ] and y:Team() == 2 then
-									table.insert( allplys, y )
-								end
-							end
-							hook.Run( "tdm_FlagNeutral", 2, v, allplys )
-							updateNumber( v[ 1 ], v[ 4 ] )	
-							status[ v[ 1 ] ] = 0
-						elseif status[ v[ 1 ] ] == 0 then
-							v[ 4 ] = v[ 4 ] - 1
-							updateNumber( v[ 1 ], v[ 4 ] )
-						end
-					end
-				end
-			end
-		end
-	end
-end )
-
-hook.Add( "Think", "tdm_checkpos", function()
-	for k, v in next, curmap do
-		for q, w in next, player.GetAll() do
-			if w:GetPos():Distance( v[ 2 ] ) <= v[ 3 ] then
-				if w:Alive() then
-					if not w.spawning then
-						if tab[ w ] ~= v[ 1 ] then
-							tab[ w ] = v[ 1 ]
-							hook.Run( "tdm_FlagCapStart", w, tab[ w ] )
-							umsg.Start( "UpdateNumber", w )
-								umsg.String( tostring( v[ 4 ] ) )
-							umsg.End()		
-						end
-					end
-				else
-					if tab[ w ] == v[ 1 ] then
-						hook.Run( "tdm_FlagCapEnd", w, tab[ w ] )
-						tab[ w ] = 0
-						umsg.Start( "UpdateNumber", w )
-							umsg.String( "69" )
-						umsg.End()
-					end
-				end					
-			elseif w:GetPos():Distance( v[ 2 ] ) > v[ 3 ] then
-				if tab[ w ] == v[ 1 ] then
-					hook.Run( "tdm_FlagCapEnd", w, tab[ w ] )
-					tab[ w ] = 0
-					umsg.Start( "UpdateNumber", w )
-						umsg.String( "69" )
-					umsg.End()
-				end
-			end
-		end
-	end
-end )
-
-hook.Add( "PlayerSpawn", "SendFlags", function( ply )
-	net.Start( "SendFlags" )
-		net.WriteTable( curmap )
-		net.WriteTable( status )
-	net.Send( ply )
-end )
-
-hook.Add( "tdm_FlagCaptured", "tdm_flagcapped", function( t, flag, plys )
-	net.Start( "SendFlags" )
-		net.WriteTable( curmap )
-		net.WriteTable( status )
-	net.Broadcast()
-	for k, v in next, plys do --If friendlies capture a point
-		AddNotice(v, "FLAG CAPTURED", SCORECOUNTS.FLAG_CAPTURED, NOTICETYPES.FLAG)
-		AddRewards(v, SCORECOUNTS.FLAG_CAPTURED)
-		umsg.Start( "friendlyflagcaptured", v )
-			umsg.String( flag[ 1 ] )
-		umsg.End()
-	end
-	for k, v in next, player.GetAll() do
-		if v:Team() ~= t and v:Team() ~= 0 then
-			umsg.Start( "enemyflagcaptured", v )
-				umsg.String( flag[ 1 ] )
-			umsg.End()		
-		end		
-	end
-end )
-
-hook.Add( "tdm_FlagNeutral", "tdm_flagneutral", function( t, flag, plys )
-	for k, v in next, plys do
-        AddNotice(v, "FLAG NEUTRALIZED", SCORECOUNTS.FLAG_NEUTRALIZED, NOTICETYPES.FLAG)
-		AddRewards(v, SCORECOUNTS.FLAG_NEUTRALIZED)
-		hook.Run( "MatchHistory_Neutral", v )
-	end
-	net.Start( "SendFlags" )
-		net.WriteTable( curmap )
-		net.WriteTable( status )
-	net.Broadcast()		
-end )
-
-hook.Add( "tdm_FlagSaved", "tdm_flagsaved", function( t, flag, plys )
-	for k, v in next, plys do
-        AddNotice(v, "FLAG SAVED", SCORECOUNTS.FLAG_SAVED, NOTICETYPES.FLAG)
-		AddRewards(v, SCORECOUNTS.FLAG_SAVED)
-	end		
-	net.Start( "SendFlags" )
-		net.WriteTable( curmap )
-		net.WriteTable( status )
-	net.Broadcast()		
-end )
-
-timer.Create( "FlagRewards", 10, 0, function()
+--//Leaving this hanging around since it's functionality that can be added in later if desired
+--[[timer.Create( "FlagRewards", 10, 0, function()
 	local numFlags = #flags[ game.GetMap() ]
 	if numFlags == 0 then
 		return
@@ -1022,159 +790,287 @@ timer.Create( "FlagRewards", 10, 0, function()
 		end
 	end
 	
-end )
-
-timer.Create( "FixFlags", 5, 0, function()
-	net.Start( "SendFlags" )
-		net.WriteTable( curmap )
-		net.WriteTable( status )
-	net.Broadcast()	
-end )
-
-local capture = capture or {}
-for k, v in next, curmap do
-	capture[ v[ 1 ] ] = {}
-end
-
-util.AddNetworkString( "BroadcastCaptures" )
-function BroadcastCaptures()
-	net.Start( "BroadcastCaptures" )
-		net.WriteTable( capture )
-	net.Broadcast()
-end
-
-hook.Add( "tdm_FlagCapStart", "tdm_startcap", function( ply, name )
-	if not table.HasValue( capture[ name ], ply ) then
-		table.insert( capture[ name ], ply )
-		BroadcastCaptures()
-	end
-end )
-
-hook.Add( "tdm_FlagCapEnd", "tdm_stopcap", function( ply, name )
-	local key = table.KeyFromValue( capture[ name ], ply )
-	table.remove( capture[ name ], key )
-	BroadcastCaptures()
-end )
-
-hook.Add( "Think", "SetFlagStatuses", function()
-	for k, v in next, curmap do
-		local n = v[ 1 ]
-		if #capture[ n ] > 0 then
-			local plys = capture[ n ]
-			if status[ n ] ~= 0 then
-				for k1, v1 in next, plys do
-					if not ( v1 and IsValid( v1 ) and v1 ~= NULL ) then 
-						continue 
-					end
-					if v1:Team() == 0 then
-						continue
-					end
-					if ( status[ n ] == 1 and v1:Team() == 2 ) or ( status[ n ] == 2 and v1:Team() == 1 ) then
-						if capture[ n ].capturing and capture[ n ].capturing ~= true and status[ n ] ~= 10 and status[ n ] ~= -10 then
-							capture[ n ].capturing = true
-							BroadcastCaptures()
-						end
-						break
-					elseif status[ n ] == 0 then
-						if capture[ n ].capturing and capture[ n ].capturing ~= true and status[ n ] ~= 10 and status[ n ] ~= -10 then
-							capture[ n ].capturing = true
-							BroadcastCaptures()
-						end
-						break	
-					end
-					if capture[ n ].capturing and capture[ n ].capturing ~= false then
-						capture[ n ].capturing = false
-						BroadcastCaptures()
-					end
-				end
-			elseif status[ n ] == 0 then
-				if #plys > 0 then
-					if capture[ n ].capturing and capture[ n ].capturing ~= true then
-						capture[ n ].capturing = true
-						BroadcastCaptures()
-					end	
-				else
-					if capture[ n ].capturing and capture[ n ].capturing ~= false then
-						capture[ n ].capturing = false
-						BroadcastCaptures()
-					end		
-				end
-			end
-		else
-			if capture[ n ].capturing ~= false then
-				capture[ n ].capturing = false
-				BroadcastCaptures()
-			end
-		end
-	end
-end )
-
---//Some of Logan's shit - damn Whuppo this file is messy as fuck...
-
-hook.Add( "tdm_FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
-    for k, v in pairs( plytable ) do
-        for k2, v2 in pairs( v:GetWeapons() ) do
-            v:GiveAmmo( v2:Clip1(), v2:GetPrimaryAmmoType(), true )
-        end
-    end
-end )
-
---[[hook.Add( "tdm_FlagNeutral", "GiveAmmoNeutral", function( _, _, plytable )
-    for k, v in pairs( plytable ) do
-        for k2, v2 in pairs( v:GetWeapons() ) do
-            v:GiveAmmo( v2:Clip1(), v2:GetPrimaryAmmoType(), true )
-        end
-    end
 end )]]
 
---//Moved from init.lua
+if not flags[ game.GetMap() ] then
+	return
+else
+	GM.FlagTable = GM.FlagTable or {}
+	
+	for k, v in pairs( flags[ game.GetMap() ] ) do
+		--//Keys in this table are the flag "name" - duplicates do not exist this way
+		--[[ Table format:
+			pos = flag position
+			size = size of the area the player must be in
+			players = table of all players inside the area, key = player object, value = player's team
+			redcount = number of red team players on the point (this was originally a local value, but let's save it anywhore)
+			bluecount = same as red but for blue team
+			currentcontrol = team currently in control of the flag
+			lastcontrol = team that last controlled the flag before it neutralized - used for "SAVED FLAG"
+			count = where the flag sits in terms of control, 0 = red control, 20 = blue control, 10 = neutral]]
+		GM.FlagTable[ v[ 1 ] ] = { pos = v[ 2 ], size = v[ 3 ], players = {}, redcount = 0, bluecount = 0, currentcontrol = 0, lastcontrol = 0, count = 10 }
+	end
+end
+
+--//Moved from init.lua - calculates ticket drain every 5 seconds
 timer.Create( "TicketFlagCheck", 5, 0, function()
     if GetGlobalBool( "RoundFinished" ) then timer.Remove( "TicketFlagCheck" ) return end
     
     if not firstcheck then
         firstcheck = true
 
-        local flagtable = flags[ game.GetMap() ]
-        if flagtable then
-            if #flagtable > 0 then
+        if GAMEMODE.FlagTable then
+            if table.Count( GAMEMODE.FlagTable ) > 0 then
+				print("TicketCheck1", table.Count( GAMEMODE.FlagTable ))
                 SetGlobalBool( "ticketmode", true )
             else
+				print("TicketCheck2")
                 SetGlobalBool( "ticketmode", false )
                 timer.Remove( "TicketFlagCheck" )
             end
         else
+			print("TicketCheck3")
             SetGlobalBool( "ticketmode", false )
             timer.Remove( "TicketFlagCheck" )
         end
     end
+
+	print("DRAIN TICKETS, RedDrain:", GAMEMODE.RedDrain, " Blue Drain: ", GAMEMODE.BlueDrain)
+	SetGlobalInt( "RedTickets", math.Clamp( GetGlobalInt( "RedTickets" ) - GAMEMODE.RedDrain, 0, GAMEMODE.Tickets ) )
+	SetGlobalInt( "BlueTickets", math.Clamp( GetGlobalInt( "BlueTickets" ) - GAMEMODE.BlueDrain, 0, GAMEMODE.Tickets ) )
     
-    if GetGlobalInt( "control" ) == 1 then
-        if GetGlobalInt( "allcontrol" ) == 1 then
-            SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 2 )
-            if GetGlobalInt( "BlueTickets" ) <= 0 then
-                print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, red wins")
-                GAMEMODE:EndRound( 1 )
-            end
-        else
-            SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
-            if GetGlobalInt( "BlueTickets" ) <= 0 then
-                print("ENDROUND DEBUG - calling EndRound from ticket loss, in red control, blue wins")
-                GAMEMODE:EndRound( 1 )
-            end
-        end
-    elseif GetGlobalInt( "control" ) == 2 then
-        if GetGlobalInt( "allcontrol" ) == 2 then
-            SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 2 )
-            if GetGlobalInt( "RedTickets" ) <= 0 then
-                print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, blue wins")
-                GAMEMODE:EndRound( 2 )
-            end			
-        else
-            SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
-            if GetGlobalInt( "BlueTickets" ) <= 0 then
-                print("ENDROUND DEBUG - calling EndRound from ticket loss, in blue control, red wins")
-                GAMEMODE:EndRound( 2 )
-            end					
+	if GetGlobalInt( "RedTickets" ) == 0 and GetGlobalInt( "BlueTickets" ) == 0 then
+		if GAMEMODE.RedDrain > GAMEMODE.BlueDrain then
+			print("ENDROUND DEBUG - calling EndRound from ticket loss, tie game but red drain higher, blue wins")
+			GAMEMODE:EndRound( 2 )
+		elseif GAMEMODE.BlueDrain > GAMEMODE.RedDrain then
+			print("ENDROUND DEBUG - calling EndRound from ticket loss, tie game but blue drain higher, red wins")
+			GAMEMODE:EndRound( 1 )
+		end
+		print("ENDROUND DEBUG - calling EndRound from ticket loss, tie game")
+		GAMEMODE:EndRound( 0 )
+	elseif GetGlobalInt( "RedTickets" ) == 0 then
+		print("ENDROUND DEBUG - calling EndRound from ticket loss, 0 red tickets, blue wins")
+		GAMEMODE:EndRound( 2 )
+	elseif GetGlobalInt( "BlueTickets" ) == 0 then
+		print("ENDROUND DEBUG - calling EndRound from ticket loss, 0 blue tickets, red wins")
+		GAMEMODE:EndRound( 1 )
+	end
+end )
+
+util.AddNetworkString( "UpdateFlagInfo" )
+function UpdateFlagCount( flag, pos, count, control, lastcontrol, ply )
+	net.Start( "UpdateFlagInfo" )
+		net.WriteString( flag )
+		net.WriteVector( pos )
+		net.WriteInt( math.Clamp( count, 0, 20 ), 6 )
+		net.WriteInt( math.Clamp( control, 0, 2 ), 3 )
+		net.WriteInt( math.Clamp( lastcontrol, 0, 2 ), 3 )
+	if ply then
+		net.Send( ply )
+	else
+		net.Broadcast()
+	end
+
+	GAMEMODE:UpdateFlagDrain()
+end
+
+GM.RedDrain, GM.BlueDrain = 0, 0
+function GM:UpdateFlagDrain()
+	local redcount, bluecount = 0, 0
+	for flagname, flagtable in pairs( self.FlagTable ) do
+		if flagtable.currentcontrol == 1 then
+			redcount = redcount + 1
+		elseif flagtable.currentcontrol == 2 then
+			bluecount = bluecount + 1
+		end
+	end
+	if redcount > bluecount then
+		self.RedDrain = 0
+		self.BlueDrain = redcount - bluecount
+	elseif bluecount > redcount then
+		self.RedDrain = bluecount - redcount
+		self.BlueDrain = 0
+	elseif self.bluecount == self.redcount and self.bluecount != 0 then
+		self.RedDrain = 1
+		self.BlueDrain = 1
+	end
+end
+
+function SendCurrentFlagStatuses( ply )
+	for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
+		UpdateFlagCount( flagname, flagtable.pos, flagtable.count, flagtable.currentcontrol, flagtable.lastcontrol, ply )
+	end
+end
+
+--//The core of the flag checking - hopefully written much better than Whuppo's was
+timer.Create( "FlagCheck", 1, 0, function()
+	--//First thing, check where all of the players are - if they're inside a flag zone, mark them down
+	for _, ply in pairs( player.GetAll() ) do
+		if not ply:IsValid() or ply:Team() == 0 or not ply:Alive() then return end
+
+		for _, flagtable in pairs( GAMEMODE.FlagTable ) do
+			if ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
+				flagtable.players[ ply ] = ply:Team()
+			else
+				flagtable.players[ ply ] = nil
+			end
+		end
+	end
+
+	--//We'll need to count how many players are on the zone, and what the team majority is
+	for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
+		--//These were intially local vars, but fuckit let's say them to the table in case we need them for some odd reason in the future
+		flagtable.redcount = 0
+		flagtable.players.redTeam = {}
+		flagtable.bluecount = 0
+		flagtable.players.blueTeam = {}
+		for ply, teamid in pairs( flagtable.players ) do
+			if teamid == 1 then
+				flagtable.redcount = flagtable.redcount + 1
+				flagtable.players.redTeam[ #flagtable.players.redTeam ] = ply
+			elseif teamid == 2 then
+				flagtable.bluecount = flagtable.bluecount + 1
+				flagtable.players.blueTeam[ #flagtable.players.blueTeam ] = ply
+			end
+		end
+		
+		--//If there's a difference by team, give the team with the most players the difference in count towards capturing - none if none
+		local difference = 0
+		if flagtable.redcount > flagtable.bluecount then
+		--//Red team first
+			difference = flagtable.redcount - flagtable.bluecount
+			--//If we're climbing from blue control (from count 20 - 11), neutralize the flag first
+			if flagtable.count > 10 and ( flagtable.count - difference ) <= 10 then
+				--//Neutralize the flag
+				flagtable.currentcontrol = 0
+				hook.Run( "FlagNeutralized", flagname, flagtable.lastcontrol, flagtable.players.redTeam )
+			end
+			--//If red hasn't yet captured the flag, give them count towards it, if the count given hits 0, capture the flag
+			if flagtable.count > 0 then
+				flagtable.count = math.Clamp( flagtable.count - difference, 0, 20 )
+
+				if flagtable.count == 0 then --//If we capture the flag with this newest count
+					flagtable.currentcontrol = 1
+
+					if flagtable.lastcontrol == 1 then --//If we held the flag last, we've saved it, not captured it
+						hook.Run( "FlagSaved", flagname, flagtable.currentcontrol, flagtable.players.redTeam )
+					else --//We captured the flag back
+						hook.Run( "FlagCaptured", flagname, flagtable.currentcontrol, flagtable.players.redTeam )
+					end
+
+					flagtable.lastcontrol = 1
+				end
+				
+				UpdateFlagCount( flagname, flagtable.pos, flagtable.count, flagtable.currentcontrol, flagtable.lastcontrol )
+			end
+		elseif flagtable.redcount < flagtable.bluecount then
+		--//This half mirrors above, but for blue team
+			difference = flagtable.bluecount - flagtable.redcount
+			if flagtable.count < 10 and ( flagtable.count + difference ) >= 10 then
+				flagtable.currentcontrol = 0
+				hook.Run( "FlagNeutralized", flagname, flagtable.lastcontrol, flagtable.players.blueTeam )
+			end
+
+			if flagtable.count < 20 then
+				flagtable.count = math.Clamp( flagtable.count + difference, 0, 20 )
+
+				if flagtable.count == 20 then
+					flagtable.currentcontrol = 2
+
+					if flagtable.lastcontrol == 2 then
+						hook.Run( "FlagSaved", flagname, flagtable.currentcontrol, flagtable.players.blueTeam )
+					else
+						hook.Run( "FlagCaptured", flagname, flagtable.currentcontrol, flagtable.players.blueTeam )
+					end
+
+					flagtable.lastcontrol = 2
+				end
+
+				UpdateFlagCount( flagname, flagtable.pos, flagtable.count, flagtable.currentcontrol, flagtable.lastcontrol )
+			end
+		end
+
+	end
+end )
+
+util.AddNetworkString( "IsOnFlag" )
+util.AddNetworkString( "IsOffFlag" )
+hook.Add( "Think", "CheckIfOnFlag", function()
+	for _, ply in pairs( player.GetAll() ) do
+		if not ply:IsValid() or ply:Team() == 0 or not ply:Alive() then return end
+
+		for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
+			if ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
+				net.Start( "IsOnFlag" )
+					net.WriteString( flagname )
+				net.Send( ply )
+			else
+				net.Start( "IsOffFlag" )
+					net.WriteString( flagname )
+				net.Send( ply )
+			end
+		end
+	end
+end )
+
+hook.Add( "PlayerSpawn", "SendInitialFlagInfo", function( ply )
+	SendCurrentFlagStatuses( ply )
+end )
+
+hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
+    for _, ply in pairs( plytable ) do
+        for _, wep in pairs( ply:GetWeapons() ) do
+            ply:GiveAmmo( wep:GetMaxClip1(), wep:GetPrimaryAmmoType(), true )
         end
     end
+end )
+
+hook.Add( "FlagCaptured", "CapturePointDistribution", function( flagname, controllingTeam, controllingTeamPlayers )
+	for _, ply in next, controllingTeamPlayers do --//I just noticed doing this rewrite, friendly's capturing a point isn't announced...
+		AddNotice( ply, "FLAG CAPTURED", SCORECOUNTS.FLAG_CAPTURED, NOTICETYPES.FLAG )
+		AddRewards( ply, SCORECOUNTS.FLAG_CAPTURED )
+		umsg.Start( "friendlyflagcaptured", ply )
+			umsg.String( flagname )
+		umsg.End()
+	end
+	for _, ply in next, player.GetAll() do
+		if ply:Team() != controllingTeam and ply:Team() != 0 then
+			umsg.Start( "enemyflagcaptured", ply )
+				umsg.String( flagname )
+			umsg.End()		
+		end		
+	end
+end )
+
+hook.Add( "FlagNeutralized", "NeutralizePointDistribution", function( flagname, previousTeam, controllingTeamPlayers )
+	for _, ply in pairs( controllingTeamPlayers ) do
+        AddNotice( ply, "FLAG NEUTRALIZED", SCORECOUNTS.FLAG_NEUTRALIZED, NOTICETYPES.FLAG )
+		AddRewards( ply, SCORECOUNTS.FLAG_NEUTRALIZED )
+		hook.Run( "MatchHistory_Neutral", ply )
+	end
+end )
+
+hook.Add( "FlagSaved", "SavePointDistribution", function( flagname, controllingTeam, controllingTeamPlayers )
+	for _, ply in pairs( controllingTeamPlayers ) do
+        AddNotice( ply, "FLAG SAVED", SCORECOUNTS.FLAG_SAVED, NOTICETYPES.FLAG )
+		AddRewards( ply, SCORECOUNTS.FLAG_SAVED )
+	end		
+end )
+
+util.AddNetworkString( "RequestInitialFlagStatus" )
+net.Receive( "RequestInitialFlagStatus", function( len, ply )
+	SendCurrentFlagStatuses( ply )
+end )
+
+util.AddNetworkString( "RequestFlagOrder" )
+util.AddNetworkString( "RequestFlagOrderCallback" )
+net.Receive( "RequestFlagOrder", function( len, ply )
+	local tosend = {}
+	for _, flagtable in pairs( flags[ game.GetMap() ] ) do
+		tosend[ #tosend + 1 ] = flagtable[ 1 ]
+	end
+	net.Start( "RequestFlagOrderCallback" )
+		net.WriteTable( tosend )
+	net.Send( ply )
 end )

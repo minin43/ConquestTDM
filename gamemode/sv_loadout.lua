@@ -90,6 +90,8 @@ extras = {
     Leech -Life				- 42
     Pyromancer -Misc		- 46
     Lifeline -Misc	        - 50
+
+	Martyrdom
 ]]
 
 hook.Add( "InitPostEntity", "SetStats", function()

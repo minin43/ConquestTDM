@@ -361,8 +361,12 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
         AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA )
     end
 
+    if GAMEMODE.Event then
+        AddNotice( att, "EVENT BONUS", totalpointcount * GAMEMODE.Event.bonus, NOTICETYPES.EXTRA )
+    end
+
     GAMEMODE:UpdateVendetta( vic, att )
-end)
+end )
 
 GM.AssistTable = { }
 hook.Add( "PlayerHurt", "CalculateAssists", function( victim, attacker, healthRemaining, damageTaken )
@@ -375,8 +379,4 @@ hook.Add( "PlayerHurt", "CalculateAssists", function( victim, attacker, healthRe
         --//will be enough to warrant giving the attacker assist points anyway
         GAMEMODE.AssistTable[ vicID ][ attacker ] = ( GAMEMODE.AssistTable[ vicID ][ attacker ] or 0 ) + damageTaken
     end
-end )
-
-hook.Add( "", "CountHeadshots", function( ply ) 
-
 end )

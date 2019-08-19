@@ -1,5 +1,6 @@
 util.AddNetworkString( "EquipTitle" )
 util.AddNetworkString( "EquipTitleCallback" )
+util.AddNetworkString( "SendClientEquippedTitles" )
 
 GM.EquippedTitles = {}
 GM.CheckedTitles = {}
@@ -30,7 +31,9 @@ hook.Add( "PlayerInitialSpawn", "SetupTitles", function( ply )
 
     --//May not work this early into the connection
     for k, v in pairs( GAMEMODE.TitleMasterTable ) do
-        ply:SetPData( v.id .. "count", ply:GetPData( v.id .. "count" ) or 0 )
+        if not v.pdata then
+            ply:SetPData( v.id .. "count", ply:GetPData( v.id .. "count" ) or 0 )
+        end
     end
 end )
 
@@ -86,7 +89,26 @@ function GM:CheckEquippedTitle( ply )
     end
 end
 
---//Makes sure to check if the player owns the title, doesn't check for bad messages, though, unlike the shop
+function GM:SendClientsEquippedTitles() --//This'd be so much easier if (I wasn't colorblind) WriteTable wasn't expensive
+    local count = 0
+    local tosend = {}
+    for k, v in pairs( player.GetAll() ) do
+        if self.EquippedTitles[ id( v:SteamID() ) ] then
+            tosend[ id( v:SteamID() ) ] = self.EquippedTitles[ id( v:SteamID() ) ]
+            count = count + 1
+        end
+    end
+
+    net.Start( "SendClientEquippedTitles" )
+        net.WriteInt( count, 8 )
+        for k, v in pairs( tosend ) do
+            net.WriteString( k )
+            net.WriteString( v )
+        end
+    net.Broadcast()
+end
+
+--//Makes sure to check if the player owns the title, doesn't check for net message spoofs, though, unlike the shop
 net.Receive( "EquipTitle", function( len, ply )
     local desiredTitle = net.ReadString()
     local fil = util.JSONToTable( file.Read( "tdm/users/titles/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
@@ -105,12 +127,14 @@ net.Receive( "EquipTitle", function( len, ply )
         net.Start( "EquipTitleCallback" )
             net.WriteString( ownstitle )
         net.Send( ply )
+
+        GAMEMODE:SendClientsEquippedTitles()
     end
 end )
 
 --//Adds the tag to chat messages - requires additional work to color the titles something other than the defautl chat color
 hook.Add( "PlayerSay", "ChatTag", function( ply, msg, teamOnly )
-    if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
+    if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] and ToBeRemovedWhenChatboxDependenciesAreAdded then
         local tab = GAMEMODE:GetTitleTable( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
         --//May be able to implement color into the messages, run if-then statements dependent on special chat addons, run GlobalChatPrint instead
         return "[" .. tab.title .. "] " .. msg
@@ -122,6 +146,8 @@ hook.Add( "PlayerLoadedIn", "SendLastTitle", function( ply )
         net.Start( "EquipTitleCallback" )
             net.WriteString( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
         net.Send( ply )
+
+        GAMEMODE:SendClientsEquippedTitles()
     end
 end )
 

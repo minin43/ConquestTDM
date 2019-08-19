@@ -182,7 +182,7 @@ end )
 
 --//Disables the rest of the HUD components if the round's finished, or the HUD's been disabled
 hook.Add( "HUDPaint", "HUD_DisableChecks", function()
-	if GetGlobalBool( "RoundFinished" ) == true or GetConVarNumber( "hud_disable" ) != 0 or LocalPlayer().disablehud == true or !LocalPlayer():Alive() then
+	if GetGlobalBool( "RoundFinished" ) == true or GetConVarNumber( "hud_disable" ) != 0 or LocalPlayer().disablehud == true --[[or !LocalPlayer():Alive()]] then
 		return true
 	end
 end )
@@ -200,6 +200,7 @@ local overlayTable = {
 }
 --//Handles perk overlays, net.Receive's found lower in file. Surface draws are drawn in order, so important overlays should be drawn last
 hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
+	if not LocalPlayer():Alive() then return end
 	if GAMEMODE.ShouldDrawThornmail then
 		overlayTable.thornmail_rate = 1
 	else
@@ -249,7 +250,7 @@ end )
 --Newly improved low-health HUD effect - should be less intrusive and more immersive
 local blood_overlay = Material("hud/damageoverlay.png", "unlitgeneric smooth")
 hook.Add( "HUDPaint", "HUD_LowHealth", function()
-	if !LocalPlayer():Alive() then LocalPlayer():SetDSP( 0, false ) return end
+	if not LocalPlayer():Alive() then LocalPlayer():SetDSP( 0, false ) return end
 	local EffectDecay = 200 --Time before effect begins to grayscale
 	local EffectStart = 30 --HP requirement before effects play
 	GAMEMODE.LastHP = GAMEMODE.LastHP or LocalPlayer():Health() or 0
@@ -260,7 +261,7 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 	if CurrentHP > EffectStart then GAMEMODE.LastHP = LocalPlayer():Health() return end
 
 	surface.SetMaterial( blood_overlay )
-	surface.SetDrawColor( 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), (EffectStart - CurrentHP) / EffectStart * 255 )
+	surface.SetDrawColor( 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), 255 * math.Clamp( GAMEMODE.GrayScale, 0, 1 ), (EffectStart - CurrentHP) / EffectStart * 175 )
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) --These values were -10 and + 20, for some reason
 
 	if GAMEMODE.LastHP > CurrentHP then --Only runs if we've taken some amount of damage the last tick
@@ -274,7 +275,7 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 			--46 prevents sounds shorter than 1 second from playing
 			end )
 		end )]]
-		GAMEMODE.GrayScale = 1
+		GAMEMODE.GrayScale = 0.5
 		WaitTimer = CurTime() + EffectDecay
 	else
 		if WaitTimer < CurTime() then
@@ -398,7 +399,7 @@ end )
 
 --//Draws Health, Ammo
 hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
-	if !LocalPlayer():Alive() and LocalPlayer():Team() != 0 then return end
+	if !LocalPlayer():Alive() or LocalPlayer():Team() != 0 then return end
 
 	--//Health
 	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
@@ -566,26 +567,24 @@ hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
 	end
 end )
 
---//Draws all the flag information - Still Whuppo's code, still very messy
+--//Draws all the flag information - Some legacy code
 hook.Add( "HUDPaint", "HUD_Flags", function()
 	if GetGlobalBool( "ticketmode" ) == true then
 
-		-- holy fuck im lazy
 		local offsetx = 30
 		local offsety = -31
-
-		--Moving flag notice code (the stuff that floats around your HUD)
-		for k, v in next, flags do
-			local col
-			if status[ v[ 1 ] ] == 1 then
+		
+		--//Draws the flags markers that float in 3d space and around your screen
+		for flagname, flaginfo in pairs( GAMEMODE.FlagTable ) do
+			local col = Color( 255, 255, 255 )
+			if flaginfo.control == 1 or flaginfo.count == 0 then
 				col = Color( 255, 0, 0 )
-			elseif status[ v[ 1 ] ] == -1 then
+			elseif flaginfo.control == 2 or flaginfo.count == 20 then
 				col = Color( 0, 0, 255 )
-			elseif status[ v[ 1 ] ] == 0 then
-				col = Color( 255, 255, 255 )
 			end
-			local pos = ( v[ 2 ] + Vector( 0, 0, 150 ) ):ToScreen()
-			local xx = v[ 2 ]
+
+			local pos = ( flaginfo.pos + Vector( 0, 0, 150 ) ):ToScreen()
+			local xx = flaginfo.pos
 			local dist = xx:Distance( LocalPlayer():GetPos() ) / 39
 			if pos.x > ScrW() then	
 				pos.x = ScrW() - 40
@@ -603,62 +602,44 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 			surface.SetFont( "Flags" )
 			surface.SetTextPos( pos.x, pos.y )
 			surface.SetTextColor( col )
-			if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
-				surface.DrawFadingText( col, v[ 1 ] )
+			if GAMEMODE.CurrentFlag and GAMEMODE.CurrentFlag == flagname and flaginfo.control != LocalPlayer():Team() then
+				surface.DrawFadingText( col, flagname )
 			else
-				surface.DrawText( v[ 1 ] )
+				surface.DrawText( flagname )
 			end		
 			surface.SetFont( "DermaDefault" )
 			surface.DrawText( " " .. tostring( math.Round( dist ) ) .. "m" )
 		end
 
-		if LocalPlayer():Alive() then -- tickets stuff
-
-			--Grey box used to surreound the flags, keeping just in case its ever needed
-			--[[surface.SetDrawColor( Color( 0, 0, 0, 166 ) )
-			draw.RoundedBoxEx( 8, 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35, Color( 0, 0, 0, 166 ), true, true )
-			surface.DrawRect( 74 + hl.x - offsetx, ScrH() - 142 - 36 + hl.y - offsety, 227, 35 )]]
-			
-			local red = GetGlobalInt( "RedTickets" )
-			local blue = GetGlobalInt( "BlueTickets" )
-
-			if red ~= globalred then
-				globalred = red
-				redalpha = 1
-			end
-
-			if blue ~= globalblue then
-				globalblue = blue
-				bluealpha = 1
-			end
-
-			redalpha = Lerp( FrameTime() * 6.4, redalpha, 0 )
-			bluealpha = Lerp( FrameTime() * 6.4, bluealpha, 0 )
-
-			local flagnum = 0
-			local position = 5--228 / 2 + 78 --192?
-			position = position - 22 * ( #flags / 2 )
-			for k, v in next, flags do
+		--//Draws the flags that sit underneath the round timer and ticket counts
+		if LocalPlayer():Alive() then
+			local screenCenter = ScrW() / 2
+			local flagCount = 0
+			local displayOffset = 5
+			displayOffset = displayOffset - ( 22 * ( table.Count( GAMEMODE.FlagTable ) / 2 ) )
+			for order, flaginfo in pairs( GAMEMODE.FlagTableOrdered ) do
+				local flagname = flaginfo
+				flaginfo = GAMEMODE.FlagTable[ flagname ]
+				
 				surface.SetFont( "Flags" )
-				local col
-				if status[ v[ 1 ] ] == 1 then
-					surface.SetTextColor( 255, 0, 0 )
+				local col = Color( 255, 255, 255 )
+				if flaginfo.control == 1 or flaginfo.count == 0 then
 					col = Color( 255, 0, 0 )
-				elseif status[ v[ 1 ] ] == -1 then
-					surface.SetTextColor( 0, 0, 255 )
+				elseif flaginfo.control == 2 or flaginfo.count == 20 then
 					col = Color( 0, 0, 255 )
-				elseif status[ v[ 1 ] ] == 0 then
-					surface.SetTextColor( 255, 255, 255 )
-					col = Color( 255, 255, 255 )
 				end
-				surface.SetTextPos( --[[position + ( 22 * flagnum ) + 774 ScrW() / 2 position +]] ( ScrW() / 2 ) + ( 22 * flagnum ) + position, 33 )
-				--surface.SetTextPos( position + ( 22 * flagnum ) + hl.x - offsetx, ScrH() - 175 + hl.y - offsety )
-				if capture[ v[ 1 ] ] and capture[ v[ 1 ] ].capturing and capture[ v[ 1 ] ].capturing == true then
-					surface.DrawFadingText( col, tostring( v[ 1 ] ) )
+
+				--surface.SetDrawColor( col )
+				surface.SetTextPos( ( ScrW() / 2 ) + ( 22 * flagCount ) + displayOffset, 33 )
+
+				if GAMEMODE.CurrentFlag and GAMEMODE.CurrentFlag == flagname and flaginfo.control != LocalPlayer():Team() then
+					surface.DrawFadingText( col, flagname )
 				else
-					surface.DrawText( tostring( v[ 1 ] ) )
-				end				
-				flagnum = flagnum + 1
+					surface.SetTextColor( col )
+					surface.DrawText( flagname )
+				end
+				
+				flagCount = flagCount + 1
 			end
 		end
 	end

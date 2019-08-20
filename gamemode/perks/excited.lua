@@ -54,4 +54,4 @@ hook.Add( "PlayerDeath", "Excited", function( ply, inf, att )
 	end
 end )
 
-RegisterPerk( "Excited", "excited", 38, "Killing an enemy will grant you a 175% speed boost which decays over 4 seconds." )
+RegisterPerk( "Excited", "excited", 50, "Killing an enemy will grant you a 175% speed boost which decays over 4 seconds." )

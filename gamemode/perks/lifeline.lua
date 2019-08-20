@@ -47,4 +47,4 @@ hook.Add( "EntityTakeDamage", "LifelineDamageReduction", function( ply, dmginfo 
 	end
 end )
 
-RegisterPerk( "Lifeline", "lifeline", 50, "Walk speed, sprint speed, jump height, & damage taken all scale with missing health; the lower, the better, the higher the worse." )
+RegisterPerk( "Lifeline", "lifeline", 65, "Walk speed, sprint speed, jump height, & damage taken all scale with missing health; the lower, the better, the higher the worse." )

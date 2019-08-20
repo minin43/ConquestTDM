@@ -53,17 +53,18 @@ GM.WeaponsList = {
 --[[	Perk table - used for your reference only
 	Packrat -Ammo			- 1
 	Hunter -Movement		- 5
-    Rebound -Life			- 9
-    Frostbite	-Misc		- 13
-    Headpopper -Sniper		- 18
-    Double Jump	 -Movement	- 22
-    Regeneration -Life		- 26
-	Thornmail -Misc			- 30
-    Vulture -Sniper			- 34
-	Excited -Movement		- 38
-    Leech -Life				- 42
-    Pyromancer -Misc		- 46
-    Lifeline -Misc	        - 50
+    Rebound -Life			- 10
+    Frostbite	-Misc		- 15
+    Headpopper -Sniper		- 20
+    Martyrdom               - 25
+    Double Jump	 -Movement	- 30
+    Regeneration -Life		- 35
+	Thornmail -Misc			- 40
+    Vulture -Sniper			- 45
+	Excited -Movement		- 50
+    Leech -Life				- 55
+    Pyromancer -Misc		- 60
+    Lifeline -Misc	        - 65
 ]]
 
 if SERVER then

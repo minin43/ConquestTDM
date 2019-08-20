@@ -142,14 +142,19 @@ if SERVER then
 	resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
     resource.AddWorkshop( "1386774614" ) --CTDM Files (CTDM content pack part 1)
     resource.AddWorkshop( "1819579704" ) --CTDM Files (CTDM content pack part 3)
-	--resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises
+	--resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises     -     Doesn't fit the feel of the gamemode
 	resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
 	resource.AddWorkshop( "1698026320" ) --The 6 new guns (CTDM content pack part 2)
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
-    resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons
+    --resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons     -     Permanently removed
     resource.AddWorkshop( "1555980538" ) --Sniper pack
-    --resource.AddWorkshop( "236113181" ) --Real error hide
+    resource.AddWorkshop( "838920776" ) --Bullpup Pack
+    resource.AddWorkshop( "1646262010" ) --RFB
+    resource.AddWorkshop( "573353347" ) --MP9
+    resource.AddWorkshop( "887113423" ) --M1014
+    resource.AddWorkshop( "1584952306" ) --TEC-9
+    resource.AddWorkshop( "1805065429" ) --R5
 
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )

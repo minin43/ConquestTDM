@@ -1,3 +1,8 @@
+--[[Notes about balancing:
+    MaxSpreadInc is the total amount the spread cone will get under all circumstances
+        A HipSpread of 0.12 seems to equal a MaxSpreadInc of 0.03
+]]
+
 function weapons.OnLoaded()
 
     --//Primary Weapons
@@ -10,11 +15,11 @@ function weapons.OnLoaded()
         wep.Damage = 27
         wep.FireDelay = 0.078
         wep.Recoil = 0.92
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.7
-        wep.MaxSpreadInc = 0.06
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -31,11 +36,11 @@ function weapons.OnLoaded()
         wep.Damage = 31
         wep.FireDelay = 0.084
         wep.Recoil = 1.08
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.4
-        wep.MaxSpreadInc = 0.07
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -50,11 +55,11 @@ function weapons.OnLoaded()
         wep.Damage = 28
         wep.FireDelay = 0.08
         wep.Recoil = 0.95
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.001
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -73,7 +78,7 @@ function weapons.OnLoaded()
         wep.AimSpread = 0.005
         wep.VelocitySensitivity = 2
         wep.MaxSpreadInc = 0.1
-        wep.SpreadPerShot = 0.001
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 20
@@ -88,11 +93,11 @@ function weapons.OnLoaded()
         wep.Damage = 26
         wep.FireDelay = 0.072
         wep.Recoil = 0.9
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.6
-        wep.MaxSpreadInc = 0.06
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -107,11 +112,11 @@ function weapons.OnLoaded()
         wep.Damage = 33
         wep.FireDelay = 0.0923
         wep.Recoil = 1.2
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.6
-        wep.MaxSpreadInc = 0.07
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -126,11 +131,11 @@ function weapons.OnLoaded()
         wep.Damage = 28
         wep.FireDelay = 0.08
         wep.Recoil = 0.97
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.9
-        wep.MaxSpreadInc = 0.055
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -145,11 +150,11 @@ function weapons.OnLoaded()
         wep.Damage = 30
         wep.FireDelay = 0.092
         wep.Recoil = 1.05
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.8
-        wep.MaxSpreadInc = 0.053
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -162,13 +167,13 @@ function weapons.OnLoaded()
         local wep = weapons.GetStored( "cw_aacgsm" )
         wep.Slot = 0
         wep.Damage = 24
-        wep.FireDelay = 0.0
-        wep.Recoil = 0.063
-        wep.HipSpread = 0.1
+        wep.FireDelay = 0.063
+        wep.Recoil = 0.87
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.5
-        wep.MaxSpreadInc = 0.045
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -187,7 +192,7 @@ function weapons.OnLoaded()
         wep.AimSpread = 0.005
         wep.VelocitySensitivity = 2
         wep.MaxSpreadInc = 0.12
-        wep.SpreadPerShot = 0.001
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 20
@@ -202,11 +207,11 @@ function weapons.OnLoaded()
         wep.Damage = 37
         wep.FireDelay = 0.086
         wep.Recoil = 1.35
-        wep.HipSpread = 0.1
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.001
         wep.VelocitySensitivity = 1.5
-        wep.MaxSpreadInc = 0.08
-        wep.SpreadPerShot = 0.001
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.004
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -685,7 +690,7 @@ function weapons.OnLoaded()
         wep.Damage = 50
         wep.FireDelay = 0.2
         wep.Recoil = 2.6
-        wep.HipSpread = 0.079
+        wep.HipSpread = 0.12
         wep.AimSpread = 0.005
         wep.VelocitySensitivity = 1.35
         wep.MaxSpreadInc = 0.09
@@ -772,6 +777,13 @@ function weapons.OnLoaded()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.09
         wep.SpeedDec = 20
+
+        wep.ReloadTime = 3.6
+        wep.ReloadTime_Empty = 3.6
+        wep.ReloadHalt = 3.6
+        wep.ReloadHalt_Empty = 3.6
+        wep.SnapToIdlePostReload = false
+        wep.Chamberable = false
     end
 
     if weapons.Get( "cw_deagle" ) then
@@ -780,7 +792,7 @@ function weapons.OnLoaded()
         wep.Damage = 56
         wep.FireDelay = 0.25
         wep.Recoil = 2.8
-        wep.HipSpread = 0.085
+        wep.HipSpread = 0.13
         wep.AimSpread = 0.005
         wep.VelocitySensitivity = 1.35
         wep.MaxSpreadInc = 0.09
@@ -827,7 +839,8 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
         return
     end
 
-	function wepbase:hasAttachment(ply, att, lookIn) --This really oughta be given to Spy
+    --Fixes the error when spectating someone first-person and they open their attachments
+    function CustomizableWeaponry:hasAttachment(ply, att, lookIn)
         if not self.useAttachmentPossessionSystem then
             return true
         end
@@ -841,17 +854,17 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
         end
         
         return false
-	end
+    end
 	
-	function wepbase:decodeAttachmentString(str)
-		self.CWAttachments = self.CWAttachments or {}
-		
-		local result = string.Explode(space, str)
-		
-		for k, v in pairs(result) do
-			if v then
-				self.CWAttachments[v] = true
-			end
-		end
-	end
+    --[[function CustomizableWeaponry:decodeAttachmentString(str)
+        self.CWAttachments = self.CWAttachments or {}
+        
+        local result = string.Explode(" ", str)
+        print("dicks - decodeAttachmentString", str)
+        if self.CWAttachments and self.CWAttachments != nil then
+            for k, v in pairs(result) do
+                self.CWAttachments[v] = true
+            end
+        end
+    end]]
 end )

@@ -26,27 +26,28 @@ function prestige.ResetPlayer( ply )
     local playerfile = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
     local boughtguns = playerfile[ 2 ]
     local searchedguns = {}
-
+    
     for k, v in pairs( boughtguns ) do
+        print(" ", k, v)
         ply:SetPData( v, 0 )
         searchedguns[ v ] = true
     end
     for k, v in pairs( primaries ) do
-        if !searchedguns[ v[ 1 ] ] then
-            ply:SetPData( v, 0 )
-            searchedguns[ v[ 1 ] ] = true
+        if !searchedguns[ v[ 2 ] ] then
+            ply:SetPData( v[ 2 ], 0 )
+            searchedguns[ v[ 2 ] ] = true
         end
     end
     for k, v in pairs( secondaries ) do
-        if !searchedguns[ v[ 1 ] ] then
-            ply:SetPData( v, 0 )
-            searchedguns[ v[ 1 ] ] = true
+        if !searchedguns[ v[ 2 ] ] then
+            ply:SetPData( v[ 2 ], 0 )
+            searchedguns[ v[ 2 ] ] = true
         end
     end
     for k, v in pairs( extras ) do
-        if !searchedguns[ v[ 1 ] ] then
-            ply:SetPData( v, 0 )
-            searchedguns[ v[ 1 ] ] = true
+        if !searchedguns[ v[ 2 ] ] then
+            ply:SetPData( v[ 2 ], 0 )
+            searchedguns[ v[ 2 ] ] = true
         end
     end
 

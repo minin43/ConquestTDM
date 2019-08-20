@@ -192,7 +192,7 @@ weaponsshop.font = "ExoTitleFont"
 weaponsshop.tabs = { "ar", "smg", "sg", "sr", "lmg", "pt", "mn", "eq" }
 weaponsshop.wepinfosetup = {
     --//Scale up means higher is better, scale down means lower is better - use for color calculation
-    { value = "Damage", display = "Damage", min = 0, max = 120, scale = "up" },
+    { value = "Damage", display = "Damage", min = 0, max = 150, scale = "up" },
     { value = "FireDelay", display = "RPM", min = 30, max = 1200, scale = "up" },
     { value = "AimSpread", display = "Aimspread", min = 0.001, max = 0.03, scale = "down" },
     { value = "HipSpread", display = "Hipspread", min = 0.01, max = 0.5, scale = "down" },
@@ -241,20 +241,23 @@ weaponsshop.modeloffsets = { --FOR MOST GUNS: pos = Vector( x coord (reversed), 
     [ "cw_mac11" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -7, 13.5, -2 ) },
     [ "cw_mr96" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     [ "cw_ump45" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 2, 12, -4 ) },
-    [ "cw_makarov" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_makarov" ] = { cam = Vector( -20, 20, 0 ), lookat = Vector( 20, 5, 0 ), pos = Vector( -6, 13.5, -3 ) },
     [ "cw_shorty" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -9, 13.5, -2 ) },
-    [ "cw_vss" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_vss" ] = { cam = Vector( 30, -60, 0 ), lookat = Vector( 30, 0, 0 ), pos = Vector( 30, -30, -1 ) },
     [ "cw_b196" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     [ "cw_scorpin_evo3" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     [ "cw_tac338" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
-    [ "cw_ber_p90" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_p90" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -3, 10, -3 ) },
     [ "cw_ber_famas_felin" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
-    [ "cw_ber_spas12" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_spas12" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -13, 13.5, -1 ) },
     [ "cw_amr2_rpk74" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     [ "cw_wf_m200" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
-    [ "cw_ber_hkmp7" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
+    [ "cw_ber_hkmp7" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -4, 13.5, 1 ) },
     [ "cw_amr2_mk46" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
-    [ "cw_fiveseven" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2.5, 13.5, -3.5 ) }--[[,
+    [ "cw_fiveseven" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2.5, 13.5, -3.5 ) },
+    [ "r5" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -10.5, 10, -1.5 ) },
+    [ "cw_tr09_auga3" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -8.5, 13.5, -3 ) },
+    [ "cw_m1014" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 9, -1 ) }--[[,
     [ "cw_flash_grenade" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
@@ -443,13 +446,13 @@ function weaponsshop:DoSetup()
                     throwaway.hover = false
                 end
                 throwaway.Think = function()
-                    if GAMEMODE.WeaponsList[ v ][ 5 ] < GAMEMODE.MyMoney then
+                    if GAMEMODE.WeaponsList[ v ][ 5 ] <= GAMEMODE.MyMoney then
                         throwaway.canbuy = true
                     else
                         throwaway.canbuy = false
                     end
 
-                    if GAMEMODE.WeaponsList[ v ][ 3 ] < GAMEMODE.MyLevel then
+                    if GAMEMODE.WeaponsList[ v ][ 3 ] <= GAMEMODE.MyLevel then
                         throwaway.unlocked = true
                     else
                         throwaway.unlocked = false

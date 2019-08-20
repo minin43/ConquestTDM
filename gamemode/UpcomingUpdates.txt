@@ -21,38 +21,36 @@ Fix Net Messaging Exploits
 Rework weapon pickup & inventory system
 ----
 What needs done for next update:
-    - Players want a gun overhaul
-        - Remove the LMGs
-        - Add:
-            M1014 (no chambering)
-            AAC Honeybadger (add ammo attachments)
-            RFB (check/remove bad sights)
-            MP9 (remove bad sights)
-            TEC-9 (edit reload timer)
-            Bullpup Pack (all 3 are really high quality - TAR has a bunch of extra sights)
-            Remington R5 - edit reload timing and prevent chambering
+DONE    - Players want a gun overhaul
+DONE        - Remove the LMGs
+DONE        - Add:
+DONE            M1014 (no chambering)
+DONE            AAC Honeybadger (add ammo attachments)
+DONE            RFB (check/remove bad sights)
+DONE            MP9 (remove bad sights)
+DONE            TEC-9 (edit reload timer)
+DONE            Bullpup Pack (all 3 are really high quality - TAR has a bunch of extra sights)
+DONE            Remington R5 - edit reload timing and prevent chambering
             Tripmine equipment
             Ammo equipment
-    - Need to finish weapon position in shop menu
+DONE    - Need to finish weapon position in shop menu
 DONE    - Increase level limit to 100?
-        - Increase Prestige requirement to 100
-        - Space unlocks for new level cap
-    - New Perk ideas
-        - Something with reducing damage for the first second of combat?
-TEST        - Martyrdom
-        - Think of ideas from R6 or LoL
+DONE        - Increase Prestige requirement to 100
+DONE        - Space unlocks for new level cap
+DONE    - Martyrdom
 DONE    Ammo gained from flag capture needs to be equal to mag capacity, not current mag count
-TEST    - Better balance the M3, SPAS, MP5, and the new guns
-TEST        - Magnum secondaries shouldn't have good hipfire
-    - Fix the cw2.0 base errors
-        - On join
-        - When spectating first person
-    - Still need to rework weapon pickup
-TEST    Lifeline now TOO good, should probably tone down the speed
+DONE    - Better balance the M3, SPAS, MP5, and the new guns
+DONE        - Magnum secondaries shouldn't have good hipfire
+DONE    - Fix the cw2.0 base errors
+DONE        - On join
+DONE        - When spectating first person
+DELAY    - Still need to rework weapon pickup
+DONE    Lifeline now TOO good, should probably tone down the speed
     - Introduce an events system
-    - AR-15 and P99 are not having their kill tracking reset
-TEST MP    - Flag capturing logic is now fucked up for blue side
-TEST    - Chat tags should be before the user name - requires hooking into hatschat
-    - Fix fall damage, is done inconsistently
+DONE    - AR-15 and P99 are not having their kill tracking reset
+DONE    - Flag capturing logic is now fucked up for blue side
+DONE    - Flag info for sv_feed needs to be rewritten for the new backend
+DONE    - Chat tags should be before the user name - requires hooking into hatschat
+DONE    - Fix fall damage, is done inconsistently
     - Finish the tripwire mine
     - Buff the full medkit

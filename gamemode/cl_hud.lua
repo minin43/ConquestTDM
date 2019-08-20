@@ -232,6 +232,7 @@ hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
 	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 end )
 
+--//Spawn Protection text - fades when spawn protection is gone
 hook.Add( "HUDPaint", "HUD_SpawnOverlay", function()
 	if GAMEMODE.ShouldDrawProtection then 
 		overlayTable.spawn_rate = 1
@@ -379,7 +380,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( colorScheme[0]["GamemodeVersionText"] )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( GAMEMODE.Version .. " Release 081119" )
+	surface.DrawText( GAMEMODE.Version .. " Release 082019" )
 end )
 
 --//Draws the damage indicator 
@@ -399,7 +400,7 @@ end )
 
 --//Draws Health, Ammo
 hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
-	if !LocalPlayer():Alive() or LocalPlayer():Team() != 0 then return end
+	if !LocalPlayer():Alive() or LocalPlayer():Team() == 0 then return end
 
 	--//Health
 	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )

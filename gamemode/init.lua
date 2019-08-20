@@ -767,13 +767,18 @@ end
 
 function GM:GetFallDamage( ply, speed )
 	if self.PreventFallDamage then return 0 end
-
+    --[[print("Fall damage calculation")
+    print( "speed: ", speed )
+    print( "suggested damage, speed / 8: ", (speed / 8) )
+    print( "optional damage, speed / 12: ", (speed / 12) )
+    print( "optional damage, speed / 16: ", (speed / 16) )
+    print( "optional damage, my custom: ", math.Clamp( speed - 580, 0, 100 ) )]]
 	--//old fall damage calculation
 	--[[speed = speed - 540
 	return ( speed * ( 100 / ( 1024 - 580 ) ) )]]
 
 	--//suggested fall damage calclulation
-	return ( speed / 8 )
+	return math.Clamp( speed - 580, 0, 200 )
 end
 
 --//Used in server-side menu code to check for players running net messages with values the player set - cheaters

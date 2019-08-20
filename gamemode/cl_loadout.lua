@@ -1488,7 +1488,7 @@ function LoadoutMenu()
     --//Inserting temporary prestige button...
 
     local canPrestige = false
-    if currentlvl >= 51 then canPrestige = true end
+    if currentlvl >= 100 then canPrestige = true end
 
 	local prestige = vgui.Create( "DButton", main )
 	prestige.Hover = false

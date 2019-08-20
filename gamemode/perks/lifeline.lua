@@ -11,9 +11,9 @@ local lldefaultjump = GM.DefaultJumpPower - lljumpdiff
 local healthtracking = {}
 
 local function UpdateMovement( ply )
-	ply:SetWalkSpeed( math.Round( lldefaultwalk + ( ( llwalkdiff * 2 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) ) )
-	ply:SetRunSpeed ( math.Round( lldefaultrun + ( ( llrundiff * 2 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) ) )
-	ply:SetJumpPower( math.Round( lldefaultjump + ( ( lljumpdiff * 2 ) * ( 1 - ( k:Health() / k:GetMaxHealth() ) ) ) ) )
+	ply:SetWalkSpeed( math.Round( lldefaultwalk + ( ( llwalkdiff * 3 ) * ( 1 - ( ply:Health() / ply:GetMaxHealth() ) ) ) ) )
+	ply:SetRunSpeed ( math.Round( lldefaultrun + ( ( llrundiff * 3 ) * ( 1 - ( ply:Health() / ply:GetMaxHealth() ) ) ) ) )
+    ply:SetJumpPower( math.Round( lldefaultjump + ( ( lljumpdiff * 2 ) * ( 1 - ( ply:Health() / ply:GetMaxHealth() ) ) ) ) )
 end
 
 hook.Add( "PostGiveLoadout", "LifelineSpawn", function( ply )

@@ -200,18 +200,19 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     end
     
     --//Flags Offense/Defense Check
-    if tab[vic] ~= 0 then
+    if GAMEMODE.FlagFeedCheck[ vic ] then
         AddNotice(att, "FLAG ATTACK", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
         hook.Call( "KillFeedFlagAttack", GAMEMODE, att )
     end
-    if tab[att] ~= 0 then
+    if GAMEMODE.FlagFeedCheck[ att ] then
         AddNotice(att, "FLAG DEFENSE", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
         hook.Call( "KillFeedFlagDefend", GAMEMODE, att )
     end
     
     --//Afterlife Check
+    print("Afterlife Check", att:Alive(), not att:Alive() )
     if not att:Alive() then
         AddNotice(att, "AFTERLIFE", SCORECOUNTS.AFTERLIFE, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.AFTERLIFE
@@ -240,7 +241,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     --//Assist Shit
     if GAMEMODE.AssistTable[ vicID ] then
         for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
-            if damageDone > 0 and attacker:IsValid() and atattacker != att then
+            if damageDone > 0 and attacker:IsValid() and attacker != att then
                 AddNotice( attacker, "ASSIST", math.Round( damageDone ), NOTICETYPES.KILL )
                 VampirismAssist( attacker, damageDone )
 

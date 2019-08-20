@@ -795,7 +795,8 @@ end )]]
 if not flags[ game.GetMap() ] then
 	return
 else
-	GM.FlagTable = GM.FlagTable or {}
+    GM.FlagTable = GM.FlagTable or {}
+    GM.FlagFeedCheck = GM.FlagFeedCheck or {}
 	
 	for k, v in pairs( flags[ game.GetMap() ] ) do
 		--//Keys in this table are the flag "name" - duplicates do not exist this way
@@ -821,21 +822,17 @@ timer.Create( "TicketFlagCheck", 5, 0, function()
 
         if GAMEMODE.FlagTable then
             if table.Count( GAMEMODE.FlagTable ) > 0 then
-				print("TicketCheck1", table.Count( GAMEMODE.FlagTable ))
                 SetGlobalBool( "ticketmode", true )
             else
-				print("TicketCheck2")
                 SetGlobalBool( "ticketmode", false )
                 timer.Remove( "TicketFlagCheck" )
             end
         else
-			print("TicketCheck3")
             SetGlobalBool( "ticketmode", false )
             timer.Remove( "TicketFlagCheck" )
         end
     end
 
-	print("DRAIN TICKETS, RedDrain:", GAMEMODE.RedDrain, " Blue Drain: ", GAMEMODE.BlueDrain)
 	SetGlobalInt( "RedTickets", math.Clamp( GetGlobalInt( "RedTickets" ) - GAMEMODE.RedDrain, 0, GAMEMODE.Tickets ) )
 	SetGlobalInt( "BlueTickets", math.Clamp( GetGlobalInt( "BlueTickets" ) - GAMEMODE.BlueDrain, 0, GAMEMODE.Tickets ) )
     
@@ -884,14 +881,15 @@ function GM:UpdateFlagDrain()
 		elseif flagtable.currentcontrol == 2 then
 			bluecount = bluecount + 1
 		end
-	end
+    end
+    
 	if redcount > bluecount then
 		self.RedDrain = 0
 		self.BlueDrain = redcount - bluecount
 	elseif bluecount > redcount then
 		self.RedDrain = bluecount - redcount
 		self.BlueDrain = 0
-	elseif self.bluecount == self.redcount and self.bluecount != 0 then
+	elseif bluecount == redcount and bluecount != 0 then
 		self.RedDrain = 1
 		self.BlueDrain = 1
 	end
@@ -1004,11 +1002,13 @@ hook.Add( "Think", "CheckIfOnFlag", function()
 			if ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
 				net.Start( "IsOnFlag" )
 					net.WriteString( flagname )
-				net.Send( ply )
+                net.Send( ply )
+                GAMEMODE.FlagFeedCheck[ ply ] = true
 			else
 				net.Start( "IsOffFlag" )
 					net.WriteString( flagname )
-				net.Send( ply )
+                net.Send( ply )
+                GAMEMODE.FlagFeedCheck[ ply ] = false
 			end
 		end
 	end

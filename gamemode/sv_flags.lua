@@ -792,6 +792,14 @@ flags[ "gm_thepit" ] = {
 	
 end )]]
 
+util.AddNetworkString( "DoesMapHaveFlags" )
+net.Receive( "DoesMapHaveFlags", function( len, ply )
+    if flags[ game.GetMap() ] then
+        net.Start( "DoesMapHaveFlagsCallback" )
+        net.Send( ply )
+    end
+end )
+
 if not flags[ game.GetMap() ] then
 	return
 else
@@ -899,6 +907,16 @@ function SendCurrentFlagStatuses( ply )
 	for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
 		UpdateFlagCount( flagname, flagtable.pos, flagtable.count, flagtable.currentcontrol, flagtable.lastcontrol, ply )
 	end
+end
+
+function SendFlagOrder( ply )
+    local tosend = {}
+	for _, flagtable in pairs( flags[ game.GetMap() ] ) do
+		tosend[ #tosend + 1 ] = flagtable[ 1 ]
+	end
+	net.Start( "RequestFlagOrderCallback" )
+		net.WriteTable( tosend )
+	net.Send( ply )
 end
 
 --//The core of the flag checking - hopefully written much better than Whuppo's was
@@ -1014,8 +1032,12 @@ hook.Add( "Think", "CheckIfOnFlag", function()
 	end
 end )
 
-hook.Add( "PlayerSpawn", "SendInitialFlagInfo", function( ply )
+hook.Add( "PlayerSpawn", "SendCurrentFlagInfo", function( ply )
 	SendCurrentFlagStatuses( ply )
+end )
+
+hook.Add( "PlayerInitialSpawn", "SendFlagOrderOnJoin", function( ply )
+    SendFlagOrder( ply )
 end )
 
 hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
@@ -1066,11 +1088,5 @@ end )
 util.AddNetworkString( "RequestFlagOrder" )
 util.AddNetworkString( "RequestFlagOrderCallback" )
 net.Receive( "RequestFlagOrder", function( len, ply )
-	local tosend = {}
-	for _, flagtable in pairs( flags[ game.GetMap() ] ) do
-		tosend[ #tosend + 1 ] = flagtable[ 1 ]
-	end
-	net.Start( "RequestFlagOrderCallback" )
-		net.WriteTable( tosend )
-	net.Send( ply )
+	SendFlagOrder( ply )
 end )

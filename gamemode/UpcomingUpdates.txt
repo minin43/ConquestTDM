@@ -54,3 +54,4 @@ DONE    - Chat tags should be before the user name - requires hooking into hatsc
 DONE    - Fix fall damage, is done inconsistently
     - Finish the tripwire mine
     - Buff the full medkit
+    - Flags aren't displaying on HUD

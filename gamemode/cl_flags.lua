@@ -3,6 +3,9 @@ GM.FlagTableOrdered = {} --Doesn't contain flag information - only numerically i
 
 surface.CreateFont( "DrawFlagNames", { font = "Arial", size = 30 } )
 
+net.Start( "DoesMapHaveFlags" )
+net.SendToServer()
+
 local offset = Vector( 0, 0, 85 )
 hook.Add( "PostDrawOpaqueRenderables", "DrawFlags", function()
 	for flagname, flaginfo in pairs( GAMEMODE.FlagTable ) do
@@ -96,6 +99,12 @@ hook.Add( "HUDPaint", "ProgressBar", function()
 	end
 end )
 
+hook.Add( "Think", "GetInitialFlagShit", function()
+    if not GAMEMODE.FlagTableOrdered then
+        RequestInitialFlagInfo()
+    end
+end )
+
 net.Receive( "UpdateFlagInfo", function()
 	local flag = net.ReadString()
 	local pos = net.ReadVector()
@@ -123,12 +132,14 @@ net.Receive( "IsOffFlag", function()
 	end
 end )
 
-net.Start( "RequestInitialFlagStatus" ) --//This is called back as UpdateFlagInfo
-net.SendToServer()
+net.Receive( "DoesMapHaveFlagsCallback", function()
+    net.Start( "RequestInitialFlagStatus" ) --//This is called back as UpdateFlagInfo
+    net.SendToServer()
 
-net.Start( "RequestFlagOrder" )
-net.SendToServer()
+    net.Start( "RequestFlagOrder" )
+    net.SendToServer()
+end )
 
 net.Receive( "RequestFlagOrderCallback", function()
-	GAMEMODE.FlagTableOrdered = net.ReadTable() --//It's generally recommended you don't send tables, since they're expensive, but since this is infreqent, w/e
+    GAMEMODE.FlagTableOrdered = net.ReadTable() --//It's generally recommended you don't send tables, since they're expensive, but since this is infreqent, w/e
 end )

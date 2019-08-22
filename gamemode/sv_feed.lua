@@ -200,19 +200,21 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     end
     
     --//Flags Offense/Defense Check
-    if GAMEMODE.FlagFeedCheck[ vic ] then
-        AddNotice(att, "FLAG ATTACK", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
-        totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
-        hook.Call( "KillFeedFlagAttack", GAMEMODE, att )
-    end
-    if GAMEMODE.FlagFeedCheck[ att ] then
-        AddNotice(att, "FLAG DEFENSE", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
-        totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
-        hook.Call( "KillFeedFlagDefend", GAMEMODE, att )
+    if GAMEMODE.FlagFeedCheck then
+        if GAMEMODE.FlagFeedCheck[ vic ] then
+            AddNotice(att, "FLAG ATTACK", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
+            totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
+            hook.Call( "KillFeedFlagAttack", GAMEMODE, att )
+        end
+        if GAMEMODE.FlagFeedCheck[ att ] then
+            AddNotice(att, "FLAG DEFENSE", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
+            totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
+            hook.Call( "KillFeedFlagDefend", GAMEMODE, att )
+        end
     end
     
     --//Afterlife Check
-    print("Afterlife Check", att:Alive(), not att:Alive() )
+    --print("Afterlife Check", att:Alive(), not att:Alive() )
     if not att:Alive() then
         AddNotice(att, "AFTERLIFE", SCORECOUNTS.AFTERLIFE, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.AFTERLIFE
@@ -227,10 +229,6 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     end
 
     --//Mid-air check
-    --//Entity:OnGround() may not work properly on a player that's dead
-    --//Are there any announcer sounds we could play for this?
-    --//Consider doing one for explosions that kill yourself and others?
-    --//Maybe one for bottomfeeder?
     if not vic:OnGround() then
         AddNotice( att, "SKEET SHOOTING", SCORECOUNTS.SKEET, NOTICETYPES.EXTRA )
     end
@@ -241,31 +239,35 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     --//Assist Shit
     if GAMEMODE.AssistTable[ vicID ] then
         for attacker, damageDone in pairs( GAMEMODE.AssistTable[ vicID ] ) do
-            if damageDone > 0 and attacker:IsValid() and attacker != att then
-                AddNotice( attacker, "ASSIST", math.Round( damageDone ), NOTICETYPES.KILL )
-                VampirismAssist( attacker, damageDone )
+            if IsValid( attacker ) then
+                if damageDone > 0 and attacker != att then
+                    AddNotice( attacker, "ASSIST", math.Round( damageDone ), NOTICETYPES.KILL )
+                    VampirismAssist( attacker, damageDone )
 
-                if attacker:GetPData( "g_assists" ) then
-                    attacker:SetPData("g_assists", tostring( attacker:GetPData( "g_assists" ) + 1 ) )
-                else
-                    attacker:SetPData("g_assists", "1" )
+                    if attacker:GetPData( "g_assists" ) then
+                        attacker:SetPData("g_assists", tostring( attacker:GetPData( "g_assists" ) + 1 ) )
+                    else
+                        attacker:SetPData("g_assists", "1" )
+                    end
+
+                    if attacker:GetNWString( "assists" ) == "" or !attacker:GetNWString( "assists" ) then
+                        attacker:SetNWString( "assists", "1" )
+                    else
+                        attacker:SetNWString( "assists", tostring( tonumber( attacker:GetNWString( "assists" ) ) + 1) )
+                    end
+
+                    attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
+                    if attacker.AttFromAssist >= 400 then 
+                        attacker:ChatPrintColor( Color( 255, 255, 255 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your current attachment due to assists!" )
+                        local wep = attacker:GetActiveWeapon()
+                        if wep and wep:GetClass() then UpdateAttKillTracking( attacker, wep:GetClass() ) end
+                        attacker.AttFromAssist = attacker.AttFromAssist - 400
+                    end
+
+                    hook.Call( "KillFeedAssist", GAMEMODE, att )
                 end
-
-                if attacker:GetNWString( "assists" ) == "" or !attacker:GetNWString( "assists" ) then
-                    attacker:SetNWString( "assists", "1" )
-                else
-                    attacker:SetNWString( "assists", tostring( tonumber( attacker:GetNWString( "assists" ) ) + 1) )
-                end
-
-                attacker.AttFromAssist = ( attacker.AttFromAssist or 0 ) + damageDone
-                if attacker.AttFromAssist >= 400 then 
-                    attacker:ChatPrintColor( Color( 255, 255, 255 ), "You earned a ", Color( 0, 255, 0 ), "free kill ", Color( 255, 255, 255 ), "towards your current attachment due to assists!" )
-                    local wep = attacker:GetActiveWeapon()
-                    if wep and wep:GetClass() then UpdateAttKillTracking( attacker, wep:GetClass() ) end
-                    attacker.AttFromAssist = attacker.AttFromAssist - 400
-                end
-
-                hook.Call( "KillFeedAssist", GAMEMODE, att )
+            --[[else
+                GAMEMODE.AssistTable[ vicID ][ attacker ] = nil]]
             end
         end
     end

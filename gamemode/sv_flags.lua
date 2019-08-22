@@ -793,6 +793,7 @@ flags[ "gm_thepit" ] = {
 end )]]
 
 util.AddNetworkString( "DoesMapHaveFlags" )
+util.AddNetworkString( "DoesMapHaveFlagsCallback" )
 net.Receive( "DoesMapHaveFlags", function( len, ply )
     if flags[ game.GetMap() ] then
         net.Start( "DoesMapHaveFlagsCallback" )
@@ -923,15 +924,15 @@ end
 timer.Create( "FlagCheck", 1, 0, function()
 	--//First thing, check where all of the players are - if they're inside a flag zone, mark them down
 	for _, ply in pairs( player.GetAll() ) do
-		if not ply:IsValid() or ply:Team() == 0 or not ply:Alive() then return end
-
-		for _, flagtable in pairs( GAMEMODE.FlagTable ) do
-			if ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
-				flagtable.players[ ply ] = ply:Team()
-			else
-				flagtable.players[ ply ] = nil
-			end
-		end
+        --if ply:IsValid() and ply:Team() != 0 and ply:Alive() then 
+            for _, flagtable in pairs( GAMEMODE.FlagTable ) do
+                if ply:IsValid() and ply:Team() != 0 and ply:Alive() and ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
+                    flagtable.players[ ply ] = ply:Team()
+                else
+                    flagtable.players[ ply ] = nil
+                end
+            end
+        --end
 	end
 
 	--//We'll need to count how many players are on the zone, and what the team majority is
@@ -1014,10 +1015,8 @@ util.AddNetworkString( "IsOnFlag" )
 util.AddNetworkString( "IsOffFlag" )
 hook.Add( "Think", "CheckIfOnFlag", function()
 	for _, ply in pairs( player.GetAll() ) do
-		if not ply:IsValid() or ply:Team() == 0 or not ply:Alive() then return end
-
 		for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
-			if ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
+			if ply:IsValid() and ply:Team() != 0 and ply:Alive() and ply:GetPos():Distance( flagtable.pos ) <= flagtable.size then
 				net.Start( "IsOnFlag" )
 					net.WriteString( flagname )
                 net.Send( ply )

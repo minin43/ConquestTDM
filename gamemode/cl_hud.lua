@@ -964,7 +964,8 @@ hook.Add( "PostDrawOpaqueRenderables", "DrawWeaponHints", function()
 	local ent = LocalPlayer():GetEyeTrace().Entity
 	if ent then
 		if IsValid( ent ) and ent:IsWeapon() and ent:GetPos():Distance( LocalPlayer():GetPos() ) <= 400 then
-			local data = data or weapons.Get( ent:GetClass() )
+            local data = data or weapons.Get( ent:GetClass() )
+            if not data then return end
 			
 			function GetInfo( check, check2 )
 				if check then

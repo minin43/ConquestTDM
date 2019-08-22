@@ -114,7 +114,7 @@ net.Receive( "UpdateFlagInfo", function()
 
 	GAMEMODE.FlagTable[ flag ] = { pos = pos, count = count, control = control, lastcontrol = lastcontrol }
 
-	if progress:IsVisible() and count != 0 and count != 20 then
+	if progress:IsVisible() and count != 0 and count != 20 and control != 1 and control != 2 then
 		surface.PlaySound( "ui/hud_capping_flag_01_wave.mp3" ) --//Standard capture "tick" sound
 	end
 end )

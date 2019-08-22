@@ -35,7 +35,7 @@ GM.HelpMenuObjects = {
 	{ type = "spacer" },
 	{ type = "header", display = "Extra Topics" },
 	{ type = "subheader", display = "Prestiging" },
-	{ type = "text", display = "If you've ever played the multiplayer for a Call of Duty game after World at War, you are familiar with what prestiging is. Prestiging resets all progress earned towards achievements and attachments and resets all player progress (resetting the player back to level 1 with no weapons, perk unlocks, and money). This grants the player 1 prestige token, which can be used in the shop to buy special cosmetics. It only becomes available at level 51, the highest level you can achieve." },
+	{ type = "text", display = "If you've ever played the multiplayer for a Call of Duty game after World at War, you are familiar with what prestiging is. Prestiging resets all progress earned towards achievements and attachments and resets all player progress (resetting the player back to level 1 with no weapons, perk unlocks, and money). This grants the player 1 prestige token, which can be used in the shop to buy special cosmetics. It only becomes available at level 100, the highest level you can achieve." },
 	{ type = "image", display = "vgui/help/11.png" },
 	{ type = "image", display = "vgui/help/12.png" },
 	{ type = "spacer" },

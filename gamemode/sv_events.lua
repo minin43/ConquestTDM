@@ -19,4 +19,5 @@ GM.EventTable = {
         - Super Ragdolls (all deaths result in super exaggerated ragdolled bodies)
         - Unlocked Store (some combination of all weapons/perks/attachments being unlocked)
     ]]
+    --os.date( "", os.time() ) http://wiki.garrysmod.com/page/os/date
 }

@@ -32,10 +32,20 @@ hook.Add( "PlayerInitialSpawn", "SetupTitles", function( ply )
     --//May not work this early into the connection
     for k, v in pairs( GAMEMODE.TitleMasterTable ) do
         if not v.pdata then
-            ply:SetPData( v.id .. "count", ply:GetPData( v.id .. "count" ) or 0 )
+            ply:SetPData( v.id .. "count", ply:GetPData( v.id .. "count", 0 ) )
+        else
+            ply:SetPData( v.pdata, ply:GetPData( v.pdata, 0 ) )
         end
     end
 end )
+
+--[[hook.Add( "PlayerLoadedIn", "SetupTitleTracking", function( ply )
+    for k, v in pairs( GAMEMODE.TitleMasterTable ) do
+        if not v.pdata then
+            ply:SetPData( v.id .. "count", ply:GetPData( v.id .. "count" ) or 0 )
+        end
+    end
+end )]]
 
 --//Since total kills, deaths, flag captures, and time played have is all information which has been saved since before this title implementation, we could very easily
 --//run into players who are already over some of the title's requirements - this checks ownership and saves previous ownership checks, so checking amount overages isn't constantly

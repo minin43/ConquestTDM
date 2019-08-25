@@ -1,6 +1,6 @@
 hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
     local att = dmginfo:GetAttacker()
-    if ply == nil or !ply:IsPlayer() or dmginfo == nil or att == nil then return end
+    if not IsValid( ply ) or dmginfo == nil or att == nil then return end
 
 	if att:IsPlayer() and dmginfo:IsBulletDamage() and att:Team() ~= ply:Team() then
         if CheckPerk( att ) == "pyro" then
@@ -22,10 +22,8 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
                     GAMEMODE:QueueIcon( att, "pyro" )
 				end
 
-				--[[if not ply:Alive() then
-					ply:Kill()
-                end]]
-                timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix", 0.5, 1, function() end )
+                --A small cooldown window the same time allotment as the shotgun fix
+                timer.Create( id( ply:SteamID() ) .. "PyroCooldown", 0.5, 1, function() end )
 			elseif num < 200 then
                 GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = att
 				ply:Ignite( 3 )

@@ -11,8 +11,12 @@ lvl.levels = {}
 	
 lvl.expmul = 300
 	
-for i = 1, 100 do
+for i = 1, 50 do
 	lvl.levels[ i ] = i * lvl.expmul
+end
+
+for i = 51, 100 do
+    lvl.levels[ i ] = ( 50 * lvl.expmul ) + ( ( i - 50 ) * expmul )
 end
 
 lvl.maxlevel = #lvl.levels

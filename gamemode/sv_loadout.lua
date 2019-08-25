@@ -312,7 +312,7 @@ end )
 --//The point of this is to remove one magazine's worth of ammo from the player's ammo pool - WAS written extremely poorly
 function GM:WeaponEquip( wep )
 	timer.Simple( 0, function() -- this will call the following on the next frame
-		if wep and wep:IsValid() and wep:GetOwner() then
+		if IsValid( wep ) and wep:GetOwner() then
 			if wep.Base == "cw_base" then
 				wep:GetOwner():RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
 			end

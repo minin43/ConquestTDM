@@ -14,9 +14,9 @@ GM.TitleMasterTable = {
     { id = "nolife", title = "The No-Life", description = "Play on the server for 50 hours", rare = 4, req = 6000, pdata = "g_time" },
     { id = "2fer", title = "The Two-fer", description = "Earn \"Double Kill\" (2 kill killspree) 30 times", rare = 1, req = 30 },
     { id = "3threat", title = "The Triple Threat", description = "Earn \"Multi Kill\" (3 kill killlspree) 20 times", rare = 2, req = 20 },
-    { id = "4killer", title = "The Quad Killer", description = "Earn \"Mega Kill\" (4 kill killspree) 15 times", rare = 3, req = 15 },
-    { id = "5up", title = "The Pent-Up", description = "Earn \"Ultra Kill\" (5 kill killspree) 10 times", rare = 3, req = 10 },
-    { id = "thegod", title = "The God", description = "Earn \"Unreal\" (6 kill killspree) 10 times", rare = 4, req = 10 },
+    { id = "4killer", title = "The Quad Killer", description = "Earn \"Mega Kill\" (4 kill killspree) 10 times", rare = 3, req = 10 },
+    { id = "5up", title = "The Pent-Up", description = "Earn \"Ultra Kill\" (5 kill killspree) 5 times", rare = 3, req = 5 },
+    { id = "thegod", title = "The God", description = "Earn \"Unreal\" (6 kill killspree) 2 times", rare = 4, req = 2 },
     { id = "thedominator", title = "The Dominator", description = "Earn \"Dominating\" (5 kill killstreak) 10 times", rare = 2, req = 10 },
     { id = "bog", title = "Blaze of Glory", description = "Earn \"Blaze Of Glory\" (10 kill killstreak) 5 times", rare = 3, req = 5 },
     { id = "topgun", title = "Top Gun", description = "Earn \"Top Gun\" (20 kill killstreak) 2 times", rare = 4, req = 2 },
@@ -44,6 +44,10 @@ GM.TitleMasterTable = {
     { id = "blinged", title = "Blinged Out", description = "Earn all of the attachments for any gun 10 times", rare = 1, req = 10 },
     { id = "joat", title = "Jack Of All Trades", description = "Earn all of the attachments for any gun 20 times", rare = 2, req = 20 }
     --{ id = "", title = "", description = "", rare = 0, req = 0 },
+    --[[
+        Getting the final kill of a match x times
+
+    ]]
 }
 --//The PData is saved as id .. "count"
 

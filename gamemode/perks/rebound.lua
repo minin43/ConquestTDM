@@ -29,7 +29,7 @@ hook.Add( "PlayerHurt", "ReboundRegen", function( ply, att ) --Ripped right from
 					if ply:Alive() then
 						local hp = ply:Health()
 						if hp < hp + GAMEMODE.ReboundHealthBack[ id( ply:SteamID() ) ] then
-							ply:SetHealth( hp + 1 )
+							ply:SetHealth( math.Clamp( hp + 1, 0, 100 ) )
 							GAMEMODE.ReboundHealthBack[ id( ply:SteamID() ) ] = GAMEMODE.ReboundHealthBack[ id( ply:SteamID() ) ] - 1
 						end
 					end

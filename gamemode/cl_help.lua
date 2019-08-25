@@ -1,6 +1,9 @@
 --//I'm going to use a table to set up the display for the help menu, type is used to distinguish what to do with display, types are:
 GM.HelpMenuObjects = {
-	{ type = "header", display = "The Basics" },
+    { type = "header", display = "The Basics" },
+    { type = "subheader", display = "First Things First" },
+    { type = "text", display = "If you end up getting bored reading this menu (which it seems most people do) and scroll to the bottom to get passed it all (which I don't recommend), you can always come back to this page by opening the menu (F1 or F2) and selecting the \"Help Menu\" button." },
+    { type = "image", display = "" }, --//Need an image
 	{ type = "subheader", display = "How To Play" },
 	{ type = "text", display = "There are 2 game types available: team deathmatch and conquest. In Team Deathmatch, your goal is to achieve more kills than your enemy before reaching the time limit. The time remaining can be seen in the top center of the screen, with each team's current kill count on each side." },
 	{ type = "image", display = "vgui/help/1.png" },
@@ -17,8 +20,8 @@ GM.HelpMenuObjects = {
 	{ type = "image", display = "vgui/help/5.png" },
 	{ type = "spacer" },
 	{ type = "subheader", display = "Navigating The Menu" },
-	{ type = "text", display = "The menu can be accessed at any moment by pressing F1 or F2 (unless you are already in it). From the menu, you can reselect your loadout, visit the shop, change your team, change your achievement tag, and re-open this help menu. " },
-	{ type = "image", display = "vgui/help/6.png" },
+	{ type = "text", display = "The menu can be accessed at any moment by pressing F1 or F2 (unless you are already in it). From the menu, you can reselect your loadout, visit the shop, change your team, change your achievement tag, and re-open this help menu." },
+	--{ type = "image", display = "vgui/help/6.png" }, --//Need a new image
 	{ type = "spacer" },
 	{ type = "subheader", display = "Perks" },
 	{ type = "text", display = "Perks are passive bonuses which, typically, positively affect gameplay. Some offer a 1-time bonus on spawn, others introduces a new mechanic available only to you, and some quietly provide a buff to your character. Few perks offer any sort of negative drawbacks, and some perks are soft counters to others." },

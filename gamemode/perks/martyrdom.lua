@@ -5,7 +5,7 @@ hook.Add( "PlayerDeath", "MartyrdomDrop", function( vic, wep, att )
         --grenade:SetAngles(self.Owner:EyeAngles())
         grenade:Spawn()
         grenade:Activate()
-        grenade:Fuse( 2 )
+        grenade:Fuse( 1 )
         grenade:SetOwner( vic )
     end
 end )

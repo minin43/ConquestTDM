@@ -23,6 +23,7 @@
     return Color( red, green, blue, 255 )
 end]]
 
+--//This is the button that switches the PropertySheet panels - "Weapons", "Weapon Skins", and "Playermodels"
 local psheetbutton = { }
 psheetbutton.text = ""
 psheetbutton.font = "DermaDefault"
@@ -108,6 +109,7 @@ vgui.Register( "PropertySheetButton", psheetbutton, "DButton" )
 
 --//
 
+--//This is the button that displays the various weapon types inside the Weapons PropertySheet panel
 local weaponsshopbutton = table.Copy( psheetbutton )
 weaponsshopbutton.gradient = false
 weaponsshopbutton.display = { ar = "Assault Rifle", smg = " Submachine Gun", sg = "Shotgun", sr = "Sniper Rifle", lmg = "Light Machine Gun", pt = "Pistol", mn = "Magnum", eq = "Equipment"}
@@ -184,8 +186,11 @@ vgui.Register( "WeaponsShopButton", weaponsshopbutton, "DButton" )
     So for any future programmer reading through this for whatever reason - I'm fairly certain this is NOT the intended use of custom vgui elements.
     As in, just using the custom element to nest a bunch of standard derma panels and adding 80 billion tables, BUT, I wanted cl_shop looking clean, 
     so I'm keeping this upcoming mess in the setup file instead of the front file.
+
+    Warning you now: this is a behemoth of a vgui element
 ]]
 
+--//This is the panel that gets placed inside the main PropertySheet - this alone creates all of the buttons displayed, displays the weapon model, and weapon information
 local weaponsshop = { }
 weaponsshop.weaponname = "Nothing Selected"
 weaponsshop.font = "ExoTitleFont"
@@ -289,6 +294,7 @@ function weaponsshop:DoSetup()
         end
 
         --//We need to check if any weapon types are empty, and if they are, disable their respective buttons
+        --//Seems to only be working with SOME weapon types - to fix
         local throwawaytypecount = {}
         for k, v in pairs( self.tabs ) do
             throwawaytypecount[ v ] = 0
@@ -705,6 +711,7 @@ vgui.Register( "WeaponsShopPanel", weaponsshop, "DPanel" )
 
 --//
 
+--//The individual buttons for the weapon skins in the Weapon Skins section of the shop
 local skinsshopbutton = {}
 skinsshopbutton.texture = Material( "" )
 skinsshopbutton.option = ""

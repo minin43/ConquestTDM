@@ -73,13 +73,13 @@ function GM:DrawEventStatuses( parentFrame )
         weekendstart = true
         wtimeleft = math.Round( GAMEMODE.EventTimers.Active.weekends / 3600, 1 )
         local s = "hours"
-        if hhtimeleft == 1.0 then s = "hour" end
+        if hhtimeleft == 1 then s = "hour" end
         wmarkupobj = markup.Parse( "<font=MenuAnnouncementsBold><colour=0,0,0>It's Double XP Weekend! 2x point accumulation! Double XP Weekend ends in </colour><colour=76,175,80>" .. wtimeleft .. "</colour><colour=0,0,0> " .. s .. "</font>", ScrW() )
         wmarkupwidth = wmarkupobj:GetWidth()
     else
         wtimeleft = math.Round( GAMEMODE.EventTimers.Dormant.weekends / ( 3600 * 24 ), 1 )
         local s = "days"
-        if hhtimeleft == 1.0 then s = "day" end
+        if hhtimeleft == 1 then s = "day" end
         wmarkupobj = markup.Parse( "<font=MenuAnnouncements><colour=0,0,0>Double XP Weekend starts in </colour><colour=76,175,80>" .. wtimeleft .. "</colour><colour=0,0,0> " .. s .. "</font>", ScrW() )
         wmarkupwidth = wmarkupobj:GetWidth()
     end

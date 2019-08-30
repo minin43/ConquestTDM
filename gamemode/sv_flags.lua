@@ -1048,8 +1048,6 @@ hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
 end )
 
 hook.Add( "FlagCaptured", "CapturePointDistribution", function( flagname, controllingTeam, controllingTeamPlayers )
-    print("Running hook FlagCaptured - CapturePointDistribution", flagname, controllingTeam, controllingTeamPlayers)
-    PrintTable( controllingTeamPlayers )
 	for _, ply in next, controllingTeamPlayers do --//I just noticed doing this rewrite, friendly's capturing a point isn't announced...
 		AddNotice( ply, "FLAG CAPTURED", SCORECOUNTS.FLAG_CAPTURED, NOTICETYPES.FLAG )
 		AddRewards( ply, SCORECOUNTS.FLAG_CAPTURED )

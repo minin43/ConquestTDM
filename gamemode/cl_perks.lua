@@ -7,7 +7,8 @@ GM.PerkIcons = {
     [ "pyro" ] = Material( "vgui/pyro_icon.png" ),
     [ "vulture" ] = Material( "vgui/vulture_icon.png" ),
     [ "leech" ] = Material( "vgui/leech_icon.png" ),
-    [ "spawn" ] = Material( "vgui/spawn_icon.png" )
+    [ "spawn" ] = Material( "vgui/spawn_icon.png" ),
+    [ "bleedout" ] = Material( "vgui/bleedout_icon.png" )
 }
 
 net.Receive( "QueueUpIcon", function()

@@ -75,14 +75,16 @@ end
 --//All point distribution is done in this hook
 hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
 
-    if vic:IsWorld() or att:IsWorld() or att:IsWorld() then return end
-
+    if vic:IsWorld() or att:IsWorld() then return end
+    
     if att == "entityflame" or att:GetClass() == "entityflame" then
         att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
         if not att then return end
     elseif att == "cw_40mm_explosive" or att:GetClass() == "cw_40mm_explosive" or att == "cw_40mm_smoke" or att:GetClass() == "cw_40mm_smoke" then
         att = att:GetOwner()
     end
+
+    if not IsValid( att ) or not att:IsPlayer() then return end
     
     local vicID = id( vic:SteamID() )
     local attID = id( att:SteamID() )
@@ -364,8 +366,16 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
         AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA )
     end
 
-    if GAMEMODE.Event then
-        AddNotice( att, "EVENT BONUS", totalpointcount * GAMEMODE.Event.bonus, NOTICETYPES.EXTRA )
+    local eventpointmultiplier = 1
+    for k, v in pairs( GAMEMODE.ActiveEvents ) do
+        local tab = RetrieveEventTable( k )
+
+        if tab.bonus then
+            eventpointmultiplier = eventpointmultiplier * tab.bonus
+        end
+    end
+    if eventpointmultiplier > 1 then
+        AddNotice( att, "EVENT BONUS", totalpointcount * eventpointmultiplier, NOTICETYPES.EXTRA )
     end
 
     GAMEMODE:UpdateVendetta( vic, att )

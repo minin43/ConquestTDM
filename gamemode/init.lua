@@ -67,10 +67,16 @@ AddCSLuaFile( "cl_shop.lua" )
 AddCSLuaFile( "cl_shop_setup.lua" )
 AddCSLuaFile( "cl_titles.lua" )
 AddCSLuaFile( "cl_help.lua" )
+AddCSLuaFile( "cl_menu.lua" )
+AddCSLuaFile( "cl_menu_setup.lua" )
+AddCSLuaFile( "cl_events.lua" )
 AddCSLuaFile( "sh_loadout.lua" )
 AddCSLuaFile( "sh_shop.lua" )
 AddCSLuaFile( "sh_weaponbalancing.lua" )
 AddCSLuaFile( "sh_titles.lua" )
+AddCSLuaFile( "sh_titles.lua" )
+AddCSLuaFile( "sh_skins.lua" )
+AddCSLuaFile( "sh_playermodels.lua" )
 
 include( "shared.lua" )
 include( "sv_player.lua" )
@@ -99,10 +105,15 @@ include( "sv_donations.lua" )
 include( "sv_weapon_submaterials.lua")
 include( "sv_titles.lua" )
 include( "sv_events.lua" )
+include( "sv_skins.lua" )
+include( "sv_playermodels.lua" )
 include( "sh_loadout.lua" )
 include( "sh_shop.lua" )
 include( "sh_weaponbalancing.lua" )
 include( "sh_titles.lua" )
+include( "sh_skins.lua" )
+include( "sh_playermodels.lua" )
+include( "sh_events.lua" )
 
 local col = {}
 col[0] = Vector( 0, 0, 0 )
@@ -278,12 +289,11 @@ function GM:DoTie()
 end
 
 function GM:EndRound( win )
-	print("ENDROUND DEBUG - function EndRound called")
 	if !timer.Exists( "RoundTimer" ) then return end
 	timer.Destroy( "RoundTimer" )
 	timer.Destroy( "Tickets" )
-	SetGlobalBool( "RoundFinished", true )
-	print("provided win condition: ", win)
+    SetGlobalBool( "RoundFinished", true )
+    
 	if win == 1 then
 		self:DoRedWin()
 	elseif win == 2 then
@@ -358,37 +368,20 @@ function GM:Initialize()
 				local bl = GetGlobalInt( "BlueTickets" )
 				local re = GetGlobalInt( "RedTickets" )
 				if bl > re then
-					print("ENDROUND DEBUG - calling EndRound from RoundTimer in ticketmode, blue wins")
 					GAMEMODE:EndRound( 2 )
 				elseif re > bl then
-					print("ENDROUND DEBUG - calling EndRound from RoundTimer in ticketmode, red wins")
 					GAMEMODE:EndRound( 1 )
 				elseif re == bl then
-					print("ENDROUND DEBUG - calling EndRound from RoundTimer in ticketmode, tie win")
 					GAMEMODE:EndRound( 0 )
 				end
 			else
 				if GetGlobalInt( "RedKills" ) > GetGlobalInt( "BlueKills" ) then
-					print("ENDROUND DEBUG - calling EndRound from RoundTimer in tdm mode, red wins")
 					GAMEMODE:EndRound( 1 )
 				elseif GetGlobalInt( "RedKills" ) < GetGlobalInt( "BlueKills" ) then
-					print("ENDROUND DEBUG - calling EndRound from RoundTimer in tdm mode, blue wins")
 					GAMEMODE:EndRound( 2 )
-				else
-					print("ENDROUND DEBUG - calling EndRound from RoundTimer in tdm mode, tie win")
-					GAMEMODE:EndRound( 0 )
-				end
-				--[[
-				if GetGlobalInt( "control" ) == 1 then
-					GAMEMODE:EndRound( 1 )
-				elseif GetGlobalInt( "control" ) == 2 then
-					GAMEMODE:EndRound( 2 )
-				elseif GetGlobalInt( "control" ) == 0 then
-					GAMEMODE:EndRound( 0 )
 				else
 					GAMEMODE:EndRound( 0 )
 				end
-				]]
 			end
 		end
 	end )
@@ -690,6 +683,12 @@ function GM:PlayerSpawn( ply )
 end
 
 function GM:PlayerDeath( vic, inf, att )
+    if att:GetClass() == "entityflame" then
+        if GAMEMODE.PyroChecks[ id( vic:SteamID() ) ] then
+            att = GAMEMODE.PyroChecks[ id( vic:SteamID() ) ]
+        end
+    end
+    
 	if( vic:IsValid() and att:IsValid() and att:IsPlayer() ) then
 		if( vic == att ) then
 			return
@@ -706,14 +705,12 @@ function GM:PlayerDeath( vic, inf, att )
 			if t == 1 then
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
-					print("ENDROUND DEBUG - calling EndRound from player death, blue wins")
 					GAMEMODE:EndRound( 2 )
 					hook.Run( "GameWinningKill", att )
 				end
 			elseif t == 2 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
-					print("ENDROUND DEBUG - calling EndRound from player death, red wins")
 					GAMEMODE:EndRound( 1 )
 					hook.Run( "GameWinningKill", att )
 				end

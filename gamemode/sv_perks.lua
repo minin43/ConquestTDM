@@ -8,7 +8,7 @@ function GM:QueueIcon( player, perk, duration )
     local str = perk or "none"
     local dur = duration or self.DefaultIconDuration
 
-    if not ply then return end
+    if not IsValid( ply ) then return end
 
     net.Start( "QueueUpIcon" )
         net.WriteString( str )

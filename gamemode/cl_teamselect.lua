@@ -273,7 +273,10 @@ function GM:TeamMenu()
 		self.TeamMainGreen.Think = function()
 			self.TeamMainGreen.NumberPlayers = #team.GetPlayers( 0 )
 		end
-	end
+    end
+    
+    net.Start( "RequestActiveEvents" )
+    net.SendToServer() 
 end
 
 concommand.Add( "tdm_spawnmenu", GM.TeamMenu )

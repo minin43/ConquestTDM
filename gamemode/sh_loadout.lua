@@ -51,20 +51,28 @@ GM.WeaponsList = {
 }
 
 --[[	Perk table - used for your reference only
-	Packrat -Ammo			- 1
-	Hunter -Movement		- 5
-    Rebound -Life			- 10
-    Frostbite	-Misc		- 15
-    Headpopper -Sniper		- 20
-    Martyrdom               - 25
-    Double Jump	 -Movement	- 30
-    Regeneration -Life		- 35
-	Thornmail -Misc			- 40
-    Vulture -Sniper			- 45
-	Excited -Movement		- 50
-    Leech -Life				- 55
-    Pyromancer -Misc		- 60
-    Lifeline -Misc	        - 65
+    Packrat -Ammo			- 1
+    Crescendo -Combat       - 5
+	Hunter -Movement		- 10
+    Rebound -Life			- 15
+    Frostbite -Combat		- 20
+    Headpopper -Sniper		- 25
+    Bleedout -Life          - 30
+    Martyrdom Combat        - 35
+    Double Jump	-Movement	- 40
+    Regeneration -Life		- 45
+	Thornmail -Combat		- 50
+    Vulture -Sniper			- 55
+	Excited -Movement		- 60
+    Pyromancer -Combat		- 65
+    Leech -Life				- 70
+    Lifeline -Combat        - 75
+
+    Possible new perk mechanics:
+    "The Bonus" - double mags received on flag capture
+    "The Grind" - All point generation gets a 5% boost (or some %)
+    "The Grind Part 2" - All kills earn double towards attachment progression
+    Titan - Every 5th kill earned counts double towards ticket drain & TDM killcount, flag capturing pressure is also doubled
 ]]
 
 if SERVER then

@@ -297,6 +297,8 @@ function GM:OpenTitles()
             end
         end )
     end
+
+    --GAMEMODE:DrawEventStatuses( self.TitleMain )
 end
 
 net.Receive( "EquipTitleCallback", function()
@@ -333,7 +335,7 @@ hook.Add( "OnPlayerChat", "AppendTitlesBeforeNames", function( ply, msg, isTeam,
         if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
             local tab = GAMEMODE:GetTitleTable( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
             chatmessage[ #chatmessage + 1 ] = ColorRarities[ tab.rare ]
-            chatmessage[ #chatmessage + 1 ] = "[ " .. tab.title .. " ] "
+            chatmessage[ #chatmessage + 1 ] = "[" .. tab.title .. "] "
         end
 
         if isDead then

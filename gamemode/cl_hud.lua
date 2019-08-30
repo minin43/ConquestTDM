@@ -190,26 +190,46 @@ end )
 local overlayTable = {
 	slaw_overlay = Material( "vgui/frosted.png" ),
 	slaw_rate = 0,
-	lifeline_overlay = Material( "" ),
+	--[[lifeline_overlay = Material( "" ),
 	lifeline_rate = 0,
 	thornmail_overlay = Material( "" ),
 	thornmail_rate = 0,
 	vengeance_overlay = Material( "" ),
-	vengeance_rate = 0,
+    vengeance_rate = 0,]]
+    bleedout_rate = 0,
 	spawn_rate = 0
 }
 --//Handles perk overlays, net.Receive's found lower in file. Surface draws are drawn in order, so important overlays should be drawn last
 hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
-	if not LocalPlayer():Alive() then return end
-	if GAMEMODE.ShouldDrawThornmail then
+    if not LocalPlayer():Alive() then 
+        overlayTable.slaw_rate = 0
+        overlayTable.bleedout_rate = 0
+        return 
+    end
+    
+    if GAMEMODE.ShouldDrawBleedout then
+		overlayTable.bleedout_rate = 1
+	else
+		overlayTable.bleedout_rate = overlayTable.bleedout_rate - 0.005
+	end
+
+	surface.SetTexture( gradient )
+	surface.SetDrawColor( 255, 0, 0, math.Clamp( 100 * overlayTable.bleedout_rate, 0, 100 ) )
+    surface.DrawTexturedRectRotated( 25, ScrH() / 2, 50, ScrH(), 0 )
+    surface.DrawTexturedRectRotated( ScrW() / 2, 25, 50, ScrW(), 270 )
+    surface.DrawTexturedRectRotated( ScrW() - 25, ScrH() / 2, 50, ScrH(), 180 )
+    surface.DrawTexturedRectRotated( ScrW() / 2, ScrH() - 25, 50, ScrW(), 90 )
+    draw.NoTexture()
+
+	--[[if GAMEMODE.ShouldDrawThornmail then
 		overlayTable.thornmail_rate = 1
 	else
 		overlayTable.thornmail_rate = overlayTable.thornmail_rate - 0.01
 	end
 
-	--surface.SetMaterial( overlayTable.thornmail_overlay )
+	surface.SetMaterial( overlayTable.thornmail_overlay )
 	surface.SetDrawColor( 255, 255, 255, math.Clamp( 200 * overlayTable.thornmail_rate, 0, 200 ) )
-	--surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
 
 	if GAMEMODE.ShouldDrawLifeline then
 		overlayTable.lifeline_rate = overlayTable.lifeline_rate + 0.01
@@ -217,9 +237,9 @@ hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
 		overlayTable.lifeline_rate = overlayTable.lifeline_rate - 0.01
 	end
 
-	--surface.SetMaterial( overlayTable.lifeline_overlay )
+	surface.SetMaterial( overlayTable.lifeline_overlay )
 	surface.SetDrawColor( 255, 255, 255, math.Clamp( 120 * overlayTable.lifeline_rate, 0, 120 ) )
-	--surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() )]]
 
 	if GAMEMODE.ShouldDrawIce then
 		overlayTable.slaw_rate = 1
@@ -380,7 +400,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( colorScheme[0]["GamemodeVersionText"] )
 	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( GAMEMODE.Version .. " Release 082019" )
+	surface.DrawText( GAMEMODE.Version .. " Release 082919" )
 end )
 
 --//Draws the damage indicator 
@@ -749,6 +769,14 @@ end )
 
 net.Receive( "EndLifeline", function()
 	GAMEMODE.ShouldDrawLifeline = false
+end )
+
+net.Receive( "BleedOverlay", function()
+    GAMEMODE.ShouldDrawBleedout = true
+end )
+
+net.Receive( "EndBleedOverlay", function()
+    GAMEMODE.ShouldDrawBleedout = false
 end )
 
 --Grenade indicator

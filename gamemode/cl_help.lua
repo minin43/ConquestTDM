@@ -3,7 +3,7 @@ GM.HelpMenuObjects = {
     { type = "header", display = "The Basics" },
     { type = "subheader", display = "First Things First" },
     { type = "text", display = "If you end up getting bored reading this menu (which it seems most people do) and scroll to the bottom to get passed it all (which I don't recommend), you can always come back to this page by opening the menu (F1 or F2) and selecting the \"Help Menu\" button." },
-    { type = "image", display = "" }, --//Need an image
+    { type = "image", display = "vgui/help/0.png" },
 	{ type = "subheader", display = "How To Play" },
 	{ type = "text", display = "There are 2 game types available: team deathmatch and conquest. In Team Deathmatch, your goal is to achieve more kills than your enemy before reaching the time limit. The time remaining can be seen in the top center of the screen, with each team's current kill count on each side." },
 	{ type = "image", display = "vgui/help/1.png" },
@@ -21,7 +21,7 @@ GM.HelpMenuObjects = {
 	{ type = "spacer" },
 	{ type = "subheader", display = "Navigating The Menu" },
 	{ type = "text", display = "The menu can be accessed at any moment by pressing F1 or F2 (unless you are already in it). From the menu, you can reselect your loadout, visit the shop, change your team, change your achievement tag, and re-open this help menu." },
-	--{ type = "image", display = "vgui/help/6.png" }, --//Need a new image
+	{ type = "image", display = "vgui/help/6.png" }, --//Need a new image
 	{ type = "spacer" },
 	{ type = "subheader", display = "Perks" },
 	{ type = "text", display = "Perks are passive bonuses which, typically, positively affect gameplay. Some offer a 1-time bonus on spawn, others introduces a new mechanic available only to you, and some quietly provide a buff to your character. Few perks offer any sort of negative drawbacks, and some perks are soft counters to others." },
@@ -64,7 +64,10 @@ GM.HelpMenuObjects = {
 	{ type = "text", display = "An important distinction needs to be made between killSTREAKs and killSPREEs. Killstreaks can be thought of like they are in Call of Duty multiplayer: how many kills you've achieved in 1 life. Rewards for getting high killstreaks start at 5 kills, and are announced in chat." },
 	{ type = "image", display = "vgui/help/19.png" },
 	{ type = "text", display = "Killsprees are kill combos, when you earn kills back-to-back, with a (currently) 7 second window between each kill. Rewards continue to accumulate if the combo is kept going, unlike killstreaks, but points are capped after a 6 combo. Killstreaks and Killsprees are the best way to earn points, with flag capturing being second best." },
-	{ type = "spacer" }
+    { type = "spacer" },
+    { type = "subheader", display = "Events" },
+	{ type = "text", display = "Events come in 2 forms: time-based, and single-game. Time based events, such as Happy Hour and Double XP Weekend, happen on a schedule, which is displayed in the F2 menu. These time-based events may provide bonus point accumulation, or may be a race to reach a specific goal. Single-game events add fun and unique mututators to the game which change or add to the game's mechanics. When they (rarely) occur, you'll see an option to vote for a map with a mutator in the mapvote." },
+    { type = "spacer" }
 }
 
 GM.HelpImageWide = 480 --by 270

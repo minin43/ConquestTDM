@@ -847,19 +847,15 @@ timer.Create( "TicketFlagCheck", 5, 0, function()
     
 	if GetGlobalInt( "RedTickets" ) == 0 and GetGlobalInt( "BlueTickets" ) == 0 then
 		if GAMEMODE.RedDrain > GAMEMODE.BlueDrain then
-			print("ENDROUND DEBUG - calling EndRound from ticket loss, tie game but red drain higher, blue wins")
 			GAMEMODE:EndRound( 2 )
 		elseif GAMEMODE.BlueDrain > GAMEMODE.RedDrain then
-			print("ENDROUND DEBUG - calling EndRound from ticket loss, tie game but blue drain higher, red wins")
-			GAMEMODE:EndRound( 1 )
+            GAMEMODE:EndRound( 1 )
+        else
+            GAMEMODE:EndRound( 0 )
 		end
-		print("ENDROUND DEBUG - calling EndRound from ticket loss, tie game")
-		GAMEMODE:EndRound( 0 )
 	elseif GetGlobalInt( "RedTickets" ) == 0 then
-		print("ENDROUND DEBUG - calling EndRound from ticket loss, 0 red tickets, blue wins")
 		GAMEMODE:EndRound( 2 )
 	elseif GetGlobalInt( "BlueTickets" ) == 0 then
-		print("ENDROUND DEBUG - calling EndRound from ticket loss, 0 blue tickets, red wins")
 		GAMEMODE:EndRound( 1 )
 	end
 end )
@@ -937,7 +933,7 @@ timer.Create( "FlagCheck", 1, 0, function()
 
 	--//We'll need to count how many players are on the zone, and what the team majority is
 	for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
-		--//These were intially local vars, but fuckit let's say them to the table in case we need them for some odd reason in the future
+		--//These were intially local vars, but fuckit let's save them to the table in case we need them for some odd reason in the future
 		flagtable.redcount = 0
 		flagtable.players.redTeam = {}
 		flagtable.bluecount = 0
@@ -945,10 +941,10 @@ timer.Create( "FlagCheck", 1, 0, function()
 		for ply, teamid in pairs( flagtable.players ) do
 			if teamid == 1 then
 				flagtable.redcount = flagtable.redcount + 1
-				flagtable.players.redTeam[ #flagtable.players.redTeam ] = ply
+				flagtable.players.redTeam[ #flagtable.players.redTeam + 1 ] = ply
 			elseif teamid == 2 then
 				flagtable.bluecount = flagtable.bluecount + 1
-				flagtable.players.blueTeam[ #flagtable.players.blueTeam ] = ply
+				flagtable.players.blueTeam[ #flagtable.players.blueTeam + 1 ] = ply
 			end
 		end
 		
@@ -960,8 +956,10 @@ timer.Create( "FlagCheck", 1, 0, function()
 			--//If we're climbing from blue control (from count 20 - 11), neutralize the flag first
 			if flagtable.count > 10 and ( flagtable.count - difference ) <= 10 then
 				--//Neutralize the flag
-				flagtable.currentcontrol = 0
-				hook.Run( "FlagNeutralized", flagname, flagtable.lastcontrol, flagtable.players.redTeam )
+				if flagtable.currentcontrol != 0 then
+                    hook.Run( "FlagNeutralized", flagname, flagtable.lastcontrol, flagtable.players.redTeam )
+                    flagtable.currentcontrol = 0
+                end
 			end
 			--//If red hasn't yet captured the flag, give them count towards it, if the count given hits 0, capture the flag
 			if flagtable.count > 0 then
@@ -985,8 +983,10 @@ timer.Create( "FlagCheck", 1, 0, function()
 		--//This half mirrors above, but for blue team
 			difference = flagtable.bluecount - flagtable.redcount
 			if flagtable.count < 10 and ( flagtable.count + difference ) >= 10 then
-				flagtable.currentcontrol = 0
-				hook.Run( "FlagNeutralized", flagname, flagtable.lastcontrol, flagtable.players.blueTeam )
+				if flagtable.currentcontrol != 0 then
+                    hook.Run( "FlagNeutralized", flagname, flagtable.lastcontrol, flagtable.players.blueTeam )
+                    flagtable.currentcontrol = 0
+                end
 			end
 
 			if flagtable.count < 20 then
@@ -1048,6 +1048,8 @@ hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
 end )
 
 hook.Add( "FlagCaptured", "CapturePointDistribution", function( flagname, controllingTeam, controllingTeamPlayers )
+    print("Running hook FlagCaptured - CapturePointDistribution", flagname, controllingTeam, controllingTeamPlayers)
+    PrintTable( controllingTeamPlayers )
 	for _, ply in next, controllingTeamPlayers do --//I just noticed doing this rewrite, friendly's capturing a point isn't announced...
 		AddNotice( ply, "FLAG CAPTURED", SCORECOUNTS.FLAG_CAPTURED, NOTICETYPES.FLAG )
 		AddRewards( ply, SCORECOUNTS.FLAG_CAPTURED )

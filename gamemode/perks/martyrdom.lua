@@ -19,5 +19,5 @@ hook.Add("EntityTakeDamage", "ScaleMartyrdomExplosiveDamage", function( ply, dmg
 end )
 
 if CustomizableWeaponry then --//Since the perk uses the thrown grenade entity from the cw2.0 pack, only include the perk if cw2.0 exists
-    RegisterPerk( "Martyrdom", "martyrdom", 25, "Gain 50% explosive damage resistance, and drop a live, short-fused grenade upon death." )
+    RegisterPerk( "Martyrdom", "martyrdom", 35, "Gain 50% explosive damage resistance, and drop a live, short-fused grenade upon death." )
 end

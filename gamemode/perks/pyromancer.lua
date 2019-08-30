@@ -2,9 +2,9 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
     local att = dmginfo:GetAttacker()
     if not IsValid( ply ) or dmginfo == nil or att == nil then return end
 
-	if att:IsPlayer() and dmginfo:IsBulletDamage() and att:Team() ~= ply:Team() then
+	if att:IsPlayer() and ply:IsPlayer() and dmginfo:IsBulletDamage() and att:Team() ~= ply:Team() then
         if CheckPerk( att ) == "pyro" then
-            if timer.Exists( id( ply:SteamID() ) .. "ShotgunPyroFix" ) then return end
+            if timer.Exists( id( ply:SteamID() ) .. "ShotgunPyroFix" ) or timer.Exists( id( ply:SteamID() ) .. "ShotgunPyroFix2" ) then return end
 			local num = math.random( 1, 1000 )
 			
 			if num < 100 and ply:IsOnFire() then
@@ -31,34 +31,11 @@ hook.Add( "EntityTakeDamage", "Pyro", function( ply, dmginfo )
                     GAMEMODE.PyroChecks[ id( ply:SteamID() ) ] = nil
                 end)
                 timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix", 0.5, 1, function() end )
-			end
+            end
+            
+            timer.Create( id( ply:SteamID() ) .. "ShotgunPyroFix2", 0.1, 1, function() end )
 		end
 	end
 end )
 
---[[hook.Add("EntityTakeDamage", "getFireDeaths", function(victim, dmginfo)
-    if !IsValid(victim) && victim:IsPlayer() then
-        return
-    end
-    if dmginfo:GetDamageType() == DMG_FIRE && dmginfo:GetDamage() >= victim:Health() then
-        hook.Run("PlayerFireDamageDeath", victim)
-    end
-end )
-
-hook.Add("PlayerFireDamageDeath", "fireDeath", function(victim)
-    ULib.tsay(nil, "PlayerFireDamageDeath called")
-    if IsValid(victim.pyroOnFire) then
-        ULib.tsay(nil, "found player on fire")
-        local killer = victim.pyroOnFire -- Get the stored player
-        ULib.tsay(nil, "killer = " .. tostring(killer))
-        if (killer == nil || !IsValid(killer)) then 
-            ULib.tsay(nil, "Killer is not valid")
-            return 
-        end
-        killer:AddFrags(1);
-        local col = Color(255, 0, 83)
-        AddNotice(killer, victim:Name(), SCORECOUNTS.KILL, NOTICETYPES.KILL, col)
-    end
-end)]]
-
-RegisterPerk( "Pyromancer", "pyro", 60, "Set enemies aflame! Ignited enemies have a small chance to explode when shot." )
+RegisterPerk( "Pyromancer", "pyro", 65, "Set enemies aflame! Ignited enemies have a small chance to explode when shot." )

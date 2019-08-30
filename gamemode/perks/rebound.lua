@@ -50,5 +50,5 @@ hook.Add( "PlayerDeath", "RemoveReboundRegen", function( ply )
 	end
 end )
 
-RegisterPerk( "Rebound", "rebound", 10, "Heal back 30% of all damage received after a short delay." )
+RegisterPerk( "Rebound", "rebound", 15, "Heal back 30% of all damage received after a short delay." )
 --RegisterPerk( "Vengeance", "vengeance", 8, "Deal bonus damage to your previous killers & heal back a small % of damage done to you, by them.")

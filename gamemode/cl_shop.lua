@@ -26,9 +26,9 @@ function GM:OpenShop()
 	self.ShopMain:ShowCloseButton( false )
 	self.ShopMain:Center()
 	self.ShopMain:MakePopup()
-	self.ShopMain.Think = function()
+	--[[self.ShopMain.Think = function()
 		self.ShopMain.x, self.ShopMain.y = self.ShopMain:GetPos()
-    end
+    end]]
     self.ShopMainTitleBar = 56
     self.ShopMain.Paint = function()
         Derma_DrawBackgroundBlur( self.ShopMain, CurTime() )
@@ -172,7 +172,9 @@ function GM:OpenShop()
 
         v.Tab.Paint = function() return true end
         v.Tab.DoClick = function() return true end --May need to remove - may unintentionally disable desired functionality
-	end
+    end
+    --print(GAMEMODE, self, self.ShopMain)
+    --self:DrawEventStatuses( self.ShopMain )
 end
 
 function GM:AttemptBuyWeapon( wepclass )

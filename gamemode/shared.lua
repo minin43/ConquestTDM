@@ -2,7 +2,7 @@ GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Cobalt, Whuppo, Logan"
 GM.Email = "lobsterlogan43@yahoo.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.13"
+GM.Version = "Conquest Team Deathmatch V. 1.14"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
@@ -155,6 +155,7 @@ if SERVER then
     resource.AddWorkshop( "887113423" ) --M1014
     resource.AddWorkshop( "1584952306" ) --TEC-9
     resource.AddWorkshop( "1805065429" ) --R5
+    resource.AddWorkshop( "374453458" ) --AAC Honeybadger
 
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )

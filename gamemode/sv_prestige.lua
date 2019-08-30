@@ -28,7 +28,6 @@ function prestige.ResetPlayer( ply )
     local searchedguns = {}
     
     for k, v in pairs( boughtguns ) do
-        print(" ", k, v)
         ply:SetPData( v, 0 )
         searchedguns[ v ] = true
     end

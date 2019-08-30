@@ -195,6 +195,9 @@ end
 
 --//We're assuming this function gets good values every time
 function GM:DoPlayerSound( ply, sound )
+    --//Since DoPlayerSounds is called in the PlayerDeath hook, where ply is still counted as alive, this sould prevent any sounds from playing post-death
+    if not ply:Alive() then return end
+
     local mandatoryPlays = { selfDamage = true, selfDeath = true, selfStep = true }
     --//Included randomness, better for the sounds to be used sparingly, but always allow damage & death sounds
     --//There will probably be double-ups with this timer, preventing sound playing when it otherwise would, but I'm okay with that
@@ -288,9 +291,9 @@ hook.Add( "DoPlayerDeath", "DoDeathSounds", function( ply, att, dmginfo )
 end )
 
 --//selfDamage
-hook.Add( "EntityTakeDamage", "DoSelfDamageSound", function( ent, dmgino )
+hook.Add( "EntityTakeDamage", "DoSelfDamageSound", function( ent, dmginfo )
     if ent:IsValid() and ent:IsPlayer() and GAMEMODE.InteractionList[ id( ent:SteamID() ) ] then
-        if timer.Exists( id( ent:SteamID() ) .. "_DamageTimer" ) then return end
+        if timer.Exists( id( ent:SteamID() ) .. "_DamageTimer" ) or ( dmginfo:GetAttacker():IsPlayer() and ent:Team() == dmginfo:GetAttacker():Team() ) then return end
 
         GAMEMODE:DoPlayerSound( ent, "selfDamage" )
         timer.Create( id( ent:SteamID() ) .. "_DamageTimer", 3, 1, function() --[[preventing more calls]] end )

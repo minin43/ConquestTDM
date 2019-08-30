@@ -5,4 +5,4 @@ hook.Add( "PostGiveLoadout", "Hunter", function( ply )
 	end
 end )
 
-RegisterPerk( "Hunter", "hunter", 5, "Reduced walking speed, boosted sprinting speed" )
+RegisterPerk( "Hunter", "hunter", 10, "Reduced walking speed, boosted sprinting speed" )

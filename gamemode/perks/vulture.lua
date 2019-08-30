@@ -1,7 +1,7 @@
 hook.Add( "EntityTakeDamage", "VultureDamage", function( ply, dmginfo )
 	local att = dmginfo:GetAttacker()
 	if CheckPerk( att ) == "vulture" then
-		if ply and ply:IsPlayer() and att and att:IsPlayer() then
+		if IsValid( ply ) and ply:IsPlayer() and IsValid( att ) and att:IsPlayer() and ply:Team() != att:Team() then
 			if (ply:Health() - dmginfo:GetDamage()) < 11 and (ply:Health() - dmginfo:GetDamage()) > 0 then
 				dmginfo:AddDamage(100) --//Overkill, but necessary to circumvent any damage-reducing mechanics
 				GAMEMODE:QueueIcon( dmginfo:GetAttacker(), "vulture" )
@@ -28,4 +28,4 @@ hook.Add( "PlayerDeath", "VultureDrop", function( ply, inf, att )
 	end
 end )
 
-RegisterPerk( "Vulture", "vulture", 45, "Execute enemies low on life! Enemies will also drop ammo packs when killed." )
+RegisterPerk( "Vulture", "vulture", 55, "Enemies drop ammo boxes on death. If any enemy you're shooting would live with 10 or less life from bullet damage, finish them instead." )

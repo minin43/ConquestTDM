@@ -14,7 +14,6 @@ tf2_dbjumpsound = {
 }
 
 hook.Add( "SetupMove", "DoubleJump", function( ply, mv, cmd )
-
 	ply.CanDoubleJump = ply.CanDoubleJump and true
 
 	if CheckPerk( ply ) == "doublejump" then
@@ -29,7 +28,14 @@ hook.Add( "SetupMove", "DoubleJump", function( ply, mv, cmd )
 			ply.CanDoubleJump = true
 		end
 	end
-
 end )
 
-RegisterPerk( "Double Jump", "doublejump", 30, "Gain the ability to double jump, jump height is slightly increased." )
+hook.Add( "EntityTakeDamage", "DoubleJumpFallDamage", function( ply, dmginfo )
+    if not IsValid( ply ) then return end
+
+    if CheckPerk( ply ) == "doublejump" and dmginfo:IsFallDamage() then
+        dmginfo:ScaleDamage( 0.8 )
+    end
+end )
+
+RegisterPerk( "Double Jump", "doublejump", 40, "Gain the ability to double jump, jump height is slightly increased, and fall damage is slightly decreased." )

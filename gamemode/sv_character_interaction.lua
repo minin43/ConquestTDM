@@ -153,7 +153,6 @@ GM.CombineCallsigns = {
 --//Strictly for Combine deaths, plays some Overwatch radio chatter like the metropolice sometimes do
 --//This is fucking messy.
 function GM:DoPostDeathRadio( ply )
-    print( "DoPostDeathRadio called" )
     if !self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds then
         self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds = {}
         self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.FirstIdent = self.CombineCallsigns[ math.random( #self.CombineCallsigns ) ]

@@ -277,6 +277,10 @@ hook.Add( "KillFeedKillstreak", "KillstreakCounting", function( ply, level )
     end
 end )
 
+hook.Add( "GameWinningKill", "GameWinningKillCounting", function( ply, dmginfo )
+    --IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "" ) )
+end )
+
 GM.HealthTracking = { lasthp = {} }
 hook.Add( "Think", "HealthTracking", function()
     local tab = GAMEMODE:GetTitleTable( "unkillable" )

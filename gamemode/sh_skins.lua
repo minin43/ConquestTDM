@@ -46,3 +46,10 @@ GM.SkinsMasterTable = {
     { name = "", dir = "", quality = 0 },
     { name = "", dir = "", quality = 0 }]]
 }
+
+function GetSkinTableByDirectory( dir )
+    for k, v in pairs( GAMEMODE.SkinsMasterTable ) do
+        if v.dir == dir then return v
+    end
+    error( "Function GetSkinTableByDirectory given bad skin texture: " .. dir )
+end

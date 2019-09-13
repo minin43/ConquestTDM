@@ -16,7 +16,7 @@ for i = 1, 50 do
 end
 
 for i = 51, 100 do
-    lvl.levels[ i ] = ( 50 * lvl.expmul ) + ( ( i - 50 ) * lvl.expmul )
+    lvl.levels[ i ] = ( 50 * lvl.expmul ) + ( ( i - 50 ) * lvl.expmul * 0.5 )
 end
 
 lvl.maxlevel = #lvl.levels

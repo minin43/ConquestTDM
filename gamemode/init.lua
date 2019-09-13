@@ -689,6 +689,8 @@ function GM:PlayerDeath( vic, inf, att )
         end
     end
     
+	if not timer.Exists( "RoundTimer" ) then return end
+
 	if( vic:IsValid() and att:IsValid() and att:IsPlayer() ) then
 		if( vic == att ) then
 			return
@@ -706,13 +708,13 @@ function GM:PlayerDeath( vic, inf, att )
 				SetGlobalInt( "RedTickets", GetGlobalInt( "RedTickets" ) - 1 )
 				if GetGlobalInt( "RedTickets" ) <= 0 then
 					GAMEMODE:EndRound( 2 )
-					hook.Run( "GameWinningKill", att )
+					hook.Run( "GameWinningKill", att, inf )
 				end
 			elseif t == 2 then
 				SetGlobalInt( "BlueTickets", GetGlobalInt( "BlueTickets" ) - 1 )
 				if GetGlobalInt( "BlueTickets" ) <= 0 then
 					GAMEMODE:EndRound( 1 )
-					hook.Run( "GameWinningKill", att )
+					hook.Run( "GameWinningKill", att, inf )
 				end
 			end
 		else

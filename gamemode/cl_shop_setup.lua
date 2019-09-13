@@ -713,12 +713,22 @@ vgui.Register( "WeaponsShopPanel", weaponsshop, "DPanel" )
 
 --//The individual buttons for the weapon skins in the Weapon Skins section of the shop
 local skinsshopbutton = {}
-skinsshopbutton.texture = Material( "" )
+skinsshopbutton.material = Material( "" )
 skinsshopbutton.option = ""
+skinsshopbutton.rarity = 0
+skinsshopbutton.display = ""
+skinsshopbutton.font = "DermaDefault"
+
+function skinsshopbutton:SetFont( fnt )
+    self.font = fnt
+end
 
 function skinsshopbutton:SetSkin( dir )
+    local skinTable = GetSkinTableByDirectory( dir )
     self.option = dir
     self.material = Material( dir )
+    self.rarity = skinTable.quality
+    self.display = skinTable.name
 end
 
 function skinsshopbutton:DoClick()
@@ -726,8 +736,16 @@ function skinsshopbutton:DoClick()
 end
 
 function skinsshopbutton:Paint()
-    surface.SetMaterial( self.material )
-    surface.DrawTexturedRect( 0, 0, self:GetWide(), self:GetTall() )
+    surface.SetDrawColor( GAMEMODE.ColorRarities( self.rarity ) )
+    surface.SetMaterial( GAMEMODE.GradientTexture )
+    --surface.DrawTexturedRect( 0, 0, self:GetWide(), self:GetTall() )
+    surface.DrawTexturedRectRotated( skinsshopbutton:GetWide() / 2, skinsshopbutton:GetTall() / 2, skinsshopbutton:GetWide(), skinsshopbutton:GetTall() - 4, 180 )
+
+    surface.SetFont( self.font )
+    surface.SetTextColor( 0, 0, 0 )
+    local w, h = surface.GetTextSize( self.display )
+    surface.SetTextPos( skinsshopbutton:GetWide() - 4 - w , skinsshopbutton:GetTall() / 2 - ( h / 2 ) )
+    surface.DrawText( self.display )
 end
 
 function skinsshopbutton:OnCursorEntered()
@@ -750,6 +768,9 @@ vgui.Register( "SkinsShopButton", skinsshopbutton, "DButton" )
 
 --//
 
+surface.CreateFont( "SkinsShopButtonFont", { font = "Exo 2", size = 24 } )
+surface.CreateFont( "SkinsShopTitleFont", { font = "Exo 2", size = 32 } )
+
 --How should the buttons be oriented? Vertically or horizontally?
 --How should we organize the buttons? By pricing options?
 
@@ -761,30 +782,93 @@ function skinsshop:Init()
     self.scrollpanel = self.scrollpanel or vgui.Create( "DScrollPanel", self )
     self.scrollpanel:SetPos( 0, 0 )
     self.scrollpanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+
+    self:ApplySkin()
 end
 
 function skinsshop:AddSkin( dir )
     self.skins[ #self.skins + 1 ] = dir
     --self:ResetList()
     for k, v in pairs( self.skins ) do
-        self.skinbuttons[ v ] = self.skinbuttons[ v ] or vgui.Create( "SkinsShopButton", self.scrollpanel )
-        self.skinbuttons[ v ]:SetSkin( v )
-        --self.skinbuttons[ v ]:SetSize(  )
-        --Create all of the buttons here
+        if not self.skinbuttons[ v.dir ] then
+            self.skinbuttons[ v.dir ] = vgui.Create( "SkinsShopButton", self.scrollpanel )
+            self.skinbuttons[ v.dir ]:SetSkin( v )
+            self.skinbuttons[ v.dir ]:SetFont( "SkinsShopButtonFont" )
+            self.skinbuttons[ v.dir ]:SetSize( self.scrollpanel:GetWide(), 56 )
+            self.skinbuttons[ v.dir ]:Dock( TOP )
+        end
     end
+end
+
+function skinsshop:ApplySkin( skin )
+    if not self.displayModel then
+        self.displayModel = vgui.Create( "DModelPanel", self )
+        self.displayModel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
+        self.displayModel:SetPos( self:GetWide() / 2, 0 )
+        self.displayModel:SetModel( "models/weapons/w_rif_m4a1.mdl" )
+        self.displayModel:SetCamPos( Vector( 0, 35, 0 ) ) --Courtesy of Spy
+        self.displayModel:SetLookAt( Vector( 0, 0, 0 ) ) --Courtesy of Spy    
+        self.displayModel:GetEntity():SetPos( Vector( -6, 13.5, -1 ) )
+        self.displayModel:SetFOV( 90 ) --Courtesy of Spy
+        self.displayModel:SetAmbientLight( Color( 255, 255, 255 ) )
+    end
+    
+    self.displayModel.Entity:SetMaterial( skin )
 end
 
 function skinsshop:SelectOption( dir )
     self.selected = dir
+    self:ApplySkin( dir )
     --self.skinbuttons[ dir ]:DoClick()
-    --Draw a model with the selected skin, display pricing
+
+    if GAMEMODE.MyPrestigeTokens >= self.skinbuttons[ self.selected ].rarity then
+        self.canBuy = true
+    end
+
+    self.buybutton = self.buybutton or vgui.Create( "DButton", self )
+    self.buybutton:SetSize(  )
+    self.buybutton:SetPos(  )
+    self.buybutton:SetText( "" )
+    self.buybutton.Paint = function()
+        if self.canBuy then
+
+            if not self.buybutton.hover then
+                --//more gradients?
+            end
+        else
+            draw.SimpleText( "Not enough prestige tokens", "SkinsShopButtonFont", self.buybutton:GetWide() / 2, self.buybutton:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            --//more gradients?
+        end
+    end
+    self.buybutton.DoClick = function()
+        if self.canBuy then
+            --//Do buy skin
+        end
+    end
+    self.buybutton.OnCursorEntered = function()
+        if self.canBuy then
+            self.buybutton.hover = true
+        end
+    end
+    self.buybutton.OnCursorExited = function()
+        self.buybutton.hover = false
+    end
+    end
 end
 
---[[function skinsshop:ResetList()
-end]]
-
 function skinsshop:Paint()
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.ColorRarities[ self.skinbuttons[ self.selected ].rarity ] )
+        surface.SetFont( "SkinsShopTitleFont" )
+        local w, t = surface.GetTextSize( self.skinbuttons[ self.selected ].display )
+        surface.SetTextPos( self:GetWide() / 4 * 3 - ( w / 2 ), self:GetWide() / 4 * 3 - t - 2 )
+        surface.DrawText( self.skinbuttons[ self.selected ].display )
 
+        surface.SetDrawColor( 0, 0, 0 )
+        w, t = surface.GetTextSize( "Price: " .. self.skinbuttons[ self.selected ].rarity .. " prestige tokens" )
+        surface.SetTextPos( self:GetWide() / 4 * 3 - ( w / 2 ), self:GetWide() / 4 * 3 + 2 )
+        surface.DrawText( "Price: " .. self.skinbuttons[ self.selected ].rarity .. " prestige tokens" )
+    end
 end
 
 vgui.Register( "SkinsShopPanel", skinsshop, "DPanel" )

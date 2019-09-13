@@ -6,14 +6,6 @@ surface.CreateFont( "TitleTitle" , { font = "Exo 2", size = 24, weight = 400 } )
 surface.CreateFont( "SubTitleTitle" , { font = "Exo 2", size = 16, weight = 500 } )
 surface.CreateFont( "DescTitle" , { font = "Exo 2", size = 16, weight = 550 } )
 
-local ColorRarities = {
-    [ 0 ] = Color( 20, 20, 20, 200 ), --Black/dark gray
-    [ 1 ] = Color( 87, 139, 235 ), --//Light blue
-    [ 2 ] = Color( 153, 102, 204 ), --//Amethyst purple
-    [ 3 ] = Color( 255, 215, 0 ), --//Gold
-    [ 4 ] = Color(252, 57, 3 ) --//Red-Orange
-}
-
 function GM:OpenTitles()
     if self.TitleMain and self.TitleMain:IsValid() then return end
 
@@ -158,7 +150,7 @@ function GM:OpenTitles()
                     --//Icon should be sized 32, 8 space buffer
                 end]]
                 surface.SetTexture( GAMEMODE.GradientTexture )
-                surface.SetDrawColor( ColorRarities[ v.rare ] )
+                surface.SetDrawColor( GAMEMODE.ColorRarities[ v.rare ] )
                 surface.DrawTexturedRectRotated( pan:GetWide() / 2, pan:GetTall() / 2, pan:GetWide(), pan:GetTall() - 4, 180 )
 
                 surface.SetTextColor( GAMEMODE.TeamColor )
@@ -238,7 +230,7 @@ function GM:OpenTitles()
                 pan:Dock( TOP )
                 pan.Paint = function()
                     surface.SetTexture( GAMEMODE.GradientTexture )
-                    surface.SetDrawColor( ColorRarities[ v.rare ] )
+                    surface.SetDrawColor( GAMEMODE.ColorRarities[ v.rare ] )
                     surface.DrawTexturedRectRotated( pan:GetWide() / 2, pan:GetTall() / 2, pan:GetWide(), pan:GetTall() - 4, 180 )
                     --surface.DrawTexturedRectRotated(number x, number y, number width, number height, number rotation)
                     
@@ -334,7 +326,7 @@ hook.Add( "OnPlayerChat", "AppendTitlesBeforeNames", function( ply, msg, isTeam,
     if ply and IsValid( ply ) then
         if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
             local tab = GAMEMODE:GetTitleTable( GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] )
-            chatmessage[ #chatmessage + 1 ] = ColorRarities[ tab.rare ]
+            chatmessage[ #chatmessage + 1 ] = GAMEMODE.ColorRarities[ tab.rare ]
             chatmessage[ #chatmessage + 1 ] = "[" .. tab.title .. "] "
         end
 

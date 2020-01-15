@@ -7,6 +7,12 @@ GM.EventTimers = GM.EventTimers or {}
 GM.EventTimers.Active = GM.EventTimers.Active or {}
 GM.EventTimers.Dormant = GM.EventTimers.Dormant or {}
 
+GM.EventTableFunctions = {
+    instagib = function()
+
+    end
+}
+
 function GetTimeInSeconds( tab )
     if not istable( tab ) then return 0 end
 
@@ -147,6 +153,10 @@ function SendPlayersEventTimes( ply )
     else
         net.Broadcast()
     end
+end
+
+function StartSingleEvent( eventID )
+
 end
 
 --//When the server changes maps or boots up, check to see if any event should be running

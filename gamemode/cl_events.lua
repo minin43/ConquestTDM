@@ -26,13 +26,13 @@ function GM:DrawEventStatuses( parentFrame )
     local hhmarkupobj, hhmarkupwidth, hhtimeleft
     if GAMEMODE.ActiveEvents.happyhour then
         happyhourStarted = true
-        hhtimeleft = math.Round( GAMEMODE.EventTimers.Active.happyhour / 60, 1 )
+        hhtimeleft = math.Round( GAMEMODE.EventTimers.Active.happyhour / 60, 2 )
         local s = "minutes"
         if hhtimeleft == 1.0 then s = "minute" end
         hhmarkupobj = markup.Parse( "<font=MenuAnnouncementsBold><colour=0,0,0>It's Happy Hour! 1.5x point accumulation! Happy hour ends in </colour><colour=76,175,80>" .. hhtimeleft .. "</colour><colour=0,0,0> " .. s .. "</font>", ScrW() )
         hhmarkupwidth = hhmarkupobj:GetWidth()
     else
-        hhtimeleft = math.Round( GAMEMODE.EventTimers.Dormant.happyhour / 3600, 1 )
+        hhtimeleft = math.Round( GAMEMODE.EventTimers.Dormant.happyhour / 3600, 2 )
         local s = "hours"
         if hhtimeleft == 1.0 then s = "hour" end
         hhmarkupobj = markup.Parse( "<font=MenuAnnouncements><colour=0,0,0>Happy Hour starts in </colour><colour=76,175,80>" .. hhtimeleft .. "</colour><colour=0,0,0> " .. s .. "</font>", ScrW() )
@@ -71,13 +71,13 @@ function GM:DrawEventStatuses( parentFrame )
     local wmarkupobj, wmarkupwidth, wtimeleft
     if GAMEMODE.ActiveEvents.weekends then
         weekendstart = true
-        wtimeleft = math.Round( GAMEMODE.EventTimers.Active.weekends / 3600, 1 )
+        wtimeleft = math.Round( GAMEMODE.EventTimers.Active.weekends / 3600, 2 )
         local s = "hours"
         if hhtimeleft == 1 then s = "hour" end
         wmarkupobj = markup.Parse( "<font=MenuAnnouncementsBold><colour=0,0,0>It's Double XP Weekend! 2x point accumulation! Double XP Weekend ends in </colour><colour=76,175,80>" .. wtimeleft .. "</colour><colour=0,0,0> " .. s .. "</font>", ScrW() )
         wmarkupwidth = wmarkupobj:GetWidth()
     else
-        wtimeleft = math.Round( GAMEMODE.EventTimers.Dormant.weekends / ( 3600 * 24 ), 1 )
+        wtimeleft = math.Round( GAMEMODE.EventTimers.Dormant.weekends / ( 3600 * 24 ), 2 )
         local s = "days"
         if hhtimeleft == 1 then s = "day" end
         wmarkupobj = markup.Parse( "<font=MenuAnnouncements><colour=0,0,0>Double XP Weekend starts in </colour><colour=76,175,80>" .. wtimeleft .. "</colour><colour=0,0,0> " .. s .. "</font>", ScrW() )

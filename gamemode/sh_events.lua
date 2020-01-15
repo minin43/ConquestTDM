@@ -1,12 +1,24 @@
 GM.EventTable = {
     Reoccuring = {
-        { id = "happyhour", name = "Happy Hour", bonus = 1.5, startTime = { hour = 22 }, endTime = { hour = 23 }, displayLength = "60 minutes" },
-        { id = "weekends", name = "Double EXP Weekends", bonus = 2, startTime = { wday = 7 }, endTime = { wday = 1 }, displayLength = "48 hours" },
+        { id = "happyhour", name = "Happy Hour", bonus = 1.5, startTime = { hour = 22 }, endTime = { hour = 23 }, displayLength = "60 minutes", desc = "" },
+        { id = "weekends", name = "Double EXP Weekends", bonus = 2, startTime = { wday = 7 }, endTime = { wday = 1 }, displayLength = "48 hours", desc = "" },
         { id = "raceprestige", name = "Race To Prestige", startTime = { day = 1 }, endTime = { day = 1 }, displayLength = "1 month" }
         --{ id = "racemastery", name = "Race To Complete Mastery" }
     },
     Single = {
-
+        { id = "instagib", name = "Instagib", desc = "Sniper rifles only, all bullet damage kills instantly." },
+        { id = "lowgrav", name = "Low-grav", desc = "50% reduced gravity. Probably best if you don't jump." },
+        { id = "bigheads", name = "Big Heads", desc = "As your kill/death ratio grows, so does your head." },
+        { id = "realism", name = "Realism", desc = "Limited HUD elements." },
+        { id = "slowmo", name = "Slomo", desc = "Reduced game speed." },
+        { id = "superberserk", name = "Super Berserk", desc = "All guns shoot 2x as fast." },
+        { id = "vampirism", name = "Vampirism", desc = "Damage done to enemies is immediately gained as life." },
+        { id = "campfire", name = "Camp Fire", desc = "Everyone carries a timed bomb on them. Enemy kills increases time before detonation." },
+        { id = "melee", name = "Melee Only", desc = "Only melee weapons." },
+        { id = "kotk", name = "King of the Kill", desc = "The top player of each team can be seen through all walls by all players." },
+        { id = "superregadolls", name = "Super Ragdolls", desc = "All deaths result in exaggerated ragdolled bodies." },
+        { id = "unlockedstore", name = "Unlocked Store", desc = "All weapons, perks, and equipment are unlocked for the round." },
+        { id = "candela", name = "Candela", desc = "Everyone drops flash grenades on death." }
     }
     --[[        
         Singleton Events (i.e. single game mutators):

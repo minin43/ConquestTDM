@@ -375,7 +375,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
         end
     end
     if eventpointmultiplier > 1 then
-        AddNotice( att, "EVENT BONUS", totalpointcount * eventpointmultiplier, NOTICETYPES.EXTRA )
+        AddNotice( att, "EVENT BONUS", totalpointcount * ( eventpointmultiplier - 1 ), NOTICETYPES.EXTRA )
     end
 
     GAMEMODE:UpdateVendetta( vic, att )

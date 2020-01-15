@@ -385,6 +385,11 @@ function GM:Initialize()
 			end
 		end
 	end )
+
+	if file.Exists( "tdm/newevent.txt", "DATA" ) then
+		local newEvent = file.Read( "tdm/newevent.txt", "DATA" )
+		StartSingleEvent( newEvent )
+	end
 end
 
 function GM:PlayerConnect( name, ip )

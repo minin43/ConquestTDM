@@ -2,8 +2,9 @@ surface.CreateFont( "MapFont", { font = "BF4 Numbers", size = 25, weight = 600, 
 surface.CreateFont( "HeaderFont", { font = "BF4 Numbers", size = 70, weight = 600, antialias = true } )
 
 GM.IconExplanations = {
-    flags = " means map has conquest flags",
-    snipers = " means sniper-heavy map"
+    flags = " indicates the map has conquest flags",
+    snipers = " indicates a sniper-friendly map with long lines of sight"
+    event = " indicates this map will be played with a random event"
 }
 
 net.Receive( "BeginMapvote", function()

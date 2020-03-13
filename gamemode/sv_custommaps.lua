@@ -8,7 +8,7 @@ end
 
 function GM:RefreshCustomProps( doCleanUp )
     if doCleanUp then
-        local deletedEnts = 
+        local deletedEnts = {}
         game.CleanUpMap( false, { "player", "func_breakable", "prop_dynamic", "weapon_*", "item_*" } ) --//Will * work as wildcard symbol?
     end
 
@@ -24,6 +24,8 @@ function GM:RefreshCustomProps( doCleanUp )
         prop:SetAngles( v.ang )
         prop:Spawn()
         prop:SetMoveType( MOVETYPE_NONE )
+		prop:SetUseType( SIMPLE_USE )
+        prop:SetSolid( SOLID_VPHYSICS )
 
         local physobject = prop:GetPhysicsObject()
         if physobject and physobject:IsValid() then physobject:EnableMotion( false ) end

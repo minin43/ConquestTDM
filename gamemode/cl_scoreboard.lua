@@ -271,7 +271,8 @@ local function CreateScoreboard()
 	AddSpacer( 1, 2 )
 	
 	for k, v in next, team.GetSortedPlayers( 1 ) do
-	
+        if !IsValid( v ) then continue end
+
 		local p = vgui.Create( "DPanel" )
 		p:SetSize( 578, 30 )
 		p.Paint = function()
@@ -318,7 +319,8 @@ local function CreateScoreboard()
 		else
 			btn.deathAlpha = 164
 		end
-		btn.Paint = function()
+        btn.Paint = function()
+            if !IsValid( v ) then return end
 			local width, height = 0, 0
 			local _x = 66
 			--stats
@@ -610,7 +612,8 @@ local function CreateScoreboard()
 		
 	end
 	
-	for k, v in next, team.GetSortedPlayers( 2 ) do
+    for k, v in next, team.GetSortedPlayers( 2 ) do
+        if !IsValid( v ) then continue end
 	
 		local p = vgui.Create( "DPanel" )
 		p:SetSize( 578, 30 )
@@ -658,7 +661,8 @@ local function CreateScoreboard()
 		else
 			btn.deathAlpha = 164
 		end
-		btn.Paint = function()
+        btn.Paint = function()
+            if !IsValid( v ) then return end
 			local width, height = 0, 0
 			local _x = 66
 			--stats

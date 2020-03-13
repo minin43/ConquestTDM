@@ -890,3 +890,11 @@ net.Receive( "AcceptedHelp", function( len, ply )
 	fil[ #fil + 1 ] = id( ply:SteamID() )
 	file.Write( "tdm/users/extra/helpmenu.txt", util.TableToJSON( fil ) )
 end )
+
+timer.Create("TeamCountChecking", 4, 0, function()
+    if #team.GetPlayers(1) + #team.GetPlayers(2) < 2 then 
+        GM.pointGainDisabled = true
+    else
+        GM.pointGainDisabled = false
+    end
+end)

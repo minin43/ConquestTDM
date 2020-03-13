@@ -52,6 +52,8 @@ SCORECOUNTS = {
 }
 
 function AddNotice(ply, text, score, type, color)
+    if GAMEMODE.pointGainDisabled then return end
+
     if !color then color = Color(255, 255, 255, 255) end
     
     score = score * GetGlobalInt("ctdm_global_xp_multiplier")

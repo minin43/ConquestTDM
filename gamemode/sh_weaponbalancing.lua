@@ -230,7 +230,7 @@ function weapons.OnLoaded()
         wep.Recoil = 2.5
         wep.HipSpread = 0.35
         wep.AimSpread = 0.001
-        wep.VelocitySensitivity = 2.5
+        wep.VelocitySensitivity = 3.0
         wep.MaxSpreadInc = 0.4
         wep.SpreadPerShot = 0.1
         wep.ClumpSpread = 0
@@ -249,7 +249,7 @@ function weapons.OnLoaded()
         wep.Recoil = 2.5
         wep.HipSpread = 0.35
         wep.AimSpread = 0.001
-        wep.VelocitySensitivity = 2.8
+        wep.VelocitySensitivity = 3.1
         wep.MaxSpreadInc = 0.4
         wep.SpreadPerShot = 0.1
         wep.ClumpSpread = 0
@@ -577,7 +577,7 @@ function weapons.OnLoaded()
         wep.VelocitySensitivity = 1.1
         wep.MaxSpreadInc = 0.06
         wep.SpreadPerShot = 0.01
-        wep.ClumpSpread = 0.030
+        wep.ClumpSpread = 0.0325
         wep.Shots = 16
         wep.Primary.ClipSize = 8
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
@@ -607,7 +607,7 @@ function weapons.OnLoaded()
     if weapons.Get( "cw_m1014" ) then
         local wep = weapons.GetStored( "cw_m1014" )
         wep.Slot = 0
-        wep.Damage = 8
+        wep.Damage = 7
         wep.FireDelay = 0.22
         wep.Recoil = 4
         wep.HipSpread = 0.04
@@ -765,7 +765,7 @@ function weapons.OnLoaded()
         wep.Slot = 1
         wep.Damage = 19
         wep.FireDelay = 0.07
-        wep.Recoil = 0.65
+        wep.Recoil = 0.72
         wep.HipSpread = 0.037
         wep.AimSpread = 0.015
         wep.VelocitySensitivity = 1.0

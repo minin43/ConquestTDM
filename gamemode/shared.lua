@@ -7,7 +7,7 @@ GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
 GM.MapTable = { --Controls both the map autodownload and the mapvote information
---[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png", type = "ins2" }, --Removed while player count remains low
+    --[[[ "cs_assault" ] = { size = "Midsize", img = "vgui/maps/assault.png", type = "ins2" }, --Removed while player count remains low
     [ "cs_italy" ] = { size = "Midsize", img = "vgui/maps/italy.png", type = "ins2" },
     [ "cs_compound" ] = { size = "Small", img = "vgui/maps/compound.png", type = "ins2" },
     [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png", type = "ins2" },

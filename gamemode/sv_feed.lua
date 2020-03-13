@@ -104,8 +104,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     GAMEMODE.KillInfoTracking[ attID ].KillSpree = GAMEMODE.KillInfoTracking[ attID ].KillSpree or 0
 
     if vicID == attID then GAMEMODE.KillInfoTracking[ attID ].KillsThisLife = 0 return end
-
-    if !att:IsPlayer() or !att:IsValid() or !vic:IsValid() or att == vic or att:GetActiveWeapon() == NULL or att:GetActiveWeapon() == NULL then
+    if !att:IsPlayer() or !att:IsValid() or !vic:IsValid() or att == vic or att:GetActiveWeapon() == NULL then
         return
     end
 
@@ -377,7 +376,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
         end
     end
     if eventpointmultiplier > 1 then
-        AddNotice( att, "EVENT BONUS", totalpointcount * ( eventpointmultiplier - 1 ), NOTICETYPES.EXTRA )
+        AddNotice( att, "EVENT BONUS", totalpointcount * eventpointmultiplier, NOTICETYPES.EXTRA )
     end
 
     GAMEMODE:UpdateVendetta( vic, att )

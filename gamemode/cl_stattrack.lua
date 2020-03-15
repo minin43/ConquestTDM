@@ -3,12 +3,20 @@ GM.AttachmentList = { }
 function SaveCurrentAttachments()
     for _, weaponEnt in pairs( LocalPlayer():GetWeapons() ) do
         if weaponEnt.Base == "cw_base" and weaponEnt.Attachments then
-            GAMEMODE.AttachmentList[ weaponEnt:GetClass() ] = { }
+            GAMEMODE.AttachmentList[ weaponEnt:GetClass() ] = { colors = {} }
             for typeIdentifier, tab in pairs( weaponEnt.Attachments ) do
                 if tab.last and tab.last > 0 then
                     GAMEMODE.AttachmentList[ weaponEnt:GetClass() ][ typeIdentifier ] = tab.last
                 end
             end
+
+            --I began implementing a check for sight colors, but it appears equip functions are localized to the client and not the server, so I'm quitting,
+            --as that's just far too much overhead JUST FOR FUCKIN' RETICLE COLORS
+            --[[for attName, tab in pairs( weaponEnt.SightColors ) do
+                if tab.last > 1 then
+                    GAMEMODE.AttachmentList[ weaponEnt:GetClass() ].colors[ attName ] = tab.last
+                end
+            end ]]
         end
     end
 end

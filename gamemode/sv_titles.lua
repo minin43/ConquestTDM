@@ -118,6 +118,15 @@ function GM:SendClientsEquippedTitles() --//This'd be so much easier if (I wasn'
     net.Broadcast()
 end
 
+function GM:DoesTitleExist(title)
+    for k, v in ipairs(self.TitleMasterTable) do
+        if v.id == title then
+            return true
+        end
+    end
+    return false
+end
+
 --//Makes sure to check if the player owns the title, doesn't check for net message spoofs, though, unlike the shop
 net.Receive( "EquipTitle", function( len, ply )
     local desiredTitle = net.ReadString()

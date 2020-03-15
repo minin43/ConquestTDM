@@ -893,8 +893,8 @@ end )
 
 timer.Create("TeamCountChecking", 4, 0, function()
     if #team.GetPlayers(1) + #team.GetPlayers(2) < 2 then 
-        GM.pointGainDisabled = true
+        GAMEMODE.pointGainDisabled = true
     else
-        GM.pointGainDisabled = false
+        GAMEMODE.pointGainDisabled = false
     end
 end)

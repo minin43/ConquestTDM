@@ -853,7 +853,6 @@ function skinsshop:SelectOption( dir )
     self.buybutton.OnCursorExited = function()
         self.buybutton.hover = false
     end
-    end
 end
 
 function skinsshop:Paint()

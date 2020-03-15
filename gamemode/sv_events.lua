@@ -13,32 +13,63 @@ GM.EventTableFunctions = {
     end
 }
 
+--//Counts how many seconds have passed from the start of the year to the given time
 function GetTimeInSeconds( tab )
     if not istable( tab ) then return 0 end
-
     local timeSec = 0
-    for k, v in pairs( tab ) do
-        if k == "sec" then
-            timeSec = timeSec + v
-        elseif k == "min" then
-            timeSec = timeSec + ( v * 60 )
-        elseif k == "hour" then
-            timeSec = timeSec + ( v * 60 * 60 )
-        elseif k == "day" then
-            timeSec = timeSec + ( v * 60 * 60 * 24 )
-        elseif k == "month" then
-            timeSec = timeSec + ( v * 60 * 60 * 24 * ( 365 / 12 ) ) --//I'm not going to check for leap year - fuck that
+
+    if tab.yday then --//If we're given yday, it already accounts for leap years & 30 day months, so counting is much faster/easier
+        for k, v in pairs( tab ) do
+            if k == "sec" then
+                timeSec = timeSec + v
+            elseif k == "min" then
+                timeSec = timeSec + ( v * 60 )
+            elseif k == "hour" then
+                timeSec = timeSec + ( v * 60 * 60 )
+            end
+        end
+        timeSec = timeSec + (tab.yday * 24 * 60 * 60)
+    else
+        local monthDays = {[1] = 31, [2] = 28, [3] = 31, [4] = 30, [5] = 31, [6] = 30, [7] = 31, [8] = 31, [9] = 30, [10] = 31, [11] = 30, [12] = 31}
+        if tab.year and tab.year % 4 == 0 then
+            if tab.month and tab.month > 2 then
+                leapYear = true
+            end
+        end
+
+        for k, v in pairs( tab ) do
+            if k == "sec" then
+                timeSec = timeSec + v
+            elseif k == "min" then
+                timeSec = timeSec + ( v * 60 )
+            elseif k == "hour" then
+                timeSec = timeSec + ( v * 60 * 60 )
+            elseif k == "day" then
+                timeSec = timeSec + ( v * 60 * 60 * 24 )
+            elseif k == "month" then
+                --timeSec = timeSec + ( v * 60 * 60 * 24 * ( 365 / 12 ) )
+                for monthCount = 1, v - 1 do
+                    if leapYear and monthCount == 2 then
+                        timeSec = timeSec + ( 60 * 60 * 24 * 29 )
+                    else
+                        timeSec = timeSec + ( 60 * 60 * 24 * monthDays[monthCount] )
+                    end
+                end
+            end
         end
     end
+
     return timeSec
 end
 
+--//Returns how much time remains between a given date (usually today) and a date in its future this year, assumes certain times if compareTable doesn't have them
 function TimeLeft( dateTable, compareTable )
+    print("TimeLeft debug called with arguments", dateTable, compareTable)
     local startTime = GetTimeInSeconds( dateTable )
     local whatIsAssumed = {}
     
     if not compareTable.sec then
-        compareTable.sec = 0
+        compareTable.sec = 1
         whatIsAssumed.sec = true
     end
     if not compareTable.min then
@@ -52,7 +83,11 @@ function TimeLeft( dateTable, compareTable )
     
     if not compareTable.day then
         if not compareTable.wday then
-            compareTable.day = dateTable.day
+            if not compareTable.month then
+                compareTable.day = dateTable.day
+            else
+                compareTable.day = 1
+            end
             whatIsAssumed.day = true
         else
             if dateTable.wday < compareTable.wday then
@@ -84,9 +119,24 @@ function TimeLeft( dateTable, compareTable )
     return math.max( compareTime - startTime, 0 )
 end
 
+function parseDate(seconds)
+    local secondsDisplay = seconds % 60
+    local minutes = math.Round(seconds / 60)
+    local minutesDisplay = minutes % 60
+    local hours = math.Round(minutes / 60)
+    local hoursDisplay = hours % 24
+    local days = math.Round(hours / 24)
+
+    return "Seconds: " .. secondsDisplay .. "\nMinutes: " .. minutesDisplay .. "\nHours: " .. hoursDisplay .. "\nDays: " .. days
+end
+
 function CreateTimedEventTimers()
     for _, eventTable in pairs( GAMEMODE.EventTable.Reoccuring ) do
         local today = os.date( "*t", os.time() )
+        --[[Quick note about this: os.date returns TODAY, I'm looking for how much time as passed UP TO TODAY, which means I don't want to be counting an extra 24 hours.
+        January 3rd returns yday = 3, but if I'm counting up to Jan 3rd at noon, I want 2 full days + the 12 hours up to noon. If I wasn't giving TimeLeft a table with
+        yday in it, I'd be subtracting day by the month count instead]]
+        today.yday = today.yday - 1
         
         if GAMEMODE.ActiveEvents[ eventTable.id ] then
             local timeleft = TimeLeft( today, eventTable.endTime )

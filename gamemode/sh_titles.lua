@@ -73,17 +73,6 @@ hook.Add( "InitPostEntity", "CreateWeaponTitles", function()
     end
 
     if SERVER then
-        if not file.Exists( "tdm/oldweapontitles.txt", "DATA" ) then
-            file.Write( "tdm/oldweapontitles.txt", util.TableToJSON( {} ) )
-            GM.OldTitles = {}
-        else
-            GM.OldTitles = {}
-            local tab = util.JSONToTable( file.Read( "tdm/oldweapontitles.txt" ) )
-            for k, v in pairs( tab ) do
-                GM.OldTitles[ k ] = v
-            end
-        end
-
         for k, v in pairs( GAMEMODE.TitleMasterTable ) do
             util.AddNetworkString( v.id .. "Status" )
             util.AddNetworkString( v.id .. "StatusCallback" )

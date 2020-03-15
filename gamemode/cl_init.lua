@@ -156,6 +156,7 @@ include( "sh_titles.lua" )
 include( "sh_titles.lua" )
 include( "sh_skins.lua" )
 include( "sh_playermodels.lua" )
+include( "sh_ulx_integration.lua" )
 
 if not file.Exists( "tdm", "DATA" ) then
 	file.CreateDir( "tdm" )

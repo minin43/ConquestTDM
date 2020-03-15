@@ -77,6 +77,7 @@ AddCSLuaFile( "sh_titles.lua" )
 AddCSLuaFile( "sh_titles.lua" )
 AddCSLuaFile( "sh_skins.lua" )
 AddCSLuaFile( "sh_playermodels.lua" )
+AddCSLuaFile( "sh_ulx_integration.lua" )
 
 include( "shared.lua" )
 include( "sv_player.lua" )
@@ -114,6 +115,7 @@ include( "sh_titles.lua" )
 include( "sh_skins.lua" )
 include( "sh_playermodels.lua" )
 include( "sh_events.lua" )
+include( "sh_ulx_integration.lua" )
 
 local col = {}
 col[0] = Vector( 0, 0, 0 )

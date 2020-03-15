@@ -64,7 +64,6 @@ end
 
 --//Returns how much time remains between a given date (usually today) and a date in its future this year, assumes certain times if compareTable doesn't have them
 function TimeLeft( dateTable, compareTable )
-    print("TimeLeft debug called with arguments", dateTable, compareTable)
     local startTime = GetTimeInSeconds( dateTable )
     local whatIsAssumed = {}
     
@@ -228,9 +227,10 @@ hook.Add( "Initialize", "CheckTimeBasedEventsAtMatchStart", function()
 
     --//Double EXP Weekends
     local doublexpweekendinfo = RetrieveEventTable( "weekends" )
-    if dateData.wday == doublexpweekendinfo.startTime.wday or dateData.wday == doublexpweekendinfo.endTime.wday then
+    if dateData.wday > doublexpweekendinfo.startTime.wday or dateData.wday <= doublexpweekendinfo.endTime.wday or (dateData.wday == doublexpweekendinfo.startTime.wday
+    and dateData.hour >= doublexpweekendinfo.startTime.hour) then
         ContinueTimedEvent( "weekends" )
-    elseif dateData.day == 6 and dateData.hour == 23 and dateData.min >= ( GAMEMODE.GameTime / 60 ) then
+    elseif dateData.wday == doublexpweekendinfo.startTime.wday and dateData.hour + 1 == doublexpweekendinfo.startTime.hour and dateData.min >= 60 - ( GAMEMODE.GameTime / 60 ) then
         local timeuntil = ( ( 60 - dateData.min ) * 60 ) + ( 60 - dateData.sec )
         timer.Create( "CountdownToWeekends", timeuntil, 1, function()
             StartTimedEvent( "weekends" )

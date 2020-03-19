@@ -28,4 +28,4 @@ hook.Add( "PlayerDeath", "VultureDrop", function( ply, inf, att )
 	end
 end )
 
-RegisterPerk( "Vulture", "vulture", 55, "Enemies drop ammo boxes on death. If any enemy you're shooting would live with 10 or less life from bullet damage, finish them instead." )
+RegisterPerk( "Vulture", "vulture", 55, "Enemies drop ammo boxes on death. If any enemy you're damaging would live with 10 or less life, finish them instead." )

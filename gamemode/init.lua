@@ -548,6 +548,8 @@ net.Receive( "tdm_loadout", function( len, pl )
 end )
 
 function giveLoadout( ply )
+    if !ply:IsPlayer() then return end
+    
 	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
 	ply:StripWeapons()
 

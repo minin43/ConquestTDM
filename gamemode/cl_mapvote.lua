@@ -3,7 +3,7 @@ surface.CreateFont( "HeaderFont", { font = "BF4 Numbers", size = 70, weight = 60
 
 GM.IconExplanations = {
     flags = " indicates the map has conquest flags",
-    snipers = " indicates a sniper-friendly map with long lines of sight",
+    snipers = " indicates a sniper-friendly map with long\nlines of sight",
     event = " indicates this map will be played with a random event"
 }
 
@@ -82,7 +82,7 @@ function GM:DrawMapvote()
     --self.MapvoteMain:SetMouseInputEnabled( true )
     self.MapvoteMain:SetKeyboardInputEnabled( false )
     self.MapvoteMain.Paint = function()
-        surface.SetDrawColor( 0, 0, 0, 210 )
+        surface.SetDrawColor( 0, 0, 0, 245 )
         surface.DrawRect( 0, 0, self.MapvoteMain:GetWide(), self.MapvoteMain:GetTall() )
 
         local txt
@@ -181,13 +181,27 @@ function GM:DrawMapvote()
         end
     end
 
-    --[[self.MapvoteInfo = vgui.Create( "DPanel", self.MapvoteMain )
-    self.MapvoteInfo:SetSize( 400, 50 )
-    self.MapvoteInfo:SetPos( self.MapvoteMain:GetWide() / 2 - self.MapvoteInfo:GetWide() / 2, self.MapvoteMain:GetTall() - self.MapvoteInfo:GetTall() - 6 )
-    self.MapvoteInfo.Paint = function()
-        surface.SetMaterial( flagimg )
-        surface.SetDrawColor( 76, 175, 80 )
-        surface.DrawTexturedRect( 10, 10, 40, 40 )
-        draw.SimpleText( "means the map has Conquest flags", "MapFont", 54, self.MapvoteInfo:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-    end]]
+    local exitButton = vgui.Create("DButton", self.MapvoteMain)
+    exitButton:SetSize(120, 30)
+    exitButton:SetPos(self.MapvoteMain:GetWide() / 2 - (exitButton:GetWide() / 2), ( ScrH() / 4 ) * 3.7 + 6)
+    exitButton:SetText("")
+    exitButton.Paint = function()
+        if exitButton.cursorEntered then
+            draw.SimpleText("Exit Server", "MapFont", exitButton:GetWide() / 2, exitButton:GetTall() / 2, colorScheme[0].TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        else
+            draw.SimpleText("Exit Server", "MapFont", exitButton:GetWide() / 2, exitButton:GetTall() / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
+    end
+    exitButton.DoClick = function()
+        surface.PlaySound( "ui/buttons/buttonrollover3.wav" )
+        LocalPlayer():ConCommand("disconnect")
+    end
+    exitButton.OnCursorEntered = function()
+        surface.PlaySound( "ui/buttons/buttonclick1.wav" )
+        exitButton.cursorEntered = true
+    end
+    
+    exitButton.OnCursorExited = function()
+        exitButton.cursorEntered = false
+    end
 end

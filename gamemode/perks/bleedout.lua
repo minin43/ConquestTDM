@@ -63,4 +63,4 @@ hook.Add("DoPlayerDeath", "DisplayBleedoutIconOnDeath", function( ply, att, dmgi
     end
 end)
 
-RegisterPerk( "Bleedout", "bleedout", 30, "Provides 5% damage reduction against bullets, with another 20% applied as a 3-second-long damage-over-time bleeding effect." )
+RegisterPerk( "Bleedout", "bleedout", 30, "Provides 5% damage reduction against bullets, with another 20% reduction applied as a 3 second long, damage-over-time bleeding effect." )

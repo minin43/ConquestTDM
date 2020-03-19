@@ -279,6 +279,25 @@ function weapons.OnLoaded()
         wep.SpeedDec = 60
     end
 
+    if weapons.Get( "cw_l115" ) then
+        local wep = weapons.GetStored( "cw_l115" )
+        wep.Slot = 3
+        wep.Damage = 300
+        wep.FireDelay = 1.5
+        wep.Recoil = 3.5
+        wep.HipSpread = 0.35
+        wep.AimSpread = 0.001
+        wep.VelocitySensitivity = 2.5
+        wep.MaxSpreadInc = 0.4
+        wep.SpreadPerShot = 0.1
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 1
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = wep.FireDelay + 0.01
+        wep.SpeedDec = 60
+    end
+
     if weapons.Get( "cw_m14" ) then
         local wep = weapons.GetStored( "cw_m14" )
         wep.Slot = 0

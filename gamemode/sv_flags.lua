@@ -1042,7 +1042,9 @@ end )
 hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
     for _, ply in pairs( plytable ) do
         for _, wep in pairs( ply:GetWeapons() ) do
-            ply:GiveAmmo( wep:GetMaxClip1(), wep:GetPrimaryAmmoType(), true )
+			if weapons.Get(wep:GetClass()).Slot < 3 then
+            	ply:GiveAmmo( wep:GetMaxClip1(), wep:GetPrimaryAmmoType(), true )
+			end
         end
     end
 end )

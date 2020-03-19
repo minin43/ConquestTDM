@@ -1,4 +1,4 @@
---//This file is used to draw perk icons when a perk affects the game
+--//This file is used to draw perk icons when a perk affects the game, and handles other miscellaneous perk functionality
 
 GM.IconQueue = { }
 GM.PerkIcons = {
@@ -30,6 +30,26 @@ net.Receive( "QueueUpIcon", function()
     end
     GAMEMODE.IconQueue[ #GAMEMODE.IconQueue + 1 ] = { icon = GAMEMODE.PerkIcons[ perk ], duration = dur, fade = 0.5 }
 end )
+
+GM.DeadlyWeaponSounds = {}
+net.Receive("DeadlyWeaponAttacker", function()
+    local toPlay = net.ReadInt(8)
+
+    if !GAMEMODE.DeadlyWeaponSounds[toPlay] then
+        GAMEMODE.DeadlyWeaponSounds[toPlay] = CreateSound(LocalPlayer(), "perks/deadlyweapon/kill" .. toPlay .. ".ogg")
+    end
+    if GAMEMODE.DeadlyWeaponSounds.activeSound and GAMEMODE.DeadlyWeaponSounds.activeSound:IsPlaying() then
+        GAMEMODE.DeadlyWeaponSounds.activeSound:Stop()
+    end
+
+    GAMEMODE.DeadlyWeaponSounds[toPlay]:Play()
+    GAMEMODE.DeadlyWeaponSounds.activeSound = GAMEMODE.DeadlyWeaponSounds[toPlay]
+end)
+net.Receive("DeadlyWeaponVictim", function()
+    local toPlay = net.ReadInt(4)
+
+    surface.PlaySound("perks/deadlyweapon/execute_warning" .. toPlay .. "_amplified.ogg")
+end)
 
 GM.CrosshairIconSize = 32
 GM.CrosshairIconBuffer = 8

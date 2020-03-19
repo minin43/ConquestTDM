@@ -67,6 +67,7 @@ GM.WeaponsList = {
     Pyromancer -Combat		- 65
     Leech -Life				- 70
     Lifeline -Combat        - 75
+    Deadly Weapon -Sniper   - 80
 
     Possible new perk mechanics:
     "The Bonus" - double mags received on flag capture

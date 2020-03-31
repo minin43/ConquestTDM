@@ -1,10 +1,9 @@
---[[Notes about balancing:
+--[[Notes about balancing:      -Unfinished-
     MaxSpreadInc is the total amount the spread cone will get under all circumstances
         A HipSpread of 0.12 seems to equal a MaxSpreadInc of 0.03
 ]]
 
-function weapons.OnLoaded()
-
+function RebalanceWeapons()
     --//Primary Weapons
 
     --// ARs //--
@@ -853,6 +852,8 @@ function weapons.OnLoaded()
 end
 
 hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
+    RebalanceWeapons()
+
 	local wepbase = weapons.GetStored( "cw_base" )
     function wepbase:unloadWeapon()
         return

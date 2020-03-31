@@ -41,7 +41,7 @@ function GM:OpenShop()
 		surface.SetTextPos( self.ShopMain:GetWide() / 2 - surface.GetTextSize("Loadout") / 2, 16 )
 		surface.DrawText( "Shop" )
 
-		surface.SetDrawColor( Color( 255, 255, 255 ) )
+		surface.SetDrawColor( 255, 255, 255 )
 		surface.DrawRect( 0, self.ShopMainTitleBar, self.ShopMain:GetWide(), self.ShopMain:GetTall() )
 
 		surface.SetDrawColor( self.TeamColor )
@@ -49,7 +49,7 @@ function GM:OpenShop()
         
         surface.SetFont( "ExoTitleFont" )
         surface.SetTextPos( 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
-        surface.DrawText( "Money: " .. self.MyMoney .. "$" )
+        surface.DrawText( "Money: " .. "$" .. comma_value( self.MyMoney ) )
 		--draw.SimpleText( "Money: " .. self.MyMoney .. "$", "ExoTitleFont", 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
         
         surface.SetTextPos( self.ShopMain:GetWide() / 2 - surface.GetTextSize("Level: " .. self.MyLevel) / 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
@@ -62,7 +62,7 @@ function GM:OpenShop()
     
         surface.SetTexture( GAMEMODE.GradientTexture )
         surface.SetDrawColor( 0, 0, 0, 164 )
-        surface.DrawTexturedRectRotated( self.ShopMain:GetWide() / 2, self.ShopMain:GetTall() - 4, 8, self.ShopMain:GetWide(), 90 )
+        surface.DrawTexturedRectRotated( self.ShopMain:GetWide() / 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) - 4, 8, self.ShopMain:GetWide(), 90 )
     end
 
     local back = vgui.Create( "DButton", self.ShopMain )
@@ -113,8 +113,8 @@ function GM:OpenShop()
     end
     
     self.ShopParentSheet = vgui.Create( "DPropertySheet", self.ShopMain )
-    self.ShopParentSheet:SetPos( -8, self.ShopMainTitleBar + 20 )
-    self.ShopParentSheet:SetSize( self.ShopMain:GetWide() + 16, self.ShopMain:GetTall() - ( self.ShopMainTitleBar * 1.5 ) - 12 )
+    self.ShopParentSheet:SetPos( -8, self.ShopMainTitleBar + 8 )
+    self.ShopParentSheet:SetSize( self.ShopMain:GetWide() + 16, self.ShopMain:GetTall() - ( self.ShopMainTitleBar * 1.5 ) )
     self.ShopParentSheet.Paint = function() return true end
 
     self.ShopWeaponsSheet = vgui.Create( "WeaponsShopPanel", self.ShopParentSheet )
@@ -125,28 +125,25 @@ function GM:OpenShop()
 
     self.ShopWeaponsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
     self.ShopWeaponsButton:SetPos( 0, self.ShopMainTitleBar )
-    self.ShopWeaponsButton:SetSize( self.ShopMain:GetWide() / 3, 48 )
+    self.ShopWeaponsButton:SetSize( self.ShopMain:GetWide() / 3, 36 )
     self.ShopWeaponsButton:SetParentSheet( self.ShopParentSheet )
     self.ShopWeaponsButton:SetTab( WeaponsSheetTable.Tab )
     self.ShopWeaponsButton:SetText( "Weapons" )
     self.ShopWeaponsButton:SetFont( "ExoTitleFont" )
 
     self.ShopSkinsSheet = vgui.Create( "SkinsShopPanel", self.ShopParentSheet )
-    self.ShopSkinsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
+    self.ShopSkinsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() - ( 56 / 2 ) - 8 ) --Dunno why this needs these extra size measurements
     self.ShopSkinsSheet:SetPos( 0, 0 )
-    self.ShopSkinsSheet.Paint = function()
-        draw.SimpleText( "UNDER CONSTRUCTION", "ExoTitleFont", self.ShopSkinsSheet:GetWide() / 2, self.ShopSkinsSheet:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-        --draw.RoundedBox( 8, 0, 0, self.ShopSkinsSheet:GetWide(), self.ShopSkinsSheet:GetTall(), Color( 0, 255, 0 ) )
-    end
+    self.ShopSkinsSheet:DoSetup()
     local ShopSheetTable = self.ShopParentSheet:AddSheet( "Skins", self.ShopSkinsSheet )
 
-    self.ShoSkinsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
-    self.ShoSkinsButton:SetPos( self.ShopMain:GetWide() / 3, self.ShopMainTitleBar )
-    self.ShoSkinsButton:SetSize( self.ShopMain:GetWide() / 3, 48 )
-    self.ShoSkinsButton:SetParentSheet( self.ShopParentSheet )
-    self.ShoSkinsButton:SetTab( ShopSheetTable.Tab )
-    self.ShoSkinsButton:SetText( "Weapon Skins" )
-    self.ShoSkinsButton:SetFont( "ExoTitleFont" )
+    self.ShopSkinsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
+    self.ShopSkinsButton:SetPos( self.ShopMain:GetWide() / 3, self.ShopMainTitleBar )
+    self.ShopSkinsButton:SetSize( self.ShopMain:GetWide() / 3, 36 )
+    self.ShopSkinsButton:SetParentSheet( self.ShopParentSheet )
+    self.ShopSkinsButton:SetTab( ShopSheetTable.Tab )
+    self.ShopSkinsButton:SetText( "Weapon Skins" )
+    self.ShopSkinsButton:SetFont( "ExoTitleFont" )
 
     self.ShopModelsSheet = vgui.Create( "ModelsShopPanel", self.ShopParentSheet )
     self.ShopModelsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
@@ -161,7 +158,7 @@ function GM:OpenShop()
 
     self.ShopModelsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
     self.ShopModelsButton:SetPos( self.ShopMain:GetWide() / 3 * 2, self.ShopMainTitleBar )
-    self.ShopModelsButton:SetSize( self.ShopMain:GetWide() / 3, 48 )
+    self.ShopModelsButton:SetSize( self.ShopMain:GetWide() / 3, 36 )
     self.ShopModelsButton:SetParentSheet( self.ShopParentSheet )
     self.ShopModelsButton:SetTab( ModelSheetTable.Tab )
     self.ShopModelsButton:SetText( "Playermodels" )

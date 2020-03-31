@@ -32,7 +32,7 @@ net.Receive( "RequestLockedWeapons", function( len, ply )
     end
 
     for k, v in pairs( GAMEMODE.WeaponsList ) do
-        if !throwaway[ v[ 2 ] ] then
+        if !throwaway[ v[ 2 ] ] and v[ 5 ] != 0 then
             lockedweps[ #lockedweps + 1 ] = k
         end
     end
@@ -52,7 +52,7 @@ net.Receive( "RequestLockedSkins", function( len, ply )
 
     for k, v in pairs( GAMEMODE.WeaponSkins ) do
         if !throwaway[ v.directory ] then --//Have to save by texture, since name can be changed
-            lockedskins[ #lockedskins + 1 ] = k
+            lockedskins[ #lockedskins + 1 ] = k --//Instead of sending a table of strings, send an int corresponding to the subtable in GAMEMODE.WeaponSkins to save space
         end
     end
 

@@ -70,14 +70,14 @@ AddCSLuaFile( "cl_help.lua" )
 AddCSLuaFile( "cl_menu.lua" )
 AddCSLuaFile( "cl_menu_setup.lua" )
 AddCSLuaFile( "cl_events.lua" )
+AddCSLuaFile( "sh_events.lua" )
 AddCSLuaFile( "sh_loadout.lua" )
-AddCSLuaFile( "sh_shop.lua" )
-AddCSLuaFile( "sh_weaponbalancing.lua" )
-AddCSLuaFile( "sh_titles.lua" )
-AddCSLuaFile( "sh_titles.lua" )
-AddCSLuaFile( "sh_skins.lua" )
 AddCSLuaFile( "sh_playermodels.lua" )
+AddCSLuaFile( "sh_skins.lua" )
+AddCSLuaFile( "sh_shop.lua" )
+AddCSLuaFile( "sh_titles.lua" )
 AddCSLuaFile( "sh_ulx_integration.lua" )
+AddCSLuaFile( "sh_weaponbalancing.lua" )
 
 include( "shared.lua" )
 include( "sv_player.lua" )
@@ -108,14 +108,14 @@ include( "sv_titles.lua" )
 include( "sv_events.lua" )
 include( "sv_skins.lua" )
 include( "sv_playermodels.lua" )
-include( "sh_loadout.lua" )
-include( "sh_shop.lua" )
-include( "sh_weaponbalancing.lua" )
-include( "sh_titles.lua" )
-include( "sh_skins.lua" )
-include( "sh_playermodels.lua" )
 include( "sh_events.lua" )
+include( "sh_loadout.lua" )
+include( "sh_playermodels.lua" )
+include( "sh_skins.lua" )
+include( "sh_shop.lua" )
+include( "sh_titles.lua" )
 include( "sh_ulx_integration.lua" )
+include( "sh_weaponbalancing.lua" )
 
 local col = {}
 col[0] = Vector( 0, 0, 0 )
@@ -567,7 +567,7 @@ function giveLoadout( ply )
 		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] then
 			timer.Simple( 0.5, function()
 				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] ) do --bad loop
-					if ply:GetWeapon( l.primary ).Base == "cw_base" then
+					if ply:GetWeapon( l.primary ).Base == "cw_base" and not istable(v) then
 						ply:GetWeapon( l.primary ):attach( k, v - 1 )
 					end
 				end
@@ -576,7 +576,7 @@ function giveLoadout( ply )
 		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] then
 			timer.Simple( 0.5, function()
 				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] ) do
-					if ply:GetWeapon( l.secondary ).Base == "cw_base" then
+					if ply:GetWeapon( l.secondary ).Base == "cw_base" and not istable(v) then
 						ply:GetWeapon( l.secondary ):attach( k, v - 1 )
 					end
 				end

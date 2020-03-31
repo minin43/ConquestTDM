@@ -98,20 +98,26 @@ function GM:OpenTitles()
     self.TitleLockedList:SetSize( self.TitleMain:GetWide() / 2 - 4, self.TitleMain:GetTall() - self.TitleMainTitleBar )
 
     local ScrollBar = self.TitleUnlockedList:GetVBar()
-	ScrollBar.Paint = function() end
-	ScrollBar.btnUp.Paint = function() end
-	ScrollBar.btnDown.Paint = function() end
-	function ScrollBar.btnGrip:Paint( w, h )
-		draw.RoundedBox( 4, 7, 0, w / 2, h, Color( 0, 0, 0, 128 ) )
-	end
+    function ScrollBar:Paint( w, h )
+        draw.RoundedBox( 4, 7, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
+        return 
+    end
+    function ScrollBar.btnGrip:Paint( w, h )
+        draw.RoundedBox( 4, 7, 0, w / 2, h, GAMEMODE.TeamColor )
+    end
+    ScrollBar.btnUp.Paint = function() return end
+    ScrollBar.btnDown.Paint = function() return end
 
     ScrollBar = self.TitleLockedList:GetVBar()
-	ScrollBar.Paint = function() end
-	ScrollBar.btnUp.Paint = function() end
-	ScrollBar.btnDown.Paint = function() end
-	function ScrollBar.btnGrip:Paint( w, h )
-		draw.RoundedBox( 4, 7, 0, w / 2, h, Color( 0, 0, 0, 128 ) )
-	end
+    function ScrollBar:Paint( w, h )
+        draw.RoundedBox( 4, 7, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
+        return 
+    end
+    function ScrollBar.btnGrip:Paint( w, h )
+        draw.RoundedBox( 4, 7, 0, w / 2, h, GAMEMODE.TeamColor )
+    end
+    ScrollBar.btnUp.Paint = function() return end
+    ScrollBar.btnDown.Paint = function() return end
 
     --//Bad programming habbit to get into, doing this below, these should be custom elements. Laziness just prevails
     local function SetupLists()

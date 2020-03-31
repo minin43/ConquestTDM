@@ -118,7 +118,8 @@ GM.ColorRarities = {
     [ 1 ] = Color( 87, 139, 235 ), --//Light blue
     [ 2 ] = Color( 153, 102, 204 ), --//Amethyst purple
     [ 3 ] = Color( 255, 215, 0 ), --//Gold
-    [ 4 ] = Color(252, 57, 3 ) --//Red-Orange
+    [ 4 ] = Color(252, 57, 3 ), --//Red-Orange
+    [ 5 ] = Color(0, 255, 255) --//Cyan
 }
 
 include( "shared.lua" )
@@ -149,14 +150,14 @@ include( "cl_help.lua" )
 include( "cl_menu.lua" )
 include( "cl_menu_setup.lua" )
 include( "cl_events.lua" )
+include( "sh_events.lua" )
 include( "sh_loadout.lua" )
-include( "sh_shop.lua" )
-include( "sh_weaponbalancing.lua" )
-include( "sh_titles.lua" )
-include( "sh_titles.lua" )
-include( "sh_skins.lua" )
 include( "sh_playermodels.lua" )
+include( "sh_skins.lua" )
+include( "sh_shop.lua" )
+include( "sh_titles.lua" )
 include( "sh_ulx_integration.lua" )
+include( "sh_weaponbalancing.lua" )
 
 if not file.Exists( "tdm", "DATA" ) then
 	file.CreateDir( "tdm" )

@@ -10,7 +10,7 @@ GM.WeaponsList = {
     { "G3A3", 				"cw_g3a3", 				16, "models/weapons/w_snip_g3sg1.mdl", 			        15000, { 0, 0, 0 }, type = "ar", slot = 1 },
     { "MP9", 			    "cw_tr09_mp9", 		    20, "models/weapons/therambotnic09/w_cw2_mp9.mdl", 	    20000, { 0, 0, 0 }, type = "smg", slot = 1 },
 	{ "G36C", 				"cw_g36c", 				24, "models/weapons/cw20_g36c.mdl", 			        30000, { 0, 0, 0 }, type = "ar", slot = 1 },
-    { "CZ Scorpion EVO", 	"cw_scorpin_evo3", 		28, "models/weapons/scorpion/w_ev03.mdl", 		        30000, { 0, 0, 0 }, type = "smg", slot = 1 },
+    { "Scorpion EVO", 	    "cw_scorpin_evo3", 		28, "models/weapons/scorpion/w_ev03.mdl", 		        30000, { 0, 0, 0 }, type = "smg", slot = 1 },
     { "TAC .338", 			"cw_tac338", 			32, "models/weapons/w_snip_TAC338.mdl", 		        30000, { 0, 0, 0 }, type = "sr", slot = 1 },
 	{ "P90", 				"cw_ber_p90", 			36, "models/weapons/w_dber_p9.mdl", 			        30000, { 0, 0, 0 }, type = "smg", slot = 1 },
     { "Remington R5", 		"r5", --[[really?]]	    40, "models/cw2/weapons/w_r5.mdl", 			            30000, { 0, 0, 0 }, type = "ar", slot = 1 },
@@ -78,13 +78,20 @@ GM.WeaponsList = {
         if a teammate reaches a state of death ( i.e about to die) the player dies instead and gives the teammate all HP they had before death."
 ]]
 
-if SERVER then
-	function RetrieveWeaponName( wepclass )
-		for k, v in pairs( GAMEMODE.WeaponsList ) do
-			if v[ 2 ] == wepclass then
-				return v[ 1 ]
-			end
-		end
-		return nil
-	end
+function RetrieveWeaponName( wepclass )
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
+        if v[ 2 ] == wepclass then
+            return v[ 1 ]
+        end
+    end
+    return nil
+end
+
+function RetrieveWeaponTable( wepclass )
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
+        if v[ 2 ] == wepclass then
+            return v
+        end
+    end
+    return nil
 end

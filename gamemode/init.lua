@@ -70,6 +70,7 @@ AddCSLuaFile( "cl_help.lua" )
 AddCSLuaFile( "cl_menu.lua" )
 AddCSLuaFile( "cl_menu_setup.lua" )
 AddCSLuaFile( "cl_events.lua" )
+AddCSLuaFile( "cl_donations.lua" )
 AddCSLuaFile( "sh_events.lua" )
 AddCSLuaFile( "sh_loadout.lua" )
 AddCSLuaFile( "sh_playermodels.lua" )
@@ -792,15 +793,15 @@ end
 --//Used in server-side menu code to check for players running net messages with values the player set - cheaters
 function CaughtCheater( ply, reason )
 	if ply:IsValid() and ply:IsPlayer() then
-		local id = ply:SteamID()
+		local plyID = ply:SteamID()
 		local datetime = os.date( "%H:%M:%S - %d/%m/%Y", os.time() ) --This is a string
 		local currentname = ply:Nick()
 
 		if not file.Exists( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", "DATA" ) then
-			file.Write( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", util.TableToJSON( { datetime = { id, currentname, reason } } ) )
+			file.Write( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", util.TableToJSON( { datetime = { plyID, currentname, reason } } ) )
 		else
 			local contents = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt" ) )
-			contents[ datetime ] = { id, currentname, reason }
+			contents[ datetime ] = { plyID, currentname, reason }
 			file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( contents ) )
 		end
 		--//Maybe do some kind of update even or something - notify superadmins to check the file

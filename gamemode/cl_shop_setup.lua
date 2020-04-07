@@ -9,15 +9,15 @@ GM.typematerials = { Material( "vgui/ar_icon.png" ), Material( "vgui/smg_icon.pn
 GM.levelmaterials = { Material( "vgui/level_locked.png" ), Material( "vgui/level_unlocked.png" ) }
 GM.moneymaterials = { Material( "vgui/money_locked.png" ), Material( "vgui/money_unlocked.png" ) }
 
-surface.CreateFont( "WeaponsShopMain" , { font = "Exo 2", size = 20, weight = 600 } )
-surface.CreateFont( "WeaponsShopButtonHeaderDisplay" , { font = "Exo 2", size = 36, weight = 600 } )
-surface.CreateFont( "WeaponsShopButtonDisplay" , { font = "Exo 2", size = 32, weight = 600 } )
-surface.CreateFont( "WeaponsShopButtonSubDisplay" , { font = "Exo 2", size = 16, weight = 500 } )
-surface.CreateFont( "WeaponsShopInfo" , { font = "Exo 2", size = 16, weight = 600 } )
-surface.CreateFont( "InsufficientFunds", { font = "Exo 2", size = 32 } )
+surface.CreateFont( "Exo-20-600" , { font = "Exo 2", size = 20, weight = 600 } )
+surface.CreateFont( "Exo-36-600" , { font = "Exo 2", size = 36, weight = 600 } )
+surface.CreateFont( "Exo-32-600" , { font = "Exo 2", size = 32, weight = 600 } )
+surface.CreateFont( "Exo-16-500" , { font = "Exo 2", size = 16, weight = 500 } )
+surface.CreateFont( "Exo-16-600" , { font = "Exo 2", size = 16, weight = 600 } )
+surface.CreateFont( "Exo-32-400", { font = "Exo 2", size = 32 } )
 
-surface.CreateFont( "SkinsShopButtonFont", { font = "Exo 2", size = 28, weight = 600 } )
-surface.CreateFont( "SkinsShopTitleFont", { font = "Exo 2", size = 40, weight = 600 } )
+surface.CreateFont( "Exo-28-600", { font = "Exo 2", size = 28, weight = 600 } )
+surface.CreateFont( "Exo-40-600", { font = "Exo 2", size = 40, weight = 600 } )
 
 --//This is the button that switches the PropertySheet panels - "Weapons", "Weapon Skins", and "Playermodels"
 local psheetbutton = { }
@@ -161,7 +161,7 @@ function weaponsshopbutton:Paint()
         --surface.SetMaterial( GAMEMODE.moneymaterials[ 2 ] )
 
         surface.SetTextColor( colorScheme[ 0 ].TeamColor )
-        surface.SetFont( "WeaponsShopButtonSubDisplay" )
+        surface.SetFont( "Exo-16-500" )
         surface.SetTextPos( self:GetTall() + 12, self:GetTall() / 2 + 8 )
         surface.DrawText( "Cost: " .. comma_value( self.weapontable[ 5 ] ) )
     else
@@ -169,7 +169,7 @@ function weaponsshopbutton:Paint()
         --surface.SetMaterial( GAMEMODE.moneymaterials[ 1 ] )
 
         surface.SetTextColor( colorScheme[ 1 ].TeamColor )
-        surface.SetFont( "WeaponsShopButtonSubDisplay" )
+        surface.SetFont( "Exo-16-500" )
         surface.SetTextPos( self:GetTall() + 12, self:GetTall() / 2 + 8 )
         surface.DrawText( "Cost: " .. comma_value( self.weapontable[ 5 ] ) )
     end
@@ -205,7 +205,7 @@ function weaponsshopbutton:Paint()
         end
 
         if !self.hover and !self.trueparent.weaponbuttons[ self.order + 1 ].hover then
-            surface.SetTexture( GAMEMODE.GradientTexture )
+            --surface.SetTexture( GAMEMODE.GradientTexture )
             surface.SetDrawColor( 0, 0, 0, 164)
             surface.DrawLine( self:GetTall() - 12, self:GetTall() - 1, self:GetWide(), self:GetTall() - 1 )
         end
@@ -227,7 +227,7 @@ vgui.Register( "WeaponsShopButton", weaponsshopbutton, "DButton" )
 
 local weaponsshop = { }
 weaponsshop.weaponname = "Nothing Selected"
-weaponsshop.font = "WeaponsShopMain"
+weaponsshop.font = "Exo-20-600"
 weaponsshop.tabs = { "ar", "smg", "sg", "sr", "lmg", "pt", "mn", "eq" }
 weaponsshop.weaponbuttons = { }
 weaponsshop.wepinfo = {
@@ -343,7 +343,7 @@ function weaponsshop:RepopulateList()
         header:SetSize( self.scrollpanel:GetWide(), 34 )
         header:Dock( TOP )
         header.Paint = function()
-            surface.SetFont( "WeaponsShopButtonHeaderDisplay" )
+            surface.SetFont( "Exo-36-600" )
             local textw, textt = surface.GetTextSize( headers[ num ] )
             surface.SetTextColor( 66, 66, 66 )
             surface.SetTextPos( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() / 2 - ( textt / 2 ) )
@@ -360,7 +360,7 @@ function weaponsshop:RepopulateList()
                 button:SetSize( self.scrollpanel:GetWide(), 56 )
                 button:Dock( TOP )
                 button:SetWeapon( weptable[ 2 ] )
-                button:SetFont( "WeaponsShopButtonDisplay" )
+                button:SetFont( "Exo-32-600" )
                 button:SetTrueParent( self, #self.weaponbuttons + 1 )
                 if GAMEMODE.MyLevel < weptable[ 3 ] then
                     button:Disable()
@@ -413,15 +413,12 @@ function weaponsshop:SelectWeapon( wep, butID )
             local diff = 6
             surface.SetDrawColor( 0, 0, 0, 190 )
             surface.DrawRect( diff, diff, w - ( diff * 2 ), h - ( diff * 2 ) )
-            --surface.DrawRect( 0, 0, w, h)
-            surface.SetTextColor( 255, 255, 255 )
-            surface.SetFont( "InsufficientFunds" )
+
+            surface.SetFont( "Exo-32-400" )
             local textw, textt = surface.GetTextSize("Insufficient")
-            surface.SetTextPos( w / 2 - ( textw / 2 ), h / 2 - textt - 2 )
-            surface.DrawText( "Insufficient" )
-            local textw, textt = surface.GetTextSize("Funds")
-            surface.SetTextPos( w / 2 - ( textw / 2 ), h / 2 + 2 )
-            surface.DrawText( "Funds" )
+            draw.SimpleTextOutlined( "Insufficient", "Exo-32-400", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            textw, textt = surface.GetTextSize("Funds")
+            draw.SimpleTextOutlined( "Funds", "Exo-32-400", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
         end
     end
 
@@ -468,7 +465,7 @@ function weaponsshop:SelectWeapon( wep, butID )
     self.infopanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
     self.infopanel.Paint = function()
         if !self.infopanel then return end
-        surface.SetFont( "WeaponsShopButtonHeaderDisplay" )
+        surface.SetFont( "Exo-36-600" )
         local headerw, headert = surface.GetTextSize( self.weaponname )
         surface.SetTextColor( GAMEMODE.TeamColor )
         surface.SetTextPos( self.infopanel:GetWide() / 2 - ( headerw / 2 ), 0 )
@@ -479,7 +476,7 @@ function weaponsshop:SelectWeapon( wep, butID )
 
         if self.DisplayStats then
             for k, v in pairs( self.wepinfo ) do
-                draw.SimpleText( v.display, "WeaponsShopInfo", self.infopanel:GetWide() / 4, headert + (k - 1) * individualt + ( individualt / 2 ), Color( 0, 0, 0 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+                draw.SimpleText( v.display, "Exo-16-600", self.infopanel:GetWide() / 4, headert + (k - 1) * individualt + ( individualt / 2 ), Color( 0, 0, 0 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
                 
                 --//Box drawing
                 local boxwide = self.infopanel:GetWide() / 3 * 2 - 8
@@ -494,7 +491,7 @@ function weaponsshop:SelectWeapon( wep, butID )
                     else
                         surface.DrawTexturedRectUV( self.infopanel:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide * v.barfill, individualt - 4, 1, 1, 1 - v.barfill, 0 )
                     end
-                    --draw.SimpleTextOutlined( v.barfill, "WeaponsShopInfo", self.infopanel:GetWide() / 4 + 8, headert + (k - 1) * individualt + 10, GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 255, 255, 255 ) )
+                    --draw.SimpleTextOutlined( v.barfill, "Exo-16-600", self.infopanel:GetWide() / 4 + 8, headert + (k - 1) * individualt + 10, GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 255, 255, 255 ) )
                 end
             end
         else
@@ -530,7 +527,7 @@ function weaponsshop:SelectWeapon( wep, butID )
             surface.SetTextColor( 66, 66, 66 )
         end
 
-        surface.SetFont( "WeaponsShopMain" )
+        surface.SetFont( "Exo-20-600" )
         local textw, textt = surface.GetTextSize( "Buy for $" .. comma_value( self.weaponprice ) )
         surface.SetTextPos( self.buybutton:GetWide() / 2 - ( textw / 2 ), self.buybutton:GetTall() / 2 - ( textt / 2 ) - 1 )
         surface.DrawText( "Buy for $" .. comma_value( self.weaponprice ) )
@@ -572,6 +569,8 @@ local skinsshopbutton = {}
 skinsshopbutton.material = Material( "" )
 skinsshopbutton.option = ""
 skinsshopbutton.rarity = 0
+skinsshopbutton.order = 0
+skinsshopbutton.alpha = 0
 skinsshopbutton.display = ""
 skinsshopbutton.font = "DermaDefault"
 
@@ -588,35 +587,61 @@ function skinsshopbutton:SetSkin( dir )
     self.display = skinTable.name
 end
 
-function skinsshopbutton:SetTrueParent( panel )
+function skinsshopbutton:SetTrueParent( panel, order )
     --//Since these buttons are actually parented to a scroll panel nested inside my custom panel, I need them to reference the custom panel and not the scroll panel
     self.trueparent = panel
+    self.order = order
 end
 
 function skinsshopbutton:DoClick()
-    --Play a sound?
+    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
     self.trueparent:SelectOption( self.option )
 end
 
 function skinsshopbutton:Paint()
     --//The button should display the texture along the right-hand side of the button
-    surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
-    surface.SetTexture( GAMEMODE.GradientTexture )
-    --surface.DrawTexturedRect( 0, 0, self:GetWide(), self:GetTall() )
-    surface.DrawTexturedRectRotated( self:GetWide() / 4, self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 0 )
-    --surface.DrawTexturedRectRotated(x, y, width, height, rotation)
+    --[[if self.hover or self.trueparent.selected == self.option then
+        surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() / 4, self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 0 )
+    end]]
 
+    draw.NoTexture()
+    local textureExampleSize = math.Round(self:GetWide() * 0.85)
+    surface.SetDrawColor( 255, 255, 255 )
     surface.SetTexture( self.texture )
-    surface.DrawTexturedRect( self:GetWide() * 0.85, 4, self:GetTall() - 8, self:GetTall() - 8 )
+    surface.DrawTexturedRect( textureExampleSize, 8, self:GetTall() - 16, self:GetTall() - 16 )
+    draw.NoTexture()
 
     surface.SetFont( self.font )
-    surface.SetTextColor( 66, 66, 66 )
+    surface.SetTextColor( 0, 0, 0, 220 )
+    if self.hover or self.selected then
+        surface.SetTextColor( GAMEMODE.TeamColor )
+    end
     local w, h = surface.GetTextSize( self.display )
     surface.SetTextPos( 16, self:GetTall() / 2 - ( h / 2 ) )
     surface.DrawText( self.display )
 
-    --surface.SetDrawColor(0, 0, 0)
-    --surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+    if self.order != 1 and self.order != 0 then
+        if self.trueparent.skinbuttonsnumerical[ self.order - 1 ].hover then
+            surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), -90 )
+        end
+    end
+    if self.order != #self.trueparent.skinbuttonsnumerical then
+        if self.trueparent.skinbuttonsnumerical[ self.order + 1 ].hover then
+            surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - 4, 8, self:GetWide(), 90 )
+        end
+
+        if !self.hover and !self.trueparent.skinbuttonsnumerical[ self.order + 1 ].hover then
+            --surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( 0, 0, 0, 164)
+            surface.DrawLine( self:GetTall() - 12, self:GetTall() - 1, self:GetWide(), self:GetTall() - 1 )
+        end
+    end
 
     return true
 end
@@ -630,10 +655,16 @@ function skinsshopbutton:OnCursorExited()
 end
 
 function skinsshopbutton:Think()
-    if self:GetParent().selected == self.option then
+    if self.trueparent.selected == self.option then
         self.selected = true
     else
         self.selected = false
+    end
+
+    if self.hover then
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 0 )
+    else
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )--Lerp
     end
 end
 
@@ -644,6 +675,7 @@ vgui.Register( "SkinsShopButton", skinsshopbutton, "DButton" )
 local skinsshop = { }
 skinsshop.skins = { }
 skinsshop.skinbuttons = { }
+skinsshop.skinbuttonsnumerical = { }
 
 function skinsshop:DoSetup()
     net.Start( "RequestLockedSkins" )
@@ -659,9 +691,11 @@ function skinsshop:DoSetup()
             return
         end
 
+        local weirdpaddingissue = 0
+        if self.scrollpanel then weirdpaddingissue = 8 end
         self.scrollpanel = self.scrollpanel or vgui.Create( "DScrollPanel", self )
         self.scrollpanel:SetPos( 0, 0 )
-        self.scrollpanel:SetSize( self:GetWide() / 2 - 16, self:GetTall() ) --I have no idea why this is 8 pixels wider than weaponsshop
+        self.scrollpanel:SetSize( self:GetWide() / 2 - 16 + weirdpaddingissue, self:GetTall() ) --I have no idea why this is 8 pixels wider than weaponsshop
         local sBar = self.scrollpanel:GetVBar()
         function sBar:Paint( w, h )
             draw.RoundedBox( 4, 7, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
@@ -679,7 +713,7 @@ function skinsshop:DoSetup()
     self:ApplySkin()
 end
 
-function skinsshop:ApplySkin( skin ) --//This function should only be called by skinsshop functions, skinsshopbuttons should call SelectionOption()
+function skinsshop:ApplySkin( skin ) --//This function should only be called by skinsshop functions, skinsshopbuttons should call SelectOption()
     if not self.displayModel then
         self.displayModel = vgui.Create( "DModelPanel", self )
         self.displayModel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
@@ -687,7 +721,7 @@ function skinsshop:ApplySkin( skin ) --//This function should only be called by 
         self.displayModel:SetModel( "models/weapons/w_rif_m4a1.mdl" )
         self.displayModel:SetCamPos( Vector( 0, 35, 0 ) ) --Courtesy of Spy
         self.displayModel:SetLookAt( Vector( 0, 0, 0 ) ) --Courtesy of Spy    
-        self.displayModel:GetEntity():SetPos( Vector( 4, 13.5, -1 ) )
+        self.displayModel:GetEntity():SetPos( Vector( 4, 13, -4 ) )
         self.displayModel:SetFOV( 90 ) --Courtesy of Spy
         self.displayModel:SetAmbientLight( Color( 255, 255, 255 ) )
         self.displayModel.LayoutEntity = function() return true end --Disables rotation
@@ -697,96 +731,189 @@ function skinsshop:ApplySkin( skin ) --//This function should only be called by 
 end
 
 function skinsshop:SelectOption( dir )
+    if dir == nil then
+        self.selected = nil
+        if self.cashbutton then self.cashbutton:Remove() self.cashbutton = nil end
+        if self.tokensbutton then self.tokensbutton:Remove() self.tokensbutton = nil end
+        if self.creditsbutton then self.creditsbutton:Remove() self.creditsbutton = nil end
+        self:ApplySkin()
+        return
+    end
+
     self.selected = dir
+    self.display = GetSkinTableByDirectory( self.selected ).name
     self:ApplySkin( dir )
-
-    local function genericOnCursorEntered( self )
-        self.hover = true
-    end
-
-    local function genericOnCursorExited( self )
-        self.hover = false
-    end
 
     --//Standard in-game cash. Only the shitty skins can be purchased with this currency
     local tab = GetSkinTableByDirectory( dir )
-    local cashdisabled, cashlocked = false
-    if tab.cash > 0 then
-        if GAMEMODE.MyMoney < tab.cash then
-            cashlocked = true
-        else
-            cashlocked = false
-        end
-    else
-        cashdisabled = true
-    end
-    self.cashbutton = vgui.Create( "DButton", self )
-    self.cashbutton:SetSize( self:GetWide() / 6, self:GetTall() / 2 )
+    local cashdisabled = tab.cash == 0
+    local cashlocked = GAMEMODE.MyMoney < tab.cash
+    self.cashbutton = self.cashbutton or vgui.Create( "DButton", self )
+    self.cashbutton:SetSize( self:GetWide() / 6, self:GetTall() / 5 * 2 )
     self.cashbutton:SetPos( self:GetWide() / 2, self:GetTall() - self.cashbutton:GetTall() )
     self.cashbutton:SetText( "" )
-    local cashTexture = Material( "vgui/money_icon.png" )
-    self.cashbutton.Paint = function()
-        --surface.SetDrawColor( 0, 0, 0 )
-        --surface.SetMaterial( cashTexture )
-        --surface.DrawTexturedRect(x, y, width, height)
-        surface.SetDrawColor(0, 0, 0)
-        surface.DrawOutlinedRect(0, 0, self.cashbutton:GetWide(), self.cashbutton:GetTall())
+    self.cashbutton.Paint = function( _, w, h )
+        surface.SetDrawColor( 0, 0, 0, 190 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cashIcon )
+        if self.cashbutton.hover and !cashdisabled then
+            if !cashlocked then
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( "$" .. comma_value( tab.cash ), "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( "$" .. comma_value( tab.cash ), "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                
+                surface.SetDrawColor( 0, 0, 0, 190 )
+                surface.DrawRect( 4, 6, self.cashbutton:GetWide() - 8, self.cashbutton:GetTall() - 11 )
+
+                surface.SetFont( "Exo-28-600" )
+                local textw, textt = surface.GetTextSize("Low")
+                draw.SimpleTextOutlined( "Low", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+                textw, textt = surface.GetTextSize("Funds")
+                draw.SimpleTextOutlined( "Funds", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            end
+        else
+            if cashdisabled then
+                draw.SimpleText( "Disabled", "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                draw.SimpleText( "$" .. comma_value( tab.cash ), "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+        end
     end
     self.cashbutton.DoClick = function()
+        if !cashlocked and !cashdisabled then
+            local success = GAMEMODE:AttemptBuyWepSkin( self.selected, "cash" )
+            if success then
+                net.Start( "RequestLockedSkins" )
+                net.SendToServer()
 
+                surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            end
+        else
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        end
     end
-    self.cashbutton.OnCursorEntered = genericOnCursorEntered( self.cashbutton )
-    self.cashbutton.OnCursorExited = genericOnCursorExited( self.cashbutton )
+    self.cashbutton.OnCursorEntered = function()
+        self.cashbutton.hover = true
+    end
+    self.cashbutton.OnCursorExited = function()
+        self.cashbutton.hover = false
+    end
 
     --//Prestige tokens. All weapon skins except rarity 5 (the most rare) can be purchased with this currency
-    local tokensdisabled, tokenslocked = false
-    if tab.tokens > 0 then
-        if GAMEMODE.MyPrestigeTokens < tab.tokens then
-            tokenslocked = true
-        else
-            tokenslocked = false
-        end
-    else
-        tokensdisabled = true
-    end
-    self.tokensbutton = vgui.Create( "DButton", self )
-    self.tokensbutton:SetSize( self:GetWide() / 6, self:GetTall() / 2 )
+    local tokenslocked = GAMEMODE.MyPrestigeTokens < tab.tokens
+    local tokensdisabled = tab.tokens == 0
+    local tokensdisplay = "Tokens"
+    if tab.tokens == 1 then tokensdisplay = "Token" end
+    self.tokensbutton = self.tokensbutton or vgui.Create( "DButton", self )
+    self.tokensbutton:SetSize( self:GetWide() / 6, self:GetTall() / 5 * 2 )
     self.tokensbutton:SetPos( self:GetWide() / 2 + self.tokensbutton:GetWide(), self:GetTall() - self.tokensbutton:GetTall() )
     self.tokensbutton:SetText( "" )
-    self.tokensbutton.Paint = function()
-        surface.SetDrawColor(0, 0, 0)
-        surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+    self.tokensbutton.Paint = function( _, w, h )
+        surface.SetDrawColor( 0, 0, 0, 190 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.tokensIcon )
+        if self.tokensbutton.hover and !tokensdisabled then
+            if !tokenslocked then
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawTexturedRect( self.tokensbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.tokens .. " " .. tokensdisplay, "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                surface.DrawTexturedRect( self.tokensbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.tokens .. " " .. tokensdisplay, "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                
+                surface.SetDrawColor( 0, 0, 0, 190 )
+                surface.DrawRect( 4, 6, self.tokensbutton:GetWide() - 8, self.tokensbutton:GetTall() - 11 )
+
+                surface.SetFont( "Exo-28-600" )
+                local textw, textt = surface.GetTextSize("Low")
+                draw.SimpleTextOutlined( "Low", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+                textw, textt = surface.GetTextSize("Tokens")
+                draw.SimpleTextOutlined( "Tokens", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            end
+        else
+            if tokensdisabled then
+                draw.SimpleText( "Disabled", "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                draw.SimpleText( tab.tokens .. " " .. tokensdisplay, "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            surface.DrawTexturedRect( self.tokensbutton:GetWide() / 2 - 48, 8, 96, 96 )
+        end
     end
     self.tokensbutton.DoClick = function()
+        if !tokenslocked and !tokensdisabled then
+            local success = GAMEMODE:AttemptBuyWepSkin( self.selected, "tokens" )
+            if success then
+                net.Start( "RequestLockedSkins" )
+                net.SendToServer()
 
-    end
-    self.tokensbutton.OnCursorEntered = genericOnCursorEntered( self.tokensbutton )
-    self.tokensbutton.OnCursorExited = genericOnCursorExited( self.tokensbutton )
-
-    --//Donator credits. All weapons can be purchased with this currency. Pricing barely changes across rarity levels
-    local creditsdisabled, creditslocked = false
-    if tab.tokens > 0 then
-        if GAMEMODE.MyPrestigeTokens < tab.tokens then
-            creditslocked = true
+                surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            end
         else
-            creditslocked = false
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
         end
-    else
-        creditsdisabled = true
     end
-    self.creditsbutton = vgui.Create( "DButton", self )
-    self.creditsbutton:SetSize( self:GetWide() / 6, self:GetTall() / 2 )
+    self.tokensbutton.OnCursorEntered = function()
+        self.tokensbutton.hover = true
+    end
+    self.tokensbutton.OnCursorExited = function()
+        self.tokensbutton.hover = false
+    end
+
+    --//Donator credits. All skins can be purchased with this currency. Pricing barely changes across rarity levels
+    local creditslocked = GAMEMODE.MyCredits < tab.credits
+    local creditsdisplay = "Credits"
+    if tab.credits == 1 then creditsdisplay = "Credit" end
+    self.creditsbutton = self.creditsbutton or vgui.Create( "DButton", self )
+    self.creditsbutton:SetSize( self:GetWide() / 6, self:GetTall() / 5 * 2 )
     self.creditsbutton:SetPos( self:GetWide() / 2 + ( self.creditsbutton:GetWide() * 2 ), self:GetTall() - self.creditsbutton:GetTall() )
     self.creditsbutton:SetText( "" )
-    self.creditsbutton.Paint = function()
-        surface.SetDrawColor(0, 0, 0)
-        surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+    self.creditsbutton.Paint = function( _, w, h )
+        surface.SetDrawColor( 0, 0, 0, 190 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.creditsIcon )
+        if self.creditsbutton.hover then
+            if !creditslocked then
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.credits .. " " .. creditsdisplay, "Exo-28-600", self.creditsbutton:GetWide() / 2, self.creditsbutton:GetTall() / 3 * 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.credits .. " " .. creditsdisplay, "Exo-28-600", self.creditsbutton:GetWide() / 2, self.creditsbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                
+                surface.SetDrawColor( 0, 0, 0, 190 )
+                surface.DrawRect( 4, 6, self.creditsbutton:GetWide() - 8, self.creditsbutton:GetTall() - 11 )
+
+                surface.SetFont( "Exo-28-600" )
+                local textw, textt = surface.GetTextSize("Low")
+                draw.SimpleTextOutlined( "Low", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+                textw, textt = surface.GetTextSize("Credits")
+                draw.SimpleTextOutlined( "Credits", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            end
+        else
+            surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+            draw.SimpleText( tab.credits .. " " .. creditsdisplay, "Exo-28-600", self.creditsbutton:GetWide() / 2, self.creditsbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
     end
     self.creditsbutton.DoClick = function()
+        if !creditslocked then
+            local success = GAMEMODE:AttemptBuyWepSkin( self.selected, "credits" )
+            if success then
+                net.Start( "RequestLockedSkins" )
+                net.SendToServer()
 
+                surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            end
+        else
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        end
     end
-    self.creditsbutton.OnCursorEntered = genericOnCursorEntered( self.creditsbutton )
-    self.creditsbutton.OnCursorExited = genericOnCursorExited( self.creditsbutton )
+    self.creditsbutton.OnCursorEntered = function()
+        self.creditsbutton.hover = true
+    end
+    self.creditsbutton.OnCursorExited = function()
+        self.creditsbutton.hover = false
+    end
 end
 
 function skinsshop:RepopulateList()
@@ -797,6 +924,12 @@ function skinsshop:RepopulateList()
         end
     end
 
+    for k, v in pairs( self.skinbuttonsnumerical ) do
+        if v and v:IsValid() then
+            v:Remove()
+        end
+    end
+
     for k, v in pairs( self.listOrder ) do
         if #v == 0 then continue end
 
@@ -804,47 +937,47 @@ function skinsshop:RepopulateList()
         header:SetSize( self.scrollpanel:GetWide(), 34 )
         header:Dock( TOP )
         header.Paint = function()
-            surface.SetFont( "SkinsShopTitleFont" )
+            surface.SetFont( "Exo-40-600" )
             local textw, textt = surface.GetTextSize( "Tier " .. k + 1 )
             surface.SetTextColor( GAMEMODE.ColorRarities[ k ] )
             surface.SetTextPos( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() / 2 - ( textt / 2 ) )
             surface.DrawText( "Tier " .. k + 1 )
 
-            --draw.SimpleText( "Tier " .. k + 1, "SkinsShopTitleFont", header:GetWide() / 2, header:GetTall() / 2, GAMEMODE.ColorRarities[ k ], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            --draw.SimpleText( "Tier " .. k + 1, "Exo-40-600", header:GetWide() / 2, header:GetTall() / 2, GAMEMODE.ColorRarities[ k ], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
             surface.SetDrawColor( GAMEMODE.ColorRarities[ k ] )
             surface.DrawLine( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() - 1, header:GetWide() / 2 + ( textw / 2 ), header:GetTall() - 1 )
         end
+        self.skinbuttonsnumerical[ #self.skinbuttonsnumerical + 1 ] = header
 
         for k2, v2 in pairs( v ) do
             local button = vgui.Create( "SkinsShopButton", self.scrollpanel )
             button:SetSkin( v2.directory )
-            button:SetFont( "SkinsShopButtonFont" )
+            button:SetFont( "Exo-28-600" )
             button:SetSize( self.scrollpanel:GetWide(), 56 )
             button:Dock( TOP )
-            button:SetTrueParent( self )
+            button:SetTrueParent( self, #self.skinbuttonsnumerical + 1 )
             self.skinbuttons[ v2.directory ] = button
+            self.skinbuttonsnumerical[ #self.skinbuttonsnumerical + 1 ] = button
         end
     end
+
+    self:SelectOption()
 end
 
 function skinsshop:Paint()
-    if self.selected then
-        surface.SetDrawColor( GAMEMODE.ColorRarities[ self.skinbuttons[ self.selected ].rarity ] )
-        surface.SetFont( "SkinsShopTitleFont" )
-        local w, t = surface.GetTextSize( self.skinbuttons[ self.selected ].display )
-        surface.SetTextPos( self:GetWide() / 4 * 3 - ( w / 2 ), self:GetWide() / 4 * 3 - t - 2 )
-        surface.DrawText( self.skinbuttons[ self.selected ].display )
-
-        surface.SetDrawColor( 0, 0, 0 )
-        local w, t = surface.GetTextSize( "Price: " .. self.skinbuttons[ self.selected ].rarity .. " prestige tokens" )
-        surface.SetTextPos( self:GetWide() / 4 * 3 - ( w / 2 ), self:GetWide() / 4 * 3 + 2 )
-        surface.DrawText( "Price: " .. self.skinbuttons[ self.selected ].rarity .. " prestige tokens" )
-    end
-    --surface.SetDrawColor(0, 0, 0)
-    --surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall() )
-    --surface.DrawLine( self:GetWide() / 2, 0, self:GetWide() / 2, self:GetTall())
     surface.SetTexture( GAMEMODE.GradientTexture )
     surface.SetDrawColor( 0, 0, 0, 164 )
+
+    if self.selected then
+        surface.SetFont( "Exo-36-600" )
+        local headerw, headert = surface.GetTextSize( self.display )
+        surface.SetTextColor( GAMEMODE.TeamColor )
+        surface.SetTextPos( self:GetWide() / 4 * 3 - ( headerw / 2 ), self:GetTall() / 2 + 8 )
+        surface.DrawText( self.display )
+
+        surface.DrawLine( self:GetWide() / 2 + ( self:GetWide() / 6 ), self:GetTall() / 2 + 21 + headert, self:GetWide() / 2 + ( self:GetWide() / 6 ), self:GetTall() - 8 )
+        surface.DrawLine( self:GetWide() / 2 + ( self:GetWide() / 3 ), self:GetTall() / 2 + 21 + headert, self:GetWide() / 2 + ( self:GetWide() / 3 ), self:GetTall() - 8 )
+    end
 
     surface.DrawLine( self:GetWide() / 2, 0, self:GetWide() / 2, self:GetTall() )
     surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), 270 )
@@ -856,36 +989,475 @@ function skinsshop:Paint()
     surface.DrawTexturedRectRotated( self:GetWide() / 2 - 4, self:GetTall() / 2, 8, self:GetTall(), 180 )
 end
 
-function skinsshop:DoClick()
+--[[function skinsshop:DoClick()
     self:RepopulateList()
     surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
-end
+end]]
 
 vgui.Register( "SkinsShopPanel", skinsshop, "DPanel" )
 
 --//
 
-local modelsshopbutton = table.Copy( skinsshopbutton )
+local modelsshopbutton = {}--table.Copy( skinsshopbutton )
+modelsshopbutton.font = "DermaDefault"
+modelsshopbutton.rarity = 0
+modelsshopbutton.order = 0
+modelsshopbutton.alpha = 0
+modelsshopbutton.display = ""
+modelsshopbutton.model = ""
+
+function modelsshopbutton:SetFont( fnt )
+    self.font = fnt
+end
+
+function modelsshopbutton:SetModel( mdl )
+    self.model = mdl
+    self.modelinfo = GetModelTableByDirectory( mdl )
+    self.display = self.modelinfo.name
+end
+
+function modelsshopbutton:SetTrueParent( panel, number )
+    self.trueparent = panel
+    self.order = number
+end
+
+function modelsshopbutton:DoClick()
+    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+    self.trueparent:SelectOption( self.model )
+end
+
+function modelsshopbutton:Paint()
+    surface.SetFont( self.font )
+    surface.SetTextColor( 0, 0, 0, 220 )
+    if self.hover or self.selected then
+        surface.SetTextColor( GAMEMODE.TeamColor )
+    end
+    local w, h = surface.GetTextSize( self.display )
+    surface.SetTextPos( 16, self:GetTall() / 2 - ( h / 1.5 ) )
+    surface.DrawText( self.display )
+
+    surface.SetFont( "Exo-16-500" )
+    surface.SetTextColor( 0, 0, 0, 220 )
+    surface.SetTextPos( self:GetTall() - 12, self:GetTall() / 2 + 8 )
+    w, h = surface.GetTextSize( "Quality: " )
+    surface.DrawText( "Quality: " )
+    surface.SetTextColor( GAMEMODE.ColorRarities[ self.modelinfo.quality ] )
+    surface.SetTextPos( self:GetTall() - 14 + w, self:GetTall() / 2 + 8 )
+    surface.DrawText( "Tier ".. ( self.modelinfo.quality + 1 ) )
+
+    if self.modelinfo.bodygroups then
+        --draw.NoTexture()
+        surface.SetDrawColor( colorScheme[ 0 ].TeamColor )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.bodygroupsIcon )
+        surface.DrawTexturedRect( self:GetWide() - ( self:GetTall() / 4 * 3 ), self:GetTall() / 2 - 16, 32, 32 )
+        --surface.DrawTexturedRect( self:GetWide() - self:GetTall() + 4, self:GetTall() / 2 - 26, 48, 48 )
+    end
+    if self.modelinfo.voiceover then
+        surface.SetMaterial( GAMEMODE.Icons.Menu.voiceoverIcon )
+        if self.modelinfo.bodygroups then
+            surface.DrawTexturedRect( self:GetWide() - ( self:GetTall() / 4 * 3 ) - 32 - 4, self:GetTall() / 2 - 16, 32, 32 )
+        else
+            surface.DrawTexturedRect( self:GetWide() - ( self:GetTall() / 4 * 3 ), self:GetTall() / 2 - 16, 32, 32 )
+        end
+    end
+
+    if self.order != 1 and self.order != 0 then
+        if self.trueparent.modelbuttonsnumerical[ self.order - 1 ].hover then
+            surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), -90 )
+        end
+    end
+    if self.order != #self.trueparent.modelbuttonsnumerical then
+        if self.trueparent.modelbuttonsnumerical[ self.order + 1 ].hover then
+            surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - 4, 8, self:GetWide(), 90 )
+        end
+
+        if !self.hover and !self.trueparent.modelbuttonsnumerical[ self.order + 1 ].hover and self.trueparent.modelbuttonsnumerical[ self.order + 1 ].trueparent then
+            --surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( 0, 0, 0, 164)
+            surface.DrawLine( self:GetTall() - 12, self:GetTall() - 1, self:GetWide(), self:GetTall() - 1 )
+        end
+    end
+    return true
+end
+
+function modelsshopbutton:OnCursorEntered()
+    self.hover = true
+end
+
+function modelsshopbutton:OnCursorExited()
+    self.hover = false
+end
+
+function modelsshopbutton:Think()
+    if self.trueparent.selectedmodel == self.model then
+        self.selected = true
+    else
+        self.selected = false
+    end
+
+    if self.hover then
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 0 )
+    else
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )--Lerp
+    end
+end
+
+vgui.Register( "ModelsShopButton", modelsshopbutton, "DButton" )
 
 --//
 
 local modelsshop = { }
+modelsshop.models = { }
+modelsshop.modelbuttons = { }
+modelsshop.modelbuttonsnumerical = { }
+modelsshop.display = ""
+
+function modelsshop:DoSetup()
+    net.Start( "RequestLockedModels" )
+    net.SendToServer()
+
+    net.Receive( "RequestLockedModelsCallback", function()
+        GAMEMODE.lockedmodels = net.ReadTable()
+
+        if #GAMEMODE.lockedmodels == 0 then
+            function self:Paint()
+                draw.DrawText( "All models purchased!", self.font, self:GetWide() / 2, self:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            return
+        end
+
+        local weirdpaddingissue = 0
+        if self.scrollpanel then weirdpaddingissue = 8 end
+        self.scrollpanel = vgui.Create( "DScrollPanel", self )
+        self.scrollpanel:SetPos( 0, 0 )
+        self.scrollpanel:SetSize( self:GetWide() / 2 - 16 + weirdpaddingissue, self:GetTall() ) --I have no idea why this is 8 pixels wider than weaponsshop
+        local sBar = self.scrollpanel:GetVBar()
+        function sBar:Paint( w, h )
+            draw.RoundedBox( 4, 7, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
+            return 
+        end
+        function sBar.btnGrip:Paint( w, h )
+            draw.RoundedBox( 4, 7, 0, w / 2, h, GAMEMODE.TeamColor )
+        end
+        sBar.btnUp.Paint = function() return end
+        sBar.btnDown.Paint = function() return end
+
+        self:RepopulateList()
+    end )
+end
+
+function modelsshop:DrawModel( dir )
+    if !dir then
+        if self.modelpanel then self.modelpanel:Remove() self.modelpanel = nil end
+        return
+    end
+
+    self.modelpanel = self.modelpanel or vgui.Create( "DModelPanel", self )
+    self.modelpanel:SetModel( dir )--, skin=0, bodygroups="")
+    self.modelpanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
+    self.modelpanel:SetPos( self:GetWide() / 2, 0 )
+    self.modelpanel:GetEntity():SetPos( Vector( -15, -15, 0 ) )
+    --PrintTable( self.modelpanel:GetEntity():GetBodyGroups() )
+    self.modelpanel.rotateamount = self.modelpanel.rotateamount or 0
+    self.modelpanel.LayoutEntity = function( self, ent )
+        ent:SetAngles( Angle( 0, ( 45 + self.rotateamount ) % 360 , 0 ) )
+    end
+    self.modelpanel.Think = function( self )
+        self.rotateamount = self.rotateamount + 0.2 --This is a bad way of doing it, as it's dependent on the client framerate
+    end
+    if self.modelinfo.bodygroups then
+        local bodygroups = self.modelpanel:GetEntity():GetBodyGroups()
+        self.modelpanel.bodygroups = { lastupdate = 0 }
+        for k, v in pairs( bodygroups ) do
+            self.modelpanel.bodygroups[ v.id ] = { 0, v.num }
+        end
+        --[[print("Bodygroups table:")
+        PrintTable( self.modelpanel.bodygroups )]]
+
+        timer.Create( "ModelPanelBodygroupChanging", 1, 0, function()
+            if !self.modelpanel then timer.Remove( "ModelPanelBodygroupChanging" ) return end
+            self.modelpanel:GetEntity():SetSkin( ( self.modelpanel:GetEntity():GetSkin() + 1 ) % self.modelpanel:GetEntity():SkinCount() )
+
+            self.modelpanel.bodygroups[ self.modelpanel.bodygroups.lastupdate ][ 1 ] = ( self.modelpanel.bodygroups[ self.modelpanel.bodygroups.lastupdate ][ 1 ] + 1 ) % ( self.modelpanel.bodygroups[ self.modelpanel.bodygroups.lastupdate ][ 2 ] )
+            self.modelpanel:GetEntity():SetBodygroup( self.modelpanel.bodygroups.lastupdate, self.modelpanel.bodygroups[ self.modelpanel.bodygroups.lastupdate ][ 1 ] )
+            if self.modelpanel.bodygroups[ self.modelpanel.bodygroups.lastupdate ][ 1 ] == 0 then 
+                self.modelpanel.bodygroups.lastupdate = ( self.modelpanel.bodygroups.lastupdate + 1 ) % ( #self.modelpanel.bodygroups + 1 )
+            end
+        end )
+    end
+end
+
+function modelsshop:SelectOption( dir )
+    if !dir then
+        self.selectedmodel = nil
+        if self.cashbutton then self.cashbutton:Remove() self.cashbutton = nil end
+        if self.tokensbutton then self.tokensbutton:Remove() self.tokensbutton = nil end
+        if self.creditsbutton then self.creditsbutton:Remove() self.creditsbutton = nil end
+        self:DrawModel()
+        return
+    end
+
+    self.selectedmodel = dir
+    self.modelinfo = GetModelTableByDirectory( dir )
+    self.display = self.modelinfo.name
+    self:DrawModel( dir )
+
+    --//Standard in-game cash. Only the shitty skins can be purchased with this currency
+    local tab = GetModelTableByDirectory( dir )
+    local cashdisabled = tab.cash == 0
+    local cashlocked = GAMEMODE.MyMoney < tab.cash
+    self.cashbutton = self.cashbutton or vgui.Create( "DButton", self )
+    self.cashbutton:SetSize( self:GetWide() / 6, self:GetTall() / 5 * 2 )
+    self.cashbutton:SetPos( self:GetWide() / 2, self:GetTall() - self.cashbutton:GetTall() )
+    self.cashbutton:SetText( "" )
+    self.cashbutton.Paint = function( _, w, h )
+        surface.SetDrawColor( 0, 0, 0, 190 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cashIcon )
+        if self.cashbutton.hover and !cashdisabled then
+            if !cashlocked then
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( "$" .. comma_value( tab.cash ), "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( "$" .. comma_value( tab.cash ), "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                
+                surface.SetDrawColor( 0, 0, 0, 190 )
+                surface.DrawRect( 4, 6, self.cashbutton:GetWide() - 8, self.cashbutton:GetTall() - 11 )
+
+                surface.SetFont( "Exo-28-600" )
+                local textw, textt = surface.GetTextSize("Low")
+                draw.SimpleTextOutlined( "Low", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+                textw, textt = surface.GetTextSize("Funds")
+                draw.SimpleTextOutlined( "Funds", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            end
+        else
+            if cashdisabled then
+                draw.SimpleText( "Disabled", "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                draw.SimpleText( "$" .. comma_value( tab.cash ), "Exo-28-600", self.cashbutton:GetWide() / 2, self.cashbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+        end
+    end
+    self.cashbutton.DoClick = function()
+        if !cashlocked and !cashdisabled then
+            local success = GAMEMODE:AttemptBuyPModel( self.selectedmodel, "cash" )
+            if success then
+                net.Start( "RequestLockedModels" )
+                net.SendToServer()
+
+                surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            end
+        else
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        end
+    end
+    self.cashbutton.OnCursorEntered = function()
+        self.cashbutton.hover = true
+    end
+    self.cashbutton.OnCursorExited = function()
+        self.cashbutton.hover = false
+    end
+
+    --//Prestige tokens. All weapon skins except rarity 5 (the most rare) can be purchased with this currency
+    local tokenslocked = GAMEMODE.MyPrestigeTokens < tab.tokens
+    local tokensdisabled = tab.tokens == 0
+    local tokensdisplay = "Tokens"
+    if tab.tokens == 1 then tokensdisplay = "Token" end
+    self.tokensbutton = self.tokensbutton or vgui.Create( "DButton", self )
+    self.tokensbutton:SetSize( self:GetWide() / 6, self:GetTall() / 5 * 2 )
+    self.tokensbutton:SetPos( self:GetWide() / 2 + self.tokensbutton:GetWide(), self:GetTall() - self.tokensbutton:GetTall() )
+    self.tokensbutton:SetText( "" )
+    self.tokensbutton.Paint = function( _, w, h )
+        surface.SetDrawColor( 0, 0, 0, 190 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.tokensIcon )
+        if self.tokensbutton.hover and !tokensdisabled then
+            if !tokenslocked then
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawTexturedRect( self.tokensbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.tokens .. " " .. tokensdisplay, "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                surface.DrawTexturedRect( self.tokensbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.tokens .. " " .. tokensdisplay, "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                
+                surface.SetDrawColor( 0, 0, 0, 190 )
+                surface.DrawRect( 4, 6, self.tokensbutton:GetWide() - 8, self.tokensbutton:GetTall() - 11 )
+
+                surface.SetFont( "Exo-28-600" )
+                local textw, textt = surface.GetTextSize("Low")
+                draw.SimpleTextOutlined( "Low", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+                textw, textt = surface.GetTextSize("Tokens")
+                draw.SimpleTextOutlined( "Tokens", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            end
+        else
+            if tokensdisabled then
+                draw.SimpleText( "Disabled", "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                draw.SimpleText( tab.tokens .. " " .. tokensdisplay, "Exo-28-600", self.tokensbutton:GetWide() / 2, self.tokensbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+            surface.DrawTexturedRect( self.tokensbutton:GetWide() / 2 - 48, 8, 96, 96 )
+        end
+    end
+    self.tokensbutton.DoClick = function()
+        if !tokenslocked and !tokensdisabled then
+            local success = GAMEMODE:AttemptBuyPModel( self.selectedmodel, "tokens" )
+            if success then
+                net.Start( "RequestLockedModels" )
+                net.SendToServer()
+
+                surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            end
+        else
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        end
+    end
+    self.tokensbutton.OnCursorEntered = function()
+        self.tokensbutton.hover = true
+    end
+    self.tokensbutton.OnCursorExited = function()
+        self.tokensbutton.hover = false
+    end
+
+    --//Donator credits. All skins can be purchased with this currency. Pricing barely changes across rarity levels
+    local creditslocked = GAMEMODE.MyCredits < tab.credits
+    local creditsdisplay = "Credits"
+    if tab.credits == 1 then creditsdisplay = "Credit" end
+    self.creditsbutton = self.creditsbutton or vgui.Create( "DButton", self )
+    self.creditsbutton:SetSize( self:GetWide() / 6, self:GetTall() / 5 * 2 )
+    self.creditsbutton:SetPos( self:GetWide() / 2 + ( self.creditsbutton:GetWide() * 2 ), self:GetTall() - self.creditsbutton:GetTall() )
+    self.creditsbutton:SetText( "" )
+    self.creditsbutton.Paint = function( _, w, h )
+        surface.SetDrawColor( 0, 0, 0, 190 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.creditsIcon )
+        if self.creditsbutton.hover then
+            if !creditslocked then
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.credits .. " " .. creditsdisplay, "Exo-28-600", self.creditsbutton:GetWide() / 2, self.creditsbutton:GetTall() / 3 * 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            else
+                surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+                draw.SimpleText( tab.credits .. " " .. creditsdisplay, "Exo-28-600", self.creditsbutton:GetWide() / 2, self.creditsbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                
+                surface.SetDrawColor( 0, 0, 0, 190 )
+                surface.DrawRect( 4, 6, self.creditsbutton:GetWide() - 8, self.creditsbutton:GetTall() - 11 )
+
+                surface.SetFont( "Exo-28-600" )
+                local textw, textt = surface.GetTextSize("Low")
+                draw.SimpleTextOutlined( "Low", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 - textt - 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+                textw, textt = surface.GetTextSize("Credits")
+                draw.SimpleTextOutlined( "Credits", "Exo-28-600", w / 2 - ( textw / 2 ), h / 2 + 2, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 0, 0, 0 ) )
+            end
+        else
+            surface.DrawTexturedRect( self.cashbutton:GetWide() / 2 - 48, 8, 96, 96 )
+            draw.SimpleText( tab.credits .. " " .. creditsdisplay, "Exo-28-600", self.creditsbutton:GetWide() / 2, self.creditsbutton:GetTall() / 3 * 2, Color( 0, 0, 0, 220 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+    end
+    self.creditsbutton.DoClick = function()
+        if !creditslocked then
+            local success = GAMEMODE:AttemptBuyPModel( self.selectedmodel, "credits" )
+            if success then
+                net.Start( "RequestLockedModels" )
+                net.SendToServer()
+
+                surface.PlaySound( "ambient/levels/labs/coinslot1.wav" )
+            end
+        else
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        end
+    end
+    self.creditsbutton.OnCursorEntered = function()
+        self.creditsbutton.hover = true
+    end
+    self.creditsbutton.OnCursorExited = function()
+        self.creditsbutton.hover = false
+    end
+end
+
+function modelsshop:RepopulateList()
+    self.listOrder = {}
+    for k, v in pairs( GAMEMODE.lockedmodels ) do
+        if !self.listOrder[ GAMEMODE.PlayerModels[ v ].collection ] then
+            self.listOrder[ #self.listOrder + 1 ] = { header = "The " .. GAMEMODE.PlayerModels[ v ].collection .. " Collection" }
+            self.listOrder[ GAMEMODE.PlayerModels[ v ].collection ] = #self.listOrder
+        end
+        table.insert( self.listOrder[ self.listOrder[ GAMEMODE.PlayerModels[ v ].collection ] ], GAMEMODE.PlayerModels[ v ] )
+    end
+
+    for k, v in pairs( self.modelbuttonsnumerical ) do
+        if v and v:IsValid() then
+            v:Remove()
+        end
+    end
+
+    for k, v in ipairs( self.listOrder ) do
+        if #v == 0 then continue end --Should ignore the header entry because it's not numerically indexed
+
+        local header = vgui.Create( "DPanel", self.scrollpanel )
+        header:SetSize( self.scrollpanel:GetWide(), 44 )
+        header:Dock( TOP )
+        header.Paint = function()
+            surface.SetFont( "Exo-28-600" )
+            local textw, textt = surface.GetTextSize( self.listOrder[ k ].header )
+            surface.SetTextColor( GAMEMODE.TeamColor ) --Could also be the highlight?
+            surface.SetTextPos( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() / 2 - ( textt / 2 ) )
+            surface.DrawText( self.listOrder[ k ].header )
+
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawLine( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() - 1, header:GetWide() / 2 + ( textw / 2 ), header:GetTall() - 1 )
+        end
+        self.modelbuttonsnumerical[ #self.modelbuttonsnumerical + 1 ] = header
+
+        for k2, v2 in ipairs( v ) do
+            local button = vgui.Create( "ModelsShopButton", self.scrollpanel )
+            button:SetModel( v2.model )
+            button:SetFont( "Exo-28-600" )
+            button:SetSize( self.scrollpanel:GetWide(), 56 )
+            button:Dock( TOP )
+            button:SetTrueParent( self, #self.modelbuttonsnumerical + 1 )
+            self.modelbuttons[ v2.model ] = button
+            self.modelbuttonsnumerical[ #self.modelbuttonsnumerical + 1 ] = button
+        end
+    end
+
+    self:SelectOption()
+end
+
+function modelsshop:Paint()
+    surface.SetTexture( GAMEMODE.GradientTexture )
+    surface.SetDrawColor( 0, 0, 0, 164 )
+
+    if self.selectedmodel then
+        surface.SetFont( "Exo-36-600" )
+        local headerw, headert = surface.GetTextSize( self.display )
+        surface.SetTextColor( GAMEMODE.TeamColor )
+        surface.SetTextPos( self:GetWide() / 4 * 3 - ( headerw / 2 ), self:GetTall() / 2 + 8 )
+        surface.DrawText( self.display )
+
+        surface.DrawLine( self:GetWide() / 2 + ( self:GetWide() / 6 ), self:GetTall() / 2 + 21 + headert, self:GetWide() / 2 + ( self:GetWide() / 6 ), self:GetTall() - 8 )
+        surface.DrawLine( self:GetWide() / 2 + ( self:GetWide() / 3 ), self:GetTall() / 2 + 21 + headert, self:GetWide() / 2 + ( self:GetWide() / 3 ), self:GetTall() - 8 )
+    end
+
+    surface.DrawLine( self:GetWide() / 2, 0, self:GetWide() / 2, self:GetTall() )
+    surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), 270 )
+
+    surface.DrawLine( self:GetWide() / 2, self:GetTall() / 2, self:GetWide(), self:GetTall() / 2 )
+    surface.DrawTexturedRectRotated( self:GetWide() / 4 * 3, self:GetTall() / 2 + 4, 8, self:GetWide() / 2, -90 )
+
+    surface.DrawLine(self:GetWide() / 2, 0, self:GetWide() / 2, self:GetTall())
+    surface.DrawTexturedRectRotated( self:GetWide() / 2 - 4, self:GetTall() / 2, 8, self:GetTall(), 180 )
+end
 
 vgui.Register( "ModelsShopPanel", modelsshop, "DPanel" )
 
 --[[
     Feedback received over the Discord:
         - One user didn't like the Exo font
-        - One user suggested making the font thicker
-        - Tab names are too small compared to their size (in weapons)
         - Back arrow looked strange
-        - Weapons shop has too many tabs/buttons (suggested doing one big list like in skins separated with dividers)
-        - Weapon buy button not obvious
         - Shop could do with less team-specific coloring
-        - Remove LVL-requirement icon when the player reaches the level (only shows up when too-low level)
-        - Thicker font is being emphasized by a second user
-        - Maybe highlight tabs instead of underline
-
-    Day 3:
-        - Scroll bar grab part could be team-colored
+        - Find a new back icon for the menus in general
 ]]

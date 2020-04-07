@@ -8,9 +8,11 @@ util.AddNetworkString( "RequestLockedModelsCallback" )
 util.AddNetworkString( "BuyWeapon" )
 util.AddNetworkString( "BuyWeaponCallback" )
 util.AddNetworkString( "BuySkin" )
-util.AddNetworkString( "BuySkinCallback")
+util.AddNetworkString( "BuySkinCallback" )
 util.AddNetworkString( "BuyModel" )
 util.AddNetworkString( "BuyModelCallback" )
+
+util.AddNetworkString( "StartPMPrecache" )
 
 --[[ Found in sh_shop, this is just how the tables are structured - WeaponsList found in sh_loadout
 GM.WeaponSkins = {
@@ -20,6 +22,17 @@ GM.WeaponSkins = {
 GM.PlayerModels = {
 	{ name = "", model = "", price = 1, cash = 0, credits = 0, voiceovers = false },
 }]]
+
+hook.Add( "PlayerLoadedIn", "PlayerPrecachePMs", function( ply )
+    net.Start( "StartPMPrecache" )
+    net.Send( ply )
+end )
+
+function GM:RefreshCurrencies( ply )
+    SendUpdate( ply ) --Cash
+    prestige.UpdateTokens( ply ) --Prestige Tokens
+    donations.UpdateCredits( ply ) --Donator Credits
+end
 
 --//Request locked crap
 net.Receive( "RequestLockedWeapons", function( len, ply )
@@ -75,12 +88,12 @@ net.Receive( "RequestLockedModels", function( len, ply )
         end
     end
 
-    net.Start( "RequestLockedSkinsCallback" )
+    net.Start( "RequestLockedModelsCallback" )
         net.WriteTable( lockedmodels )
     net.Send( ply )
 end )
 
---//Legacy code ripped from sv_money.lua, written exploitably. SHAME, WHUPPO. SHAME.
+--//Legacy code ripped from sv_money.lua, written exploitably. SHAME, WHUPPO. SHAME.    -    To be removed later
 net.Receive( "BuyShit", function( len, ply )
 	local wep = net.ReadString()
 	local num = tonumber( net.ReadString() )
@@ -124,44 +137,45 @@ net.Receive( "BuyWeapon", function( len, ply )
 end )
 
 net.Receive( "BuySkin", function( len, ply )
-	local num = net.ReadInt( 16 )
+	local num = net.ReadInt( 8 )
 	local currency = net.ReadString()
 	local skin = GAMEMODE.WeaponSkins[ num ]
 	
 	local price = skin[ currency ]
 	if currency == "tokens" then --Prestige Tokens
 		if price > prestige.GetTokens( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
-		prestige.SubtractTokens( ply, price )
+        prestige.SubtractTokens( ply, price )
 	elseif currency == "credits" then --Donator Credits
-		if price > ( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
-		donations.SubtractCredits( ply, price )
+		if price > donations.GetCredits( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
+        donations.SubtractCredits( ply, price )
 	elseif currency == "cash" then --Standard cash
 		if price > GetMoney( ply ) then CaughtCheater( ply, "Sent net message BuySkin for a skin they don't have the " .. currency .. " for" ) return end
-		SubtractMoney( ply, price )
+        SubtractMoney( ply, price )
 	else Error( "Function for net message BuySkin ran with bad currency type" ) return end
 
 	local fil = util.JSONToTable( file.Read( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
 	local ttab = fil[ 2 ]
 	table.insert( ttab, skin.directory )
 	local new = util.TableToJSON( { id( ply:SteamID() ), ttab } )
-	file.Write( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", new )
+    file.Write( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", new )
+    
+    net.Start( "BuySkinCallback" )
+    net.Send( ply )
 
-	net.Start( "BuySkinCallback" )
-	net.Send( ply )
+    GAMEMODE:RefreshCurrencies( ply )
 end )
 
-
 net.Receive( "BuyModel", function( len, ply )
-	local num = net.ReadInt( 16 )
+	local num = net.ReadInt( 8 )
 	local currency = net.ReadString()
 	local pmodel = GAMEMODE.PlayerModels[ num ]
-	
-	local price = PlayerModels[ currency ]
+	--print(num, GAMEMODE.PlayerModels[ num ], currency)
+	local price = GAMEMODE.PlayerModels[ num ][ currency ]
 	if currency == "tokens" then --Prestige Tokens
 		if price > prestige.GetTokens( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
 		prestige.SubtractTokens( ply, price )
 	elseif currency == "credits" then --Donator Credits
-		if price > ( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
+		if price > donations.GetCredits( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
 		donations.SubtractCredits( ply, price )
 	elseif currency == "cash" then --Standard cash
 		if price > GetMoney( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end
@@ -175,5 +189,7 @@ net.Receive( "BuyModel", function( len, ply )
 	file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", new )
 
 	net.Start( "BuyModelCallback" )
-	net.Send( ply )
+    net.Send( ply )
+    
+    GAMEMODE:RefreshCurrencies( ply )
 end )

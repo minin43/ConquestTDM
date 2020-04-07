@@ -82,7 +82,8 @@ addMoney:defaultAccess(ULib.ACCESS_SUPERADMIN)
 
 function ulx.setCredits(calling_ply, target_plys, target_credits)
     for k, v in pairs(target_plys) do
-        donations.SetCredits(v, tonumber(target_credits))
+        donations.SetCredits(v, tonumber(target_credits) or donations.GetCredits(v))
+        donations.UpdateCredits(v)
     end
 
     ulx.fancyLogAdmin(calling_ply, "#A Set the following player's DONATOR'S CREDITS to " .. target_credits .. ": #T", target_plys)
@@ -96,7 +97,8 @@ setCredits:defaultAccess(ULib.ACCESS_SUPERADMIN)
 
 function ulx.addCredits(calling_ply, target_plys, target_credits)
     for k, v in pairs(target_plys) do
-        donations.SetCredits(v, tonumber(target_money))
+        donations.AddCredits(v, tonumber(target_credits) or 0)
+        donations.UpdateCredits(v)
     end
 
     ulx.fancyLogAdmin(calling_ply, "#A Added " .. target_credits .. " DONATOR'S CREDITS to the following players: #T", target_plys)
@@ -110,10 +112,11 @@ addCredits:defaultAccess(ULib.ACCESS_SUPERADMIN)
 
 function ulx.setTokens(calling_ply, target_plys, target_tokens)
     for k, v in pairs(target_plys) do
-        donations.SetCredits(v, tonumber(target_tokens))
+        prestige.SetTokens(v, tonumber(target_tokens) or prestige.GetTokens(v))
+        prestige.UpdateTokens(v)
     end
 
-    ulx.fancyLogAdmin(calling_ply, "#A Set the following player's DONATOR'S CREDITS to " .. target_tokens .. ": #T", target_plys)
+    ulx.fancyLogAdmin(calling_ply, "#A Set the following player's PRESTIGE TOKENS to " .. target_tokens .. ": #T", target_plys)
 end
 local setTokens = ulx.command("CTDM Commands", "ulx settokens", ulx.setTokens, "!settokens")
 setTokens:addParam{type = ULib.cmds.PlayersArg}
@@ -124,10 +127,11 @@ setTokens:defaultAccess(ULib.ACCESS_SUPERADMIN)
 
 function ulx.addTokens(calling_ply, target_plys, target_tokens)
     for k, v in pairs(target_plys) do
-        donations.SetCredits(v, tonumber(target_money))
+        prestige.AddTokens(v, tonumber(target_tokens) or 0)
+        prestige.UpdateTokens(v)
     end
 
-    ulx.fancyLogAdmin(calling_ply, "#A Added " .. target_tokens .. " DONATOR'S CREDITS to the following players: #T", target_plys)
+    ulx.fancyLogAdmin(calling_ply, "#A Added " .. target_tokens .. " PRESTIGE TOKENS to the following players: #T", target_plys)
 end
 local addTokens = ulx.command("CTDM Commands", "ulx addtokens", ulx.addTokens, "!addtokens")
 addTokens:addParam{type = ULib.cmds.PlayersArg}

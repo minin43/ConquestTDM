@@ -91,7 +91,15 @@ GM.Icons = {
 		cancelIcon = Material( "vgui/cancelIcon.png", "noclamp smooth" ),
 		titleIcon = Material( "vgui/achievement.png", "noclamp smooth" ),
 		helpIcon = Material( "vgui/help.png", "noclamp smooth" ),
-		backIcon = Material( "vgui/back.png", "noclamp smooth" )
+        backIcon = Material( "vgui/back.png", "noclamp smooth" ),
+        cashIcon = Material( "vgui/money_icon.png", "smooth" ),
+        cashIconSmall = Material( "vgui/money_icon_small.png", "smooth" ),
+        tokensIcon = Material( "vgui/prestige_token_icon.png", "smooth"),
+        tokensIconSmall = Material( "vgui/prestige_token_icon_small.png", "smooth"),
+        creditsIcon = Material( "vgui/donator_credits_icon.png", "smooth" ),
+        creditsIconSmall = Material( "vgui/donator_credits_icon_small.png", "smooth" ),
+        bodygroupsIcon = Material( "vgui/bodygroups_icon.png", "smooth" ),
+        voiceoverIcon = Material( "vgui/voiceover_icon.png", "smooth" )
     }
 }
 
@@ -150,6 +158,7 @@ include( "cl_help.lua" )
 include( "cl_menu.lua" )
 include( "cl_menu_setup.lua" )
 include( "cl_events.lua" )
+include( "cl_donations.lua" )
 include( "sh_events.lua" )
 include( "sh_loadout.lua" )
 include( "sh_playermodels.lua" )

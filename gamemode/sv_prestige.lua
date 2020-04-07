@@ -5,7 +5,7 @@ util.AddNetworkString( "PlayerAttemptPrestige" )
 prestige = {}
 
 function prestige.GetTokens( ply )
-    return math.Round( tonumber( ply:GetPData( "prestigetokens" ) ) )
+    return tonumber( ply:GetPData( "prestigetokens" ) )
 end
 
 function prestige.AddTokens( ply, amt )
@@ -75,10 +75,15 @@ function prestige.ActuallyPrestige( ply, amt )
     prestige.AddTokens( ply, amt )
 end
 
-net.Receive( "GetPrestigeTokens", function( len, ply )
+--//Sends GetPrestigeTokensCallback to a player
+function prestige.UpdateTokens( ply )
     net.Start( "GetPrestigeTokensCallback" )
         net.WriteInt( prestige.GetTokens( ply ), 16 ) --//16 is probably overkill, but there's technically no cap, so better safe than sorry
     net.Send( ply )
+end
+
+net.Receive( "GetPrestigeTokens", function( len, ply )
+    prestige.UpdateTokens( ply )
 end )
 
 net.Receive( "PlayerAttemptPrestige", function( len, ply )

@@ -1,9 +1,11 @@
 --//This file to be used for handling donator credits and VIP status
+util.AddNetworkString( "GetDonatorCredits" )
+util.AddNetworkString( "GetDonatorCreditsCallback" )
 
 donations = {}
 
 function donations.GetCredits( ply )
-    return math.Round( tonumber( ply:GetPData( "donatorcredits" ) ) )
+    return tonumber( ply:GetPData( "donatorcredits" ) )
 end
 
 function donations.AddCredits( ply, amt )
@@ -17,6 +19,12 @@ end
 
 function donations.SubtractCredits( ply, amt )
     ply:SetPData( "donatorcredits", donations.GetCredits( ply ) - math.abs( amt ) )
+end
+
+function donations.UpdateCredits( ply )
+    net.Start( "GetDonatorCreditsCallback" )
+        net.WriteInt( donations.GetCredits( ply ), 16 )
+    net.Send( ply )
 end
 
 hook.Add( "PlayerInitialSpawn", "SetupDonatorPData", function( ply )
@@ -58,4 +66,8 @@ end
 
 hook.Add( "PlayerInitialSpawn", "SetUserGroup", function( ply )
 	--fil = 
+end )
+
+net.Receive( "GetDonatorCredits", function( len, ply )
+    donations.UpdateCredits( ply )
 end )

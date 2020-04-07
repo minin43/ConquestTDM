@@ -18,6 +18,9 @@ function GM:OpenShop()
         GAMEMODE.MyMoney = curAmt
     end )
 
+    net.Start( "GetDonatorCredits")
+    net.SendToServer()
+
 	self.ShopMain = vgui.Create( "DFrame" )
 	self.ShopMain:SetSize( 750, 600 )
 	self.ShopMain:SetTitle( "" )
@@ -30,36 +33,55 @@ function GM:OpenShop()
 		self.ShopMain.x, self.ShopMain.y = self.ShopMain:GetPos()
     end]]
     self.ShopMainTitleBar = 56
+    local iconSize = 24
+    local iconOffsetY = 1
     self.ShopMain.Paint = function()
+        --Do a blur and draw the TeamColor title bar along the top
         Derma_DrawBackgroundBlur( self.ShopMain, CurTime() )
 		surface.SetDrawColor( self.TeamColor )
 		surface.DrawRect( 0, 0, self.ShopMain:GetWide(), self.ShopMainTitleBar )
 
-		--draw.SimpleText( "Shop", "ExoTitleFont", self.ShopMain:GetWide() / 2, self.ShopMainTitleBar / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        --Draw the "Shop" text along the top
         surface.SetFont( "Exo 2" )
 		surface.SetTextColor( Color( 255, 255, 255 ) )
 		surface.SetTextPos( self.ShopMain:GetWide() / 2 - surface.GetTextSize("Loadout") / 2, 16 )
 		surface.DrawText( "Shop" )
 
+        --Draw a white background
 		surface.SetDrawColor( 255, 255, 255 )
-		surface.DrawRect( 0, self.ShopMainTitleBar, self.ShopMain:GetWide(), self.ShopMain:GetTall() )
-
+        surface.DrawRect( 0, self.ShopMainTitleBar, self.ShopMain:GetWide(), self.ShopMain:GetTall() )
+        
+        --Draw the TeamColor bar along the bottom of the menu
 		surface.SetDrawColor( self.TeamColor )
         surface.DrawRect( 0, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ), self.ShopMain:GetWide(), self.ShopMain:GetTall() )
         
+        --Display player level on the left-hand side of the bottom bar
         surface.SetFont( "ExoTitleFont" )
-        surface.SetTextPos( 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
-        surface.DrawText( "Money: " .. "$" .. comma_value( self.MyMoney ) )
-		--draw.SimpleText( "Money: " .. self.MyMoney .. "$", "ExoTitleFont", 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-        
-        surface.SetTextPos( self.ShopMain:GetWide() / 2 - surface.GetTextSize("Level: " .. self.MyLevel) / 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
+        surface.SetTextPos( 5, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
         surface.DrawText( "Level: " .. self.MyLevel )
-        --draw.SimpleText( "Level: " .. self.MyLevel, "ExoTitleFont", self.ShopMain:GetWide() / 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-        
-        surface.SetTextPos( self.ShopMain:GetWide() - surface.GetTextSize("Prestige Tokens: " .. self.MyPrestigeTokens) - 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
-        surface.DrawText( "Prestige Tokens: " .. self.MyPrestigeTokens )
-        --draw.SimpleText( "Prestige Tokens: " .. self.MyPrestigeTokens, "ExoTitleFont", self.ShopMain:GetWide() - 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ), Color( 255, 255, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-    
+
+        --Display player money with an icon & value
+        surface.SetDrawColor( 255, 255, 255 )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.cashIconSmall )
+        --surface.DrawTexturedRect( self.ShopMain:GetWide() / 3, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ), iconSize, iconSize )
+        --surface.SetTextPos( self.ShopMain:GetWide() / 3 + iconSize, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
+        surface.DrawTexturedRect( self.ShopMain:GetWide() / 3 - --[[( iconSize / 2 ) -]] ( surface.GetTextSize( ": $" .. comma_value( self.MyMoney ) ) ), self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
+        surface.SetTextPos( self.ShopMain:GetWide() / 3 + iconSize - --[[( iconSize / 2 ) -]] ( surface.GetTextSize( ": $" .. comma_value( self.MyMoney ) ) ), self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
+        surface.DrawText( ": $" .. comma_value( self.MyMoney ) )
+
+        --Display player prestige tokens with icon & value 
+        surface.SetMaterial( GAMEMODE.Icons.Menu.tokensIconSmall )
+        surface.DrawTexturedRect( self.ShopMain:GetWide() / 3 * 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
+        surface.SetTextPos( self.ShopMain:GetWide() / 3 * 2 + iconSize, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
+        surface.DrawText( ": " .. self.MyPrestigeTokens )
+
+        --Display player donator credits with icon & value
+        surface.SetTextPos( self.ShopMain:GetWide() - surface.GetTextSize( ": " .. self.MyCredits ) - 5, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
+        surface.DrawText( ": " .. self.MyCredits )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.creditsIconSmall )
+        surface.DrawTexturedRect( self.ShopMain:GetWide() - surface.GetTextSize( ": " .. self.MyCredits ) - iconSize - 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
+
+        --Do some gradient drawing along the bottom
         surface.SetTexture( GAMEMODE.GradientTexture )
         surface.SetDrawColor( 0, 0, 0, 164 )
         surface.DrawTexturedRectRotated( self.ShopMain:GetWide() / 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) - 4, 8, self.ShopMain:GetWide(), 90 )
@@ -146,14 +168,15 @@ function GM:OpenShop()
     self.ShopSkinsButton:SetFont( "ExoTitleFont" )
 
     self.ShopModelsSheet = vgui.Create( "ModelsShopPanel", self.ShopParentSheet )
-    self.ShopModelsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() )
+    self.ShopModelsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() - ( 56 / 2 ) - 8 ) --Dunno why this needs these extra size measurements
     self.ShopModelsSheet:SetPos( 0, 0 )
-    self.ShopModelsSheet.Paint = function()
+    self.ShopModelsSheet:DoSetup()
+    --[[self.ShopModelsSheet.Paint = function()
         --draw.RoundedBox( 8, 0, 0, self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall(), Color( 0, 0, 255 ) )
         --surface.SetDrawColor( Color( 0, 0, 255 ) )
         --surface.DrawRect( 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall() )
         draw.SimpleText( "UNDER CONSTRUCTION", "ExoTitleFont", self.ShopModelsSheet:GetWide() / 2, self.ShopModelsSheet:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-    end
+    end]]
     local ModelSheetTable = self.ShopParentSheet:AddSheet( "Playermodels", self.ShopModelsSheet )
 
     self.ShopModelsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
@@ -190,4 +213,41 @@ function GM:AttemptBuyWeapon( wepclass )
         end
     end
     return false
+end
+
+function GM:AttemptBuyWepSkin( skindir, currency )
+    if !self.lockedskins then
+        net.Start( "RequestLockedSkins" )
+        net.SendToServer()
+        return false
+    end
+
+    for k, v in pairs( self.WeaponSkins ) do
+        if v.directory == skindir then
+            net.Start( "BuySkin" )
+                net.WriteInt( k, 8 )
+                net.WriteString( currency )
+            net.SendToServer()
+            return true
+        end
+    end
+    return false
+end
+
+function GM:AttemptBuyPModel( model, currency )
+    if !self.lockedmodels then
+        net.Start( "RequestLockedModels" )
+        net.SendToServer()
+        return false
+    end
+
+    for k, v in pairs( self.PlayerModels ) do
+        if v.model == model then
+            net.Start( "BuyModel" )
+                net.WriteInt( k, 8 )
+                net.WriteString( currency )
+            net.SendToServer()
+            return true
+        end
+    end
 end

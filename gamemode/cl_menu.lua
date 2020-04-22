@@ -38,7 +38,7 @@ function GM:MenuMain()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
 		self.ChooseMain:Close() --Remove?
 		--self:SetLoadout()
-		LoadoutMenu()
+		GAMEMODE:LoadoutMenu()
 	end
 
 	self.ChooseShop = vgui.Create( "ChooseMainButton", self.ChooseMain )

@@ -44,7 +44,7 @@ function GM:OpenShop()
         --Draw the "Shop" text along the top
         surface.SetFont( "Exo 2" )
 		surface.SetTextColor( Color( 255, 255, 255 ) )
-		surface.SetTextPos( self.ShopMain:GetWide() / 2 - surface.GetTextSize("Loadout") / 2, 16 )
+		surface.SetTextPos( self.ShopMain:GetWide() / 2 - surface.GetTextSize("Shop") / 2, 16 )
 		surface.DrawText( "Shop" )
 
         --Draw a white background

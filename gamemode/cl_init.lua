@@ -38,6 +38,7 @@ colorScheme = {
 		["ButtonIndicator"] = Color(255, 255, 0, 255)
 	}
 }
+GM.TeamColor = colorScheme[ 0 ].TeamColor
 
 GM.Icons = {
 	Teams = {
@@ -130,11 +131,42 @@ GM.ColorRarities = {
     [ 5 ] = Color(0, 255, 255) --//Cyan
 }
 
+GM.DefaultModels = {
+	Rebels = {
+		"models/player/group03/male_01.mdl",
+		"models/player/group03/male_02.mdl",
+		"models/player/group03/male_03.mdl",
+		"models/player/group03/male_04.mdl",
+		"models/player/group03/male_05.mdl",
+		"models/player/group03/male_06.mdl",
+		"models/player/group03/male_07.mdl",
+		"models/player/group03/male_08.mdl",
+		"models/player/group03/male_09.mdl"
+	},
+	Combine = {
+		"models/player/police.mdl"
+	},
+	Insurgents = {
+		"models/player/ins_insurgent_heavy.mdl",
+		"models/player/ins_insurgent_light.mdl",
+		"models/player/ins_insurgent_standard.mdl"
+	},
+	Security = {
+		"models/player/ins_security_heavy.mdl",
+		"models/player/ins_security_light.mdl",
+		"models/player/ins_security_standard.mdl"
+	}
+}
+GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
+GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
+
 include( "shared.lua" )
 include( "cl_hud.lua" )
 --include( "cl_spawnmenu.lua" )
 include( "cl_scoreboard.lua" )
 include( "cl_lvl.lua" )
+include( "cl_shop.lua" )
+include( "cl_shop_setup.lua" )
 include( "cl_loadout.lua" )
 include( "cl_loadout_setup.lua" )
 include( "cl_money.lua" )
@@ -151,8 +183,6 @@ include( "cl_vendetta.lua" )
 include( "cl_teamselect.lua" )
 include( "cl_character_interaction.lua" )
 include( "cl_perks.lua" )
-include( "cl_shop.lua" )
-include( "cl_shop_setup.lua" )
 include( "cl_titles.lua" )
 include( "cl_help.lua" )
 include( "cl_menu.lua" )
@@ -181,8 +211,8 @@ function unid( steamid )
     return string.upper( x )
 end
 
-hook.Add( "Think", "SetColors", function()
-	GAMEMODE.TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
+hook.Add( "Think", "RequestTeamsInit", function()
+	--GAMEMODE.TeamColor = colorScheme[LocalPlayer():Team()]["TeamColor"]
 
 	if !GAMEMODE.ReceivedTeams then
 		net.Start( "RequestTeams" )
@@ -235,6 +265,11 @@ net.Receive( "PlayerChatColor", function()
 		end
 	end
 	chat.AddText( unpack( fixedtab ) )
+end )
+
+net.Receive( "TeamSwapHook", function()
+    local newteam = net.ReadInt( 4 )
+    GAMEMODE.TeamColor = colorScheme[ newteam ].TeamColor
 end )
 --[[
 net.Receive( "SetMagician", function()

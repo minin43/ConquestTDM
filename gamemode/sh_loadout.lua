@@ -40,13 +40,20 @@ GM.WeaponsList = {
     { "TEC-9", 			"cw_weapon_tec9", 	84, "models/weapons/w_bfh_tec9.mdl", 	    60000, { 0, 0, 0 }, type = "smg", slot = 2 },
     { "Deagle",			"cw_deagle",	    100,"models/weapons/w_pist_deagle.mdl",		60000, { 0, 0, 0 }, type = "mn", slot = 2 },
 	--//Equipment
-	{ "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0, type = "eq", slot = 3 },
-	{ "Flash Grenades", 	"cw_flash_grenade",	6, "models/weapons/w_eq_flashbang.mdl", 			4000, type = "eq", slot = 3 },
-	{ "Slow Medkit", 		"medkit_slow",		12, "models/weapons/w_medkit.mdl",					10000, type = "eq", slot = 3 },
-	{ "Smoke Grenades", 	"cw_smoke_grenade", 19, "models/weapons/w_eq_smokegrenade.mdl", 		10000, type = "eq", slot = 3 },
-	{ "Fast Medkit", 		"medkit_fast", 		27, "models/weapons/w_medkit.mdl", 					20000, type = "eq", slot = 3 },
-	{ "Frag Grenade x2",	"grenades", 		36, "models/weapons/w_cw_fraggrenade_thrown.mdl",	20000, type = "eq", slot = 3 },
-    { "Large Medkit", 		"medkit_full", 		46, "models/weapons/w_medkit.mdl", 					30000, type = "eq", slot = 3 }
+    { "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0, type = "eq", slot = 3,
+        desc = "Give 'em the 'ol 1-2" },
+	{ "Flash Grenades", 	"cw_flash_grenade",	6, "models/weapons/w_eq_flashbang.mdl", 			4000, type = "eq", slot = 3,
+        desc = "2x flashbangs which blind all players near the grenade when detonated." },
+	{ "Slow Medkit", 		"medkit_slow",		12, "models/weapons/w_medkit.mdl",					10000, type = "eq", slot = 3,
+        desc = "Heal friendlies 10 HP with the primary attack, or yourself with the secondary attack. Slowly regenerates ammo." },
+	{ "Smoke Grenades", 	"cw_smoke_grenade", 19, "models/weapons/w_eq_smokegrenade.mdl", 		10000, type = "eq", slot = 3,
+        desc = "3x smoke grenades to block sightlines." },
+	{ "Fast Medkit", 		"medkit_fast", 		27, "models/weapons/w_medkit.mdl", 					20000, type = "eq", slot = 3,
+        desc = "Heal friendlies 20 HP with the primary attack, or yourself with the secondary attack. Limited ammo capacity. Slowly regenerates ammo." },
+	{ "Frag Grenade x2",	"grenades", 		36, "models/weapons/w_cw_fraggrenade_thrown.mdl",	20000, type = "eq", slot = 3,
+        desc = "2x frag grenades. Kills stuff. Does not damage yourself or friendlies." },
+    { "Large Medkit", 		"medkit_full", 		46, "models/weapons/w_medkit.mdl", 					30000, type = "eq", slot = 3,
+        desc = "Heal yourself 1/2 your missing HP with the secondary attack. Cannot heal friendlies. Large ammo capacity. Extremely slowly regenerates ammo." }
     --//Find new slots for: Ammo equipment, tripwire mine
 }
 
@@ -58,7 +65,7 @@ GM.WeaponsList = {
     Frostbite -Combat		- 20
     Headpopper -Sniper		- 25
     Bleedout -Life          - 30
-    Martyrdom Combat        - 35
+    Martyrdom -Combat       - 35
     Double Jump	-Movement	- 40
     Regeneration -Life		- 45
 	Thornmail -Combat		- 50
@@ -66,7 +73,7 @@ GM.WeaponsList = {
 	Excited -Movement		- 60
     Pyromancer -Combat		- 65
     Leech -Life				- 70
-    Lifeline -Combat        - 75
+    Lifeline -Movement      - 75
     Deadly Weapon -Sniper   - 80
 
     Possible new perk mechanics:

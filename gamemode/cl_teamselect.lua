@@ -140,7 +140,7 @@ function GM:TeamMenu()
 				LocalPlayer().blue = false
 				LocalPlayer().red = true
 				self.TeamMain:Close()
-				LoadoutMenu()
+				GAMEMODE:LoadoutMenu( 1 )
 			end
 		end
 		self.TeamMainRed.OnCursorEntered = function()
@@ -211,7 +211,7 @@ function GM:TeamMenu()
 				LocalPlayer().blue = true
 				LocalPlayer().red = false
 				self.TeamMain:Close()
-				LoadoutMenu()
+				GAMEMODE:LoadoutMenu( 2 )
 			end
 		end
 		self.TeamMainBlue.OnCursorEntered = function()

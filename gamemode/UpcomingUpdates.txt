@@ -9,10 +9,6 @@ Character Interaction Sounds
         - Spetsnaz, OpFor, Militia
 ----
 New Loadout Menu
-    Shop Menu
-        - Will include a system for weapon skins
-    Team Selection
-        - Team join is right on click, not after entire loadout selection    
 ----
 Fix Net Messaging Exploits
     - Buy weapons
@@ -25,5 +21,4 @@ What needs done for next update:
     - Ammo equipment
     - Fix the cw2.0 base error on join
     - Still need to rework weapon pickup
-    - Introduce an events system
     - Finish the tripwire mine

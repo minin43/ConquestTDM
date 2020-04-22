@@ -62,7 +62,8 @@ usermessage.Hook( "DeathScreen", function( um )
 	Main:Center()
 	Main:SetTitle( "" )
 	Main:ShowCloseButton( false )
-	Main.Paint = function()
+    Main.Paint = function()
+        if not Main then return end
 		surface.SetDrawColor( 0, 0, 0, 75 )
 		surface.DrawRect( 0, 0, Main:GetWide(), Main:GetTall() - 30 )
 		surface.SetDrawColor( 0, 0, 0, 150 )
@@ -196,7 +197,7 @@ usermessage.Hook( "DeathScreen", function( um )
 	vendettaNotice:SetTextColor( Color( 250, 100, 100 ) )
 	vendettaNotice:SetText( "" )
 	vendettaNotice.Think = function()
-		if not Main and Main:IsValid() then return end
+		if not (Main and Main:IsValid()) then return end
 		if Vendetta then
 			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!")
 		end

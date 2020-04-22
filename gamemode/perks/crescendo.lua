@@ -17,4 +17,4 @@ hook.Add( "EntityTakeDamage", "CrescendoBuildup", function( ply, dmginfo )
     end
 end)
 
-RegisterPerk( "Crescendo", "crescendo", 5, "Consecutive shots against an enemy slowly builds up additional damage per shot, lost after leaving combat." )
+RegisterPerk( "Crescendo", "crescendo", 5, "Consecutive shots against an enemy slowly builds up additional damage per bullet, lost after leaving combat." )

@@ -1,5 +1,5 @@
 --//This file is strictly for creating custom vgui elements for the shop
---//DAMN YE ALL WHO ENTER HERE
+--//DAMN YE ALL WHO ENTER HERE, this file is a damn clusterfuck
 
 GM.slotmaterials = { Material( "vgui/prinary_icon.png" ), Material( "secondary_icon.png" ), Material( "equipment_icon.png" ) }
 GM.typematerials = { Material( "vgui/ar_icon.png" ), Material( "vgui/smg_icon.png" ), Material( "vgui/shotgun_icon.png" ), Material( "vgui/sniper_icon.png" ),
@@ -14,10 +14,113 @@ surface.CreateFont( "Exo-36-600" , { font = "Exo 2", size = 36, weight = 600 } )
 surface.CreateFont( "Exo-32-600" , { font = "Exo 2", size = 32, weight = 600 } )
 surface.CreateFont( "Exo-16-500" , { font = "Exo 2", size = 16, weight = 500 } )
 surface.CreateFont( "Exo-16-600" , { font = "Exo 2", size = 16, weight = 600 } )
+surface.CreateFont( "Exo-24-600" , { font = "Exo 2", size = 24, weight = 600 } )
 surface.CreateFont( "Exo-32-400", { font = "Exo 2", size = 32 } )
 
 surface.CreateFont( "Exo-28-600", { font = "Exo 2", size = 28, weight = 600 } )
 surface.CreateFont( "Exo-40-600", { font = "Exo 2", size = 40, weight = 600 } )
+
+--//
+
+--WeaponInfo is used both in cl_shop_setup as well as cl_loadout_setup
+local weaponinfo = {}
+weaponinfo.font = "Exo-36-600"
+weaponinfo.wepinfo = {}
+
+function weaponinfo:SetFont( fnt )
+    self.font = fnt
+end
+
+function weaponinfo:CreateStats( wepclass )
+    local wep = weapons.GetStored( wepclass )
+    if !wep then return end
+
+    self.wepinfo = {
+        { value = "Damage",     display = "Damage",     barfill = 0,    min = 0,        max = 120,  scale = "up" },
+        { value = "FireDelay",  display = "Firerate",   barfill = 0,    min = 0.05,     max = 1.5,  scale = "up" },
+        { value = "AimSpread",  display = "Accuracy",   barfill = 0,    min = 0.001,    max = 0.03, scale = "up" },
+        { value = "Recoil",     display = "Recoil",     barfill = 0,    min = 0.1,      max = 2,    scale = "down" }
+    }
+    
+    self.weaponname = wep.PrintName or "Nothing Selected"
+    self.weaponprice = RetrieveWeaponTable( wepclass )[ 5 ] or 0
+
+    if wep.Base == "cw_base" then
+        self.DisplayStats = true
+        for k, v in pairs( self.wepinfo ) do
+            if v.value == "Damage" and wep.Shots > 1 then --If it's a shotgun, scale with shots * damage
+                v.barfill = ( math.Clamp( wep.Damage * wep.Shots, v.min, v.max + 50 ) - v.min) / ( v.max + 50 - v.min)
+            elseif v.value == "AimSpread" then
+                v.barfill = 1 - ( math.Clamp( wep.AimSpread - v.min, 0, v.max ) / v.max )
+
+                if wep.Shots > 1 then --If it's a shotgun, scale with clumpspread
+                    local clumpspread = 1 - ( ( wep.ClumpSpread - 0.02 ) / ( 0.06 - 0.02 ) )
+                    v.barfill = ( v.barfill + clumpspread ) / 2
+                    --v.barfill = 1 - ( ( wep.ClumpSpread - 0.02 ) / ( 0.06 - 0.02 ) )
+                else --Otherwise scale with hipspread
+                    local hipspread = 1 - ( ( wep.HipSpread - 0.03 ) / ( 0.35 - 0.03 ) )
+                    v.barfill = ( v.barfill + hipspread ) / 2
+                end
+            elseif v.value == "FireDelay" then
+                v.barfill = 1 - ( ( math.Clamp( wep.FireDelay - v.min, 0, v.max - v.min ) ) / ( v.max - v.min ) )
+            elseif v.value == "Recoil" then
+                if wep.Shots > 1 then
+                    v.barfill = ( math.Clamp( wep.Recoil, 0, 4 ) ) / 4
+                else
+                    v.barfill = ( ( math.Clamp( wep.Recoil - v.min, 0, v.max - v.min ) ) / ( v.max - v.min ) )
+                end
+            else
+                --//Default information displaying
+                v.barfill = math.Clamp( wep[ v.value ], v.min, v.max ) / v.max
+            end
+        end
+    else
+        self.DisplayStats = false
+    end
+
+    self.bar = Material( "vgui/ryg_gradient.png", "noclamp" )
+    self.draw = true
+end
+
+function weaponinfo:Paint()
+    if !self or !self.draw then return end
+    --print("wtf")
+    surface.SetFont( self.font )
+    local headerw, headert = surface.GetTextSize( self.weaponname )
+    surface.SetTextColor( GAMEMODE.TeamColor )
+    surface.SetTextPos( self:GetWide() / 2 - ( headerw / 2 ), 0 )
+    surface.DrawText( self.weaponname )
+
+    local infobox = self:GetTall() - headert - 4 --//The height wepinfo has room to play with
+    local individualt = infobox / ( #self.wepinfo + 1 )
+
+    if self.DisplayStats then
+        for k, v in pairs( self.wepinfo ) do
+            draw.SimpleText( v.display, "Exo-16-600", self:GetWide() / 4, headert + (k - 1) * individualt + ( individualt / 2 ), Color( 0, 0, 0 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+            
+            --//Box drawing
+            local boxwide = self:GetWide() / 3 * 2 - 8
+            if v.barfill then
+                surface.SetDrawColor( 0, 0, 0, 80 )
+                surface.DrawRect( self:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide, individualt - 4 )
+                
+                surface.SetDrawColor( 255, 255, 255 )
+                surface.SetMaterial( self.bar )
+                if v.scale == "up" then
+                    surface.DrawTexturedRectUV( self:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide * v.barfill, individualt - 4, 0, 0, 1 * v.barfill, 1 )
+                else
+                    surface.DrawTexturedRectUV( self:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide * v.barfill, individualt - 4, 1, 1, 1 - v.barfill, 0 )
+                end
+                --draw.SimpleTextOutlined( v.barfill, "Exo-16-600", self:GetWide() / 4 + 8, headert + (k - 1) * individualt + 10, GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 255, 255, 255 ) )
+            end
+        end
+    else
+        --Pretty much only for equipment, should display some description
+    end
+    return true
+end
+
+vgui.Register( "WeaponInfo", weaponinfo, "DPanel" )
 
 --//This is the button that switches the PropertySheet panels - "Weapons", "Weapon Skins", and "Playermodels"
 local psheetbutton = { }
@@ -228,7 +331,7 @@ vgui.Register( "WeaponsShopButton", weaponsshopbutton, "DButton" )
 local weaponsshop = { }
 weaponsshop.weaponname = "Nothing Selected"
 weaponsshop.font = "Exo-20-600"
-weaponsshop.tabs = { "ar", "smg", "sg", "sr", "lmg", "pt", "mn", "eq" }
+--weaponsshop.tabs = { "ar", "smg", "sg", "sr", "lmg", "pt", "mn", "eq" } --To remove?
 weaponsshop.weaponbuttons = { }
 weaponsshop.wepinfo = {
     { value = "Damage",     display = "Damage",     barfill = 0,    min = 0,        max = 120,  scale = "up" },
@@ -345,11 +448,11 @@ function weaponsshop:RepopulateList()
         header.Paint = function()
             surface.SetFont( "Exo-36-600" )
             local textw, textt = surface.GetTextSize( headers[ num ] )
-            surface.SetTextColor( 66, 66, 66 )
+            surface.SetTextColor( GAMEMODE.TeamColor )--66, 66, 66 )
             surface.SetTextPos( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() / 2 - ( textt / 2 ) )
             surface.DrawText( headers[ num ] )
 
-            surface.SetDrawColor( 0, 0, 0 )
+            surface.SetDrawColor( GAMEMODE.TeamColor )
             surface.DrawLine( header:GetWide() / 2 - ( textw / 2 ), header:GetTall() - 1, header:GetWide() / 2 + ( textw / 2 ), header:GetTall() - 1 )
         end
         self.weaponbuttons[ #self.weaponbuttons + 1 ] = header 
@@ -367,6 +470,13 @@ function weaponsshop:RepopulateList()
                 end
                 self.weaponbuttons[ #self.weaponbuttons + 1 ] = button
             end
+            --[[local spacer = vgui.Create( "DPanel", self.scrollpanel )
+            spacer:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar / 4 )
+            spacer:Dock( TOP )
+            spacer.Paint = function( panel, w, h )
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawLine( 4, h / 2, w - 4, h / 2 )
+            end]]
         end
     end
 
@@ -425,7 +535,12 @@ function weaponsshop:SelectWeapon( wep, butID )
     self.weaponname = wep.PrintName or "Nothing Selected"
     self.weaponprice = RetrieveWeaponTable( self.selectedweapon )[ 5 ] or 0
 
-    if wep.Base == "cw_base" then
+    self.infopanel = self.infopanel or vgui.Create( "WeaponInfo", self )
+    self.infopanel:SetPos( self:GetWide() / 2, self:GetTall() / 2 )
+    self.infopanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
+    self.infopanel:CreateStats( self.selectedweapon )
+
+    --[[if wep.Base == "cw_base" then
         self.DisplayStats = true
         for k, v in pairs( self.wepinfo ) do
             if v.value == "Damage" and wep.Shots > 1 then --If it's a shotgun, scale with clumpspread
@@ -497,7 +612,7 @@ function weaponsshop:SelectWeapon( wep, butID )
         else
             --Pretty much only for equipment, should display some description
         end
-    end
+    end]]
 
     if self.buybutton then self.buybutton:Remove() end
     self.buybutton = vgui.Create( "DButton", self.infopanel )
@@ -585,6 +700,11 @@ function skinsshopbutton:SetSkin( dir )
     self.texture = surface.GetTextureID( dir )
     self.rarity = skinTable.rarity
     self.display = skinTable.name
+
+    self.textureimage = vgui.Create( "DImage", self )
+    self.textureimage:SetImage( self.option )
+    self.textureimage:SetSize( self:GetTall() - 16, self:GetTall() - 16 )
+    self.textureimage:SetPos( self:GetWide() * 0.8, 8 )
 end
 
 function skinsshopbutton:SetTrueParent( panel, order )
@@ -605,13 +725,6 @@ function skinsshopbutton:Paint()
         surface.SetTexture( GAMEMODE.GradientTexture )
         surface.DrawTexturedRectRotated( self:GetWide() / 4, self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 0 )
     end]]
-
-    draw.NoTexture()
-    local textureExampleSize = math.Round(self:GetWide() * 0.85)
-    surface.SetDrawColor( 255, 255, 255 )
-    surface.SetTexture( self.texture )
-    surface.DrawTexturedRect( textureExampleSize, 8, self:GetTall() - 16, self:GetTall() - 16 )
-    draw.NoTexture()
 
     surface.SetFont( self.font )
     surface.SetTextColor( 0, 0, 0, 220 )
@@ -951,9 +1064,9 @@ function skinsshop:RepopulateList()
 
         for k2, v2 in pairs( v ) do
             local button = vgui.Create( "SkinsShopButton", self.scrollpanel )
-            button:SetSkin( v2.directory )
             button:SetFont( "Exo-28-600" )
             button:SetSize( self.scrollpanel:GetWide(), 56 )
+            button:SetSkin( v2.directory )
             button:Dock( TOP )
             button:SetTrueParent( self, #self.skinbuttonsnumerical + 1 )
             self.skinbuttons[ v2.directory ] = button
@@ -1157,11 +1270,10 @@ function modelsshop:DrawModel( dir )
     end
 
     self.modelpanel = self.modelpanel or vgui.Create( "DModelPanel", self )
-    self.modelpanel:SetModel( dir )--, skin=0, bodygroups="")
+    self.modelpanel:SetModel( dir )
     self.modelpanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
     self.modelpanel:SetPos( self:GetWide() / 2, 0 )
     self.modelpanel:GetEntity():SetPos( Vector( -15, -15, 0 ) )
-    --PrintTable( self.modelpanel:GetEntity():GetBodyGroups() )
     self.modelpanel.rotateamount = self.modelpanel.rotateamount or 0
     self.modelpanel.LayoutEntity = function( self, ent )
         ent:SetAngles( Angle( 0, ( 45 + self.rotateamount ) % 360 , 0 ) )
@@ -1175,8 +1287,6 @@ function modelsshop:DrawModel( dir )
         for k, v in pairs( bodygroups ) do
             self.modelpanel.bodygroups[ v.id ] = { 0, v.num }
         end
-        --[[print("Bodygroups table:")
-        PrintTable( self.modelpanel.bodygroups )]]
 
         timer.Create( "ModelPanelBodygroupChanging", 1, 0, function()
             if !self.modelpanel then timer.Remove( "ModelPanelBodygroupChanging" ) return end

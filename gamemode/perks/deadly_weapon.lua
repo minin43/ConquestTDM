@@ -94,7 +94,7 @@ hook.Add("EntityFireBullets", "FiredYourShot", function(ply, bulletdata)
     end
 end)
 
-RegisterPerk("Deadly Weapon", "deadlyweapon", 80, "After reaching 4 kills in one life, equip a 1-shot-kill sniper rifle with 1 bullet in the chamber. Earning a kill with the rifle refreshes all weapon ammo and player life.")
+RegisterPerk("Deadly Weapon", "deadlyweapon", 80, "After reaching 4 kills in one life, equip a 1-shot-kill sniper with 1 bullet loaded. Earning a kill with it refreshes all weapon ammo and player heatlh.")
 
 --[[Issues to consider now
     - Dropping the gun on death]]

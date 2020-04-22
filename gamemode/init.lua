@@ -4,6 +4,7 @@ GM.SavedAttachmentLists = { }
 GM.KillInfoTracking = { }
 GM.DamageSaving = { }
 GM.SpawnSoundsTracking = { }
+GM.PlayerLoadouts = { }
 GM.PreventFallDamage = false
 GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
@@ -12,6 +13,7 @@ GM.PostGameCountdown = 20 --Amount of time after the game has ended players can 
 GM.Tickets = 200 --Number of tickets on conquest maps
 GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
+--This also exists in cl_init. It should be in a shared file, but I'm lazy, so any changes made to this should also be made to the client copy
 GM.DefaultModels = {
 	Rebels = {
 		"models/player/group03/male_01.mdl",
@@ -40,6 +42,16 @@ GM.DefaultModels = {
 }
 GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
 GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
+function IsDefaultModel( mdl )
+    for k, v in pairs( GAMEMODE.DefaultModels ) do
+        for k2, v2 in pairs( v ) do
+            if mdl == v2 then
+                return true
+            end
+        end
+    end
+    return false
+end
 
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
@@ -107,7 +119,6 @@ include( "sv_donations.lua" )
 include( "sv_weapon_submaterials.lua")
 include( "sv_titles.lua" )
 include( "sv_events.lua" )
-include( "sv_skins.lua" )
 include( "sv_playermodels.lua" )
 include( "sh_events.lua" )
 include( "sh_loadout.lua" )
@@ -123,8 +134,8 @@ col[0] = Vector( 0, 0, 0 )
 col[1] = Vector( 1.0, .2, .2 )
 col[2] = Vector( .2, .2, 1.0 )
 
-load = load or {}
-preload = preload or {}
+--load = load or {}
+--preload = preload or {}
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
@@ -178,6 +189,7 @@ util.AddNetworkString( "StartAttTrack" )
 util.AddNetworkString( "GlobalChatColor" )
 util.AddNetworkString( "PlayerChatColor" )
 util.AddNetworkString( "AcceptedHelp" )
+util.AddNetworkString( "TeamSwapHook" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
@@ -467,7 +479,8 @@ function GM:PlayerInitialSpawn( ply )
     self.PerkTracking[ id( ply:SteamID() ) ] = {}
 	self.KillInfoTracking[ id( ply:SteamID() ) ] = {} 
 	self.KillInfoTracking[ id( ply:SteamID() ) ].KillsThisLife = 0
-	self.DamageSaving[ id( ply:SteamID() ) ] = { lifeCount = 0 }
+    self.DamageSaving[ id( ply:SteamID() ) ] = { lifeCount = 0 }
+    self.UnlockedMasterTable[ id(ply:SteamID()) ] = {} --Used in sv_loadout
 
 	if ply:IsBot() then
 		ply:SetTeam( 1 )
@@ -525,28 +538,9 @@ function GM:PlayerShouldTakeDamage( ply, attacker )
 	return true
 end
 
-net.Receive( "tdm_loadout", function( len, pl )
-	local p = net.ReadString() // primary
-	local s = net.ReadString() // secondary
-	local e = net.ReadString() // extra
-	local perks = net.ReadString()
-	if( pl:IsValid() ) then
-		preload[ pl ] = {
-			primary = p,
-			secondary = s,
-			extra = e,
-			perk = perks
-		}
-		if not load[ pl ] or not pl:Alive() then
-			load[ pl ] = {
-				primary = p,
-				secondary = s,
-				extra = e,
-				perk = perks
-			}
-		end
-	end
-end )
+--[[net.Receive( "tdm_loadout", function( len, pl )
+    Moved to sv_loadout
+end )]]
 
 function giveLoadout( ply )
     if !ply:IsPlayer() then return end
@@ -559,44 +553,47 @@ function giveLoadout( ply )
 		return
 	end
 
-	local l = load[ply]
-	if( l ) then
-		ply:Give( l.primary )
-		ply:Give( l.secondary )
+	local loadout = GAMEMODE.PlayerLoadouts[ ply ]
+	if( loadout ) then
+		ply:Give( loadout.primary )
+        ply:Give( loadout.secondary )
+        
+        ApplyWeaponSkin( ply, loadout.primary, loadout.primaryskin )
+        ApplyWeaponSkin( ply, loadout.secondary, loadout.secondaryskin )
 
 		--This sets previous attachments up for the guns
-		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] then
+		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ loadout.primary ] then
 			timer.Simple( 0.5, function()
-				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.primary ] ) do --bad loop
-					if ply:GetWeapon( l.primary ).Base == "cw_base" and not istable(v) then
-						ply:GetWeapon( l.primary ):attach( k, v - 1 )
+				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ loadout.primary ] ) do --bad loop
+					if ply:GetWeapon( loadout.primary ).Base == "cw_base" and not istable(v) then
+						ply:GetWeapon( loadout.primary ):attach( k, v - 1 )
 					end
 				end
 			end )
 		end
-		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] then
+		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ loadout.secondary ] then
 			timer.Simple( 0.5, function()
-				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ l.secondary ] ) do
-					if ply:GetWeapon( l.secondary ).Base == "cw_base" and not istable(v) then
-						ply:GetWeapon( l.secondary ):attach( k, v - 1 )
+				for k, v in pairs( GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ loadout.secondary ] ) do
+					if ply:GetWeapon( loadout.secondary ).Base == "cw_base" and not istable(v) then
+						ply:GetWeapon( loadout.secondary ):attach( k, v - 1 )
 					end
 				end
 			end )
 		end
 		
-		if l.extra then
-			if l.extra == "grenades" then
+		if loadout.extra then
+			if loadout.extra == "grenades" then
 				ply:RemoveAmmo( 2, "Frag Grenades" )
 				ply:GiveAmmo( 2, "Frag Grenades", true )
-			elseif l.extra == "attachment" then
+			elseif loadout.extra == "attachment" then
 				CustomizableWeaponry.giveAttachments( ply, CustomizableWeaponry.registeredAttachmentsSKey, true )
 			else
-				ply:Give( l.extra )
+				ply:Give( loadout.extra )
 			end
 		end
 		
-		if l.perk then
-			local t = l.perk
+		if loadout.perk then
+			local t = loadout.perk
 			ply[t] = true
 			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = t
 		else
@@ -630,8 +627,8 @@ function GM:PlayerSpawn( ply )
 		return
 	end
 	
-	if ply:IsPlayer() and load[ ply ] ~= nil then
-		if( load[ply].perk ~= nil ) then
+	if ply:IsPlayer() and self.PlayerLoadouts[ ply ] ~= nil then
+		if( self.PlayerLoadouts[ply].perk ~= nil ) then
 			ply.perk = true
 		else
 			ply.perk = false
@@ -649,16 +646,27 @@ function GM:PlayerSpawn( ply )
 	ply:SetNoCollideWithTeammates( true )
 	ply:ConCommand( "cw_simple_telescopics 0" )
 
-	if ply:Team() == 1 then
-		local teamName = team.GetName( 1 )
-		ply:SetModel( self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ] )
-	elseif ply:Team() == 2 then
-		local teamName = team.GetName( 2 )
-		ply:SetModel( self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ] )
-	end
-	ply:SetPlayerColor( col[ply:Team()] )
+    giveLoadout( ply )
 
-	giveLoadout( ply )
+    if GAMEMODE.PlayerLoadouts[ ply ].playermodel then
+        ply:SetModel( GAMEMODE.PlayerLoadouts[ ply ].playermodel )
+        
+        if GAMEMODE.PlayerLoadouts[ ply ].playermodelskin then
+            ply:SetSkin( GAMEMODE.PlayerLoadouts[ ply ].playermodelskin )
+        else
+            ply:SetPlayerColor( col[ply:Team()] )
+        end
+
+        if GAMEMODE.PlayerLoadouts[ ply ].playermodelbodygroups then
+            for bodygroup, value in pairs( GAMEMODE.PlayerLoadouts[ ply ].playermodelbodygroups ) do
+                ply:SetBodygroup( bodygroup, value )
+            end
+        end
+    else
+        local teamName = team.GetName( ply:Team() )
+        ply:SetModel( self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ] )
+        ply:SetPlayerColor( col[ply:Team()] )
+    end
 
 	if GetGlobalBool( "RoundFinished" ) then
 		ply:SetWalkSpeed( 200 )
@@ -792,13 +800,14 @@ end
 
 --//Used in server-side menu code to check for players running net messages with values the player set - cheaters
 function CaughtCheater( ply, reason )
+    print("Caught a cheater! Check data/tdm/cheaters for more information!")
 	if ply:IsValid() and ply:IsPlayer() then
 		local plyID = ply:SteamID()
 		local datetime = os.date( "%H:%M:%S - %d/%m/%Y", os.time() ) --This is a string
 		local currentname = ply:Nick()
 
-		if not file.Exists( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", "DATA" ) then
-			file.Write( "tdm/cheaters/" .. id( ply:SteamID() ) ".txt", util.TableToJSON( { datetime = { plyID, currentname, reason } } ) )
+		if not file.Exists( "tdm/cheaters/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
+			file.Write( "tdm/cheaters/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { datetime = { plyID, currentname, reason } } ) )
 		else
 			local contents = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt" ) )
 			contents[ datetime ] = { plyID, currentname, reason }
@@ -808,7 +817,7 @@ function CaughtCheater( ply, reason )
 	end
 end
 
-hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )
+--[[hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )
 	local pl = preload[ ply ]
 	if ( pl ) then
 		load[ ply ] = {
@@ -818,7 +827,7 @@ hook.Add( "PlayerDeath", "FixLoadoutExploit", function( ply, inf, att )
 			perk = pl.perk
 		}
 	end
-end )
+end )]]
 
 hook.Add( "InitPostEntity", "RemoveDMEntities", function()
     -- remove hl2:dm weapons / ammo
@@ -879,6 +888,12 @@ hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
 		end )
 		GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] = ply:Team()
 	end
+end )
+
+hook.Add( "PlayerChangedTeam", "NotifyTeamSwap", function( ply, oldteam, newteam )
+    net.Start( "TeamSwapHook" )
+        net.WriteInt( newteam, 4 )
+    net.Send( ply )
 end )
 
 --[[hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )

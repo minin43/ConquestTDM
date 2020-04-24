@@ -83,6 +83,7 @@ AddCSLuaFile( "cl_menu.lua" )
 AddCSLuaFile( "cl_menu_setup.lua" )
 AddCSLuaFile( "cl_events.lua" )
 AddCSLuaFile( "cl_donations.lua" )
+AddCSLuaFile( "cl_weapon_submaterials.lua")
 AddCSLuaFile( "sh_events.lua" )
 AddCSLuaFile( "sh_loadout.lua" )
 AddCSLuaFile( "sh_playermodels.lua" )
@@ -116,7 +117,6 @@ include( "sv_perks.lua" )
 include( "sv_prestige.lua" )
 include( "sv_shop.lua" )
 include( "sv_donations.lua" )
-include( "sv_weapon_submaterials.lua")
 include( "sv_titles.lua" )
 include( "sv_events.lua" )
 include( "sv_playermodels.lua" )
@@ -190,6 +190,7 @@ util.AddNetworkString( "GlobalChatColor" )
 util.AddNetworkString( "PlayerChatColor" )
 util.AddNetworkString( "AcceptedHelp" )
 util.AddNetworkString( "TeamSwapHook" )
+util.AddNetworkString( "ApplyWeaponSkin" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
@@ -542,8 +543,24 @@ end
     Moved to sv_loadout
 end )]]
 
+function ApplyWeaponSkin( ply, wep, skinmat )
+    if !ply or !wep or !skinmat then return end
+
+    for k, v in pairs( ply:GetWeapons() ) do
+        if v:GetClass() == wep then
+            v:SetMaterial( skinmat )
+        end
+    end
+
+    --Received in cl_weapon_submaterials
+    net.Start( "ApplyWeaponSkin" )
+        net.WriteString( wep )
+        net.WriteString( skinmat )
+    net.Send( ply )
+end
+
 function giveLoadout( ply )
-    if !ply:IsPlayer() then return end
+    if !ply:IsPlayer() or ply:IsBot() then return end
     
 	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
 	ply:StripWeapons()
@@ -555,8 +572,8 @@ function giveLoadout( ply )
 
 	local loadout = GAMEMODE.PlayerLoadouts[ ply ]
 	if( loadout ) then
-		ply:Give( loadout.primary )
-        ply:Give( loadout.secondary )
+		ply:Give( loadout.primary or "cw_ar15" )
+        ply:Give( loadout.secondary or "" )
         
         ApplyWeaponSkin( ply, loadout.primary, loadout.primaryskin )
         ApplyWeaponSkin( ply, loadout.secondary, loadout.secondaryskin )
@@ -648,6 +665,7 @@ function GM:PlayerSpawn( ply )
 
     giveLoadout( ply )
 
+    GAMEMODE.PlayerLoadouts[ ply ] = GAMEMODE.PlayerLoadouts[ ply ] or {}
     if GAMEMODE.PlayerLoadouts[ ply ].playermodel then
         ply:SetModel( GAMEMODE.PlayerLoadouts[ ply ].playermodel )
         
@@ -716,7 +734,7 @@ function GM:PlayerDeath( vic, inf, att )
 		vic:SetFOV( 0, 0 )
 		net.Start( "tdm_deathnotice" )
 			net.WriteEntity( vic )
-			net.WriteString( att.LastUsedWep ) --What does this do?
+			net.WriteString( att.LastUsedWep )
 			net.WriteEntity( att )
 			net.WriteString( tostring( vic:LastHitGroup() == HITGROUP_HEAD ) )
 		net.Broadcast()
@@ -891,18 +909,11 @@ hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
 end )
 
 hook.Add( "PlayerChangedTeam", "NotifyTeamSwap", function( ply, oldteam, newteam )
+    print("running hook PlayerChangedTeam, sendin client new team of ", newteam)
     net.Start( "TeamSwapHook" )
         net.WriteInt( newteam, 4 )
     net.Send( ply )
 end )
-
---[[hook.Add( "EntityTakeDamage", "FixBulletVelocity", function( ply, dmginfo )
-	if ply:IsValid() and ply:IsPlayer() and dmginfo:IsBulletDamage() and ply:Team() != dmginfo:GetAttacker():Team() then
-		local dmg = dmginfo:GetDamage()
-		dmginfo:SetDamage( 0 )
-		ply:SetHealth( ply:Health() - dmg )
-	end
-end )]]
 
 net.Receive( "AcceptedHelp", function( len, ply )
 	GAMEMODE.AcceptedHelp[ id( ply:SteamID() ) ] = true
@@ -911,6 +922,7 @@ net.Receive( "AcceptedHelp", function( len, ply )
 	file.Write( "tdm/users/extra/helpmenu.txt", util.TableToJSON( fil ) )
 end )
 
+--Well this didn't work...
 timer.Create("TeamCountChecking", 4, 0, function()
     if #team.GetPlayers(1) + #team.GetPlayers(2) < 2 then 
         GAMEMODE.pointGainDisabled = true

@@ -24,7 +24,7 @@ GM.SkinsMasterTable = {
     { name = "Juice", dir = "models/props_lab/Tank_Glass001", quality = 4 },
     { name = "Mirror", dir = "models/screenspace", quality = 3 },
     { name = "Flesh", dir = "models/flesh", quality = 2 },
-    { name = "ATTENTION ATTENTION", dir = "phoenix_storms/stripes", quality = 1 },
+    { name = "ATTENTION!!!", dir = "phoenix_storms/stripes", quality = 1 },
     { name = "Green Wire", dir = "phoenix_storms/wire/pcb_green", quality = 3 },
     { name = "Red Wire", dir = "phoenix_storms/wire/pcb_red", quality = 3 },
     { name = "Blue Wire", dir = "phoenix_storms/wire/pcb_blue", quality = 3 },

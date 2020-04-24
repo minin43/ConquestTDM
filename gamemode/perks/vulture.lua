@@ -3,7 +3,7 @@ hook.Add( "EntityTakeDamage", "VultureDamage", function( ply, dmginfo )
 	if CheckPerk( att ) == "vulture" then
 		if IsValid( ply ) and ply:IsPlayer() and IsValid( att ) and att:IsPlayer() and ply:Team() != att:Team() then
 			if (ply:Health() - dmginfo:GetDamage()) < 11 and (ply:Health() - dmginfo:GetDamage()) > 0 then
-				dmginfo:AddDamage(100) --//Overkill, but necessary to circumvent any damage-reducing mechanics
+				dmginfo:AddDamage(500) --//Overkill, but necessary to circumvent any damage-reducing mechanics
 				GAMEMODE:QueueIcon( dmginfo:GetAttacker(), "vulture" )
 			end
 		end
@@ -11,8 +11,8 @@ hook.Add( "EntityTakeDamage", "VultureDamage", function( ply, dmginfo )
 end )
 
 hook.Add( "PlayerDeath", "VultureDrop", function( ply, inf, att )
-	if att and IsValid( att ) and att ~= NULL and load[ att ] ~= nil then
-		if load[ att ].perk and load[ att ].perk ~= nil and load[ att ].perk == "vulture" then
+	if att and IsValid( att ) and att ~= NULL and GAMEMODE.PlayerLoadouts[ att ] ~= nil then
+		if GAMEMODE.PlayerLoadouts[ att ].perk and GAMEMODE.PlayerLoadouts[ att ].perk ~= nil and GAMEMODE.PlayerLoadouts[ att ].perk == "vulture" then
 			local ammo = ents.Create( "cw_ammo_kit_small" )
 			if ( !IsValid( ammo ) ) then return end
 			ammo:SetPos( ply:GetPos() )

@@ -189,6 +189,7 @@ include( "cl_menu.lua" )
 include( "cl_menu_setup.lua" )
 include( "cl_events.lua" )
 include( "cl_donations.lua" )
+include( "cl_weapon_submaterials.lua")
 include( "sh_events.lua" )
 include( "sh_loadout.lua" )
 include( "sh_playermodels.lua" )
@@ -269,59 +270,9 @@ end )
 
 net.Receive( "TeamSwapHook", function()
     local newteam = net.ReadInt( 4 )
+    print("Client received TeamSwapHook net message with new team: ", newteam)
     GAMEMODE.TeamColor = colorScheme[ newteam ].TeamColor
 end )
---[[
-net.Receive( "SetMagician", function()
-	local bool = net.ReadBool()
-	local wep = net.ReadEntity()
-	local num = net.ReadInt( 32 )
-	local tbl = {}
-	
-	if bool and tbl[num] == nil then
-		wep["ReloadSpeed"] = ( wep["ReloadSpeed"] * 1.5 )
-		--wep["DelpoyTime"] = ( wep["DelpoyTime"] / 2 )
-		tbl[num] = wep
-	elseif !bool and tbl[num] == wep then
-		savedwep["ReloadSpeed"] = ( savedwep["ReloadSpeed"] / 1.5 )
-		--savedwep["DelpoyTime"] = ( savedwep["DelpoyTime"] * 2 )
-	end
-end)
-
-net.Receive( "FixReloadSpeeds", function()
-	local wep = net.ReadString()
-	timer.Simple( 1, function() 
-		GAMEMODE.PreReloadFixValues = GAMEMODE.PreReloadFixValues or { }
-		GAMEMODE.PreReloadFixValues[ wep ] = { }
-		wep = LocalPlayer():GetWeapon( wep )
-
-		if wep.Shots == 1 then
-			GAMEMODE.PreReloadFixValues[ wep:GetClass() ] = { wep.ReloadSpeed }
-			wep.ReloadSpeed = wep.ReloadSpeed * 1.2
-			weapons.GetStored( wep:GetClass() ).ReloadSpeed = weapons.GetStored( wep:GetClass() ).ReloadSpeed * 1.2
-		else
-			GAMEMODE.PreReloadFixValues[ wep:GetClass() ] = { wep.InsertShellTime, wep.ReloadStartTime }
-			wep.InsertShellTime = wep.InsertShellTime * 0.8
-			wep.ReloadStartTime = wep.ReloadStartTime * 0.8
-			weapons.GetStored( wep:GetClass() ).InsertShellTime = weapons.GetStored( wep:GetClass() ).InsertShellTime * 0.8
-			weapons.GetStored( wep:GetClass() ).ReloadStartTime = weapons.GetStored( wep:GetClass() ).ReloadStartTime * 0.8
-		end
-	end )
-end )
-
-net.Receive( "UnFixReloadSpeeds", function()
-	for k, v in pairs( GAMEMODE.PreReloadFixValues ) do
-		if #v == 1 then
-			weapons.GetStored( k ).ReloadSpeed = v[1]
-		else
-			weapons.GetStored( k ).InsertShellTime = v[1]
-			weapons.GetStored( k ).ReloadStartTime = v[2]
-		end
-	end
-end )]]
-
-
-
 
 
 

@@ -1,6 +1,7 @@
 util.AddNetworkString( "GetPrestigeTokens" )
 util.AddNetworkString( "GetPrestigeTokensCallback" )
 util.AddNetworkString( "PlayerAttemptPrestige" )
+util.AddNetworkString( "AttemptPrestigeCallback" )
 
 prestige = {}
 
@@ -31,19 +32,7 @@ function prestige.ResetPlayer( ply )
         ply:SetPData( v, 0 )
         searchedguns[ v ] = true
     end
-    for k, v in pairs( primaries ) do
-        if !searchedguns[ v[ 2 ] ] then
-            ply:SetPData( v[ 2 ], 0 )
-            searchedguns[ v[ 2 ] ] = true
-        end
-    end
-    for k, v in pairs( secondaries ) do
-        if !searchedguns[ v[ 2 ] ] then
-            ply:SetPData( v[ 2 ], 0 )
-            searchedguns[ v[ 2 ] ] = true
-        end
-    end
-    for k, v in pairs( extras ) do
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
         if !searchedguns[ v[ 2 ] ] then
             ply:SetPData( v[ 2 ], 0 )
             searchedguns[ v[ 2 ] ] = true
@@ -88,7 +77,7 @@ end )
 
 net.Receive( "PlayerAttemptPrestige", function( len, ply )
     if prestige.AttemptPrestige( ply ) then
-        net.Start( "GetPrestigeTokensCallback" )
+        net.Start( "AttemptPrestigeCallback" )
             net.WriteInt( prestige.GetTokens( ply ), 16 ) --//16 is probably overkill, but there's technically no cap, so better safe than sorry
         net.Send( ply )
     end

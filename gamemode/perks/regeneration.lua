@@ -1,7 +1,7 @@
 --//This is old and poorly optimized, timer.Create checks if the timer exists now and resets it
 hook.Add( "PlayerHurt", "Regen", function( ply, att )
-	if ply and IsValid( ply ) and ply ~= NULL and load[ ply ] ~= nil then
-		if load[ ply ].perk and load[ ply ].perk == "regen" then
+	if ply and IsValid( ply ) and ply ~= NULL and GAMEMODE.PlayerLoadouts[ ply ] ~= nil then
+		if GAMEMODE.PlayerLoadouts[ ply ].perk and GAMEMODE.PlayerLoadouts[ ply ].perk == "regen" then
 			if timer.Exists( "regen_" .. ply:SteamID() ) then
 				timer.Stop( "regen_" .. ply:SteamID() )
 				if timer.Exists( "delay_" .. ply:SteamID() ) then

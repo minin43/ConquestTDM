@@ -358,6 +358,9 @@ function playermodelpanel:SetModel( strModelName, strModelName2 )
         if !self.specialdraw then
             self.WeaponEntity:AddEffects( EF_BONEMERGE )
         end
+        if self.WeaponSkin then
+            self.WeaponEntity:SetMaterial( self.WeaponSkin )
+        end
 
         timer.Simple( 0, function()
             if self then
@@ -439,7 +442,7 @@ function playermodelpanel:Paint( w, h )
 
     surface.SetTexture( GAMEMODE.GradientTexture )
     surface.SetDrawColor( 0, 0, 0, 164 )
-    surface.DrawTexturedRectRotated( w / 2, h - 4 - (GAMEMODE.TitleBar / 2), 8, w, 90 )
+    surface.DrawTexturedRectRotated( w / 2, h - 4 - GAMEMODE.TitleBar, 8, w, 90 )
     surface.DrawTexturedRectRotated( w / 2, (h / 4) + 4 , 8, w, -90 )
 end
 
@@ -534,7 +537,6 @@ end
 function playermodelpanel:SetSkin( num )
     self.EntitySkin = num
     self.Entity:SetSkin( math.Clamp( num, 1, self.Entity:SkinCount() ) )
-    --Save some local value we can use later when sending info to the server
 end
 
 function playermodelpanel:SetOptionsPanel( panel )
@@ -554,7 +556,6 @@ end
 function playermodelpanel:SetBodygroup( bodygroup, value )
     self.EntityBodygroup[bodygroup] = value
     self.Entity:SetBodygroup( bodygroup, value )
-    --Save some local value we can use later when sending info to the server
 end
 
 vgui.Register( "PlayermodelPanel", playermodelpanel, "DModelPanel")
@@ -613,7 +614,7 @@ function playermodelpaneloptions:RefreshOptions()
     local numskins = self.referencepanel.Entity:SkinCount()
     if numskins > 1 then
         local skins = vgui.Create( "LoganSlider", scrollpanel )
-        skins:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )--GAMEMODE.TitleBar / 2 )
+        skins:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )
         skins:Dock( TOP )
         skins:StartDraw()
         skins:SetText( "Skin:" )
@@ -625,8 +626,8 @@ function playermodelpaneloptions:RefreshOptions()
         end
     else
         if #self.referencepanel.Entity:GetBodyGroups() == 1 then
-            local skins = vgui.Create( "DPanel", scrollpanel ) --SetHeight(height)
-            skins:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 * 2 )--GAMEMODE.TitleBar / 2 )
+            local skins = vgui.Create( "DPanel", scrollpanel )
+            skins:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 * 2 )
             skins:Dock( TOP )
             skins.Paint = function()
                 draw.SimpleText( "- Cannot be edited -", "Exo-18-400", skins:GetWide() / 2, skins:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -638,7 +639,7 @@ function playermodelpaneloptions:RefreshOptions()
     for k, v in pairs( self.referencepanel.Entity:GetBodyGroups() ) do
         if v.num > 1 then
             local bg = vgui.Create( "LoganSlider", scrollpanel )
-            bg:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )--GAMEMODE.TitleBar / 2 )
+            bg:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )
             bg:Dock( TOP )
             bg:StartDraw()
             bg:SetText( string.upper(string.Left(v.name, 1)) .. string.Right(v.name, #v.name - 1) .. ":" )
@@ -656,9 +657,6 @@ end
 function playermodelpaneloptions:Paint()
     surface.SetDrawColor( 255, 255, 255 )
     surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
-    --surface.SetDrawColor( 0, 0, 0, 220 )
-    --surface.DrawLine( 8, GAMEMODE.TitleBar, self:GetWide() - 8, GAMEMODE.TitleBar )
-    --surface.DrawLine( 8, self:GetTall() - 1, self:GetWide() - 8, self:GetTall() - 1 )
     return true
 end
 
@@ -695,7 +693,7 @@ end
 --Prepare thy buttcheeks
 function playermodelpanelmodels:DoClick()
     if #self.models == 0 then
-        --deny sound
+        surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
         return
     end
     if self.moving then return end
@@ -715,15 +713,13 @@ function playermodelpanelmodels:DoClick()
         self.moving = true
 
         self.listpanel = vgui.Create( "DPanel", self.trueparent )
-        self.listpanel:SetSize( self:GetWide(), math.min( (GAMEMODE.TitleBar / 2) * #self.models, (self.trueparent:GetTall() / 4 * 3) - (GAMEMODE.TitleBar / 2) ) )
+        self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * #self.models, self.trueparent:GetTall() / 4 * 3 - GAMEMODE.TitleBar ) )
         self.listpanel:SetPos( 0, self.trueparent:GetTall() )
         self.listpanel.Paint = function()
             if !self.listpanel then return end
             surface.SetDrawColor( 255, 255, 255 )
             surface.DrawRect( 0, 0, self.listpanel:GetWide(), self.listpanel:GetTall() )
             surface.SetDrawColor( 0, 0, 0 )
-            --surface.DrawOutlinedRect( 0, 0, self.listpanel:GetWide(), self.listpanel:GetTall() + 1 )
-            --surface.DrawOutlinedRect( 1, 1, self.listpanel:GetWide() - 2, self.listpanel:GetTall() )
             surface.DrawLine( 0, 0, self.listpanel:GetWide(), 0 )
             surface.DrawLine( 0, 1, self.listpanel:GetWide(), 1 )
             surface.SetTexture( GAMEMODE.GradientTexture )
@@ -843,7 +839,7 @@ function playermodelpanelmodels:DoClick()
             end
         end
 
-        self.listpanel:MoveTo( 0, self.trueparent:GetTall() - self.listpanel:GetTall() - (GAMEMODE.TitleBar / 2), 0.75, 0, -1, function()
+        self.listpanel:MoveTo( 0, self.trueparent:GetTall() - self.listpanel:GetTall() - (GAMEMODE.TitleBar), 0.75, 0, -1, function()
             self.moving = false 
             self.extended = true
         end )
@@ -858,7 +854,202 @@ vgui.Register( "PlayermodelPanelModels", playermodelpanelmodels, "DButton" )
 
 --//
 
-local primariesbutton = {}--table.Copy( basebutton )
+local weaponskinoptions = table.Copy( basebutton )
+weaponskinoptions.skins = {}
+weaponskinoptions.trueparent = nil
+
+function weaponskinoptions:SetSkins( tab )
+    self.skins = tab
+end
+
+function weaponskinoptions:SetTrueParent( panel )
+    self.trueparent = panel
+end
+
+function weaponskinoptions:Paint()
+    surface.SetDrawColor( 255, 255, 255 )
+    surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
+    surface.SetFont( "Exo-24-400" )
+    local w, h = surface.GetTextSize( "Select Weapon Skin" )
+    surface.SetTextPos( self:GetWide() / 2 - (w / 2), self:GetTall() / 2 - (h / 2) )
+    surface.SetTextColor( 0, 0, 0, 220 )
+    if self.hover then
+        surface.SetTextColor( GAMEMODE.TeamColor )
+    end
+    surface.DrawText( "Select Weapon Skin" )
+
+    surface.SetDrawColor( 0, 0, 0, 200 )
+    surface.DrawLine( 0, -1, 0, self:GetTall() )
+    return true
+end
+
+function weaponskinoptions:OnRemove()
+    if self.listpanel then
+        if self.listpanel.scrollpanel then
+            self.listpanel.scrollpanel:Remove()
+        end
+        self.listpanel:Remove()
+    end
+end
+
+function weaponskinoptions:DoClick()
+    if #self.skins == 0 then
+        surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        return
+    end
+    if self.moving then return end
+
+    if self.extended then
+        self.moving = true
+        if self.listpanel.selected then
+            self.trueparent:SelectSkin( self.listpanel.selected )
+        end
+        self.listpanel:MoveTo( 0, self.trueparent:GetTall(), 0.75, 0, -1, function()
+            self.moving = false
+            self.extended = false
+            self.listpanel:Remove()
+        end )
+    else
+        self.moving = true
+
+        self.listpanel = vgui.Create( "DPanel", self.trueparent )
+        self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * #self.skins, self.trueparent:GetTall() / 2 - GAMEMODE.TitleBar ) )
+        self.listpanel:SetPos( 0, self.trueparent:GetTall() )
+        self.listpanel.Paint = function()
+            if !self.listpanel then return end
+            surface.SetDrawColor( 255, 255, 255 )
+            surface.DrawRect( 0, 0, self.listpanel:GetWide(), self.listpanel:GetTall() )
+            surface.SetDrawColor( 0, 0, 0 )
+            surface.DrawLine( 0, 0, self.listpanel:GetWide(), 0 )
+            surface.DrawLine( 0, 1, self.listpanel:GetWide(), 1 )
+            surface.SetTexture( GAMEMODE.GradientTexture )
+            surface.SetDrawColor( 0, 0, 0, 164 )
+            surface.DrawTexturedRectRotated( self.listpanel:GetWide() / 2, self.listpanel:GetTall() - 4, 8, self.listpanel:GetWide(), 90 )
+            surface.SetDrawColor( 66, 66, 66 )
+            surface.DrawLine( 0, 0, 0, self.listpanel:GetTall() )
+        end
+        
+        self.trueparent.PaintOver = function( panel, w, h )
+            if self.listpanel and self.listpanel:IsValid() then
+                local panelx, panely = self.listpanel:GetPos()
+                if panely < self.trueparent:GetTall() - self:GetTall() then
+                    surface.SetTexture( GAMEMODE.GradientTexture )
+                    surface.SetDrawColor( 0, 0, 0, 200 )
+                    surface.DrawTexturedRectRotated( w / 2, panely - 6, 12, w, 90 )
+                end
+            end
+        end
+
+        if !self.listpanel.scrollpanel then
+            self.listpanel.scrollpanel = vgui.Create( "DScrollPanel", self.listpanel )
+            self.listpanel.scrollpanel:SetPos( 0, 0 )
+            self.listpanel.scrollpanel:SetSize( self.listpanel:GetWide(), self.listpanel:GetTall() )
+            local sBar = self.listpanel.scrollpanel:GetVBar()
+            function sBar:Paint( w, h )
+                draw.RoundedBox( 4, w / 4, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
+                return 
+            end
+            function sBar.btnGrip:Paint( w, h )
+                draw.RoundedBox( 4, w / 4, 0, w / 2, h, GAMEMODE.TeamColor )
+            end
+            sBar.btnUp.Paint = function() return end
+            sBar.btnDown.Paint = function() return end
+
+            local default = vgui.Create( "DButton", self.listpanel.scrollpanel )
+            default:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
+            default:Dock( TOP )
+            default:SetText("")
+            default.Paint = function()
+                if !self.listpanel then return end
+                surface.SetFont( "Exo-28-600" )
+                surface.SetTextColor( 0, 0, 0, 220 )
+                if default.hover or self.listpanel.selected == "" or self.trueparent.selectedskin == "" then
+                    surface.SetTextColor( GAMEMODE.TeamColor )
+                end
+                local w, h = surface.GetTextSize( "No Skin" )
+                surface.SetTextPos( 16, default:GetTall() / 2 - ( h / 1.5 ) )
+                surface.DrawText( "No Skin" )
+
+                surface.SetFont( "Exo-16-500" )
+                surface.SetTextColor( 0, 0, 0, 220 )
+                surface.SetTextPos( default:GetTall() - 12, default:GetTall() / 2 + 8 )
+                w, h = surface.GetTextSize( "Quality: " )
+                surface.DrawText( "Quality: " )
+                surface.SetTextColor( GAMEMODE.ColorRarities[ 0 ] )
+                surface.SetTextPos( default:GetTall() - 14 + w, default:GetTall() / 2 + 8 )
+                surface.DrawText( "Tier 1" )
+                return true
+            end
+            default.OnCursorEntered = function()
+                default.hover = true
+            end
+            default.OnCursorExited = function()
+                default.hover = false
+            end
+            default.DoClick = function()
+                self.listpanel.selected = ""
+                self.trueparent:SelectSkin( self.listpanel.selected )
+                surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+            end
+
+            for k, v in ipairs( GAMEMODE.MySkins ) do
+                local skintable = GAMEMODE.SkinsMasterTable[ v ]
+                local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
+                button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
+                button:Dock( TOP )
+                button.Paint = function()
+                    if !self.listpanel then return end
+                    surface.SetFont( "Exo-28-600" )
+                    surface.SetTextColor( 0, 0, 0, 220 )
+                    if button.hover or skintable.dir == self.listpanel.selected or skintable.dir == self.trueparent.selectedskin then
+                        surface.SetTextColor( GAMEMODE.TeamColor )
+                    end
+                    local w, h = surface.GetTextSize( skintable.name )
+                    surface.SetTextPos( 16, button:GetTall() / 2 - ( h / 1.5 ) )
+                    surface.DrawText( skintable.name )
+
+                    surface.SetFont( "Exo-16-500" )
+                    surface.SetTextColor( 0, 0, 0, 220 )
+                    surface.SetTextPos( button:GetTall() - 12, button:GetTall() / 2 + 8 )
+                    w, h = surface.GetTextSize( "Quality: " )
+                    surface.DrawText( "Quality: " )
+                    surface.SetTextColor( GAMEMODE.ColorRarities[ skintable.quality ] )
+                    surface.SetTextPos( button:GetTall() - 14 + w, button:GetTall() / 2 + 8 )
+                    surface.DrawText( "Tier ".. ( skintable.quality + 1 ) )
+                    return true
+                end
+                button.OnCursorEntered = function()
+                    button.hover = true
+                end
+                button.OnCursorExited = function()
+                    button.hover = false
+                end
+                button.DoClick = function()
+                    self.listpanel.selected = skintable.dir
+                    self.trueparent:SelectSkin( self.listpanel.selected )
+                    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+                end
+            end
+        end
+
+        self:MoveToFront()
+
+        self.listpanel:MoveTo( 0, self.trueparent:GetTall() - self.listpanel:GetTall() - (GAMEMODE.TitleBar), 0.75, 0, -1, function()
+            self.moving = false 
+            self.extended = true
+        end )
+    end
+end
+
+function weaponskinoptions:GetMovingPanel()
+    return self.listpanel
+end
+
+vgui.Register( "WeaponSkinButton", weaponskinoptions, "DButton" )
+
+--//
+
+local primariesbutton = {}
 
 function primariesbutton:Paint()
     surface.SetDrawColor( GAMEMODE.TeamColor )
@@ -873,34 +1064,6 @@ function primariesbutton:Paint()
     local w, h = surface.GetTextSize( self.display )
     surface.SetTextPos( self:GetTall() - 14, self:GetTall() / 2 - ( h / 2 ) - 2 )
     surface.DrawText( self.display )
-
-    --[[if self.order != 1 and self.order != 0 then
-        if self.trueparent.weaponbuttons[ self.order - 1 ].hover then
-            surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( 0, 0, 0, self.alpha )
-            surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), -90 )
-        end
-    end
-    if self.order != #self.trueparent.weaponbuttons then
-        if self.trueparent.weaponbuttons[ self.order + 1 ].hover then
-            surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( 0, 0, 0, self.alpha )
-            surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - 4, 8, self:GetWide(), 90 )
-        end
-
-        if !self.hover and !self.trueparent.weaponbuttons[ self.order + 1 ].hover then
-            --surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( 0, 0, 0, 164)
-            surface.DrawLine( self:GetTall() - 12, self:GetTall() - 1, self:GetWide(), self:GetTall() - 1 )
-        end
-    end
-
-    if self.disabled and self.hover then
-        surface.SetDrawColor( 0, 0, 0, 220 )
-        surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-        draw.SimpleTextOutlined( "Unlocks at level " .. self.weapontable[ 3 ], self.font, self:GetWide() / 2, self:GetTall() / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color( 0, 0, 0 ) )
-        --draw.SimpleText( "Unlocks at level " .. self.weapontable[ 3 ], self.font, self:GetWide() / 2, self:GetTall() / 2, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-    end]]
 
     return true
 end
@@ -928,6 +1091,7 @@ function primariespanel:DoSetup()
     self.scrollpanel = vgui.Create( "DScrollPanel", self )
     self.scrollpanel:SetPos( 0, 0 )
     self.scrollpanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+    self.scrollpanel.buttons = {}
     local sBar = self.scrollpanel:GetVBar()
     function sBar:Paint( w, h )
         draw.RoundedBox( 4, w / 4, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
@@ -965,7 +1129,7 @@ function primariespanel:RepopulateList()
             button:Dock( TOP )
             button:SetTrueParent( self, k )
             button:SetWeapon( weptable[2] )
-            --do more button stuff
+            self.scrollpanel.buttons[ weptable[2] ] = button
         end
         if k != #GAMEMODE.UnlockedPrimaries and #v > 0 then
             local spacer = vgui.Create( "DPanel", self.scrollpanel )
@@ -977,6 +1141,7 @@ function primariespanel:RepopulateList()
             end
         end
     end
+
     self:SelectWeapon()
 end
 
@@ -985,17 +1150,20 @@ function primariespanel:SetReferenceModelPanel( panel )
 end
 
 function primariespanel:SelectWeapon( wepclass )
-    --[[if !wepclass then
-        self.selectedweapon = "cw_ar15"
-    end]]
-
-    --Set or reset? weapon skin
     self.selectedweapon = wepclass or "cw_ar15"
     self.weaponinfo = self.weaponinfo or vgui.Create( "WeaponInfo", self )
     self.weaponinfo:SetPos( 0, self:GetTall() / 2 )
-    self.weaponinfo:SetSize( self:GetWide(), self:GetTall() / 2 --[[* 1.2]] )
+    self.weaponinfo:SetSize( self:GetWide(), self:GetTall() / 2 )
     self.weaponinfo:SetFont( "Exo-32-600" )
     self.weaponinfo:CreateStats( self.selectedweapon )
+
+    self.skinbutton = self.skinbutton or vgui.Create( "WeaponSkinButton", self )
+    self.skinbutton:SetSize( self:GetWide(), GAMEMODE.TitleBar )
+    self.skinbutton:SetPos( 0, self:GetTall() - self.skinbutton:GetTall() )
+    self.skinbutton:SetTrueParent( self )
+    if self.possibleskins then
+        self.skinbutton:SetSkins( self.possibleskins )
+    end
 
     local wepTable = weapons.GetStored( self.selectedweapon )
     if wepTable and wepTable.WM and !wepTable.DrawTraditionalWorldModel then
@@ -1006,11 +1174,24 @@ function primariespanel:SelectWeapon( wepclass )
     self.modelpanel:SetModel( nil, RetrieveWeaponTable( self.selectedweapon )[ 4 ] )
 end
 
+function primariespanel:SelectSkin( skin )
+    self.selectedskin = skin
+    self.modelpanel.WeaponEntity:SetMaterial( skin )
+    self.modelpanel.WeaponSkin = skin
+end
+
+function primariespanel:SetSkins( tbl )
+    self.possibleskins = tbl
+    if self.skinbutton then
+        self.skinbutton:SetSkins( tbl )
+    end
+end
+
 function primariespanel:Paint()
     surface.SetTexture( GAMEMODE.GradientTexture )
     surface.SetDrawColor( 0, 0, 0, 164 )
     surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() / 2 - 4, 8, self:GetWide(), 90 )
-    --surface.DrawTexturedRectRotated(x, y, width, height, rotation)
+    surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - GAMEMODE.TitleBar - 4, 8, self:GetWide(), 90 )
     return true
 end
 
@@ -1018,7 +1199,7 @@ vgui.Register( "PrimariesPanel", primariespanel, "DPanel" )
 
 --//
 
-local secondariesbutton = {}--table.Copy( basebutton )
+local secondariesbutton = {}
 
 function secondariesbutton:Paint()
     surface.SetDrawColor( GAMEMODE.TeamColor )
@@ -1058,6 +1239,7 @@ function secondariespanel:DoSetup()
     self.scrollpanel = vgui.Create( "DScrollPanel", self )
     self.scrollpanel:SetPos( 0, 0 )
     self.scrollpanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+    self.scrollpanel.buttons = {}
     local sBar = self.scrollpanel:GetVBar()
     function sBar:Paint( w, h )
         draw.RoundedBox( 4, w / 4, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
@@ -1095,7 +1277,7 @@ function secondariespanel:RepopulateList()
             button:Dock( TOP )
             button:SetTrueParent( self, k )
             button:SetWeapon( weptable[2] )
-            --do more button stuff
+            self.scrollpanel.buttons[ weptable[2] ] = button
         end
         if k != #GAMEMODE.UnlockedSecondaries and #v > 0 then
             local spacer = vgui.Create( "DPanel", self.scrollpanel )
@@ -1116,22 +1298,46 @@ function secondariespanel:SelectWeapon( wepclass )
             self.weaponinfo = nil
         end
         self.selectedweapon = ""
+        
+        if self.skinbutton then
+            self.skinbutton:Remove()
+            self.skinbutton = nil
+        end
         return
     end
 
-    --Set or reset? weapon skin
     self.selectedweapon = wepclass
     self.weaponinfo = self.weaponinfo or vgui.Create( "WeaponInfo", self )
     self.weaponinfo:SetPos( 0, self:GetTall() / 2 )
     self.weaponinfo:SetSize( self:GetWide(), self:GetTall() / 2 --[[* 1.2]] )
     self.weaponinfo:SetFont( "Exo-32-600" )
     self.weaponinfo:CreateStats( self.selectedweapon )
+
+    self.skinbutton = self.skinbutton or vgui.Create( "WeaponSkinButton", self )
+    self.skinbutton:SetSize( self:GetWide(), GAMEMODE.TitleBar )
+    self.skinbutton:SetPos( 0, self:GetTall() - self.skinbutton:GetTall() )
+    self.skinbutton:SetTrueParent( self )
+    if self.possibleskins then
+        self.skinbutton:SetSkins( self.possibleskins )
+    end
+end
+
+function secondariespanel:SelectSkin( skin )
+    self.selectedskin = skin
+end
+
+function secondariespanel:SetSkins( tbl )
+    self.possibleskins = tbl
+    if self.skinbutton then
+        self.skinbutton:SetSkins( tbl )
+    end
 end
 
 function secondariespanel:Paint()
     surface.SetTexture( GAMEMODE.GradientTexture )
     surface.SetDrawColor( 0, 0, 0, 164 )
     surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() / 2 - 4, 8, self:GetWide(), 90 )
+    surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - GAMEMODE.TitleBar - 4, 8, self:GetWide(), 90 )
     return true
 end
 
@@ -1177,6 +1383,7 @@ function equipmentpanel:DoSetup()
     self.scrollpanel = vgui.Create( "DScrollPanel", self )
     self.scrollpanel:SetPos( 0, 0 )
     self.scrollpanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+    self.scrollpanel.buttons = {}
     local sBar = self.scrollpanel:GetVBar()
     function sBar:Paint( w, h )
         draw.RoundedBox( 4, w / 4, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
@@ -1207,24 +1414,24 @@ function equipmentpanel:RepopulateList()
         surface.DrawLine( w / 2 - (tw / 2) - 4, h / 2 + (th / 2) - 2, w / 2 + (tw / 2) + 4, h / 2 + (th / 2) - 2 )
     end
 
-    for k, v in pairs( GAMEMODE.UnlockedEquipment ) do
-        for _, weptable in pairs( v ) do
-            local button = vgui.Create( "EquipmentButton", self.scrollpanel )
-            button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
-            button:Dock( TOP )
-            button:SetTrueParent( self, k )
-            button:SetWeapon( weptable[2] )
-            --do more button stuff
+    if #GAMEMODE.UnlockedEquipment == 0 then
+        local noequip = vgui.Create( "DPanel", self.scrollpanel )
+        noequip:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+        noequip:Dock( TOP )
+        noequip.Paint = function()
+            draw.SimpleText( "No equipment", "Exo-24-600", noequip:GetWide() / 2, noequip:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
-        --[[if k != #GAMEMODE.UnlockedEquipment and #v > 0 then
-            local spacer = vgui.Create( "DPanel", self.scrollpanel )
-            spacer:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar / 4 )
-            spacer:Dock( TOP )
-            spacer.Paint = function( panel, w, h )
-                surface.SetDrawColor( GAMEMODE.TeamColor )
-                surface.DrawLine( 4, h / 2, w - 4, h / 2 )
+    else
+        for k, v in pairs( GAMEMODE.UnlockedEquipment ) do
+            for _, weptable in pairs( v ) do
+                local button = vgui.Create( "EquipmentButton", self.scrollpanel )
+                button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+                button:Dock( TOP )
+                button:SetTrueParent( self, k )
+                button:SetWeapon( weptable[2] )
+                self.scrollpanel.buttons[ weptable[2] ] = button
             end
-        end]]
+        end
     end
 end
 
@@ -1258,6 +1465,7 @@ function equipmentpanel:Paint()
     surface.SetTexture( GAMEMODE.GradientTexture )
     surface.SetDrawColor( 0, 0, 0, 164 )
     surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() / 2 - 4, 8, self:GetWide(), 90 )
+    surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - GAMEMODE.TitleBar - 4, 8, self:GetWide(), 90 )
     return true
 end
 
@@ -1326,6 +1534,7 @@ function perkspanel:DoSetup()
     self.scrollpanel = vgui.Create( "DScrollPanel", self )
     self.scrollpanel:SetPos( 0, 0 )
     self.scrollpanel:SetSize( self:GetWide(), self:GetTall() / 2 )
+    self.scrollpanel.buttons = {}
     local sBar = self.scrollpanel:GetVBar()
     function sBar:Paint( w, h )
         draw.RoundedBox( 4, w / 4, 16, w / 2, h - 32, Color( 66, 66, 66 ) )
@@ -1336,6 +1545,17 @@ function perkspanel:DoSetup()
     end
     sBar.btnUp.Paint = function() return end
     sBar.btnDown.Paint = function() return end
+
+    function GetPerkTable( perkid )
+        if !GAMEMODE.UnlockedPerks then return end
+
+        for k, v in pairs( GAMEMODE.UnlockedPerks ) do
+            if perkid == v[2] then
+                return v
+            end
+        end
+        return false
+    end
 end
 
 function perkspanel:RepopulateList()
@@ -1358,6 +1578,7 @@ function perkspanel:RepopulateList()
         button:Dock( TOP )
         button:SetTrueParent( self )
         button:SetPerkTable( perktable )
+        self.scrollpanel.buttons[ perktable[2] ] = button
         --do more button stuff
     end
 end

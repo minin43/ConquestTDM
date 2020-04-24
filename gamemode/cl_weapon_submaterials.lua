@@ -1,6 +1,6 @@
 --//TO NOTE: THE SETSUBMATERIALS TABLE STARTS AT KEY 0, THE VALUES RETRIEVED IN THIS FILE STARTED AT KEY 1
 --//Additionally, it looks like some submaterials are retuning as errors, such as in the mp5 - check for validity
-GM.WeaponSubmaterialExclusionss = {
+GM.WeaponSubmaterialExclusions = {
     [ "cw_ar15" ] = { 2 },
     [ "cw_ak74" ] = { 1, 2 },
     [ "cw_g3a3" ] = { 3, 4 },
@@ -33,3 +33,23 @@ GM.WeaponSubmaterialExclusionss = {
     [ "cw_fiveseven" ] = { 1, 2 }
     --[ "cw_" ] = {  },
 }
+
+net.Receive( "ApplyWeaponSkin", function()
+    local wepclass = net.ReadString()
+    local skindir = net.ReadString()
+    GAMEMODE.WeaponSubmaterialExclusions[wepclass] = GAMEMODE.WeaponSubmaterialExclusions[wepclass] or {}
+
+    if LocalPlayer():GetWeapon( wepclass ) then
+        local model = LocalPlayer():GetWeapon( wepclass ).CW_VM
+        local exclusiontable = {}
+        for k, v in pairs( GAMEMODE.WeaponSubmaterialExclusions[wepclass] ) do
+            exclusiontable[ v - 1 ] = true
+        end
+
+        for k, v in pairs( model:GetMaterials() ) do
+            if --[[IsValid(v) and]] !exclusiontable[k] then
+                model:SetSubMaterial( k, skindir )
+            end
+        end
+    end
+end )

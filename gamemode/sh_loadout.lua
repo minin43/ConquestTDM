@@ -102,3 +102,16 @@ function RetrieveWeaponTable( wepclass )
     end
     return nil
 end
+
+function IsDefaultWeapon( wepclass )
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
+        if v[2] == wepclass then
+            if (v[ 3 ] == 1 or v[ 3 ] == 0) and (v[ 5 ] == 0) then
+                return true
+            else
+                return false
+            end
+        end
+    end
+    return false
+end

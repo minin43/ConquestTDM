@@ -1,16 +1,5 @@
 GM.UnlockedMasterTable = GM.UnlockedMasterTable or {}
 
-util.AddNetworkString( "RequestWeapons" )
-util.AddNetworkString( "RequestWeaponsCallback" )
-util.AddNetworkString( "RequestWeaponsList" )
-util.AddNetworkString( "RequestWeaponsListCallback" )
-util.AddNetworkString( "GetRank" )
-util.AddNetworkString( "GetRankCallback" )
-util.AddNetworkString( "GetCurWeapons" )
-util.AddNetworkString( "GetCurWeaponsCallback" )
-util.AddNetworkString( "GetUserGroupRank" )
-util.AddNetworkString( "GetUserGroupRankCallback" )
---
 util.AddNetworkString( "GetUnlockedWeapons" )
 util.AddNetworkString( "GetUnlockedWeaponsCallback" )
 util.AddNetworkString( "GetUnlockedModels" )
@@ -26,7 +15,7 @@ net.Receive( "GetUnlockedWeapons", function( len, ply )
     local unlockedweps = fil[ 2 ]
     local throwaway, tosend = {}, {}
     
-    GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1] = {}
+    GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1] = { "dummyprimary", "dummysecondary" }
     for k, v in pairs( unlockedweps ) do
         GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1][ #GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1] + 1 ] = v
         throwaway[ v ] = true
@@ -113,21 +102,35 @@ net.Receive( "SetLoadout", function( len, ply )
     for k, tbl in pairs( GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ] ) do
         for _, class in pairs( tbl ) do
             if k == 1 then
-                if class == primary then ownsprim = true continue
-                elseif class == secondary then ownssec = true continue
-                elseif class == equipment then ownsequip = true continue end
+                if !ownsprim and (class == primary or IsDefaultWeapon( primary )) then ownsprim = true print(1) end
+                if !ownssec and (class == secondary or IsDefaultWeapon( secondary )) then ownssec = true print(2) end
+                if !ownsequip and (class == equipment or IsDefaultWeapon( equipment )) then ownsequip = true print(3) end
             elseif k == 2 then
-                if class == primaryskin then ownsskin1 = true end
-                if class == secondaryskin then ownsskin2 = true continue end
+                if class == primaryskin then ownsskin1 = true print(4) end
+                if class == secondaryskin then ownsskin2 = true print(5) end
             else
-                if class == pm or IsDefaultModel( pm ) then ownsmodel = true end
+                if class == pm or IsDefaultModel( pm ) then ownsmodel = true print(6) break end
             end
         end
     end
 
-    if (!ownsprim) or (primaryskin and !ownsskin1) or (secondary and !ownssec) or (secondaryskin and !ownsskin2) or (equipment and !ownsequip) or
-    (perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ]) or (pm and !ownsmodel) then
-        CaughtCheater( ply, "Attempted to spawn with weapon/model/skin/perk they don't have access to.")
+    if (!ownsprim) then
+        CaughtCheater( ply, "Attempted to spawn with primary weapon they don't have access to.")
+        return
+    elseif (primaryskin and !ownsskin1) or (secondaryskin and !ownsskin2) then
+        CaughtCheater( ply, "Attempted to spawn with weapon skin they don't have access to.")
+        return
+    elseif (secondary and !ownssec) then
+        CaughtCheater( ply, "Attempted to spawn with secondary weapon they don't have access to.")
+        return
+    elseif (equipment and !ownsequip) then
+        CaughtCheater( ply, "Attempted to spawn with equipment they don't have access to.")
+        return
+    elseif (perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ]) then
+        CaughtCheater( ply, "Attempted to spawn with perk they don't have access to.")
+        return
+    elseif (pm and !ownsmodel) then
+        CaughtCheater( ply, "Attempted to spawn with model they don't have access to.")
         return
     end
 

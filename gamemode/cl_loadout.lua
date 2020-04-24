@@ -49,7 +49,14 @@ function GM:LoadoutMenu( switchingTo )
 
     net.Receive( "GetUnlockedSkinsCallback", function()
         self.MySkins = net.ReadTable()
-        --ResetPMSelectionButton()
+        if self.LoadoutMainPPanel then
+            self.LoadoutMainPPanel:SetSkins( self.MySkins )
+            --self.LoadoutMainPPanel:DrawSkinsButton()
+        end
+        if self.LoadoutMainSPanel then
+            self.LoadoutMainSPanel:SetSkins( self.MySkins )
+            --self.LoadoutMainSPanel:DrawSkinsButton()
+        end
     end )
 
     self.MyModels = self.MyModels or {}
@@ -186,7 +193,18 @@ function GM:LoadoutMenu( switchingTo )
     PMPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (self.TitleBar * 1.5) )
     PMPanel:SetPos( 0, self.TitleBar )
     PMPanel:SetDefaultModel( self.DefaultModels[ team.GetName( switchingTo ) ][ math.random( #self.DefaultModels[ team.GetName( switchingTo ) ] ) ] )
-    PMPanel:SetModel( nil, "models/weapons/w_rif_m4a1.mdl" )
+    if self.LastSentLoadout then
+        PMPanel:SetModel( self.LastSentLoadout[5][1], "models/weapons/w_rif_m4a1.mdl" )
+        PMPanel:SetSkin( self.LastSentLoadout[5][2] )
+
+        if self.LastSentLoadout[5][3] then
+            for k, v in pairs( self.LastSentLoadout[5][3] ) do
+                PMPanel:SetBodygroup( k, v )
+            end
+        end
+    else
+        PMPanel:SetModel( nil, "models/weapons/w_rif_m4a1.mdl" )
+    end
     PMPanel:SetFOV( 60 )
     PMPanel.PaintOver = function( _, w, h )
         --surface.SetDrawColor(0, 0, 0)
@@ -203,7 +221,7 @@ function GM:LoadoutMenu( switchingTo )
         end
 
         local PMSelection = vgui.Create( "PlayermodelPanelModels", self )
-        PMSelection:SetSize( self.PMPanel:GetWide(), GAMEMODE.TitleBar / 2)
+        PMSelection:SetSize( self.PMPanel:GetWide(), GAMEMODE.TitleBar )
         PMSelection:SetPos( 0, GAMEMODE.TitleBar + self.PMPanel:GetTall() - PMSelection:GetTall() )
         PMSelection:SetModels( GAMEMODE.MyModels )
         PMSelection:SetTrueParent( self.PMPanel )
@@ -211,7 +229,7 @@ function GM:LoadoutMenu( switchingTo )
         self.PMSelection = PMSelection
 
         local PMOptions = vgui.Create( "PlayermodelPanelOptions", self )
-        PMOptions:SetSize( self.PMPanel:GetWide(), PMPanel:GetTall() / 4 ) --Unfortunately, the height of the options panel needs to be manually set since I don't know how to scale it with self.LoadoutMain
+        PMOptions:SetSize( self.PMPanel:GetWide(), PMPanel:GetTall() / 4 )
         PMOptions:SetPos( 0, GAMEMODE.TitleBar )
         PMOptions:SetModelPanel( self.PMPanel )
         self.PMPanel:SetOptionsButton( PMOptions )
@@ -223,21 +241,98 @@ function GM:LoadoutMenu( switchingTo )
     PPanel:SetPos( self.LoadoutMain:GetWide() / 5, GAMEMODE.TitleBar )
     PPanel:SetReferenceModelPanel( self.LoadoutMain.PMPanel )
     PPanel:DoSetup()
+    self.LoadoutMainPPanel = PPanel
 
     local SPanel = vgui.Create( "SecondariesPanel", self.LoadoutMain )
     SPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (GAMEMODE.TitleBar * 1.5) )
     SPanel:SetPos( self.LoadoutMain:GetWide() / 5 * 2, GAMEMODE.TitleBar )
     SPanel:DoSetup()
+    self.LoadoutMainSPanel = SPanel
 
     local EPanel = vgui.Create( "EquipmentPanel", self.LoadoutMain )
     EPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (GAMEMODE.TitleBar * 1.5) )
     EPanel:SetPos( self.LoadoutMain:GetWide() / 5 * 3, GAMEMODE.TitleBar )
     EPanel:DoSetup()
+    self.LoadoutMainEPanel = EPanel
 
     local PerkPanel = vgui.Create( "PerksPanel", self.LoadoutMain )
     PerkPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (GAMEMODE.TitleBar * 1.5) )
     PerkPanel:SetPos( self.LoadoutMain:GetWide() / 5 * 4, GAMEMODE.TitleBar )
     PerkPanel:DoSetup()
+    self.LoadoutMainPerkPanel = PerkPanel
+
+    timer.Simple( 0.2, function()
+        if !self.LoadoutMain then return end
+
+        if self.LastSentLoadout then
+            if self.LastSentLoadout[1][1] and PPanel.scrollpanel.buttons[ self.LastSentLoadout[1][1] ] then
+                PPanel.scrollpanel:ScrollToChild( PPanel.scrollpanel.buttons[ self.LastSentLoadout[1][1] ] )
+                PPanel:SelectWeapon( self.LastSentLoadout[1][1] )
+                PPanel:SelectSkin( self.LastSentLoadout[1][2] or "" )
+            end
+            if self.LastSentLoadout[2][1] and SPanel.scrollpanel.buttons[ self.LastSentLoadout[2][1] ] then
+                SPanel.scrollpanel:ScrollToChild( SPanel.scrollpanel.buttons[ self.LastSentLoadout[2][1] ] )
+                SPanel:SelectWeapon( self.LastSentLoadout[2][1] )
+                SPanel:SelectSkin( self.LastSentLoadout[2][2] or "" )
+            end
+            if self.LastSentLoadout[3] and EPanel.scrollpanel.buttons[ self.LastSentLoadout[3] ] then
+                EPanel.scrollpanel:ScrollToChild( EPanel.scrollpanel.buttons[ self.LastSentLoadout[3] ] )
+                EPanel:SelectWeapon( self.LastSentLoadout[3] )
+            end
+            if self.LastSentLoadout[4] and PerkPanel.scrollpanel.buttons[ self.LastSentLoadout[4] ] then
+                PerkPanel.scrollpanel:ScrollToChild( PerkPanel.scrollpanel.buttons[ self.LastSentLoadout[4] ] )
+                PerkPanel:SelectPerk( GetPerkTable(self.LastSentLoadout[4]) )
+            end
+        end
+    end )
+
+    local canPrestige = GAMEMODE.MyLevel >= 100
+	local PrestigeButton = vgui.Create( "DButton", GAMEMODE.LoadoutMain )
+	PrestigeButton:SetSize( EPanel:GetWide(), GAMEMODE.TitleBar )
+    PrestigeButton:SetPos( GAMEMODE.LoadoutMain:GetWide() / 5 * 3, GAMEMODE.TitleBar + EPanel:GetTall() - PrestigeButton:GetTall() )
+    PrestigeButton.Paint = function()
+        if canPrestige then
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawRect( 0, 0, PrestigeButton:GetWide(), PrestigeButton:GetTall() )
+            surface.SetTextColor( 255, 255, 255 )
+            surface.SetFont( "Exo-32-400" )
+            local w, h = surface.GetTextSize( "Prestige" )
+            surface.SetTextPos( PrestigeButton:GetWide() / 2 - (w / 2), PrestigeButton:GetTall() / 2 - (h / 2) - 4 ) 
+        else
+            surface.SetDrawColor( 255, 255, 255 )
+            surface.DrawRect( 0, 0, PrestigeButton:GetWide(), PrestigeButton:GetTall() )
+            surface.SetTextColor( 0, 0, 0, 200 )
+            surface.SetFont( "Exo-24-400" )
+            local w, h = surface.GetTextSize( "Prestige" )
+            surface.SetTextPos( PrestigeButton:GetWide() / 2 - (w / 2), PrestigeButton:GetTall() / 2 - (h / 2) )
+        end
+        
+        if PrestigeButton.hover then
+            surface.SetTextColor( colorScheme[ switchingTo ].ButtonIndicator )
+        end
+        surface.DrawText( "Prestige" )
+
+        surface.SetDrawColor( 0, 0, 0, 200 )
+        surface.DrawLine( 0, -1, 0, PrestigeButton:GetTall() )
+		return true
+	end
+    PrestigeButton.OnCursorEntered = function()
+        if canPrestige then
+            PrestigeButton.hover = true
+        end
+	end
+	PrestigeButton.OnCursorExited = function()
+		PrestigeButton.hover = false
+	end
+    PrestigeButton.DoClick = function()
+        if canPrestige then
+            GAMEMODE.LoadoutMain:Close()
+            OpenConfirmationPanel()
+            surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+        else
+            surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
+        end
+	end
 
     local AcceptButton = vgui.Create( "LoganButton", self.LoadoutMain )
     AcceptButton:SetSize( self.LoadoutMain:GetWide() / 5, GAMEMODE.TitleBar )
@@ -256,7 +351,7 @@ function GM:LoadoutMenu( switchingTo )
         end
         surface.DrawText( todisplay )
 
-        surface.SetDrawColor( 66, 66, 66 )
+        surface.SetDrawColor( 0, 0, 0, 200 )
         surface.DrawLine( 0, 0, 0, AcceptButton:GetTall() )
 
         --[[surface.SetDrawColor( 88, 88, 88 )
@@ -274,11 +369,12 @@ function GM:LoadoutMenu( switchingTo )
         surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
 
         local tosend = {}
-        tosend[1] = { PPanel.selectedweapon or "cw_ar15" }
-        tosend[2] = { SPanel.selectedweapon or "" }
-        tosend[3] = EPanel.selectedweapon or ""
-        tosend[4] = PerkPanel.selectedperk or ""
+        tosend[1] = { PPanel.selectedweapon or "cw_ar15", PPanel.selectedskin }
+        tosend[2] = { SPanel.selectedweapon, SPanel.selectedskin }
+        tosend[3] = EPanel.selectedweapon
+        tosend[4] = PerkPanel.selectedperk
         tosend[5] = { PMPanel.model, PMPanel.EntitySkin or 0, PMPanel.EntityBodygroup }
+        GAMEMODE.LastSentLoadout = tosend
 
         net.Start( "SetLoadout" )
             net.WriteTable( tosend )
@@ -290,6 +386,143 @@ function GM:LoadoutMenu( switchingTo )
             chat.AddText( "Your loadout will be given on your next spawn" )
         end
         self.LoadoutMain:Close()
+    end
+end
+
+function OpenConfirmationPanel()
+    confirmationpanel = vgui.Create( "DFrame" )
+    confirmationpanel:SetSize( 450, 180 )
+    confirmationpanel:SetTitle( "" )
+    confirmationpanel:SetVisible( true )
+    confirmationpanel:SetDraggable( false )
+    confirmationpanel:ShowCloseButton( false )
+    confirmationpanel:Center()
+    confirmationpanel.Think = function()
+        confirmationpanel:MakePopup()
+    end
+    confirmationpanel.Paint = function()
+        Derma_DrawBackgroundBlur( confirmationpanel, CurTime() )
+        surface.SetDrawColor( 255, 255, 255, 255 )
+        surface.DrawRect( 0, 0, confirmationpanel:GetWide(), confirmationpanel:GetTall() )
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.DrawRect( 0, 0, confirmationpanel:GetWide(), 56 )
+        surface.SetFont( "Exo 2" )
+        surface.SetTextColor( Color( 255, 255, 255 ) )
+        surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Prestige") / 2, 16 )
+        surface.DrawText( "Prestige" )
+        surface.SetTexture( gradient )
+
+        draw.SimpleText( "Are you sure you wish to prestige?", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 - 5, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( "This cannot be undone!", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 + 20, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+    end
+    confirmationpanel.PaintOver = function()
+        surface.SetTexture( gradient )
+        surface.SetDrawColor( 0, 0, 0, 164 )
+        surface.DrawTexturedRectRotated( confirmationpanel:GetWide() / 2, 56 + 4, 8, confirmationpanel:GetWide(), 270 )
+    end
+    confirmationpanel.OnClose = function()
+        confirmationpanel:Remove()
+        confirmationpanel = nil
+    end
+
+    local acceptbutton = vgui.Create( "DButton", confirmationpanel )
+    acceptbutton:SetSize( 64, 36 )
+    acceptbutton:SetPos( 32, confirmationpanel:GetTall() - acceptbutton:GetTall() - 8 )
+    acceptbutton:SetText( "" )
+    acceptbutton.Paint = function()
+        if acceptbutton.Hover then
+            draw.RoundedBox( 4, 0, 0, acceptbutton:GetWide(), acceptbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+        end
+        if acceptbutton.Click then
+            draw.RoundedBox( 4, 0, 0, acceptbutton:GetWide(), acceptbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+        end
+        draw.SimpleText( "CONFIRM", "Exo 2 Button", acceptbutton:GetWide() / 2, acceptbutton:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        return true
+    end
+    acceptbutton.OnCursorEntered = function()
+        acceptbutton.Hover = true
+    end
+    acceptbutton.OnCursorExited = function()
+        acceptbutton.Hover = false
+    end
+    acceptbutton.OnMousePressed = function()
+        --LocalPlayer():EmitSound( "buttons/button22.wav" )
+        acceptbutton.Click = true
+    end
+    acceptbutton.OnMouseReleased = function()
+        acceptbutton.Click = false
+
+        if acceptbutton.once then return end
+        acceptbutton.once = true
+        net.Start( "PlayerAttemptPrestige" )
+        net.SendToServer()
+        
+        net.Receive( "AttemptPrestigeCallback", function()
+            GAMEMODE.MyPrestigeTokens = net.ReadInt( 16 )
+            DoClientPrestige( GAMEMODE.MyPrestigeTokens )
+        end )
+    end
+    
+    local cancelbutton = vgui.Create( "DButton", confirmationpanel )
+    cancelbutton:SetSize( 64, 36 )
+    cancelbutton:SetPos( confirmationpanel:GetWide() - cancelbutton:GetWide() - 32, confirmationpanel:GetTall() - cancelbutton:GetTall() - 8 )
+    cancelbutton:SetText( "" )
+    cancelbutton.Paint = function()
+        if cancelbutton.Hover then
+            draw.RoundedBox( 4, 0, 0, cancelbutton:GetWide(), cancelbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+        end
+        if cancelbutton.Click then
+            draw.RoundedBox( 4, 0, 0, cancelbutton:GetWide(), cancelbutton:GetTall(), Color( 0, 0, 0, 255 * 0.2 ) )
+        end
+        draw.SimpleText( "CANCEL", "Exo 2 Button", cancelbutton:GetWide() / 2, cancelbutton:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        return true
+    end
+    cancelbutton.OnCursorEntered = function()
+        cancelbutton.Hover = true
+    end
+    cancelbutton.OnCursorExited = function()
+        cancelbutton.Hover = false
+    end
+    cancelbutton.OnMousePressed = function()
+        LocalPlayer():EmitSound( "buttons/button22.wav" )
+        cancelbutton.Click = true
+    end
+    cancelbutton.OnMouseReleased = function()
+        cancelbutton.Click = false
+        confirmationpanel:Close()
+        confirmationpanel = nil
+    end
+
+    function DoClientPrestige( Tokens )
+        acceptbutton:Remove()
+        cancelbutton:Remove()
+        --timer.Simple( 1, function()
+            confirmationpanel.Paint = function()
+                if !confirmationpanel then return end
+                Derma_DrawBackgroundBlur( confirmationpanel, CurTime() )
+                surface.SetDrawColor( 255, 255, 255, 255 )
+                surface.DrawRect( 0, 0, confirmationpanel:GetWide(), confirmationpanel:GetTall() )
+                surface.SetDrawColor( GAMEMODE.TeamColor )
+                surface.DrawRect( 0, 0, confirmationpanel:GetWide(), 56 )
+                surface.SetFont( "Exo 2" )
+                surface.SetTextColor( Color( 255, 255, 255 ) )
+                surface.SetTextPos( confirmationpanel:GetWide() / 2 - surface.GetTextSize("Prestige") / 2, 16 )
+                surface.DrawText( "Prestige" )
+                surface.SetTexture( gradient )
+
+                draw.SimpleText( "Prestige Succesful!", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 - 5, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                draw.SimpleText( "You have: " .. Tokens .. " prestige token(s)!", "Exo 2", confirmationpanel:GetWide() / 2, confirmationpanel:GetTall() / 2 + 35, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            end
+
+            surface.PlaySound( "ui/challengecomplete.wav" )
+        --end )
+
+        timer.Simple( 2, function()
+            ply:ConCommand( "tdm_setteam 0" )
+        end )
+        timer.Simple( 3, function()
+            confirmationpanel:Remove()
+        end )
     end
 end
 

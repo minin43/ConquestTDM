@@ -475,14 +475,6 @@ function playermodelpanel:Think()
             pos, ang = self.Entity:GetBonePosition( self.Entity:LookupBone("ValveBiped.Bip01_R_Hand") )
             
             if pos and ang then
-                --[[RotateAroundAxis(ang, Right(ang), self.WMAng[1])
-                RotateAroundAxis(ang, Up(ang), self.WMAng[2])
-                RotateAroundAxis(ang, Forward(ang), self.WMAng[3])
-
-                pos = pos + self.WMPos[1] * Right(ang) 
-                pos = pos + self.WMPos[2] * Forward(ang)
-                pos = pos + self.WMPos[3] * Up(ang)]]
-
                 ang:RotateAroundAxis(ang:Right(), self.WMAng[1])
                 ang:RotateAroundAxis(ang:Up(), self.WMAng[2])
                 ang:RotateAroundAxis(ang:Forward(), self.WMAng[3])
@@ -713,7 +705,7 @@ function playermodelpanelmodels:DoClick()
         self.moving = true
 
         self.listpanel = vgui.Create( "DPanel", self.trueparent )
-        self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * #self.models, self.trueparent:GetTall() / 4 * 3 - GAMEMODE.TitleBar ) )
+        self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * (#self.models + 1), self.trueparent:GetTall() / 4 * 3 - (GAMEMODE.TitleBar) ) )
         self.listpanel:SetPos( 0, self.trueparent:GetTall() )
         self.listpanel.Paint = function()
             if !self.listpanel then return end
@@ -913,7 +905,7 @@ function weaponskinoptions:DoClick()
         self.moving = true
 
         self.listpanel = vgui.Create( "DPanel", self.trueparent )
-        self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * #self.skins, self.trueparent:GetTall() / 2 - GAMEMODE.TitleBar ) )
+        self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * (#self.skins + 1), self.trueparent:GetTall() / 2 - GAMEMODE.TitleBar ) )
         self.listpanel:SetPos( 0, self.trueparent:GetTall() )
         self.listpanel.Paint = function()
             if !self.listpanel then return end
@@ -992,42 +984,49 @@ function weaponskinoptions:DoClick()
                 surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
             end
 
-            for k, v in ipairs( GAMEMODE.MySkins ) do
-                local skintable = GAMEMODE.SkinsMasterTable[ v ]
-                local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
-                button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
-                button:Dock( TOP )
-                button.Paint = function()
-                    if !self.listpanel then return end
-                    surface.SetFont( "Exo-28-600" )
-                    surface.SetTextColor( 0, 0, 0, 220 )
-                    if button.hover or skintable.dir == self.listpanel.selected or skintable.dir == self.trueparent.selectedskin then
-                        surface.SetTextColor( GAMEMODE.TeamColor )
-                    end
-                    local w, h = surface.GetTextSize( skintable.name )
-                    surface.SetTextPos( 16, button:GetTall() / 2 - ( h / 1.5 ) )
-                    surface.DrawText( skintable.name )
+            local order = {}
+            for k, v in pairs( GAMEMODE.MySkins ) do
+                order[ GAMEMODE.SkinsMasterTable[ v ].quality ] = order[ GAMEMODE.SkinsMasterTable[ v ].quality ] or {}
+                order[ GAMEMODE.SkinsMasterTable[ v ].quality ][ #order[ GAMEMODE.SkinsMasterTable[ v ].quality ] + 1 ] = GAMEMODE.SkinsMasterTable[ v ]
+            end
+            
+            for k, v in ipairs( order ) do
+                for _, skintable in ipairs( v ) do
+                    local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
+                    button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
+                    button:Dock( TOP )
+                    button.Paint = function()
+                        if !self.listpanel then return end
+                        surface.SetFont( "Exo-28-600" )
+                        surface.SetTextColor( 0, 0, 0, 220 )
+                        if button.hover or skintable.dir == self.listpanel.selected or skintable.dir == self.trueparent.selectedskin then
+                            surface.SetTextColor( GAMEMODE.TeamColor )
+                        end
+                        local w, h = surface.GetTextSize( skintable.name )
+                        surface.SetTextPos( 16, button:GetTall() / 2 - ( h / 1.5 ) )
+                        surface.DrawText( skintable.name )
 
-                    surface.SetFont( "Exo-16-500" )
-                    surface.SetTextColor( 0, 0, 0, 220 )
-                    surface.SetTextPos( button:GetTall() - 12, button:GetTall() / 2 + 8 )
-                    w, h = surface.GetTextSize( "Quality: " )
-                    surface.DrawText( "Quality: " )
-                    surface.SetTextColor( GAMEMODE.ColorRarities[ skintable.quality ] )
-                    surface.SetTextPos( button:GetTall() - 14 + w, button:GetTall() / 2 + 8 )
-                    surface.DrawText( "Tier ".. ( skintable.quality + 1 ) )
-                    return true
-                end
-                button.OnCursorEntered = function()
-                    button.hover = true
-                end
-                button.OnCursorExited = function()
-                    button.hover = false
-                end
-                button.DoClick = function()
-                    self.listpanel.selected = skintable.dir
-                    self.trueparent:SelectSkin( self.listpanel.selected )
-                    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+                        surface.SetFont( "Exo-16-500" )
+                        surface.SetTextColor( 0, 0, 0, 220 )
+                        surface.SetTextPos( button:GetTall() - 12, button:GetTall() / 2 + 8 )
+                        w, h = surface.GetTextSize( "Quality: " )
+                        surface.DrawText( "Quality: " )
+                        surface.SetTextColor( GAMEMODE.ColorRarities[ skintable.quality ] )
+                        surface.SetTextPos( button:GetTall() - 14 + w, button:GetTall() / 2 + 8 )
+                        surface.DrawText( "Tier ".. ( skintable.quality + 1 ) )
+                        return true
+                    end
+                    button.OnCursorEntered = function()
+                        button.hover = true
+                    end
+                    button.OnCursorExited = function()
+                        button.hover = false
+                    end
+                    button.DoClick = function()
+                        self.listpanel.selected = skintable.dir
+                        self.trueparent:SelectSkin( self.listpanel.selected )
+                        surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+                    end
                 end
             end
         end

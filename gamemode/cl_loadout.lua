@@ -389,6 +389,7 @@ function GM:LoadoutMenu( switchingTo )
     end
 end
 
+--The old prestige shit I wrote for the old loadoutmenu, adapted for the current one. Just got really lazy and didn't want to rewrite anything
 function OpenConfirmationPanel()
     confirmationpanel = vgui.Create( "DFrame" )
     confirmationpanel:SetSize( 450, 180 )
@@ -528,3 +529,7 @@ end
 
 surface.CreateFont( "ExoTitleFont" , { font = "Exo 2", size = 20, weight = 400 } )
 surface.CreateFont( "ExoInfoFont", { font = "Exo 2", size = 24, weight = 400 } )
+
+net.Receive( "StartLoadoutDirect", function()
+    GAMEMODE:LoadoutMenu()
+end )

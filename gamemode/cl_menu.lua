@@ -36,8 +36,7 @@ function GM:MenuMain()
 	self.ChooseLoadout.DoClick = function()
 		if self.ChooseLoadout.Disabled then return end
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		self.ChooseMain:Close() --Remove?
-		--self:SetLoadout()
+		self.ChooseMain:Close()
 		GAMEMODE:LoadoutMenu()
 	end
 
@@ -48,9 +47,9 @@ function GM:MenuMain()
 	self.ChooseShop:SetFont( "MenuInfo" )
 	self.ChooseShop:SetIcon( GAMEMODE.Icons.Menu.shopIcon )
 	self.ChooseShop.DoClick = function()
-		if self.ChooseShop.Disabled then return end --Always returns true, to be removed when shop is finished
+		if self.ChooseShop.Disabled then return end
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		self.ChooseMain:Close() --Remove?
+		self.ChooseMain:Close()
 		GAMEMODE:OpenShop()
 	end
 
@@ -62,7 +61,7 @@ function GM:MenuMain()
 	self.ChooseTeam:SetIcon( GAMEMODE.Icons.Menu.teamChangeIcon )
 	self.ChooseTeam.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		self.ChooseMain:Close() --Remove?
+		self.ChooseMain:Close()
 		LocalPlayer():ConCommand( "tdm_spawnmenu" )
 	end
 
@@ -74,7 +73,7 @@ function GM:MenuMain()
 	self.ChooseTag:SetIcon( GAMEMODE.Icons.Menu.titleIcon )
 	self.ChooseTag.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		self.ChooseMain:Close() --Remove?
+		self.ChooseMain:Close()
 		GAMEMODE:OpenTitles()
 	end
 
@@ -84,10 +83,9 @@ function GM:MenuMain()
 	self.ChooseHelp:SetText( "Help" )
 	self.ChooseHelp:SetFont( "MenuInfo" )
 	self.ChooseHelp:SetIcon( GAMEMODE.Icons.Menu.helpIcon )
-	--self.ChooseHelp:Disable( true )
 	self.ChooseHelp.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		self.ChooseMain:Close() --Remove?
+		self.ChooseMain:Close()
 		GAMEMODE:OpenHelp()
 	end
 
@@ -99,10 +97,10 @@ function GM:MenuMain()
 	self.ChooseCancel:SetIcon( GAMEMODE.Icons.Menu.cancelIcon )
 	self.ChooseCancel.DoClick = function()
 		surface.PlaySound( self.ChooseLoadout.SoundTable[ math.random( #self.ChooseLoadout.SoundTable ) ] )
-		self.ChooseMain:Close() --Remove?
+		self.ChooseMain:Close()
     end
     
     GAMEMODE:DrawEventStatuses( self.ChooseMain )
 end
 
-concommand.Add( "tdm_loadout", GM.MenuMain ) --GAMEMODE.NewLoadout( GAMEMODE ) ?
+concommand.Add( "tdm_menu", GM.MenuMain )

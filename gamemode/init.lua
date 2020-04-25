@@ -352,13 +352,13 @@ function GM:EndRound( win )
 	hook.Call( "Pointshop2GmIntegration_RoundEnded" )
 end
 
-local function CheckVIP( ply )
+--[[local function CheckVIP( ply )
 	if ply:CheckGroup( "vip" ) or ply:CheckGroup( "vip+" ) or ply:CheckGroup( "ultravip" ) or ply:CheckGroup( "admin" ) or ply:CheckGroup( "superadmin" ) or ply:CheckGroup( "headadmin" ) or ply:CheckGroup( "coowner" ) or ply:CheckGroup( "owner" ) or ply:CheckGroup( "secret" ) then
 		return true
 	else
 		return false
 	end
-end
+end]]
 
 function GM:Initialize()
 
@@ -416,34 +416,43 @@ function GM:ShowHelp( ply )
 	local wep = ply:GetActiveWeapon()
 	
 	if not IsValid(wep) or not wep.CW20Weapon or wep.dt.State == CW_IDLE then
-		ply:ConCommand( "tdm_loadout" )
-		umsg.Start( "ClearTable", ply )
-		umsg.End()
+		ply:ConCommand( "tdm_menu" )
 	end
 end
 
+util.AddNetworkString( "StartLoadoutDirect" )
 function GM:ShowTeam( ply )
 	local wep = ply:GetActiveWeapon()
 	
-	if not IsValid(wep) or not wep.CW20Weapon or wep.dt.State == CW_IDLE then
-		ply:ConCommand( "tdm_loadout" )
-		umsg.Start( "ClearTable", ply )
-		umsg.End()
+    if not IsValid(wep) or not wep.CW20Weapon or wep.dt.State == CW_IDLE then
+        if ply:Team() == 0 then
+            net.Start( "OpenTeamMenuDirect" )
+            net.Send( ply )
+        else
+            net.Start( "StartLoadoutDirect" )
+            net.Send( ply )
+        end
 	end
 end
 
+util.AddNetworkString( "StartShopDirect" )
 function GM:ShowSpare1( ply )
 	local wep = ply:GetActiveWeapon()
 	
 	if not IsValid(wep) or not wep.CW20Weapon or wep.dt.State == CW_IDLE then
-		--ply:PS_ToggleMenu()
+        net.Start( "StartShopDirect" )
+        net.Send( ply )
 	end
 end
 
+util.AddNetworkString( "OpenTeamMenuDirect" )
 function GM:ShowSpare2( ply )
-	local tr = util.TraceLine( util.GetPlayerTrace( ply ) )
-
-	if IsValid( tr.Entity ) then ply:PrintMessage( HUD_PRINTCONSOLE, "ent: " .. tr.Entity:GetClass() ) end
+	local wep = ply:GetActiveWeapon()
+	
+	if not IsValid(wep) or not wep.CW20Weapon or wep.dt.State == CW_IDLE then
+        net.Start( "OpenTeamMenuDirect" )
+        net.Send( ply )
+	end
 end
 
 
@@ -505,7 +514,6 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SetTeam( 0 )
 	ply:Spectate( OBS_MODE_CHASE )
 	--//Opening menu has been moved to a net.Receive in cl_init, now opens a special menu dependent on player's team (which is why it was necessary for it to be rewritten how it is)
-	--ply:ConCommand( "tdm_spawnmenu" )
 
 	if not self.AcceptedHelp[ id( ply:SteamID() ) ] then
 		self.AcceptedHelp[ id( ply:SteamID() ) ] = false
@@ -568,7 +576,7 @@ function giveLoadout( ply )
 	if GetGlobalBool( "RoundFinished" ) then
 		ply:Give( "weapon_crowbar" )
 		return
-	end
+    end
 
 	local loadout = GAMEMODE.PlayerLoadouts[ ply ]
 	if( loadout ) then
@@ -616,7 +624,10 @@ function giveLoadout( ply )
 		else
 			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = "none"
 		end
-	end
+    end
+    
+    ply:Give( "weapon_fists" )
+    
 	hook.Call( "PostGiveLoadout", nil, ply )
 end
 
@@ -909,7 +920,6 @@ hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
 end )
 
 hook.Add( "PlayerChangedTeam", "NotifyTeamSwap", function( ply, oldteam, newteam )
-    print("running hook PlayerChangedTeam, sendin client new team of ", newteam)
     net.Start( "TeamSwapHook" )
         net.WriteInt( newteam, 4 )
     net.Send( ply )

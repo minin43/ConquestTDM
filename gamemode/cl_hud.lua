@@ -381,25 +381,29 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	end
 
 	surface.SetFont( "Info" )
-	local info = "[F1] Choose Team | [F2] Choose Loadout"
-	local infowidth, infoheight = surface.GetTextSize( info )
+	local info = "[F1] Menu | [F2] Loadout | [F3] Shop | [F4] Choose Team"
+    local infowidth, infoheight = surface.GetTextSize( info )
+    --local info2 = "[F3] Open Shop | [F4] Choose Team"
+    local info2width, info2height = 0, 0 --surface.GetTextSize( info )
 	
 	--Creates the boxes in the top left hand corner for F1 and F2 commands
 	surface.SetDrawColor( GAMEMODE.CurrentScheme ) 
 	surface.SetTexture( gradient )
-	surface.DrawRect( 32, 32, infowidth + 9, infoheight + 5 ) --Align it with gamemode name/version text set below
+	surface.DrawRect( 32, 32, infowidth + 9, infoheight + info2height + 5 ) --Align it with gamemode name/version text set below
 	surface.SetDrawColor( colorScheme[0]["HelpMenuShade"] )
-	surface.DrawRect( 32, 32, infowidth + 11, infoheight + 7 )
+	surface.DrawRect( 32, 32, infowidth + 11, infoheight + info2height + 7 )
 
 	--Writes the text in string "info" set above
 	surface.SetFont( "Info" )
 	surface.SetTextColor( colorScheme[0]["HelpMenuText"] )
 	surface.SetTextPos( 36, 33 )
-	surface.DrawText( info )
+    surface.DrawText( info )
+    --surface.SetTextPos( 35, 33 + infoheight )
+    --surface.DrawText( info2 )
 
 	--Gamemode name & version number
 	surface.SetTextColor( colorScheme[0]["GamemodeVersionText"] )
-	surface.SetTextPos( 32, 64 ) --Align it with grey box in the top left hand corner rectangle set above
+	surface.SetTextPos( 32, 38 + infoheight + info2height ) --Align it with grey box in the top left hand corner rectangle set above
 	surface.DrawText( GAMEMODE.Version .. " Release 082919" )
 end )
 

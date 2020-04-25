@@ -161,36 +161,6 @@ vip = {
 	{ "Developer", 209 }
 }
 
-function isPrimary( class )
-	for k, v in next, GAMEMODE.WeaponsList do
-        if class == v[ 2 ] then
-			return v.slot == 1
-		end
-	end
-	
-	return false
-end
-
-function isSecondary( class )
-	for k, v in next, GAMEMODE.WeaponsList do
-        if class == v[ 2 ] then
-			return v.slot == 2
-		end
-	end
-	
-	return false
-end
-
-function isExtra( class )
-	for k, v in next, GAMEMODE.WeaponsList do
-        if class == v[ 2 ] then
-			return v.slot == 3
-		end
-	end
-	
-	return false
-end
-
 --[[function FixExploit( ply, wep )
 	ply:StripWeapon( wep )
 	local ent = ents.Create( wep )
@@ -334,8 +304,8 @@ end )
 
 --//Used to remove dropped weapons to prevent entity buildup
 hook.Add( "PlayerDeath", "ClearDroppedWeapons", function( ply )
-	if ply.LastUsedWep then	
-		if not isExtra( ply.LastUsedWep ) then
+	if ply.LastUsedWep then
+		if !isUnique( ply.LastUsedWep) and !isExtra( ply.LastUsedWep ) then
 			local ent = ents.Create( ply.LastUsedWep )
 			ent:SetPos( ply:GetPos() )
 			ent:Spawn()

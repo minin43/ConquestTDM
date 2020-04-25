@@ -43,12 +43,12 @@ net.Receive( "ApplyWeaponSkin", function()
         local model = LocalPlayer():GetWeapon( wepclass ).CW_VM
         local exclusiontable = {}
         for k, v in pairs( GAMEMODE.WeaponSubmaterialExclusions[wepclass] ) do
-            exclusiontable[ v - 1 ] = true
+            exclusiontable[ v ] = true
         end
 
         for k, v in pairs( model:GetMaterials() ) do
-            if --[[IsValid(v) and]] !exclusiontable[k] then
-                model:SetSubMaterial( k, skindir )
+            if !exclusiontable[k] and v != "models/weapons/v_models/hands/v_hands" then
+                model:SetSubMaterial( k - 1, skindir )
             end
         end
     end

@@ -279,4 +279,8 @@ function GM:TeamMenu()
     net.SendToServer() 
 end
 
+net.Receive( "OpenTeamMenuDirect", function()
+    GAMEMODE:TeamMenu()
+end )
+
 concommand.Add( "tdm_spawnmenu", GM.TeamMenu )

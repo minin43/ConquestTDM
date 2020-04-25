@@ -115,3 +115,42 @@ function IsDefaultWeapon( wepclass )
     end
     return false
 end
+
+function isPrimary( class )
+	for k, v in next, GAMEMODE.WeaponsList do
+        if class == v[ 2 ] then
+			return v.slot == 1
+		end
+	end
+	
+	return false
+end
+
+function isSecondary( class )
+	for k, v in next, GAMEMODE.WeaponsList do
+        if class == v[ 2 ] then
+			return v.slot == 2
+		end
+	end
+	
+	return false
+end
+
+function isExtra( class )
+	for k, v in next, GAMEMODE.WeaponsList do
+        if class == v[ 2 ] then
+			return v.slot == 3
+		end
+	end
+	
+	return false
+end
+
+function isUnique( class )
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
+        if class == v[ 2 ] then
+            return true
+        end
+    end
+    return false
+end

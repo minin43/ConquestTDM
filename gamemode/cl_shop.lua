@@ -6,16 +6,16 @@ function GM:OpenShop()
 
     net.Receive( "GetPrestigeTokensCallback", function()
         local tokens = net.ReadInt( 16 )
-        GAMEMODE.MyPrestigeTokens = tokens
+        self.MyPrestigeTokens = tokens
     end )
-    GAMEMODE.MyPrestigeTokens = GAMEMODE.MyPrestigeTokens or 0
+    self.MyPrestigeTokens = self.MyPrestigeTokens or 0
 
     net.Start( "RequestMoney" )
     net.SendToServer()
 
     net.Receive( "RequestMoneyCallback", function()
         curAmt = tonumber( net.ReadString() ) --Lazy-ass Whuppo
-        GAMEMODE.MyMoney = curAmt
+        self.MyMoney = curAmt
     end )
 
     net.Start( "GetDonatorCredits")
@@ -29,9 +29,6 @@ function GM:OpenShop()
 	self.ShopMain:ShowCloseButton( false )
 	self.ShopMain:Center()
 	self.ShopMain:MakePopup()
-	--[[self.ShopMain.Think = function()
-		self.ShopMain.x, self.ShopMain.y = self.ShopMain:GetPos()
-    end]]
     self.ShopMainTitleBar = 56
     local iconSize = 24
     local iconOffsetY = 1
@@ -62,7 +59,7 @@ function GM:OpenShop()
 
         --Display player money with an icon & value
         surface.SetDrawColor( 255, 255, 255 )
-        surface.SetMaterial( GAMEMODE.Icons.Menu.cashIconSmall )
+        surface.SetMaterial( self.Icons.Menu.cashIconSmall )
         --surface.DrawTexturedRect( self.ShopMain:GetWide() / 3, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ), iconSize, iconSize )
         --surface.SetTextPos( self.ShopMain:GetWide() / 3 + iconSize, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
         surface.DrawTexturedRect( self.ShopMain:GetWide() / 3 - --[[( iconSize / 2 ) -]] ( surface.GetTextSize( ": $" .. comma_value( self.MyMoney ) ) ), self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
@@ -70,7 +67,7 @@ function GM:OpenShop()
         surface.DrawText( ": $" .. comma_value( self.MyMoney ) )
 
         --Display player prestige tokens with icon & value 
-        surface.SetMaterial( GAMEMODE.Icons.Menu.tokensIconSmall )
+        surface.SetMaterial( self.Icons.Menu.tokensIconSmall )
         surface.DrawTexturedRect( self.ShopMain:GetWide() / 3 * 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
         surface.SetTextPos( self.ShopMain:GetWide() / 3 * 2 + iconSize, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
         surface.DrawText( ": " .. self.MyPrestigeTokens )
@@ -78,11 +75,11 @@ function GM:OpenShop()
         --Display player donator credits with icon & value
         surface.SetTextPos( self.ShopMain:GetWide() - surface.GetTextSize( ": " .. self.MyCredits ) - 5, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
         surface.DrawText( ": " .. self.MyCredits )
-        surface.SetMaterial( GAMEMODE.Icons.Menu.creditsIconSmall )
+        surface.SetMaterial( self.Icons.Menu.creditsIconSmall )
         surface.DrawTexturedRect( self.ShopMain:GetWide() - surface.GetTextSize( ": " .. self.MyCredits ) - iconSize - 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
 
         --Do some gradient drawing along the bottom
-        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.SetTexture( self.GradientTexture )
         surface.SetDrawColor( 0, 0, 0, 164 )
         surface.DrawTexturedRectRotated( self.ShopMain:GetWide() / 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) - 4, 8, self.ShopMain:GetWide(), 90 )
     end
@@ -93,7 +90,7 @@ function GM:OpenShop()
     back:SetText( "" )
     back.DoClick = function()
         self.ShopMain:Close()
-        GAMEMODE:MenuMain()
+        self:MenuMain()
     end
     back.Paint = function()
         if back.hover then
@@ -101,7 +98,7 @@ function GM:OpenShop()
         else
             surface.SetDrawColor( 0, 0, 0, 220 )
         end
-        surface.SetMaterial( GAMEMODE.Icons.Menu.backIcon )
+        surface.SetMaterial( self.Icons.Menu.backIcon )
         surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
     end
     back.OnCursorEntered = function()
@@ -124,7 +121,7 @@ function GM:OpenShop()
         else
             surface.SetDrawColor( 0, 0, 0, 220 )
         end
-        surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+        surface.SetMaterial( self.Icons.Menu.cancelIcon )
         surface.DrawTexturedRect( 0, 0, close:GetWide(), close:GetTall() )
     end
     close.OnCursorEntered = function()
@@ -171,12 +168,6 @@ function GM:OpenShop()
     self.ShopModelsSheet:SetSize( self.ShopParentSheet:GetWide(), self.ShopParentSheet:GetTall() - ( 56 / 2 ) - 8 ) --Dunno why this needs these extra size measurements
     self.ShopModelsSheet:SetPos( 0, 0 )
     self.ShopModelsSheet:DoSetup()
-    --[[self.ShopModelsSheet.Paint = function()
-        --draw.RoundedBox( 8, 0, 0, self.ShopModelsSheet:GetWide(), self.ShopModelsSheet:GetTall(), Color( 0, 0, 255 ) )
-        --surface.SetDrawColor( Color( 0, 0, 255 ) )
-        --surface.DrawRect( 0, 0, self.ShopWeaponsSheet:GetWide(), self.ShopWeaponsSheet:GetTall() )
-        draw.SimpleText( "UNDER CONSTRUCTION", "ExoTitleFont", self.ShopModelsSheet:GetWide() / 2, self.ShopModelsSheet:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-    end]]
     local ModelSheetTable = self.ShopParentSheet:AddSheet( "Playermodels", self.ShopModelsSheet )
 
     self.ShopModelsButton = vgui.Create( "PropertySheetButton", self.ShopMain )
@@ -191,10 +182,8 @@ function GM:OpenShop()
 		if ( !v.Tab ) then continue end
 
         v.Tab.Paint = function() return true end
-        v.Tab.DoClick = function() return true end --May need to remove - may unintentionally disable desired functionality
+        v.Tab.DoClick = function() return true end
     end
-    --print(GAMEMODE, self, self.ShopMain)
-    --self:DrawEventStatuses( self.ShopMain )
 end
 
 function GM:AttemptBuyWeapon( wepclass )
@@ -251,3 +240,7 @@ function GM:AttemptBuyPModel( model, currency )
         end
     end
 end
+
+net.Receive( "StartShopDirect", function()
+    GAMEMODE:OpenShop()
+end )

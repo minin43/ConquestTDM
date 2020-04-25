@@ -78,7 +78,7 @@ hook.Add("PlayerSpawn", "DeadlyWeaponSetup", function(ply)
     GAMEMODE.WeaponCounter[ply] = 0
 end)
 
-hook.Add("EntityFireBullets", "FiredYourShot", function(ply, bulletdata)
+hook.Add("EntityFireBullets", "FiredL115", function(ply, bulletdata)
     if ply:GetActiveWeapon():GetClass() == "cw_l115" then
         timer.Simple(0.4, function()
             for k, v in pairs(ply:GetWeapons()) do
@@ -93,6 +93,16 @@ hook.Add("EntityFireBullets", "FiredYourShot", function(ply, bulletdata)
         end)
     end
 end)
+
+hook.Add( "PlayerButtonDown", "PreventL115Drop", function( ply, bind )
+    if bind == KEY_Q and IsValid( ply ) and ply:Team() != 0 and !ply.spawning then
+        local wep = ply:GetActiveWeapon()
+        if wep and wep:GetClass() == "cw_l115" then
+            ply:StripWeapon( wep )
+            GAMEMODE.WeaponCounter[ply] = 0
+        end
+    end
+end )
 
 RegisterPerk("Deadly Weapon", "deadlyweapon", 80, "After reaching 4 kills in one life, equip a 1-shot-kill sniper with 1 bullet loaded. Earning a kill with it refreshes all weapon ammo and player heatlh.")
 

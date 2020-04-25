@@ -1,10 +1,13 @@
 surface.CreateFont( "MapFont", { font = "BF4 Numbers", size = 25, weight = 600, antialias = true } )
 surface.CreateFont( "HeaderFont", { font = "BF4 Numbers", size = 70, weight = 600, antialias = true } )
 
+GM.MapvoteButtonWide = ScrW() / 4
+GM.MapvoteButtonTall = ScrH() / 4
+
 GM.IconExplanations = {
-    flags = " indicates the map has conquest flags",
-    snipers = " indicates a sniper-friendly map with long\nlines of sight",
-    event = " indicates this map will be played with a random event"
+    flags = " map has conquest flags",
+    snipers = " sniper-friendly map",
+    event = " random event used"
 }
 
 net.Receive( "BeginMapvote", function()
@@ -97,15 +100,15 @@ function GM:DrawMapvote()
     end
 
     local positions = {
-        { x = ( ScrW() / 4 ) - 6, y = ScrH() / 4 - 6 },
-        { x = ( ScrW() / 2 ), y = ScrH() / 4 - 6 },
-        { x = ( ScrW() / 4 ) * 3 + 6, y = ScrH() / 4 - 6 },
-        { x = ( ScrW() / 4 ) - 6, y = ( ScrH() / 4 ) * 2 },
-        { x = ( ScrW() / 2 ), y = ( ScrH() / 4 ) * 2 },
-        { x = ( ScrW() / 4 ) * 3 + 6, y = ( ScrH() / 4 ) * 2 },
-        { x = ( ScrW() / 4 ) - 6, y = ( ScrH() / 4 ) * 3 + 6 },
-        { x = ( ScrW() / 2 ), y = ( ScrH() / 4 ) * 3 + 6 },
-        { x = ( ScrW() / 4 ) * 3 + 6, y = ( ScrH() / 4 ) * 3 + 6 }
+        { x = ( self.MapvoteButtonWide ) - 6, y = self.MapvoteButtonTall - 6 },
+        { x = ( ScrW() / 2 ), y = self.MapvoteButtonTall - 6 },
+        { x = ( self.MapvoteButtonWide ) * 3 + 6, y = self.MapvoteButtonTall - 6 },
+        { x = ( self.MapvoteButtonWide ) - 6, y = ( self.MapvoteButtonTall ) * 2 },
+        { x = ( ScrW() / 2 ), y = ( self.MapvoteButtonTall ) * 2 },
+        { x = ( self.MapvoteButtonWide ) * 3 + 6, y = ( self.MapvoteButtonTall ) * 2 },
+        { x = ( self.MapvoteButtonWide ) - 6, y = ( self.MapvoteButtonTall ) * 3 + 6 },
+        { x = ( ScrW() / 2 ), y = ( self.MapvoteButtonTall ) * 3 + 6 },
+        { x = ( self.MapvoteButtonWide ) * 3 + 6, y = ( self.MapvoteButtonTall ) * 3 + 6 }
     }
 
     --//As soon as I added in random and repeat options, shit got messy
@@ -116,7 +119,7 @@ function GM:DrawMapvote()
                 dumby:SetFont( "MapFont" )
                 dumby:SetMapName( "random" )
                 dumby:SetVotes( 0 )
-                dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                dumby:SetSize( self.MapvoteButtonWide, self.MapvoteButtonTall )
                 dumby:SetPos( positions[ k ].x - ( dumby:GetWide() / 2 ), positions[ k ].y - ( dumby:GetTall() / 2 ) )
 
                 self.MapvoteOptions[ v.name ] = dumby
@@ -127,13 +130,13 @@ function GM:DrawMapvote()
                     dumby:SetMapName( "repeat" )
                     dumby:SetVotes( 0 )
                     dumby:SetMapImage( self.MapTable[ game.GetMap() ].img )
-                    dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                    dumby:SetSize( self.MapvoteButtonWide, self.MapvoteButtonTall )
                     dumby:SetPos( positions[ k ].x - ( dumby:GetWide() / 2 ), positions[ k ].y - ( dumby:GetTall() / 2 ) )
 
                     self.MapvoteOptions[ v.name ] = dumby
                 else
                     local dumby = vgui.Create( "DPanel", self.MapvoteMain )
-                    dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                    dumby:SetSize( self.MapvoteButtonWide, self.MapvoteButtonTall )
                     dumby:SetPos( positions[ k ].x - ( dumby:GetWide() / 2 ), positions[ k ].y - ( dumby:GetTall() / 2 ) )
                     dumby.Paint = function()
                         surface.SetDrawColor( 60, 60, 60, 240 )
@@ -145,8 +148,13 @@ function GM:DrawMapvote()
                 end
             elseif v.name == "legend" then
                 local dumby = vgui.Create( "DPanel", self.MapvoteMain )
-                dumby:SetSize( ScrW() / 4, ScrH() / 4 )
+                dumby:SetSize( self.MapvoteButtonWide, self.MapvoteButtonTall )
                 dumby:SetPos( positions[ k ].x - ( dumby:GetWide() / 2 ), positions[ k ].y - ( dumby:GetTall() / 2 ) )
+                for k, v in pairs( self.IconExplanations ) do
+                    if isstring( v ) then
+                        self.IconExplanations[ k .. "Markup" ] = markup.Parse( "<font=MapFont>" .. v .. "</font>", self.MapvoteButtonWide - 32 - 4)
+                    end
+                end
                 dumby.Paint = function()
                     surface.SetDrawColor( 60, 60, 60, 240 )
                     surface.DrawRect( 0, 0, dumby:GetWide(), dumby:GetTall() )
@@ -160,6 +168,7 @@ function GM:DrawMapvote()
                         surface.DrawTexturedRect( 4, ( 4 * counter ) + ( 32 * ( counter - 1 ) ), 32, 32 )
                         draw.NoTexture()
 
+                        --self.IconExplanations[ k .. "Markup" ]:Draw( 40, (4 * counter) + (16 * counter) + (16 * (counter - 1)), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
                         draw.SimpleText( self.IconExplanations[ k ], "MapFont", 40, ( 4 * counter ) + ( 16 * counter ) + ( 16 * ( counter - 1 ) ), Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
                     end
                 end
@@ -174,7 +183,7 @@ function GM:DrawMapvote()
             dumby:SetMapImage( v.info.img )
             dumby:SetVotes( 0 )
             dumby:SetTags( v.info.tags )
-            dumby:SetSize( ScrW() / 4, ScrH() / 4 ) --1/4 the size of 16:9 resolutions
+            dumby:SetSize( self.MapvoteButtonWide, self.MapvoteButtonTall ) --1/4 the size of 16:9 resolutions
             dumby:SetPos( positions[ k ].x - ( dumby:GetWide() / 2 ), positions[ k ].y - ( dumby:GetTall() / 2 ) )
 
             self.MapvoteOptions[ v.name ] = dumby
@@ -183,7 +192,7 @@ function GM:DrawMapvote()
 
     local exitButton = vgui.Create("DButton", self.MapvoteMain)
     exitButton:SetSize(120, 30)
-    exitButton:SetPos(self.MapvoteMain:GetWide() / 2 - (exitButton:GetWide() / 2), ( ScrH() / 4 ) * 3.7 + 6)
+    exitButton:SetPos(self.MapvoteMain:GetWide() / 2 - (exitButton:GetWide() / 2), ( self.MapvoteButtonTall ) * 3.7 + 6)
     exitButton:SetText("")
     exitButton.Paint = function()
         if exitButton.cursorEntered then

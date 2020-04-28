@@ -100,6 +100,15 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "ttt_trinity_church" ] = { id = 1796051616, size = "Large", img = "vgui/maps/trinitychurch.png", type = "ins2",
         tags = { } },
     [ "zs_abstractum_v1" ] = { id = 1708763559, size = "Small", img = "vgui/maps/abstractum.png", type = "ins2",
+        tags = { } },
+    --Update 1.16
+    [ "dm_drift" ] = { id = 837801728, size = "Small", img = "vgui/maps/drift.png", type = "hl2",
+        tags = { } },
+    [ "de_paris_subway" ] = { id = 439316726, size = "Large", img = "vgui/maps/paris_subway.png", type = "ins2",
+        tags = { } },
+    [ "cs_east_borough" ] = { id = 296957963, size = "Large", img = "vgui/maps/east_borough.png", type = "ins2",
+        tags = { } },
+    [ "gm_battleground_nodes" ] = { id = 1425456348, size = "Massive", img = "vgui/maps/battleground.png", type = "hl2",
         tags = { } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
@@ -137,17 +146,12 @@ GM.DependentDownloads = {
 }
 
 if SERVER then
-    
+    --Weapons
 	resource.AddWorkshop( "349050451" ) --CW2.0 Base
 	resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
-    resource.AddWorkshop( "1386774614" ) --CTDM Files (CTDM content pack part 1)
-    resource.AddWorkshop( "1819579704" ) --CTDM Files (CTDM content pack part 3)
-	--resource.AddWorkshop( "805601312" ) --INS2 Ambient Noises     -     Doesn't fit the feel of the gamemode
-	resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
 	resource.AddWorkshop( "1698026320" ) --The 6 new guns (CTDM content pack part 2)
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
-    --resource.AddWorkshop( "1757496598" ) --AMR pack (RPK, MK 46) - FUCK these are so big for being just 2 weapons     -     Permanently removed
     resource.AddWorkshop( "1555980538" ) --Sniper pack
     resource.AddWorkshop( "838920776" ) --Bullpup Pack
     resource.AddWorkshop( "1646262010" ) --RFB
@@ -157,10 +161,25 @@ if SERVER then
     resource.AddWorkshop( "1805065429" ) --R5
     resource.AddWorkshop( "374453458" ) --AAC Honeybadger
 
+    --Server Content
+    resource.AddWorkshop( "1386774614" ) --CTDM Files (CTDM content pack part 1)
+    resource.AddWorkshop( "1819579704" ) --CTDM Files (CTDM content pack part 3)
+    resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
+
+    --Playermodels
+    resource.AddWorkshop( "150404359" ) --GMod Tower
+    resource.AddWorkshop( "660726443" ) --Necris Part 1 - Yikes these are huge for 2 PMs
+    resource.AddWorkshop( "660726791" ) --Necris Part 2
+    resource.AddWorkshop( "660726791" ) --Info_Player_Start
+    resource.AddWorkshop( "660726791" ) --R6 Kapkan
+    resource.AddWorkshop( "660726791" ) --Thanos
+    resource.AddWorkshop( "660726791" ) --GTA V Characters
+    resource.AddWorkshop( "1843708002" ) --John Wick
+
 	util.AddNetworkString( "RequestTeams" )
 	util.AddNetworkString( "RequestTeamsCallback" )
 
-	if GM.MapTable[ game.GetMap() ] then --Commented out until there are MW2 and INS2 playermodels for the teams
+	if GM.MapTable[ game.GetMap() ] then 
 		local mapType = GM.MapTable[ game.GetMap() ].type
 		if mapType and mapType != "mw2" then
 			local redOptions = #GM.TeamNames[ mapType ].red

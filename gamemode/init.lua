@@ -455,7 +455,6 @@ function GM:ShowSpare2( ply )
 	end
 end
 
-
 function GM:PlayerInitialSpawn( ply )
 	--//If you're looking for any logic related to finishing loading in, what little code there is can be found in shared.lua in the "if SERVER then" chunk
 	--//In the net.Receive for "RequestTeams." The server receives this net message as soon as the client has fully loaded in, as the spawnmenu requires it.
@@ -627,7 +626,7 @@ function giveLoadout( ply )
     end
     
     ply:Give( "weapon_fists" )
-    
+
 	hook.Call( "PostGiveLoadout", nil, ply )
 end
 

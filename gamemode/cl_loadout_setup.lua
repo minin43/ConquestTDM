@@ -1526,7 +1526,7 @@ function perkspanel:DoSetup()
 
     --Because perks aren't sent to the client (even though they could be...) this is ran and handled differently from the weapons
     net.Receive( "GetUnlockedPerksCallback", function()
-        GAMEMODE.UnlockedPerks = net.ReadTable()
+        GAMEMODE.Perks = net.ReadTable()
         self:RepopulateList()
     end )
 
@@ -1546,13 +1546,19 @@ function perkspanel:DoSetup()
     sBar.btnDown.Paint = function() return end
 
     function GetPerkTable( perkid )
-        if !GAMEMODE.UnlockedPerks then return end
+        if !GAMEMODE.Perks then return end
 
-        for k, v in pairs( GAMEMODE.UnlockedPerks ) do
+        for k, v in pairs( GAMEMODE.Perks ) do
             if perkid == v[2] then
                 return v
             end
         end
+        for k, v in pairs( GAMEMODE.Perks.locked ) do
+            if perkid == v[2] then
+                return v
+            end
+        end
+
         return false
     end
 end
@@ -1571,14 +1577,32 @@ function perkspanel:RepopulateList()
         surface.DrawLine( w / 2 - (tw / 2) - 4, h / 2 + (th / 2) - 2, w / 2 + (tw / 2) + 4, h / 2 + (th / 2) - 2 )
     end
 
-    for _, perktable in pairs( GAMEMODE.UnlockedPerks ) do
+    for _, perktable in ipairs( GAMEMODE.Perks ) do
         local button = vgui.Create( "PerksButton", self.scrollpanel )
         button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
         button:Dock( TOP )
         button:SetTrueParent( self )
         button:SetPerkTable( perktable )
         self.scrollpanel.buttons[ perktable[2] ] = button
-        --do more button stuff
+    end
+    for _, perktable in ipairs( GAMEMODE.Perks.locked ) do
+        local locked = vgui.Create( "DPanel", self.scrollpanel )
+        locked:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+        locked:Dock( TOP )
+        locked.Paint = function( panel )
+            if !locked then return end
+            surface.SetTextColor( 0, 0, 0, 220 )
+            surface.SetFont( "Exo-24-600" )
+            local w, h = surface.GetTextSize( perktable[ 1 ] )
+            surface.SetTextPos( 12, panel:GetTall() / 2 - ( h / 2 ) - 2 )
+            surface.DrawText( perktable[ 1 ] )
+
+            surface.SetFont( "Exo-16-500" )
+            surface.SetTextColor( colorScheme[1].TeamColor )
+            surface.SetTextPos( 24, panel:GetTall() / 2 + ( h / 2 ) - 4 )
+            surface.DrawText( "Unlocks at Level " .. perktable[ 3 ] )
+            return true
+        end
     end
 end
 

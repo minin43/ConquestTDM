@@ -35,7 +35,8 @@ hook.Add( "PlayerInitialSpawn", "SetupDonatorPData", function( ply )
 	end )
 end )
 
-vip = { }
+vip = {}
+vip.Players = {}
 
 vip.Groups = { --Multiplier %
 	vip = 0.10,
@@ -60,12 +61,36 @@ else
 	end
 end
 
+--DOES NOT save to a file, only sets the player's "usergroup"
 function vip.SetVip( ply, group )
+    vip.Players[ id(ply:SteamID()) ] = group
+end
 
+function vip.GetVip( ply )
+    return vip.Players[ id(ply:SteamID()) ] or false
+end
+
+--Saves the provided group name to a file
+function vip.SaveVip( ply, group )
+    if vip.Groups[ group ] then
+        file.Write( "tdm/users/vip/" .. id(ply:SteamID()) .. ".txt", group )
+        vip.SetVip( ply, group )
+    end
 end
 
 hook.Add( "PlayerInitialSpawn", "SetUserGroup", function( ply )
-	--fil = 
+	if not file.Exists( "tdm/users/vip", "DATA" ) then
+        file.CreateDir( "tdm/users/vip" )
+    end
+
+    if file.Exists( "tdm/users/vip/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
+        local vipgroup = file.Read( "tdm/users/vip/" .. id( ply:SteamID() ) .. ".txt" )
+        vip.SetVip( ply, vipgroup )
+    else
+        print("Checking for ULiB usergroup - currently not working")
+        local ulibcontent = file.Read( "ulib/users.txt" )
+        --PrintTable(string.Explode( "\n", ulibcontent))
+	end
 end )
 
 net.Receive( "GetDonatorCredits", function( len, ply )

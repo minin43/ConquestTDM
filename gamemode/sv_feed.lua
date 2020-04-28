@@ -362,9 +362,9 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
             net.WriteString( SoundToSend )
         net.Send( att )
     end
-
-    if vip.Groups[ att:GetUserGroup() ] then
-        AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ ply:GetUserGroup() ], NOTICETYPES.EXTRA )
+    
+    if vip.GetVip( att ) then
+        AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ vip.GetVip( att ) ], NOTICETYPES.EXTRA )
     end
 
     local eventpointmultiplier = 1

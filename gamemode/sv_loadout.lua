@@ -74,10 +74,12 @@ net.Receive( "GetUnlockedModels", function( len, ply )
     net.Send( ply )
 end )
 net.Receive( "GetUnlockedPerks", function( len, ply )
-    local tosend = {}
+    local tosend = { locked = {} }
     for _, perkinfo in pairs( GAMEMODE.Perks ) do
         if perkinfo[ 3 ] <= lvl.GetLevel( ply ) then
             tosend[ #tosend + 1 ] = perkinfo
+        else
+            tosend.locked[ #tosend.locked + 1 ] = perkinfo
         end
     end
 
@@ -146,20 +148,6 @@ net.Receive( "SetLoadout", function( len, ply )
         playermodelbodygroups = pmbgroups
     }
 end )
-
-vip = {
-	{ "vip", 201 },
-    { "operator", 201 },
-	{ "vip+", 202 },
-	{ "ultravip", 203 },
-	{ "admin", 204 },
-	{ "superadmin", 204 },
-	{ "headadmin", 205 },
-	{ "coowner", 206 },
-	{ "owner", 206 },
-	{ "creator", 206 },
-	{ "Developer", 209 }
-}
 
 --[[function FixExploit( ply, wep )
 	ply:StripWeapon( wep )

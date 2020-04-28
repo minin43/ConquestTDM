@@ -23,7 +23,6 @@ GM.BuyableModels = {
     { name = "Sub-Zero", model = "models/player/subzero.mdl", collection = "Gmod Tower", voiceovers = false, quality = 1 },
     { name = "Walter White", model = "models/Agent_47/agent_47.mdl", collection = "Gmod Tower", voiceovers = false, quality = 1 },
     { name = "Boba Fett", model = "models/player/bobafett.mdl", collection = "Gmod Tower", voiceovers = false, quality = 2, bodygroups = true },
-    --{ name = "Chel", model = "", collection = "HL2 Defaults", voiceovers = false, quality = 2 },
     { name = "Chewbacca", model = "models/player/chewbacca.mdl", collection = "Gmod Tower", voiceovers = false, quality = 2 },
     { name = "Chris", model = "models/player/chris.mdl", collection = "Gmod Tower", voiceovers = false, quality = 2 },
     { name = "Crimson Lance Soldier", model = "models/player/lordvipes/bl_clance/crimsonlanceplayer.mdl", collection = "Gmod Tower", voiceovers = false, quality = 2 },
@@ -44,7 +43,12 @@ GM.BuyableModels = {
     { name = "Teslapower", model = "models/player/teslapower.mdl", collection = "Gmod Tower", voiceovers = false, quality = 4 },
     { name = "Tron Guy", model = "models/player/anon/anon.mdl", collection = "Gmod Tower", voiceovers = false, quality = 4, bodygroups = true },
     { name = "Necris Male", model = "models/mark2580/ut4/necris_m_player.mdl", collection = "Necris", voiceovers = false, quality = 5, bodygroups = true },
-    { name = "Necris Female", model = "models/mark2580/ut4/necris_f_player.mdl", collection = "Necris", voiceovers = false, quality = 5, bodygroups = true }
+    { name = "Necris Female", model = "models/mark2580/ut4/necris_f_player.mdl", collection = "Necris", voiceovers = false, quality = 5, bodygroups = true },
+    { name = "Thanos", model = "models/kryptonite/inf_thanos/inf_thanos.mdl", collection = "Avengers", voiceovers = false, quality = 3 },
+    { name = "John Wick", model = "models/wick_chapter2", collection = "Avengers", voiceovers = false, quality = 4, bodygroups = true },
+    { name = "Franklin", model = "models/grandtheftauto5/franklin.mdl", collection = "GTA V", voiceovers = false, quality = 4, bodygroups = true },
+    { name = "Michael", model = "models/grandtheftauto5/michael.mdl", collection = "GTA V", voiceovers = false, quality = 4, bodygroups = true },
+    { name = "Trevor", model = "models/grandtheftauto5/trevor.mdl", collection = "GTA V", voiceovers = false, quality = 4 }
     --{ name = "", model = "", collection = "", voiceovers = false, quality = 0 },
 }
 

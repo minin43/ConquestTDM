@@ -133,7 +133,9 @@ net.Receive( "BuyWeapon", function( len, ply )
 	file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", new )
 
 	net.Start( "BuyWeaponCallback" )
-	net.Send( ply )
+    net.Send( ply )
+    
+    GAMEMODE.RecacheUnlockedTable[ply].wep = true
 end )
 
 net.Receive( "BuySkin", function( len, ply )
@@ -163,6 +165,8 @@ net.Receive( "BuySkin", function( len, ply )
     net.Send( ply )
 
     GAMEMODE:RefreshCurrencies( ply )
+
+    GAMEMODE.RecacheUnlockedTable[ ply ].skin = true
 end )
 
 net.Receive( "BuyModel", function( len, ply )
@@ -192,4 +196,6 @@ net.Receive( "BuyModel", function( len, ply )
     net.Send( ply )
     
     GAMEMODE:RefreshCurrencies( ply )
+
+    GAMEMODE.RecacheUnlockedTable[ ply ].model = true
 end )

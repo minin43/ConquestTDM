@@ -113,6 +113,19 @@ function GM:LoadoutMenu( switchingTo )
         surface.SetTextPos( self.LoadoutMain:GetWide() / 3 + iconSize - --[[( iconSize / 2 ) -]] ( surface.GetTextSize( ": $" .. comma_value( self.MyMoney ) ) ), self.LoadoutMain:GetTall() - ( self.TitleBar / 2 ) + 4 )
         surface.DrawText( " $" .. comma_value( self.MyMoney ) )
 
+        --If we have new unlocks
+        if self.NotifyUnlocks and self.NotifyUnlocks > 0 then
+            local text = "weapon"
+            if self.NotifyUnlocks > 1 then text = "weapons" end
+            local w, h = surface.GetTextSize( "You've unlocked " .. self.NotifyUnlocks .. " new " .. text .. " in the shop!")
+            surface.SetTextPos( self.LoadoutMain:GetWide() / 2 - (w / 2), self.LoadoutMain:GetTall() - ( self.TitleBar / 2 ) + 4 )
+            local fade = math.abs(math.sin(CurTime() * 4))
+            local crazycolor = Color( colorScheme[switchingTo].ButtonIndicator.r + ((255 - colorScheme[switchingTo].ButtonIndicator.r) * fade), colorScheme[switchingTo].ButtonIndicator.g + ((255 - colorScheme[switchingTo].ButtonIndicator.g) * fade), colorScheme[switchingTo].ButtonIndicator.b + ((255 - colorScheme[switchingTo].ButtonIndicator.b) * fade) )
+            surface.SetTextColor( crazycolor )
+            surface.DrawText( "You've unlocked " .. self.NotifyUnlocks .. " new " .. text .. " in the shop!" )
+        end
+        surface.SetTextColor( Color( 255, 255, 255 ) )
+
         --Display player prestige tokens with icon & value 
         surface.SetMaterial( GAMEMODE.Icons.Menu.tokensIconSmall )
         surface.DrawTexturedRect( self.LoadoutMain:GetWide() / 3 * 2, self.LoadoutMain:GetTall() - ( self.TitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
@@ -194,7 +207,11 @@ function GM:LoadoutMenu( switchingTo )
     PMPanel:SetPos( 0, self.TitleBar )
     PMPanel:SetDefaultModel( self.DefaultModels[ team.GetName( switchingTo ) ][ math.random( #self.DefaultModels[ team.GetName( switchingTo ) ] ) ] )
     if self.LastSentLoadout then
-        PMPanel:SetModel( self.LastSentLoadout[5][1], "models/weapons/w_rif_m4a1.mdl" )
+        if IsDefaultModel(self.LastSentLoadout[5][1]) then
+            PMPanel:SetModel( nil, "models/weapons/w_rif_m4a1.mdl" )
+        else
+            PMPanel:SetModel( self.LastSentLoadout[5][1], "models/weapons/w_rif_m4a1.mdl" )
+        end
         PMPanel:SetSkin( self.LastSentLoadout[5][2] )
 
         if self.LastSentLoadout[5][3] then
@@ -389,7 +406,7 @@ function GM:LoadoutMenu( switchingTo )
     end
 end
 
---The old prestige shit I wrote for the old loadoutmenu, adapted for the current one. Just got really lazy and didn't want to rewrite anything
+--The old prestige shit I wrote for the old loadoutmenu, adapted for the current one. Just got really lazy and didn't want to rewrite any of this
 function OpenConfirmationPanel()
     confirmationpanel = vgui.Create( "DFrame" )
     confirmationpanel:SetSize( 450, 180 )

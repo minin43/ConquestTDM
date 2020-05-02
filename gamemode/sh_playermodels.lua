@@ -45,7 +45,7 @@ GM.BuyableModels = {
     { name = "Necris Male", model = "models/mark2580/ut4/necris_m_player.mdl", collection = "Necris", voiceovers = false, quality = 5, bodygroups = true },
     { name = "Necris Female", model = "models/mark2580/ut4/necris_f_player.mdl", collection = "Necris", voiceovers = false, quality = 5, bodygroups = true },
     { name = "Thanos", model = "models/kryptonite/inf_thanos/inf_thanos.mdl", collection = "Avengers", voiceovers = false, quality = 3 },
-    { name = "John Wick", model = "models/wick_chapter2", collection = "Avengers", voiceovers = false, quality = 4, bodygroups = true },
+    { name = "John Wick", model = "models/wick_chapter2", collection = "John Wick", voiceovers = false, quality = 4, bodygroups = true },
     { name = "Franklin", model = "models/grandtheftauto5/franklin.mdl", collection = "GTA V", voiceovers = false, quality = 4, bodygroups = true },
     { name = "Michael", model = "models/grandtheftauto5/michael.mdl", collection = "GTA V", voiceovers = false, quality = 4, bodygroups = true },
     { name = "Trevor", model = "models/grandtheftauto5/trevor.mdl", collection = "GTA V", voiceovers = false, quality = 4 }
@@ -59,6 +59,9 @@ function GetModelTableByDirectory( dir )
     for k, v in pairs( GAMEMODE.PlayerModels ) do
         if v.model == dir then return v end
     end
+
+    if IsDefaultModel( dir ) then return false end
+
     error( "Function GetModelTableByDirectory given bad model directory: " .. dir )
 end
 

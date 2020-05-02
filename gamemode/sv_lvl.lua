@@ -1,4 +1,5 @@
 util.AddNetworkString( "SendUpdate" )
+util.AddNetworkString( "NewLevel" )
 
 local color_red = Color( 255, 0, 0 )
 local color_blue = Color( 0, 0, 255 )
@@ -140,9 +141,33 @@ hook.Add( "PlayerInitialSpawn", "lvl.SendInitialLevel", function( ply )
 	end )
 end )
 	
-hook.Add( "lvl.OnLevelUp", "lvl.OnLevelUp", function( ply, newlv )
-	ply:ChatPrintColor( "You have leveled up to ", color_green, "level " .. tostring( newlv ), color_white )--, ". You unlocked: ", color_green )
-	ply:SendLua([[surface.PlaySound( "ui/UI_Awards_Basic_wav.mp3" )]])
+hook.Add( "lvl.OnLevelUp", "lvl.OnLevelUp", function( ply, newlvl )
+    local throwaway = {}
+    local nonperkunlocks = 0
+
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
+        if v[3] == newlvl then
+            throwaway[ #throwaway + 1 ] = v[ 1 ]
+            nonperkunlocks = nonperkunlocks + 1
+        end
+    end
+    for k, v in pairs( GAMEMODE.Perks ) do
+        if v[3] == newlvl then
+            throwaway[ #throwaway + 1 ] = v[ 1 ]
+            GAMEMODE.RecacheUnlockedTable[ ply ].perk = true --From sv_loadout, re-updates unlocked-perks list on next loadout open
+        end
+    end
+
+    if #throwaway == 0 then
+        ply:ChatPrintColor( color_white, "You have leveled up to ", color_green, "level " .. tostring( newlvl ), color_white )
+    else
+        ply:ChatPrintColor( color_white, "You have leveled up to ", color_green, "level " .. tostring( newlvl ), color_white, ". You unlocked: ", color_green, throwaway, color_white )
+    end
+    
+    net.Start( "NewLevel" )
+        net.WriteInt( nonperkunlocks, 8 )
+        --Should maybe send a table containing where the unlocks are?
+    net.Send( ply )
 end )
 
 concommand.Add( "lvl_refresh", function( ply )

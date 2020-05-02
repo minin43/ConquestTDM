@@ -21,6 +21,8 @@ function GM:OpenShop()
     net.Start( "GetDonatorCredits")
     net.SendToServer()
 
+    self.NotifyUnlocks = 0
+
 	self.ShopMain = vgui.Create( "DFrame" )
 	self.ShopMain:SetSize( 750, 600 )
 	self.ShopMain:SetTitle( "" )
@@ -64,17 +66,17 @@ function GM:OpenShop()
         --surface.SetTextPos( self.ShopMain:GetWide() / 3 + iconSize, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
         surface.DrawTexturedRect( self.ShopMain:GetWide() / 3 - --[[( iconSize / 2 ) -]] ( surface.GetTextSize( ": $" .. comma_value( self.MyMoney ) ) ), self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
         surface.SetTextPos( self.ShopMain:GetWide() / 3 + iconSize - --[[( iconSize / 2 ) -]] ( surface.GetTextSize( ": $" .. comma_value( self.MyMoney ) ) ), self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
-        surface.DrawText( ": $" .. comma_value( self.MyMoney ) )
+        surface.DrawText( " $" .. comma_value( self.MyMoney ) )
 
         --Display player prestige tokens with icon & value 
         surface.SetMaterial( self.Icons.Menu.tokensIconSmall )
         surface.DrawTexturedRect( self.ShopMain:GetWide() / 3 * 2, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
         surface.SetTextPos( self.ShopMain:GetWide() / 3 * 2 + iconSize, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
-        surface.DrawText( ": " .. self.MyPrestigeTokens )
+        surface.DrawText( " " .. self.MyPrestigeTokens )
 
         --Display player donator credits with icon & value
         surface.SetTextPos( self.ShopMain:GetWide() - surface.GetTextSize( ": " .. self.MyCredits ) - 5, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 2 ) + 4 )
-        surface.DrawText( ": " .. self.MyCredits )
+        surface.DrawText( " " .. self.MyCredits )
         surface.SetMaterial( self.Icons.Menu.creditsIconSmall )
         surface.DrawTexturedRect( self.ShopMain:GetWide() - surface.GetTextSize( ": " .. self.MyCredits ) - iconSize - 4, self.ShopMain:GetTall() - ( self.ShopMainTitleBar / 4 ) - ( iconSize / 2 ) + iconOffsetY, iconSize, iconSize )
 

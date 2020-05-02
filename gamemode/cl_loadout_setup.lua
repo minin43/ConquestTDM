@@ -287,7 +287,8 @@ playermodelpanel.RebelModels = { "models/player/group03/male_01.mdl", "models/pl
 playermodelpanel.Sequences = { "idle_ar2", "pose_standing_02", "idle_all_01", "cidle_ar2" }
 playermodelpanel.EntityBodygroup = {}
 playermodelpanel.DefaultWeapon = "models/weapons/w_rif_m4a1.mdl"
-playermodelpanel.model = playermodelpanel.RebelModels[ math.random( #playermodelpanel.RebelModels ) ]
+playermodelpanel.defaultmodel = playermodelpanel.RebelModels[ math.random( #playermodelpanel.RebelModels ) ]
+playermodelpanel.model = playermodelpanel.defaultmodel
 playermodelpanel.WeaponEntity = nil
 playermodelpanel.OptionsButton = nil
 playermodelpanel.OptionsPanel = nil
@@ -297,7 +298,7 @@ playermodelpanel.rotatemult = 0.25
 AccessorFunc( playermodelpanel, "WeaponEntity", "WeaponEntity" )
 
 function playermodelpanel:SetDefaultModel( mdl )
-    self.model = mdl
+    self.defaultmodel = mdl
 end
 
 --//Modified DModelPanel SetModel function, allows a second model be added as a weapon to equip to the first model
@@ -314,8 +315,8 @@ function playermodelpanel:SetModel( strModelName, strModelName2 )
         end
     end
 
-    local firstModel = strModelName or self.model
-    self.model = strModelName or self.model
+    local firstModel = strModelName or self.defaultmodel
+    self.model = strModelName or self.defaultmodel
     local secondModel = strModelName2 or self.DefaultWeapon
 
     if strModelName or (!self.Entity and strModelName2) then
@@ -602,9 +603,12 @@ function playermodelpaneloptions:RefreshOptions()
     end
     self.referencepanel:SetSequence( self.referencepanel.EntitySequence or 1 )
     numElements = numElements + 1
-    
+
+    local getstoedit = GetModelTableByDirectory( self.referencepanel.model )
+    if getstoedit and getstoedit.bodygroups then getstoedit = true else getstoedit = false end
+
     local numskins = self.referencepanel.Entity:SkinCount()
-    if numskins > 1 then
+    if numskins > 1 and getstoedit then
         local skins = vgui.Create( "LoganSlider", scrollpanel )
         skins:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )
         skins:Dock( TOP )
@@ -617,7 +621,7 @@ function playermodelpaneloptions:RefreshOptions()
             self.referencepanel:SetSkin( math.Round( num ) )
         end
     else
-        if #self.referencepanel.Entity:GetBodyGroups() == 1 then
+        if #self.referencepanel.Entity:GetBodyGroups() == 1 or !getstoedit then
             local skins = vgui.Create( "DPanel", scrollpanel )
             skins:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 * 2 )
             skins:Dock( TOP )
@@ -628,20 +632,22 @@ function playermodelpaneloptions:RefreshOptions()
     end
     numElements = numElements + 1
 
-    for k, v in pairs( self.referencepanel.Entity:GetBodyGroups() ) do
-        if v.num > 1 then
-            local bg = vgui.Create( "LoganSlider", scrollpanel )
-            bg:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )
-            bg:Dock( TOP )
-            bg:StartDraw()
-            bg:SetText( string.upper(string.Left(v.name, 1)) .. string.Right(v.name, #v.name - 1) .. ":" )
-            bg:SetMin( 0 )
-            bg:SetMax( v.num - 1 )
-            bg:SetValue( 0 )
-            bg.OnValueChanged = function( _, num )
-                self.referencepanel:SetBodygroup( v.id, math.Round( num ) )
+    if getstoedit then
+        for k, v in pairs( self.referencepanel.Entity:GetBodyGroups() ) do
+            if v.num > 1 then
+                local bg = vgui.Create( "LoganSlider", scrollpanel )
+                bg:SetSize( self:GetWide() - reducedSize, scrollpanel:GetTall() / 3 )
+                bg:Dock( TOP )
+                bg:StartDraw()
+                bg:SetText( string.upper(string.Left(v.name, 1)) .. string.Right(v.name, #v.name - 1) .. ":" )
+                bg:SetMin( 0 )
+                bg:SetMax( v.num - 1 )
+                bg:SetValue( 0 )
+                bg.OnValueChanged = function( _, num )
+                    self.referencepanel:SetBodygroup( v.id, math.Round( num ) )
+                end
+                numElements = numElements + 1
             end
-            numElements = numElements + 1
         end
     end
 end
@@ -656,19 +662,19 @@ vgui.Register( "PlayermodelPanelOptions", playermodelpaneloptions, "DPanel" )
 
 --//
 
-local playermodelpanelmodels = table.Copy( basebutton )
-playermodelpanelmodels.models = {}
-playermodelpanelmodels.trueparent = nil
+local playermodelpanelbuttons = table.Copy( basebutton )
+playermodelpanelbuttons.models = {}
+playermodelpanelbuttons.trueparent = nil
 
-function playermodelpanelmodels:SetModels( tab )
+function playermodelpanelbuttons:SetModels( tab )
     self.models = tab
 end
 
-function playermodelpanelmodels:SetTrueParent( panel )
+function playermodelpanelbuttons:SetTrueParent( panel )
     self.trueparent = panel
 end
 
-function playermodelpanelmodels:Paint()
+function playermodelpanelbuttons:Paint()
     surface.SetDrawColor( 255, 255, 255 )
     surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
     surface.SetFont( "Exo-24-400" )
@@ -683,7 +689,7 @@ function playermodelpanelmodels:Paint()
 end
 
 --Prepare thy buttcheeks
-function playermodelpanelmodels:DoClick()
+function playermodelpanelbuttons:DoClick()
     if #self.models == 0 then
         surface.PlaySound( GAMEMODE.ButtonSounds.Deny[ math.random( #GAMEMODE.ButtonSounds.Deny ) ] )
         return
@@ -785,7 +791,9 @@ function playermodelpanelmodels:DoClick()
                 default.hover = false
             end
             default.DoClick = function()
-                self.listpanel.selected = self.trueparent.model
+                self.listpanel.selected = self.trueparent.defaultmodel
+                self.trueparent:SetModel( self.listpanel.selected )
+                self.trueparent:ResetOptionsButton()
                 surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
             end
 
@@ -822,6 +830,8 @@ function playermodelpanelmodels:DoClick()
                     end
                     button.DoClick = function()
                         self.listpanel.selected = v2.model
+                        self.trueparent:SetModel( self.listpanel.selected )
+                        self.trueparent:ResetOptionsButton()
                         surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
                     end
 
@@ -838,11 +848,11 @@ function playermodelpanelmodels:DoClick()
     end
 end
 
-function playermodelpanelmodels:GetMovingPanel()
+function playermodelpanelbuttons:GetMovingPanel()
     return self.listpanel
 end
 
-vgui.Register( "PlayermodelPanelModels", playermodelpanelmodels, "DButton" )
+vgui.Register( "PlayermodelPanelModels", playermodelpanelbuttons, "DButton" )
 
 --//
 
@@ -1421,15 +1431,13 @@ function equipmentpanel:RepopulateList()
             draw.SimpleText( "No equipment", "Exo-24-600", noequip:GetWide() / 2, noequip:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
     else
-        for k, v in pairs( GAMEMODE.UnlockedEquipment ) do
-            for _, weptable in pairs( v ) do
-                local button = vgui.Create( "EquipmentButton", self.scrollpanel )
-                button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
-                button:Dock( TOP )
-                button:SetTrueParent( self, k )
-                button:SetWeapon( weptable[2] )
-                self.scrollpanel.buttons[ weptable[2] ] = button
-            end
+        for _, weptable in pairs( GAMEMODE.UnlockedEquipment ) do
+            local button = vgui.Create( "EquipmentButton", self.scrollpanel )
+            button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+            button:Dock( TOP )
+            button:SetTrueParent( self, k )
+            button:SetWeapon( weptable[2] )
+            self.scrollpanel.buttons[ weptable[2] ] = button
         end
     end
 end
@@ -1657,8 +1665,8 @@ net.Receive( "GetUnlockedWeaponsCallback", function()
             table.insert( GAMEMODE.UnlockedSecondaries[ typetoint[GAMEMODE.WeaponsList[ v ].type] ], GAMEMODE.WeaponsList[ v ] )
         end
         if GAMEMODE.WeaponsList[ v ].slot == 3 then
-            GAMEMODE.UnlockedEquipment[ typetoint[GAMEMODE.WeaponsList[ v ].type] ] = GAMEMODE.UnlockedEquipment[ typetoint[GAMEMODE.WeaponsList[ v ].type] ] or {}
-            table.insert( GAMEMODE.UnlockedEquipment[ typetoint[GAMEMODE.WeaponsList[ v ].type] ], GAMEMODE.WeaponsList[ v ] )
+            --GAMEMODE.UnlockedEquipment[ typetoint[GAMEMODE.WeaponsList[ v ].type] ] = GAMEMODE.UnlockedEquipment[ typetoint[GAMEMODE.WeaponsList[ v ].type] ] or {}
+            table.insert( GAMEMODE.UnlockedEquipment, GAMEMODE.WeaponsList[ v ] )
         end
     end
     hook.Run( "ReceivedUnlockedWeapons" )

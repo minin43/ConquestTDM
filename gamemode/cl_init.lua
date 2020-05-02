@@ -159,6 +159,16 @@ GM.DefaultModels = {
 }
 GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
 GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
+function IsDefaultModel( mdl )
+    for k, v in pairs( GAMEMODE.DefaultModels ) do
+        for k2, v2 in pairs( v ) do
+            if mdl == v2 then
+                return true
+            end
+        end
+    end
+    return false
+end
 
 include( "shared.lua" )
 include( "cl_hud.lua" )
@@ -254,23 +264,23 @@ end )
 
 net.Receive( "PlayerChatColor", function()
 	local tab = net.ReadTable()
-	local fixedtab = {}
-
-	for k, v in pairs( tab ) do
-		if isstring( v ) or IsColor( v ) then
-            fixedtab[ #fixedtab + 1 ] = v
-        --[[elseif istable( v ) then
+    local fixedtab = {}
+    
+    for k, v in pairs( tab ) do
+        if istable( v ) and !IsColor( v ) then
             for k, v in ipairs( v ) do
                 fixedtab[ #fixedtab + 1 ] = v
-            end]]
+            end
+        else
+            fixedtab[ #fixedtab + 1 ] = v
 		end
-	end
+    end
+    
 	chat.AddText( unpack( fixedtab ) )
 end )
 
 net.Receive( "TeamSwapHook", function()
     local newteam = net.ReadInt( 4 )
-    print("Client received TeamSwapHook net message with new team: ", newteam)
     GAMEMODE.TeamColor = colorScheme[ newteam ].TeamColor
 end )
 

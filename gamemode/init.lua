@@ -149,25 +149,25 @@ end
 
 function _Ply:ChatPrintColor( ... )
 	local args = { ... }
-	local tab = {}
-
+    local tab = {}
+    
     for k, v in pairs( args ) do
         --//We can be sent tables
-        --[[if istable( v ) then
+        if istable( v ) and !IsColor( v ) then
             --//Only numerically-indexed tables
             for k2, v2 in ipairs( v ) do
                 --//If there are multiple items in the table, add a comma to the end of all except the last
                 if k2 == #v then
                     tab[ #tab + 1 ] = v2
                 else
-                    tab[ #tab + 1 ] = v2 .. ","
+                    tab[ #tab + 1 ] = v2 .. ", "
                 end
             end
-        else]]
+        else
             tab[ #tab + 1 ] = v
-        --end
-	end
-
+        end
+    end
+    
 	net.Start( "PlayerChatColor" )
 		net.WriteTable( tab )
 	net.Send( self )
@@ -626,8 +626,6 @@ function giveLoadout( ply )
     end
     
     ply:Give( "weapon_fists" )
-
-	hook.Call( "PostGiveLoadout", nil, ply )
 end
 
 local dontgive = {
@@ -672,19 +670,18 @@ function GM:PlayerSpawn( ply )
 	ply:StartSpawnProtection( 5 ) --//Moved to sv_customspawns
 	ply:SetNoCollideWithTeammates( true )
 	ply:ConCommand( "cw_simple_telescopics 0" )
-
+    --print("timedebug1")
     giveLoadout( ply )
-
+    --print("timedebug2")
     GAMEMODE.PlayerLoadouts[ ply ] = GAMEMODE.PlayerLoadouts[ ply ] or {}
     if GAMEMODE.PlayerLoadouts[ ply ].playermodel then
         ply:SetModel( GAMEMODE.PlayerLoadouts[ ply ].playermodel )
         
         if GAMEMODE.PlayerLoadouts[ ply ].playermodelskin then
             ply:SetSkin( GAMEMODE.PlayerLoadouts[ ply ].playermodelskin )
-        else
-            ply:SetPlayerColor( col[ply:Team()] )
         end
-
+        ply:SetPlayerColor( col[ply:Team()] )
+        
         if GAMEMODE.PlayerLoadouts[ ply ].playermodelbodygroups then
             for bodygroup, value in pairs( GAMEMODE.PlayerLoadouts[ ply ].playermodelbodygroups ) do
                 ply:SetBodygroup( bodygroup, value )
@@ -692,7 +689,15 @@ function GM:PlayerSpawn( ply )
         end
     else
         local teamName = team.GetName( ply:Team() )
-        ply:SetModel( self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ] )
+        local model = self.DefaultModels[ teamName ][ math.random( #self.DefaultModels[ teamName ] ) ]
+        
+        ply:SetModel( model )
+        ply:SetSkin( math.random( ply:SkinCount() ) )
+        if #ply:GetBodyGroups() > 1 then
+            for _, bgdata in pairs( ply:GetBodyGroups() ) do
+                ply:SetBodygroup( bgdata.id, math.random( bgdata.num ) )
+            end
+        end
         ply:SetPlayerColor( col[ply:Team()] )
     end
 
@@ -720,11 +725,13 @@ function GM:PlayerSpawn( ply )
 			end
 			ply:GiveAmmo( 2, "40MM", true )
 		end
-	end )
+    end )
+    
+    hook.Call( "PostGiveLoadout", nil, ply )
 
 	net.Start( "StartAttTrack" )
 	net.Send( ply )
-
+    print("timedebug3")
 	return false
 end
 
@@ -922,6 +929,9 @@ hook.Add( "PlayerChangedTeam", "NotifyTeamSwap", function( ply, oldteam, newteam
     net.Start( "TeamSwapHook" )
         net.WriteInt( newteam, 4 )
     net.Send( ply )
+    if GAMEMODE.PlayerLoadouts[ ply ] and GAMEMODE.PlayerLoadouts[ ply ].playermodel and IsDefaultModel( GAMEMODE.PlayerLoadouts[ ply ].playermodel ) then
+        GAMEMODE.PlayerLoadouts[ ply ].playermodel = nil
+    end
 end )
 
 net.Receive( "AcceptedHelp", function( len, ply )

@@ -398,6 +398,7 @@ function weaponsshop:DoSetup()
         if #GAMEMODE.lockedweapons == 0 then
             function self:Paint()
                 draw.DrawText( "All weapons purchased!", self.font, self:GetWide() / 2, self:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+                return true
             end
             return
         end
@@ -424,12 +425,14 @@ end
 function weaponsshop:RepopulateList()
     self.listOrder = { {}, {}, {} }
 
-    local typetoint = { ar = 1, smg = 2, sg = 3, sr = 4, lmg = 5, pt = 6, mn = 7, eq = 8 }
+    --local typetoint = { ar = 1, smg = 2, sg = 3, sr = 4, lmg = 5, pt = 6, mn = 7, eq = 8 }
     for k, v in pairs( GAMEMODE.lockedweapons ) do
         local slot = GAMEMODE.WeaponsList[ v ].slot
-        local typeint = typetoint[ GAMEMODE.WeaponsList[ v ].type ]
-        self.listOrder[ slot ][ typeint ] = self.listOrder[ slot ][ typeint ] or { }
-        table.insert( self.listOrder[ slot ][ typeint ], GAMEMODE.WeaponsList[ v ] )
+        --local typeint = typetoint[ GAMEMODE.WeaponsList[ v ].type ]
+        --self.listOrder[ slot ][ typeint ] = self.listOrder[ slot ][ typeint ] or { }
+        --table.insert( self.listOrder[ slot ][ typeint ], GAMEMODE.WeaponsList[ v ] )
+        self.listOrder[ slot ] = self.listOrder[ slot ] or {}
+        table.insert( self.listOrder[ slot ], GAMEMODE.WeaponsList[ v ] )
     end
 
     for k, v in pairs( self.weaponbuttons ) do
@@ -457,27 +460,25 @@ function weaponsshop:RepopulateList()
         end
         self.weaponbuttons[ #self.weaponbuttons + 1 ] = header 
 
-        for _, type in pairs( slot ) do
-            for _, weptable in pairs( type ) do
-                local button = vgui.Create( "WeaponsShopButton", self.scrollpanel )
-                button:SetSize( self.scrollpanel:GetWide(), 56 )
-                button:Dock( TOP )
-                button:SetWeapon( weptable[ 2 ] )
-                button:SetFont( "Exo-32-600" )
-                button:SetTrueParent( self, #self.weaponbuttons + 1 )
-                if GAMEMODE.MyLevel < weptable[ 3 ] then
-                    button:Disable()
-                end
-                self.weaponbuttons[ #self.weaponbuttons + 1 ] = button
+        for _, weptable in pairs( slot ) do
+            local button = vgui.Create( "WeaponsShopButton", self.scrollpanel )
+            button:SetSize( self.scrollpanel:GetWide(), 56 )
+            button:Dock( TOP )
+            button:SetWeapon( weptable[ 2 ] )
+            button:SetFont( "Exo-32-600" )
+            button:SetTrueParent( self, #self.weaponbuttons + 1 )
+            if GAMEMODE.MyLevel < weptable[ 3 ] then
+                button:Disable()
             end
-            --[[local spacer = vgui.Create( "DPanel", self.scrollpanel )
-            spacer:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar / 4 )
-            spacer:Dock( TOP )
-            spacer.Paint = function( panel, w, h )
-                surface.SetDrawColor( GAMEMODE.TeamColor )
-                surface.DrawLine( 4, h / 2, w - 4, h / 2 )
-            end]]
+            self.weaponbuttons[ #self.weaponbuttons + 1 ] = button
         end
+        --[[local spacer = vgui.Create( "DPanel", self.scrollpanel )
+        spacer:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar / 4 )
+        spacer:Dock( TOP )
+        spacer.Paint = function( panel, w, h )
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawLine( 4, h / 2, w - 4, h / 2 )
+        end]]
     end
 
     self:SelectWeapon()

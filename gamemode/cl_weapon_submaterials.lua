@@ -53,3 +53,8 @@ net.Receive( "ApplyWeaponSkin", function()
         end
     end
 end )
+
+--[[
+    Skin issues:
+    m1014
+]]

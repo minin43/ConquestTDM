@@ -1,4 +1,5 @@
 GM.UnlockedMasterTable = GM.UnlockedMasterTable or {}
+GM.RecacheUnlockedTable = GM.RecacheUnlockedTable or {}
 
 util.AddNetworkString( "GetUnlockedWeapons" )
 util.AddNetworkString( "GetUnlockedWeaponsCallback" )
@@ -11,84 +12,101 @@ util.AddNetworkString( "GetUnlockedPerksCallback" )
 util.AddNetworkString( "SetLoadout" )
 
 net.Receive( "GetUnlockedWeapons", function( len, ply )
-    local fil = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
-    local unlockedweps = fil[ 2 ]
-    local throwaway, tosend = {}, {}
-    
-    GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1] = { "dummyprimary", "dummysecondary" }
-    for k, v in pairs( unlockedweps ) do
-        GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1][ #GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][1] + 1 ] = v
-        throwaway[ v ] = true
-    end
-
-    for k, v in pairs( GAMEMODE.WeaponsList ) do
-        if throwaway[ v[ 2 ] ] or (v[ 3 ] == 0 and v[ 5 ] == 0) then
-            tosend[ #tosend + 1 ] = k
+    if GAMEMODE.RecacheUnlockedTable[ ply ].wep then
+        local fil = util.JSONToTable( file.Read( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
+        local unlockedweps = fil[ 2 ]
+        local throwaway = {}
+        
+        for k, v in pairs( unlockedweps ) do
+            print(k, v)
+            throwaway[ v ] = true
         end
+
+        GAMEMODE.UnlockedMasterTable[ ply ].wep = {}
+        for k, v in pairs( GAMEMODE.WeaponsList ) do
+            if throwaway[ v[ 2 ] ] or (v[ 3 ] == 0 and v[ 5 ] == 0) then
+                print("adding: ", v[1])
+                table.insert( GAMEMODE.UnlockedMasterTable[ ply ].wep, k)
+            end
+        end
+        print("UnlockedMasterTable contents:")
+        PrintTable(GAMEMODE.UnlockedMasterTable[ply].wep)
+        GAMEMODE.RecacheUnlockedTable[ ply ].wep = false
     end
 
     net.Start( "GetUnlockedWeaponsCallback" )
-        net.WriteTable( tosend )
+        net.WriteTable( GAMEMODE.UnlockedMasterTable[ply].wep )
     net.Send( ply )
 end )
 net.Receive( "GetUnlockedSkins", function( len, ply )
-    local fil = util.JSONToTable( file.Read( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
-    local unlockedskins = fil[ 2 ]
-    local throwaway, tosend = {}, {}
+    if GAMEMODE.RecacheUnlockedTable[ ply ].skin then
+        local fil = util.JSONToTable( file.Read( "tdm/users/skins/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
+        local unlockedskins = fil[ 2 ]
+        local throwaway = {}
 
-    GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][2] = {}
-    for k, v in pairs( unlockedskins ) do
-        GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][2][ #GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][2] + 1 ] = v        
-        throwaway[ v ] = true
-    end
-
-    for k, v in pairs( GAMEMODE.WeaponSkins ) do
-        if throwaway[ v.directory ] then 
-            tosend[ #tosend + 1 ] = k
+        for k, v in pairs( unlockedskins ) do    
+            throwaway[ v ] = true
         end
+
+        GAMEMODE.UnlockedMasterTable[ ply ].skin = {}
+        for k, v in pairs( GAMEMODE.WeaponSkins ) do
+            if throwaway[ v.directory ] then 
+                table.insert( GAMEMODE.UnlockedMasterTable[ ply ].skin, k )
+            end
+        end
+
+        GAMEMODE.RecacheUnlockedTable[ ply ].skin = false
     end
 
     net.Start( "GetUnlockedSkinsCallback" )
-        net.WriteTable( tosend )
+        net.WriteTable( GAMEMODE.UnlockedMasterTable[ ply ].skin )
     net.Send( ply )
 end )
 net.Receive( "GetUnlockedModels", function( len, ply )
-	local fil = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
-	local unlockedmodels = fil[ 2 ]
-	local throwaway, tosend = {}, {}
+    if GAMEMODE.RecacheUnlockedTable[ ply ].model then
+        local fil = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) )
+        local unlockedmodels = fil[ 2 ]
+        local throwaway = {}
 
-    GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][3] = {}
-    for k, v in pairs( unlockedmodels ) do
-        GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][3][ #GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ][3] + 1 ] = v        
-        throwaway[ v ] = true
-    end
-
-    for k, v in pairs( GAMEMODE.PlayerModels ) do
-        if throwaway[ v.model ] then --//Have to save by model, since naming can be changed
-            tosend[ #tosend + 1 ] = k
+        for k, v in pairs( unlockedmodels ) do      
+            throwaway[ v ] = true
         end
+
+        GAMEMODE.UnlockedMasterTable[ ply ].model = {}
+        for k, v in pairs( GAMEMODE.PlayerModels ) do
+            if throwaway[ v.model ] then --//Have to save by model, since naming can be changed
+                table.insert( GAMEMODE.UnlockedMasterTable[ ply ].skin, k )
+            end
+        end
+
+        GAMEMODE.RecacheUnlockedTable[ ply ].skin = false
     end
 
     net.Start( "GetUnlockedModelsCallback" )
-        net.WriteTable( tosend )
+        net.WriteTable( GAMEMODE.UnlockedMasterTable[ ply ].model )
     net.Send( ply )
 end )
 net.Receive( "GetUnlockedPerks", function( len, ply )
-    local tosend = { locked = {} }
-    for _, perkinfo in pairs( GAMEMODE.Perks ) do
-        if perkinfo[ 3 ] <= lvl.GetLevel( ply ) then
-            tosend[ #tosend + 1 ] = perkinfo
-        else
-            tosend.locked[ #tosend.locked + 1 ] = perkinfo
+    if GAMEMODE.RecacheUnlockedTable[ ply ].model then
+        local tosend = { locked = {} }
+        for _, perkinfo in pairs( GAMEMODE.Perks ) do
+            if perkinfo[ 3 ] <= lvl.GetLevel( ply ) then
+                tosend[ #tosend + 1 ] = perkinfo
+            else
+                tosend.locked[ #tosend.locked + 1 ] = perkinfo
+            end
         end
+
+        GAMEMODE.UnlockedMasterTable[ ply ].perk = tosend
+        GAMEMODE.RecacheUnlockedTable[ ply ].perk = false
     end
 
     net.Start( "GetUnlockedPerksCallback" )
-        net.WriteTable( tosend )
+        net.WriteTable( GAMEMODE.UnlockedMasterTable[ ply ].perk )
     net.Send( ply )
 end )
 net.Receive( "SetLoadout", function( len, ply )
-    --GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ] = GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ] or {}
+    --GAMEMODE.UnlockedMasterTable[ ply ] = GAMEMODE.UnlockedMasterTable[ ply ] or {}
     local newloadout = net.ReadTable()
     local primary = newloadout[1][1]
     local primaryskin = newloadout[1][2]
@@ -101,7 +119,7 @@ net.Receive( "SetLoadout", function( len, ply )
     local pmbgroups = newloadout[5][3]
 
     local ownsprim, ownssec, ownsequip, ownsmodel, ownsskin1, ownsskin2
-    for k, tbl in pairs( GAMEMODE.UnlockedMasterTable[ id(ply:SteamID()) ] ) do
+    for k, tbl in pairs( GAMEMODE.UnlockedMasterTable[ ply ] ) do
         for _, class in pairs( tbl ) do
             if k == 1 then
                 if !ownsprim and (class == primary or IsDefaultWeapon( primary )) then ownsprim = true print(1) end
@@ -111,12 +129,12 @@ net.Receive( "SetLoadout", function( len, ply )
                 if class == primaryskin then ownsskin1 = true print(4) end
                 if class == secondaryskin then ownsskin2 = true print(5) end
             else
-                if class == pm or IsDefaultModel( pm ) then ownsmodel = true print(6) break end
+                --[[if class == pm or IsDefaultModel( pm ) then]] ownsmodel = true print(6) --break end
             end
         end
     end
 
-    if (!ownsprim) then
+    --[[if (!ownsprim) then
         CaughtCheater( ply, "Attempted to spawn with primary weapon they don't have access to.")
         return
     elseif (primaryskin and !ownsskin1) or (secondaryskin and !ownsskin2) then
@@ -128,13 +146,13 @@ net.Receive( "SetLoadout", function( len, ply )
     elseif (equipment and !ownsequip) then
         CaughtCheater( ply, "Attempted to spawn with equipment they don't have access to.")
         return
-    elseif (perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ]) then
+    elseif perk and (perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ]) then
         CaughtCheater( ply, "Attempted to spawn with perk they don't have access to.")
         return
     elseif (pm and !ownsmodel) then
         CaughtCheater( ply, "Attempted to spawn with model they don't have access to.")
         return
-    end
+    end]]
 
     GAMEMODE.PlayerLoadouts[ ply ] = {
         primary = primary,
@@ -148,6 +166,11 @@ net.Receive( "SetLoadout", function( len, ply )
         playermodelbodygroups = pmbgroups
     }
 end )
+
+hook.Add( "PlayerInitialSpawn", "SetupPrecacheEnvironment", function( ply )
+    GAMEMODE.RecacheUnlockedTable[ ply ] = {wep = true, skin = true, model = true, perk = true}
+    GAMEMODE.UnlockedMasterTable[ ply ] = {wep = {}, skin = {}, model = {}, perk = {}}
+end ) 
 
 --[[function FixExploit( ply, wep )
 	ply:StripWeapon( wep )

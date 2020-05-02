@@ -1,4 +1,4 @@
---//This file is to be used for handling sending clients relevant crosshair icons when perks 'n such effect the game
+--//Contains all perk-related tables, functions, and net messages
 GM.DefaultIconDuration = 1
 GM.Perks = {}
 perks = GM.Perks

@@ -213,6 +213,7 @@ weaponsshopbutton.gradient = false
 weaponsshopbutton.weaponclass = ""
 weaponsshopbutton.order = 0
 weaponsshopbutton.alpha = 0
+weaponsshopbutton.selectedmove = 0
 
 function weaponsshopbutton:DoClick()
     if self.disabled then 
@@ -237,10 +238,15 @@ function weaponsshopbutton:Think()
         self.selected = false
     end
 
-    if self.hover then
+    if !self.hover then
         self.alpha = Lerp( FrameTime() * 5, self.alpha, 0 )
     else
-        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )--Lerp
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )
+    end
+    if !self.selected then
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 0 )
+    else
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 100 )
     end
 end
 
@@ -260,32 +266,30 @@ function weaponsshopbutton:Paint()
     surface.DrawTexturedRect( 8, 8, self:GetTall() - 16, self:GetTall() - 16 )
 
     if self.canbuy then
-        --surface.SetDrawColor( colorScheme[ 0 ].TeamColor )
-        --surface.SetMaterial( GAMEMODE.moneymaterials[ 2 ] )
-
         surface.SetTextColor( colorScheme[ 0 ].TeamColor )
         surface.SetFont( "Exo-16-500" )
         surface.SetTextPos( self:GetTall() + 12, self:GetTall() / 2 + 8 )
         surface.DrawText( "Cost: " .. comma_value( self.weapontable[ 5 ] ) )
     else
-        --surface.SetDrawColor( colorScheme[ 1 ].TeamColor )
-        --surface.SetMaterial( GAMEMODE.moneymaterials[ 1 ] )
-
         surface.SetTextColor( colorScheme[ 1 ].TeamColor )
         surface.SetFont( "Exo-16-500" )
         surface.SetTextPos( self:GetTall() + 12, self:GetTall() / 2 + 8 )
         surface.DrawText( "Cost: " .. comma_value( self.weapontable[ 5 ] ) )
     end
-    --surface.DrawTexturedRect( self:GetWide() - ( self:GetTall() - 24 ) - 12, 12, self:GetTall() - 24, self:GetTall() - 24 )
 
     surface.SetTextColor( 0, 0, 0, 220 )
     if self.disabled then
         surface.SetDrawColor( colorScheme[ 1 ].TeamColor )
         surface.SetMaterial( GAMEMODE.levelmaterials[ 1 ] )
-        --surface.DrawTexturedRect( self:GetWide() - ( ( self:GetTall() - 24 ) * 2 ) - ( 12 * 2 ), 12, self:GetTall() - 24, self:GetTall() - 24 )
         surface.DrawTexturedRect( self:GetWide() - ( self:GetTall() - 24 ) - 12, 12, self:GetTall() - 24, self:GetTall() - 24 )
     elseif ( self.hover or self.selected ) then
         surface.SetTextColor( GAMEMODE.TeamColor )
+    end
+
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
     end
 
     surface.SetFont( self.font )
@@ -296,14 +300,14 @@ function weaponsshopbutton:Paint()
     if self.order != 1 and self.order != 0 then
         if self.trueparent.weaponbuttons[ self.order - 1 ].hover then
             surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( 0, 0, 0, self.alpha )
+            surface.SetDrawColor( 0, 0, 0, self.trueparent.weaponbuttons[ self.order - 1 ].alpha )
             surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), -90 )
         end
     end
     if self.order != #self.trueparent.weaponbuttons then
         if self.trueparent.weaponbuttons[ self.order + 1 ].hover then
             surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( 0, 0, 0, self.alpha )
+            surface.SetDrawColor( 0, 0, 0, self.trueparent.weaponbuttons[ self.order + 1 ].alpha )
             surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - 4, 8, self:GetWide(), 90 )
         end
 
@@ -425,12 +429,8 @@ end
 function weaponsshop:RepopulateList()
     self.listOrder = { {}, {}, {} }
 
-    --local typetoint = { ar = 1, smg = 2, sg = 3, sr = 4, lmg = 5, pt = 6, mn = 7, eq = 8 }
     for k, v in pairs( GAMEMODE.lockedweapons ) do
         local slot = GAMEMODE.WeaponsList[ v ].slot
-        --local typeint = typetoint[ GAMEMODE.WeaponsList[ v ].type ]
-        --self.listOrder[ slot ][ typeint ] = self.listOrder[ slot ][ typeint ] or { }
-        --table.insert( self.listOrder[ slot ][ typeint ], GAMEMODE.WeaponsList[ v ] )
         self.listOrder[ slot ] = self.listOrder[ slot ] or {}
         table.insert( self.listOrder[ slot ], GAMEMODE.WeaponsList[ v ] )
     end
@@ -541,80 +541,6 @@ function weaponsshop:SelectWeapon( wep, butID )
     self.infopanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
     self.infopanel:CreateStats( self.selectedweapon )
 
-    --[[if wep.Base == "cw_base" then
-        self.DisplayStats = true
-        for k, v in pairs( self.wepinfo ) do
-            if v.value == "Damage" and wep.Shots > 1 then --If it's a shotgun, scale with clumpspread
-                v.barfill = ( math.Clamp( wep.Damage * wep.Shots, v.min, v.max + 50 ) - v.min) / ( v.max + 50 - v.min)
-            elseif v.value == "AimSpread" then
-                v.barfill = 1 - ( math.Clamp( wep.AimSpread - v.min, 0, v.max ) / v.max )
-
-                if wep.Shots > 1 then --If it's a shotgun, scale with clumpspread
-                    local clumpspread = 1 - ( ( wep.ClumpSpread - 0.02 ) / ( 0.06 - 0.02 ) )
-                    v.barfill = ( v.barfill + clumpspread ) / 2
-                    --v.barfill = 1 - ( ( wep.ClumpSpread - 0.02 ) / ( 0.06 - 0.02 ) )
-                else --Otherwise scale with hipspread
-                    local hipspread = 1 - ( ( wep.HipSpread - 0.03 ) / ( 0.35 - 0.03 ) )
-                    v.barfill = ( v.barfill + hipspread ) / 2
-                end
-            elseif v.value == "FireDelay" then
-                v.barfill = 1 - ( ( math.Clamp( wep.FireDelay - v.min, 0, v.max - v.min ) ) / ( v.max - v.min ) )
-            elseif v.value == "Recoil" then
-                if wep.Shots > 1 then
-                    v.barfill = ( math.Clamp( wep.Recoil, 0, 4 ) ) / 4
-                else
-                    v.barfill = ( ( math.Clamp( wep.Recoil - v.min, 0, v.max - v.min ) ) / ( v.max - v.min ) )
-                end
-            else
-                --//Default information displaying
-                v.barfill = math.Clamp( wep[ v.value ], v.min, v.max ) / v.max
-            end
-        end
-    else
-        self.DisplayStats = false
-    end
-
-    local bar = Material( "vgui/ryg_gradient.png", "noclamp" )
-    if self.infopanel and self.infopanel:IsValid() then self.infopanel:Remove() end
-    self.infopanel = vgui.Create( "DPanel", self )
-    self.infopanel:SetPos( self:GetWide() / 2, self:GetTall() / 2 )
-    self.infopanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )
-    self.infopanel.Paint = function()
-        if !self.infopanel then return end
-        surface.SetFont( "Exo-36-600" )
-        local headerw, headert = surface.GetTextSize( self.weaponname )
-        surface.SetTextColor( GAMEMODE.TeamColor )
-        surface.SetTextPos( self.infopanel:GetWide() / 2 - ( headerw / 2 ), 0 )
-        surface.DrawText( self.weaponname )
-
-        local infobox = self.infopanel:GetTall() - headert - 4 --//The height wepinfo has room to play with
-        local individualt = infobox / ( #self.wepinfo + 1 )
-
-        if self.DisplayStats then
-            for k, v in pairs( self.wepinfo ) do
-                draw.SimpleText( v.display, "Exo-16-600", self.infopanel:GetWide() / 4, headert + (k - 1) * individualt + ( individualt / 2 ), Color( 0, 0, 0 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-                
-                --//Box drawing
-                local boxwide = self.infopanel:GetWide() / 3 * 2 - 8
-                if v.barfill then
-                    surface.SetDrawColor( 0, 0, 0, 80 )
-                    surface.DrawRect( self.infopanel:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide, individualt - 4 )
-                    
-                    surface.SetDrawColor( 255, 255, 255 )
-                    surface.SetMaterial( bar )
-                    if v.scale == "up" then
-                        surface.DrawTexturedRectUV( self.infopanel:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide * v.barfill, individualt - 4, 0, 0, 1 * v.barfill, 1 )
-                    else
-                        surface.DrawTexturedRectUV( self.infopanel:GetWide() / 4 + 4, headert + (k - 1) * individualt + 2, boxwide * v.barfill, individualt - 4, 1, 1, 1 - v.barfill, 0 )
-                    end
-                    --draw.SimpleTextOutlined( v.barfill, "Exo-16-600", self.infopanel:GetWide() / 4 + 8, headert + (k - 1) * individualt + 10, GAMEMODE.TeamColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, Color( 255, 255, 255 ) )
-                end
-            end
-        else
-            --Pretty much only for equipment, should display some description
-        end
-    end]]
-
     if self.buybutton then self.buybutton:Remove() end
     self.buybutton = vgui.Create( "DButton", self.infopanel )
     self.buybutton:SetSize( 144, 24 )
@@ -687,6 +613,7 @@ skinsshopbutton.option = ""
 skinsshopbutton.rarity = 0
 skinsshopbutton.order = 0
 skinsshopbutton.alpha = 0
+skinsshopbutton.selectedmove = 0
 skinsshopbutton.display = ""
 skinsshopbutton.font = "DermaDefault"
 
@@ -736,17 +663,23 @@ function skinsshopbutton:Paint()
     surface.SetTextPos( 16, self:GetTall() / 2 - ( h / 2 ) )
     surface.DrawText( self.display )
 
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+    end
+
     if self.order != 1 and self.order != 0 then
         if self.trueparent.skinbuttonsnumerical[ self.order - 1 ].hover then
             surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.SetDrawColor( Color( GAMEMODE.ColorRarities[ self.rarity ].r, GAMEMODE.ColorRarities[ self.rarity ].g, GAMEMODE.ColorRarities[ self.rarity ].b, self.trueparent.skinbuttonsnumerical[ self.order - 1 ].alpha ) )
             surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), -90 )
         end
     end
     if self.order != #self.trueparent.skinbuttonsnumerical then
         if self.trueparent.skinbuttonsnumerical[ self.order + 1 ].hover then
             surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.SetDrawColor( Color( GAMEMODE.ColorRarities[ self.rarity ].r, GAMEMODE.ColorRarities[ self.rarity ].g, GAMEMODE.ColorRarities[ self.rarity ].b, self.trueparent.skinbuttonsnumerical[ self.order + 1 ].alpha ) )
             surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - 4, 8, self:GetWide(), 90 )
         end
 
@@ -775,10 +708,16 @@ function skinsshopbutton:Think()
         self.selected = false
     end
 
-    if self.hover then
+    if !self.hover then
         self.alpha = Lerp( FrameTime() * 5, self.alpha, 0 )
     else
-        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )--Lerp
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )
+    end
+
+    if !self.selected then
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 0 )
+    else
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 100 )
     end
 end
 
@@ -1117,6 +1056,7 @@ modelsshopbutton.font = "DermaDefault"
 modelsshopbutton.rarity = 0
 modelsshopbutton.order = 0
 modelsshopbutton.alpha = 0
+modelsshopbutton.selectedmove = 0
 modelsshopbutton.display = ""
 modelsshopbutton.model = ""
 
@@ -1159,9 +1099,15 @@ function modelsshopbutton:Paint()
     surface.SetTextPos( self:GetTall() - 14 + w, self:GetTall() / 2 + 8 )
     surface.DrawText( "Tier ".. ( self.modelinfo.quality + 1 ) )
 
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+    end
+
     if self.modelinfo.bodygroups then
         --draw.NoTexture()
-        surface.SetDrawColor( colorScheme[ 0 ].TeamColor )
+        surface.SetDrawColor( 88, 88, 88 )--colorScheme[ 0 ].TeamColor )
         surface.SetMaterial( GAMEMODE.Icons.Menu.bodygroupsIcon )
         surface.DrawTexturedRect( self:GetWide() - ( self:GetTall() / 4 * 3 ), self:GetTall() / 2 - 16, 32, 32 )
         --surface.DrawTexturedRect( self:GetWide() - self:GetTall() + 4, self:GetTall() / 2 - 26, 48, 48 )
@@ -1178,19 +1124,18 @@ function modelsshopbutton:Paint()
     if self.order != 1 and self.order != 0 then
         if self.trueparent.modelbuttonsnumerical[ self.order - 1 ].hover then
             surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.SetDrawColor( Color( GAMEMODE.ColorRarities[ self.rarity ].r, GAMEMODE.ColorRarities[ self.rarity ].g, GAMEMODE.ColorRarities[ self.rarity ].b, self.trueparent.modelbuttonsnumerical[ self.order - 1 ].alpha ) )
             surface.DrawTexturedRectRotated( self:GetWide() / 2, 4, 8, self:GetWide(), -90 )
         end
     end
     if self.order != #self.trueparent.modelbuttonsnumerical then
         if self.trueparent.modelbuttonsnumerical[ self.order + 1 ].hover then
             surface.SetTexture( GAMEMODE.GradientTexture )
-            surface.SetDrawColor( GAMEMODE.ColorRarities[ self.rarity ] )
+            surface.SetDrawColor( Color( GAMEMODE.ColorRarities[ self.rarity ].r, GAMEMODE.ColorRarities[ self.rarity ].g, GAMEMODE.ColorRarities[ self.rarity ].b, self.trueparent.modelbuttonsnumerical[ self.order + 1 ].alpha ) )
             surface.DrawTexturedRectRotated( self:GetWide() / 2, self:GetTall() - 4, 8, self:GetWide(), 90 )
         end
 
         if !self.hover and !self.trueparent.modelbuttonsnumerical[ self.order + 1 ].hover and self.trueparent.modelbuttonsnumerical[ self.order + 1 ].trueparent then
-            --surface.SetTexture( GAMEMODE.GradientTexture )
             surface.SetDrawColor( 0, 0, 0, 164)
             surface.DrawLine( self:GetTall() - 12, self:GetTall() - 1, self:GetWide(), self:GetTall() - 1 )
         end
@@ -1213,10 +1158,16 @@ function modelsshopbutton:Think()
         self.selected = false
     end
 
-    if self.hover then
+    if !self.hover then
         self.alpha = Lerp( FrameTime() * 5, self.alpha, 0 )
     else
-        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )--Lerp
+        self.alpha = Lerp( FrameTime() * 5, self.alpha, 164 )
+    end
+
+    if !self.selected then
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 0 )
+    else
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 100 )
     end
 end
 

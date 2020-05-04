@@ -40,8 +40,8 @@ GM.WeaponsList = {
     { "TEC-9", 			"cw_weapon_tec9", 	84, "models/weapons/w_bfh_tec9.mdl", 	    60000, { 0, 0, 0 }, type = "smg", slot = 2 },
     { "Deagle",			"cw_deagle",	    100,"models/weapons/w_pist_deagle.mdl",		60000, { 0, 0, 0 }, type = "mn", slot = 2 },
 	--//Equipment
-    { "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0, type = "eq", slot = 3,
-        desc = "Give 'em the 'ol 1-2" },
+    --[[{ "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0, type = "eq", slot = 3,
+        desc = "Give 'em the 'ol 1-2" },]]
 	{ "Flash Grenades", 	"cw_flash_grenade",	6, "models/weapons/w_eq_flashbang.mdl", 			4000, type = "eq", slot = 3,
         desc = "2x flashbangs which blind all players near the grenade when detonated." },
 	{ "Slow Medkit", 		"medkit_slow",		12, "models/weapons/w_medkit.mdl",					10000, type = "eq", slot = 3,
@@ -104,16 +104,17 @@ function RetrieveWeaponTable( wepclass )
 end
 
 function IsDefaultWeapon( wepclass )
-    for k, v in pairs( GAMEMODE.WeaponsList ) do
-        if v[2] == wepclass then
-            if (v[ 3 ] == 1 or v[ 3 ] == 0) and (v[ 5 ] == 0) then
-                return true
-            else
-                return false
+    if !GAMEMODE.CachedDefaultWeapons then
+        GAMEMODE.CachedDefaultWeapons = {}
+        for k, v in pairs( GAMEMODE.WeaponsList ) do
+            if v[2] == wepclass then
+                if (v[ 3 ] == 1 or v[ 3 ] == 0) and (v[ 5 ] == 0) then
+                    GAMEMODE.CachedDefaultWeapons[wepclass] = true
+                end
             end
         end
     end
-    return false
+    return GAMEMODE.CachedDefaultWeapons[wepclass] or false
 end
 
 function isPrimary( class )

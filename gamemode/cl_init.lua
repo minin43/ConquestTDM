@@ -160,14 +160,16 @@ GM.DefaultModels = {
 GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
 GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
 function IsDefaultModel( mdl )
-    for k, v in pairs( GAMEMODE.DefaultModels ) do
-        for k2, v2 in pairs( v ) do
-            if mdl == v2 then
-                return true
+    if !GAMEMODE.CachedDefaultPlayermodels then
+        GAMEMODE.CachedDefaultPlayermodels = {}
+        for k, v in pairs( GAMEMODE.DefaultModels ) do
+            for k2, v2 in pairs( v ) do
+                GAMEMODE.CachedDefaultPlayermodels[ v2 ] = true
             end
         end
     end
-    return false
+
+    return GAMEMODE.CachedDefaultPlayermodels[ mdl ]
 end
 
 include( "shared.lua" )

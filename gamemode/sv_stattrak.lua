@@ -154,6 +154,22 @@ wep_att[ "cw_wf_m200" ] = {
 	{ "am_matchgrade", 120 }
 }
 
+wep_att[ "cw_weapon_rfb" ] = {
+    { "md_nightforce_nxs", 0 },
+    { "bg_rfb_special_rail", 0 },
+	{ "md_rmr", 10 },
+    { "md_saker", 20 },
+    { "bg_rfb_long_barrel", 30 },
+    { "md_anpeq15", 40 },
+    { "md_bipod", 50 },
+    { "md_microt1", 60 },
+    { "bg_rfb_short_barrel", 70 },
+    { "md_aimpoint", 80 },
+    { "md_eotech", 90 },
+    { "md_schmidt_shortdot", 100 },
+    { "md_acog", 110 },
+}
+
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
 function ConstructAttachmentLists()
 	print( "(Re)constructing attachment lists..." )

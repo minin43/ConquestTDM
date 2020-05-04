@@ -43,14 +43,16 @@ GM.DefaultModels = {
 GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
 GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
 function IsDefaultModel( mdl )
-    for k, v in pairs( GAMEMODE.DefaultModels ) do
-        for k2, v2 in pairs( v ) do
-            if mdl == v2 then
-                return true
+    if !GAMEMODE.CachedDefaultPlayermodels then
+        GAMEMODE.CachedDefaultPlayermodels = {}
+        for k, v in pairs( GAMEMODE.DefaultModels ) do
+            for k2, v2 in pairs( v ) do
+                GAMEMODE.CachedDefaultPlayermodels[ v2 ] = true
             end
         end
     end
-    return false
+
+    return GAMEMODE.CachedDefaultPlayermodels[ mdl ]
 end
 
 AddCSLuaFile( "cl_init.lua" )
@@ -670,9 +672,9 @@ function GM:PlayerSpawn( ply )
 	ply:StartSpawnProtection( 5 ) --//Moved to sv_customspawns
 	ply:SetNoCollideWithTeammates( true )
 	ply:ConCommand( "cw_simple_telescopics 0" )
-    --print("timedebug1")
+    print("timedebug1")
     giveLoadout( ply )
-    --print("timedebug2")
+    print("timedebug2")
     GAMEMODE.PlayerLoadouts[ ply ] = GAMEMODE.PlayerLoadouts[ ply ] or {}
     if GAMEMODE.PlayerLoadouts[ ply ].playermodel then
         ply:SetModel( GAMEMODE.PlayerLoadouts[ ply ].playermodel )
@@ -900,13 +902,15 @@ hook.Add( "PlayerDeath", "DamageIndicatorClear", function( vic )
 end )
 
 hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
-	--//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
+    --//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
 	if GAMEMODE.ValidModels[ ply:GetModel() ] then
-		GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
-		net.Start( "SetInteractionGroup" )
-			net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] )
-		net.Send( ply )
+        GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
+    else
+        GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = nil
 	end
+    net.Start( "SetInteractionGroup" )
+        net.WriteString( GAMEMODE.InteractionList[ id( ply:SteamID() ) ] or GAMEMODE.DefaultModels[ team.GetName(ply:Team()) ][1] )
+    net.Send( ply )
 
 	if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] then
 		if GAMEMODE.SpawnSoundsTracking[ id( ply:SteamID() ) ] != ply:Team() then

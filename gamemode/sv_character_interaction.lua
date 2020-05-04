@@ -1,4 +1,5 @@
 util.AddNetworkString( "SetInteractionGroup" )
+util.AddNetworkString( "ResetInteractionGroup" )
 
 GM.PlayedSounds = {} --//Since I use CSoundPatch for playing sounds, each sound per player has to be unique, so we need to set them all up here
 GM.InteractionList = {} --//This table is used to store a player's voice series (hl2 rebebl, ins2 security, mw2 rangers, etc)

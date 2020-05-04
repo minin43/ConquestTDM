@@ -13,7 +13,7 @@ GM.WeaponSubmaterialExclusions = {
     [ "cw_m14" ] = { 5 },
     [ "cw_m1911" ] = { 1 },
     [ "cw_m249_official" ] = { 2 },
-    [ "cw_m3super90" ] = { 5 },
+    [ "cw_m3super90" ] = { 2, 3, 4, 5, 6 },
     [ "cw_mac11" ] = { 4 },
     [ "cw_mr96" ] = { 3 },
     [ "cw_p99" ] = { 1 },
@@ -30,7 +30,8 @@ GM.WeaponSubmaterialExclusions = {
     [ "cw_wf_m200" ] = {  },
     [ "cw_ber_hkmp7" ] = {  },
     [ "cw_amr2_mk46" ] = {  },
-    [ "cw_fiveseven" ] = { 1, 2 }
+    [ "cw_fiveseven" ] = { 1, 2 },
+    [ "cw_m1014" ] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 }
     --[ "cw_" ] = {  },
 }
 
@@ -41,6 +42,7 @@ net.Receive( "ApplyWeaponSkin", function()
 
     if LocalPlayer():GetWeapon( wepclass ) then
         local model = LocalPlayer():GetWeapon( wepclass ).CW_VM
+        
         local exclusiontable = {}
         for k, v in pairs( GAMEMODE.WeaponSubmaterialExclusions[wepclass] ) do
             exclusiontable[ v ] = true
@@ -53,8 +55,3 @@ net.Receive( "ApplyWeaponSkin", function()
         end
     end
 end )
-
---[[
-    Skin issues:
-    m1014
-]]

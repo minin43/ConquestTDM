@@ -39,6 +39,8 @@ function prestige.ResetPlayer( ply )
         end
     end
 
+    GAMEMODE.RecacheUnlockedTable[ ply ].wep = true
+
 	file.Write( "tdm/users/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { playerfile[ 1 ], { } } ) )
 end
 

@@ -763,11 +763,18 @@ function playermodelpanelbuttons:DoClick()
             local default = vgui.Create( "DButton", self.listpanel.scrollpanel )
             default:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
             default:Dock( TOP )
-            default:SetText("Default")
+            default:SetText("")
+            default.selectedmove = 0
             default.Paint = function()
+                if default.selected then
+                    surface.SetDrawColor( GAMEMODE.TeamColor )
+                    surface.SetTexture( GAMEMODE.GradientTexture )
+                    surface.DrawTexturedRectRotated( self:GetWide() - ( (default.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+                end
+
                 surface.SetFont( "Exo-28-600" )
                 surface.SetTextColor( 0, 0, 0, 220 )
-                if default.hover or self.trueparent.model == self.listpanel.selected then
+                if default.hover or default.selected then
                     surface.SetTextColor( GAMEMODE.TeamColor )
                 end
                 local w, h = surface.GetTextSize( "Default Skin" )
@@ -796,16 +803,35 @@ function playermodelpanelbuttons:DoClick()
                 self.trueparent:ResetOptionsButton()
                 surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
             end
+            default.Think = function()
+                if self.trueparent.defaultmodel == self.listpanel.selected then
+                    default.selected = true
+                else
+                    default.selected = false
+                end
+                if !default.selected then
+                    default.selectedmove = Lerp( FrameTime() * 5, default.selectedmove, 0 )
+                else
+                    default.selectedmove = Lerp( FrameTime() * 5, default.selectedmove, 100 )
+                end
+            end
 
             for k, v in ipairs( order ) do        
                 for k2, v2 in pairs( v ) do
                     local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
                     button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
                     button:Dock( TOP )
+                    button.selectedmove = 0
                     button.Paint = function()
+                        if button.selected then
+                            surface.SetDrawColor( GAMEMODE.TeamColor )
+                            surface.SetTexture( GAMEMODE.GradientTexture )
+                            surface.DrawTexturedRectRotated( self:GetWide() - ( (button.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+                        end
+
                         surface.SetFont( "Exo-28-600" )
                         surface.SetTextColor( 0, 0, 0, 220 )
-                        if button.hover or v2.model == self.listpanel.selected then
+                        if button.hover or button.selected then
                             surface.SetTextColor( GAMEMODE.TeamColor )
                         end
                         local w, h = surface.GetTextSize( v2.name )
@@ -833,6 +859,18 @@ function playermodelpanelbuttons:DoClick()
                         self.trueparent:SetModel( self.listpanel.selected )
                         self.trueparent:ResetOptionsButton()
                         surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+                    end
+                    button.Think = function()
+                        if v2.model == self.listpanel.selected then
+                            button.selected = true
+                        else
+                            button.selected = false
+                        end
+                        if !button.selected then
+                            button.selectedmove = Lerp( FrameTime() * 5, button.selectedmove, 0 )
+                        else
+                            button.selectedmove = Lerp( FrameTime() * 5, button.selectedmove, 100 )
+                        end
                     end
 
                     self.listpanel.modelbuttons[ v2.model ] = button
@@ -961,11 +999,18 @@ function weaponskinoptions:DoClick()
             default:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
             default:Dock( TOP )
             default:SetText("")
+            default.selectedmove = 0
             default.Paint = function()
                 if !self.listpanel then return end
+                if default.selected then
+                    surface.SetDrawColor( GAMEMODE.TeamColor )
+                    surface.SetTexture( GAMEMODE.GradientTexture )
+                    surface.DrawTexturedRectRotated( self:GetWide() - ( (default.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+                end
+
                 surface.SetFont( "Exo-28-600" )
                 surface.SetTextColor( 0, 0, 0, 220 )
-                if default.hover or self.listpanel.selected == "" or self.trueparent.selectedskin == "" then
+                if default.hover or default.selected then
                     surface.SetTextColor( GAMEMODE.TeamColor )
                 end
                 local w, h = surface.GetTextSize( "No Skin" )
@@ -993,6 +1038,18 @@ function weaponskinoptions:DoClick()
                 self.trueparent:SelectSkin( self.listpanel.selected )
                 surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
             end
+            default.Think = function()
+                if self.listpanel.selected == "" or self.trueparent.selectedskin == "" then
+                    default.selected = true
+                else
+                    default.selected = false
+                end
+                if !default.selected then
+                    default.selectedmove = Lerp( FrameTime() * 5, default.selectedmove, 0 )
+                else
+                    default.selectedmove = Lerp( FrameTime() * 5, default.selectedmove, 100 )
+                end
+            end
 
             local order = {}
             for k, v in pairs( GAMEMODE.MySkins ) do
@@ -1005,11 +1062,18 @@ function weaponskinoptions:DoClick()
                     local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
                     button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
                     button:Dock( TOP )
+                    button.selectedmove = 0
                     button.Paint = function()
                         if !self.listpanel then return end
+                        if button.selected then
+                            surface.SetDrawColor( GAMEMODE.TeamColor )
+                            surface.SetTexture( GAMEMODE.GradientTexture )
+                            surface.DrawTexturedRectRotated( self:GetWide() - ( (button.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+                        end
+
                         surface.SetFont( "Exo-28-600" )
                         surface.SetTextColor( 0, 0, 0, 220 )
-                        if button.hover or skintable.dir == self.listpanel.selected or skintable.dir == self.trueparent.selectedskin then
+                        if button.hover or button.selected then
                             surface.SetTextColor( GAMEMODE.TeamColor )
                         end
                         local w, h = surface.GetTextSize( skintable.name )
@@ -1036,6 +1100,18 @@ function weaponskinoptions:DoClick()
                         self.listpanel.selected = skintable.dir
                         self.trueparent:SelectSkin( self.listpanel.selected )
                         surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+                    end
+                    button.Think = function()
+                        if skintable.dir == self.listpanel.selected or skintable.dir == self.trueparent.selectedski then
+                            button.selected = true
+                        else
+                            button.selected = false
+                        end
+                        if !button.selected then
+                            button.selectedmove = Lerp( FrameTime() * 5, button.selectedmove, 0 )
+                        else
+                            button.selectedmove = Lerp( FrameTime() * 5, button.selectedmove, 100 )
+                        end
                     end
                 end
             end
@@ -1064,6 +1140,12 @@ function primariesbutton:Paint()
     surface.SetDrawColor( GAMEMODE.TeamColor )
     surface.SetMaterial( GAMEMODE.typematerials[ self.weapontable.type ] )
     surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
+
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+    end
 
     surface.SetTextColor( 0, 0, 0, 220 )
     if self.hover or self.selected then
@@ -1215,6 +1297,12 @@ function secondariesbutton:Paint()
     surface.SetMaterial( GAMEMODE.typematerials[ self.weapontable.type ] )
     surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
 
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+    end
+
     surface.SetTextColor( 0, 0, 0, 220 )
     if self.hover or self.selected then
         surface.SetTextColor( GAMEMODE.TeamColor )
@@ -1361,6 +1449,12 @@ function equipmentbutton:Paint()
     surface.SetMaterial( GAMEMODE.typematerials[ self.weapontable.type ] )
     surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
 
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+    end
+
     surface.SetTextColor( 0, 0, 0, 220 )
     if self.hover or self.selected then
         surface.SetTextColor( GAMEMODE.TeamColor )
@@ -1481,9 +1575,17 @@ vgui.Register( "EquipmentPanel", equipmentpanel, "DPanel" )
 --//
 
 local perksbutton = table.Copy( basebutton )
+perksbutton.selectedmove = 0
 
 function perksbutton:Paint()
     if !self.startdraw then return end
+
+    if self.selected then
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.SetTexture( GAMEMODE.GradientTexture )
+        surface.DrawTexturedRectRotated( self:GetWide() - ( (self.selectedmove / 100) * (self:GetWide() / 4) ), self:GetTall() / 2, self:GetWide() / 2, self:GetTall(), 180 )
+    end
+
     surface.SetTextColor( 0, 0, 0, 220 )
     if self.hover or self.selected then
         surface.SetTextColor( GAMEMODE.TeamColor )
@@ -1509,6 +1611,11 @@ function perksbutton:Think()
         self.selected = true
     else
         self.selected = false
+    end
+    if !self.selected then
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 0 )
+    else
+        self.selectedmove = Lerp( FrameTime() * 5, self.selectedmove, 100 )
     end
 end
 

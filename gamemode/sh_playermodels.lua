@@ -37,7 +37,7 @@ GM.BuyableModels = {
     { name = "Stormtrooper", model = "models/player/stormtrooper.mdl", collection = "Gmod Tower", voiceovers = false, quality = 2 },
     { name = "Kapkan", model = "models/player/r6s_kapkan.mdl", collection = "R6 Siege", voiceovers = false, quality = 3, bodygroups = true },
     { name = "Alyx", model = "models/player/alyx.mdl", collection = "HL2 Defaults", voiceovers = false, quality = 3 },
-    { name = "Ash", model = "models/player/red.mdl", collection = "Gmod Tower", voiceovers = false, quality = 3, bodygroups = true },
+    { name = "Pokemon Trainer", model = "models/player/red.mdl", collection = "Gmod Tower", voiceovers = false, quality = 3, bodygroups = true },
     { name = "Rorschach", model = "models/player/rorschach.mdl", collection = "Gmod Tower", voiceovers = false, quality = 3 },
     { name = "Info_player_start", model = "models/player/infoplayerstart.mdl", collection = "NULL", voiceovers = false, quality = 4 },
     { name = "Teslapower", model = "models/player/teslapower.mdl", collection = "Gmod Tower", voiceovers = false, quality = 4 },

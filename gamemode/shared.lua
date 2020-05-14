@@ -13,7 +13,15 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_cbble" ] = { size = "Midsize", img = "vgui/maps/cbbl.png", type = "ins2" },
     [ "de_dust" ] = { size = "Midsize", img = "vgui/maps/dust.png", type = "ins2" },
     [ "de_dust2" ] = { size = "Midsize", img = "vgui/maps/dust2.png", type = "ins2" },
-	[ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png", type = "ins2" },]]
+    [ "cs_office" ] = { size = "Small", img = "vgui/maps/office.png", type = "ins2" },]]
+    
+    --[[ 
+        id = Workshop ID
+        size = Describes map size in mapvote
+        img = Map icon directory
+        type = designated teams (hl2 teams, Insurgency teams, MW2 teams)
+        tags = Table containing extra string "flags" to indicate special properties about the map (sniper-friendly or whatever)
+    ]]
 	
 	[ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2",
 		tags = { } },
@@ -109,12 +117,14 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "cs_east_borough" ] = { id = 296957963, size = "Large", img = "vgui/maps/east_borough.png", type = "ins2",
         tags = { } },
     [ "gm_battleground_nodes" ] = { id = 1425456348, size = "Massive", img = "vgui/maps/battleground.png", type = "hl2",
-        tags = { } }
+        tags = { } },
+    [ "gm_boreas" ] = { id = 1572373847, size = "Massive", img = "vgui/maps/boreas.png", type = "hl2",
+    tags = { "resupply" } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
 	--[ "dm_aftermath" ] = { id = 975289333, size = "Large", img = "vgui/maps/aftermath.png", type = "hl2" }, --Seems to be crashing clients
-	--[ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png", type = "ins2" }, --To big/open
+	--[ "gm_toysoldiers" ] = { id = 313827200, size = "Enormous", img = "vgui/maps/toysoldier.png", type = "ins2" }, --Too big/open
 	--[ "gm_floatingworlds_3" ] = { id = 122421739, size = "Enormous", img = "vgui/maps/floatingworlds.png", type = "ins2" }, --Too big/open
 	--[ "dm_9rooms_b16" ] = { id = 1642035717, size = "Small", img = "vgui/maps/9rooms.png", type = "hl2" }, --Not popular
 	--[ "dm_resident" ] = { id = 1623087187, size = "Midsize", img = "vgui/maps/resident.png", type = "hl2" }, --Too hard to balance

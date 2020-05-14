@@ -55,81 +55,12 @@ function IsDefaultModel( mdl )
     return GAMEMODE.CachedDefaultPlayermodels[ mdl ]
 end
 
+include( "shared.lua" )
+include( "sh_loader.lua" )
+
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
-AddCSLuaFile( "cl_hud.lua" )
-AddCSLuaFile( "cl_spawnmenu.lua" )
-AddCSLuaFile( "cl_scoreboard.lua" )
-AddCSLuaFile( "cl_lvl.lua" )
-AddCSLuaFile( "cl_loadout.lua" )
-AddCSLuaFile( "cl_loadout_setup.lua" )
-AddCSLuaFile( "cl_money.lua" )
-AddCSLuaFile( "cl_flags.lua" )
-AddCSLuaFile( "cl_feed.lua" )
-AddCSLuaFile( "cl_deathscreen.lua" )
-AddCSLuaFile( "cl_customspawns.lua" )
-AddCSLuaFile( "cl_leaderboards.lua" )
-AddCSLuaFile( "cl_playercards.lua" )
-AddCSLuaFile( "cl_mapvote.lua" )
-AddCSLuaFile( "cl_mapvote_setup.lua" )
-AddCSLuaFile( "cl_stattrack.lua" )
-AddCSLuaFile( "cl_vendetta.lua" )
-AddCSLuaFile( "cl_teamselect.lua" )
-AddCSLuaFile( "cl_character_interaction.lua" )
-AddCSLuaFile( "cl_perks.lua" )
-AddCSLuaFile( "cl_shop.lua" )
-AddCSLuaFile( "cl_shop_setup.lua" )
-AddCSLuaFile( "cl_titles.lua" )
-AddCSLuaFile( "cl_help.lua" )
-AddCSLuaFile( "cl_menu.lua" )
-AddCSLuaFile( "cl_menu_setup.lua" )
-AddCSLuaFile( "cl_events.lua" )
-AddCSLuaFile( "cl_donations.lua" )
-AddCSLuaFile( "cl_weapon_submaterials.lua")
-AddCSLuaFile( "sh_events.lua" )
-AddCSLuaFile( "sh_loadout.lua" )
-AddCSLuaFile( "sh_playermodels.lua" )
-AddCSLuaFile( "sh_skins.lua" )
-AddCSLuaFile( "sh_shop.lua" )
-AddCSLuaFile( "sh_titles.lua" )
-AddCSLuaFile( "sh_ulx_integration.lua" )
-AddCSLuaFile( "sh_weaponbalancing.lua" )
-
-include( "shared.lua" )
-include( "sv_player.lua" )
-include( "sv_lvl.lua" )
-include( "sv_loadout.lua" )
-include( "sv_stattrak.lua" )
-include( "sv_money.lua" )
-include( "sv_feed.lua" )
-include( "sv_flags.lua" )
-include( "sv_deathscreen.lua" )
-include( "sv_spawning.lua" )
-include( "sv_leaderboards.lua" )
-include( "sv_teambalance.lua" )
-include( "sv_playercards.lua" )
-include( "sv_mapvote.lua" )
-include( "sv_vendetta.lua" )
-include( "sv_teamselect.lua" )
---include( "sv_backgroundgunfire.lua") -- TODO
-include( "sv_character_interaction.lua" )
-include( "sv_spectator.lua" )
-include( "sv_custommaps.lua" )
-include( "sv_perks.lua" )
-include( "sv_prestige.lua" )
-include( "sv_shop.lua" )
-include( "sv_donations.lua" )
-include( "sv_titles.lua" )
-include( "sv_events.lua" )
-include( "sv_playermodels.lua" )
-include( "sh_events.lua" )
-include( "sh_loadout.lua" )
-include( "sh_playermodels.lua" )
-include( "sh_skins.lua" )
-include( "sh_shop.lua" )
-include( "sh_titles.lua" )
-include( "sh_ulx_integration.lua" )
-include( "sh_weaponbalancing.lua" )
+AddCSLuaFile( "sh_loader.lua" )
 
 local col = {}
 col[0] = Vector( 0, 0, 0 )
@@ -175,10 +106,10 @@ function _Ply:ChatPrintColor( ... )
 	net.Send( self )
 end
 
-local _flags = file.Find( "flags/*", "GAME" )
+--[[local _flags = file.Find( "flags/*", "GAME" )
 for k, v in next, _flags do
 	resource.AddSingleFile( "flags/" .. v )
-end
+end]]
 
 util.AddNetworkString( "tdm_loadout" )
 util.AddNetworkString( "tdm_deathnotice" )
@@ -196,8 +127,8 @@ util.AddNetworkString( "ApplyWeaponSkin" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
-CreateConVar( "tdm_xpmulti", 0, FCVAR_NOTIFY, "0 to disable." )
-CreateConVar( "tdm_devmode", 0, FCVAR_NOTIFY, "1 to disable ending of round... or something" )
+--[[CreateConVar( "tdm_xpmulti", 0, FCVAR_NOTIFY, "0 to disable." )
+CreateConVar( "tdm_devmode", 0, FCVAR_NOTIFY, "1 to disable ending of round... or something" )]]
 
 if not file.Exists( "tdm", "DATA" ) then
 	file.CreateDir( "tdm" )
@@ -401,7 +332,9 @@ function GM:Initialize()
 					GAMEMODE:EndRound( 0 )
 				end
 			end
-		end
+        end
+        
+        hook.Run( "RountTimerInc", GetGlobalInt( "RoundTime" ), GetGlobalInt( "RedTickets" ), GetGlobalInt( "BlueTickets" ) )
 	end )
 
 	if file.Exists( "tdm/newevent.txt", "DATA" ) then
@@ -708,6 +641,7 @@ function GM:PlayerSpawn( ply )
 		ply:SetRunSpeed( 360 )
 	end
 
+    ply:RemoveAllAmmo()
 	timer.Simple( 1, function()
 		if ply:IsPlayer() then
 			for k, v in pairs( ply:GetWeapons() ) do

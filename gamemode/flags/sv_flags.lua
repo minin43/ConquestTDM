@@ -741,10 +741,25 @@ flags[ "gm_battleground_nodes" ] = {
     { "E", Vector(-4142.4688, -1423.6875, -63.9688), 289.0, 0.0 }
 }
 
-flags[ "cs_east_boroush" ] = {
+flags[ "cs_east_borough" ] = {
     { "A", Vector(-1486.5938, -2128.7188, -15.9688), 204.0, 0.0 },
     { "B", Vector(767.75, -1951.8125, -16), 276.0, 0.0 },
     { "C", Vector(2303.625, -1650.4688, -16), 198.0, 0.0 }
+}
+
+flags[ "gm_boreas" ] = {
+    { "A", Vector(-8102.625, -14276.0313, -10495.9375), 451.0, 0.0, "1" },
+    { "B", Vector(-9353.2188, -11183.125, -10463.9688), 231.0, 0.0, "1" },
+    { "C", Vector(-10137.0938, -8473.5313, -10319.9688), 88.0, 0.0, "1" },
+
+    { "A", Vector(-255.8438, 3455.9375, -6399.9688), 402.0, 0.0, "2" },
+    { "B", Vector(65.5313, 4802.625, -6399.9688), 278.0, 0.0, "2" },
+    { "C", Vector(748.75, 4423.8125, -6271.9688), 90.0, 0.0, "2" },
+    { "D", Vector(1748.2813, 3855.5, -6319.9688), 290.0, 0.0, "2" },
+
+    { "A", Vector(2335.2188, 2508.1875, -6399.9688), 317.0, 0.0, "3" },
+    { "B", Vector(1425.5625, 3080.2813, -6271.9688), 134.0, 0.0, "3" },
+    { "C", Vector(2528.2813, 4095.3438, -6319.9688), 165.0, 0.0, "3" }
 }
 
 --[[flags[ "" ] = {
@@ -833,26 +848,36 @@ net.Receive( "DoesMapHaveFlags", function( len, ply )
     end
 end )
 
-if not flags[ game.GetMap() ] then
-	return
-else
-    GM.FlagTable = GM.FlagTable or {}
-    GM.FlagFeedCheck = GM.FlagFeedCheck or {}
-	
-	for k, v in pairs( flags[ game.GetMap() ] ) do
-		--//Keys in this table are the flag "name" - duplicates do not exist this way
-		--[[ Table format:
-			pos = flag position
-			size = size of the area the player must be in
-			players = table of all players inside the area, key = player object, value = player's team
-			redcount = number of red team players on the point (this was originally a local value, but let's save it anywhore)
-			bluecount = same as red but for blue team
-			currentcontrol = team currently in control of the flag
-			lastcontrol = team that last controlled the flag before it neutralized - used for "SAVED FLAG"
-			count = where the flag sits in terms of control, 0 = red control, 20 = blue control, 10 = neutral]]
-		GM.FlagTable[ v[ 1 ] ] = { pos = v[ 2 ], size = v[ 3 ], players = {}, redcount = 0, bluecount = 0, currentcontrol = 0, lastcontrol = 0, count = 10 }
-	end
+if not flags[ game.GetMap() ] then return end
+
+function GM:SetupFlags( id )
+    self.FlagTable = self.FlagTable or {}
+    self.FlagFeedCheck = self.FlagFeedCheck or {}
+    --//Keys in this table are the flag "name" - duplicates do not exist this way
+    --[[ Table format:
+        pos = flag position
+        size = size of the area the player must be in
+        players = table of all players inside the area, key = player object, value = player's team
+        redcount = number of red team players on the point (this was originally a local value, but let's save it anywhore)
+        bluecount = same as red but for blue team
+        currentcontrol = team currently in control of the flag
+        lastcontrol = team that last controlled the flag before it neutralized - used for "SAVED FLAG"
+        count = where the flag sits in terms of control, 0 = red control, 20 = blue control, 10 = neutral]]
+
+    if id then
+        for k, v in pairs( flags[ game.GetMap() ] ) do
+            if id == v[5] then
+                self.FlagTable[ v[ 1 ] ] = { pos = v[ 2 ], size = v[ 3 ], players = {}, redcount = 0, bluecount = 0, currentcontrol = 0, lastcontrol = 0, count = 10 }
+            end
+        end
+    end
+    if table.IsEmpty( self.FlagTable ) then
+        for k, v in pairs( flags[ game.GetMap() ] ) do
+            self.FlagTable[ v[ 1 ] ] = { pos = v[ 2 ], size = v[ 3 ], players = {}, redcount = 0, bluecount = 0, currentcontrol = 0, lastcontrol = 0, count = 10 }
+        end
+    end
 end
+GM:SetupFlags()
 
 --//Moved from init.lua - calculates ticket drain every 5 seconds
 timer.Create( "TicketFlagCheck", 5, 0, function()
@@ -862,7 +887,7 @@ timer.Create( "TicketFlagCheck", 5, 0, function()
         firstcheck = true
 
         if GAMEMODE.FlagTable then
-            if table.Count( GAMEMODE.FlagTable ) > 0 then
+            if !table.IsEmpty( GAMEMODE.FlagTable ) then
                 SetGlobalBool( "ticketmode", true )
             else
                 SetGlobalBool( "ticketmode", false )

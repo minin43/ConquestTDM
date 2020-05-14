@@ -4,10 +4,10 @@ if !game.SinglePlayer() then return end
 
 if CLIENT then
     language.Add( "tool.ctdm_props.name", "CTDM Prop Setup" )
-    language.Add( "tool.ctdm_props.desc", "Used to save props and remove map entities for CTDM" )
+    language.Add( "tool.ctdm_props.desc", "Used to save props and remove map entities for CTDM servers" )
     language.Add( "Tool.ctdm_props.0", "Primary: Mark/Unmark USER SPAWNED Prop For Saving   Secondary: Mark/Unmark MAP SPAWNED Prop for Deletion   Reload: Area Trace for Deletion" )
 	--language.Add( "Tool.ctdm_props.set", "Weight:" )
-	language.Add( "Tool.ctdm_props.set_desc", "Set " )
+	language.Add( "Tool.ctdm_props.set_desc", "Props" )
 end
 
 TOOL.Category = "ConquestTDM"
@@ -48,9 +48,7 @@ if SERVER then
         myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_props"]
 
         for k, v in pairs( myTool.Marked.Props ) do
-            if k and k:IsValid() then 
-                k:Remove()
-            end
+            k:Remove()
         end
         myTool.Marked.Props = {}
         
@@ -62,23 +60,62 @@ if SERVER then
         local mapFile = file.Read( "tdm/tool/map_edits/" .. game.GetMap() .. ".txt", "DATA")
         local extractedInfo = util.JSONToTable( mapFile )
 
-        for k, v in pairs( extractedInfo.propSpawns ) do
-            local prop = ents.Create( "prop_physics" )
-            if !IsValid( prop ) then return end
-            prop:SetModel( v.model )
-            prop:SetPos( v.pos )
-            prop:SetAngles( v.ang )
-            prop:Spawn()
-            prop:SetColor( Color( 0, 255, 0 ) )
+        if not extractedInfo or table.IsEmpty( extractedInfo ) then return end
 
-            local physobject = prop:GetPhysicsObject()
-            physobject:EnableMotion( false )
-            myTool.Marked.Props[ prop ] = { model = v.model, pos = v.pos, ang = v.ang }
+        if extractedInfo.propSpawns then
+            for k, v in pairs( extractedInfo.propSpawns ) do
+                local prop = ents.Create( "prop_physics" )
+                if !IsValid( prop ) then return end
+                prop:SetModel( v.model )
+                prop:SetPos( v.pos )
+                prop:SetAngles( v.ang )
+                prop:Spawn()
+                prop:SetColor( Color( 0, 255, 0 ) )
+
+                local physobject = prop:GetPhysicsObject()
+                physobject:EnableMotion( false )
+                myTool.Marked.Props[ prop ] = { model = v.model, pos = v.pos, ang = v.ang }
+            end
         end
 
-        for k, v in pairs( extractedInfo.Deletions ) do
-            ents.GetMapCreatedEntity( k ):SetColor( Color( 255, 0, 0 ) )
-            myTool.Marked.Deletion[ k ] = true
+        if extractedInfo.Deletions then
+            for k, v in pairs( extractedInfo.Deletions ) do
+                ents.GetMapCreatedEntity( k ):SetColor( Color( 255, 0, 0 ) )
+                myTool.Marked.Deletion[ k ] = true
+            end
+        end
+
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_walls"]
+        for k, v in pairs( myTool.Marked.Walls ) do
+            if k and k:IsValid() then
+                k:Remove()
+            end
+        end
+        myTool.Marked.Walls = {}
+
+        if extractedInfo.Walls then
+            local vector1
+            for k, v in pairs( extractedInfo.Walls ) do
+                if k % 2 == 1 then
+                    vector1 = Vector( v[1], v[2], v[3] )
+                else
+                    local vector2 = Vector( v[1], v[2], v[3] )
+
+                    local wall = ents.Create( "ctdm_invis_wall" )
+                    wall:SetPos( vector1 )
+                    --wall:SetMinBound( vector1 ) -- Just the position for now
+                    wall:SetMaxBound( vector2 )
+                    wall:Spawn()
+                    wall:PhysicsInitBox( Vector(0,0,0), vector2 - vector1 )
+
+                    local phys = wall:GetPhysicsObject()
+                    if IsValid( phys ) then
+                        phys:EnableMotion( false )
+                    end
+
+                    myTool.Marked.Walls[ wall ] = {vec1 = vector1, vec2 = vector2}
+                end
+            end
         end
 
         ply:ChatPrint( "Loading saved prop information..." )
@@ -101,7 +138,15 @@ if SERVER then
             end
         end
 
-        file.Write( "tdm/tool/map_edits/" .. game.GetMap() .. ".txt", util.TableToJSON( { propSpawns = fixedProps, Deletions = fixedDeletion } ) )
+        local fixedWalls = {}
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_walls"]
+        for k, v in pairs( myTool.Marked.Walls ) do
+            if k and k:IsValid() then
+                table.Add( fixedWalls, v )
+            end
+        end
+
+        file.Write( "tdm/tool/map_edits/" .. game.GetMap() .. ".txt", util.TableToJSON( { propSpawns = fixedProps, Deletions = fixedDeletion, Walls = fixedWalls } ) )
     end )
 end
 
@@ -257,10 +302,11 @@ function TOOL.BuildCPanel( CPanel )
 
     local info = vgui.Create( "DLabel", CPanel )
     info:Dock( TOP )
-    info:SetTall( 22 )
+    info:SetTall( 66 )
     info:DockMargin( 10, 22, 10, 22 )
-    info:SetText( "[WARNING] Saving to disc overwrites what was\npreviously stored. If you don't want to lose it, create a backup. ALSO, opening the currently-saved"
-                    .. " config also removes all un-saved edits. Use with caution." )
+    info:SetTextColor( Color( 0, 0, 0, 200 ) )
+    info:SetText( "[WARNING] Saving to disc overwrites what was\npreviously stored. If you don't want to lose it,\ncreate a backup. ALSO, opening the currently-saved\n"
+                    .. "config also removes all un-saved edits.\nUse with caution." )
 end
 
 if CLIENT then

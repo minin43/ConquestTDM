@@ -14,16 +14,30 @@ util.AddNetworkString( "debug_showspawns" )
 local curSpawns = {}
 local nl = Vector( 0, 0, 0 )	
 
-function refreshspawns()
+--Made some minor adjustments to this function to get it to work with id-based spawns
+function refreshspawns( id )
 	local toApply = {}
 	local fi = file.Read( "tdm/spawns/" .. game.GetMap() .. ".txt", "DATA" )
-	local exp = string.Explode( "\n", fi )
-	for k, v in next, exp do
-		local toAdd = util.JSONToTable( v )
-		table.insert( toApply, toAdd )
-	end
-	curSpawns = toApply
-	local num = GetConVar( "tdm_showspawns" ):GetInt()
+    local exp = string.Explode( "\n", fi )
+    local num = GetConVar( "tdm_showspawns" ):GetInt()
+    
+    if id then
+        for k, v in next, exp do
+            local toAdd = util.JSONToTable( v )
+            if v[4] == id then
+                table.insert( toApply, toAdd )
+            end
+        end
+    end
+    if table.IsEmpty( toApply ) then
+        for k, v in next, exp do
+            local toAdd = util.JSONToTable( v )
+            table.insert( toApply, toAdd )
+        end
+    end
+    
+    curSpawns = toApply
+    
 	if num == 1 then
 		net.Start( "debug_showspawns" )
 			net.WriteTable( curSpawns )

@@ -4,7 +4,7 @@ if !game.SinglePlayer() then return end
 
 if CLIENT then
     language.Add( "tool.ctdm_spawn.name", "CTDM Spawner" )
-    language.Add( "tool.ctdm_spawn.desc", "Used to place & save spawn & flag zones for CTDM" )
+    language.Add( "tool.ctdm_spawn.desc", "Used to place & save spawn & flag zones for CTDM servers" )
     language.Add( "Tool.ctdm_spawn.0", "Primary: Spawner   Secondary: Flag   Reload: Reset" )
 	--language.Add( "Tool.ctdm_spawn.set", "Weight:" )
 	language.Add( "Tool.ctdm_spawn.set_desc", "Set spawns" )
@@ -27,22 +27,28 @@ if SERVER then
     util.AddNetworkString( "SaveValues" )
     util.AddNetworkString( "StartingValues" )
     util.AddNetworkString( "ServerSaveToDisc" )
-    util.AddNetworkString( "RunServerInitDipshit" )
+    --util.AddNetworkString( "RunServerInitDipshit" )
+    util.AddNetworkString( "DeleteSpawn" )
+    util.AddNetworkString( "DeleteFlag" )
+    util.AddNetworkString( "UpdateSpawnerValue" )
+    util.AddNetworkString( "UpdateFlagValue" )
 
     net.Receive( "SaveValues", function( len, ply )
-        myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
 
         local which = net.ReadInt( 3 )
         if which == 1 then
             team = net.ReadInt( 3 )
             posOne = net.ReadVector()
             posTwo = net.ReadVector()
-            table.insert( myTool.SpawnTable, { team, posOne, posTwo } )
+            id = net.ReadString()
+            table.insert( myTool.SpawnTable, { team, posOne, posTwo, id } )
         else
             flagLetter = net.ReadString()
             posOne = net.ReadVector()
             flagSize = net.ReadInt( 16 )
-            table.insert( myTool.FlagTable, { flagLetter, posOne, flagSize, 0 } )
+            id = net.ReadString()
+            table.insert( myTool.FlagTable, { flagLetter, posOne, flagSize, 0, id } )
         end
 
         net.Start( "DeleteClientValues" )
@@ -52,7 +58,7 @@ if SERVER then
     end )
 
     net.Receive( "ServerSaveToDisc", function( len, ply )
-        myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
 
         local str = ""
         for k, v in pairs( myTool.SpawnTable ) do
@@ -63,6 +69,41 @@ if SERVER then
         end
 
         file.Write( "tdm/tool/" .. game.GetMap() .. ".txt", str )
+    end )
+
+    net.Receive( "DeleteSpawn", function( len, ply )
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local toDelete = net.ReadInt( 8 )
+        
+        table.remove( myTool.SpawnTable, toDelete )
+    end )
+
+    net.Receive( "DeleteFlag", function( len, ply )
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local toDelete = net.ReadInt( 8 )
+        
+        table.remove( myTool.FlagTable, toDelete )
+    end )
+
+    net.Receive( "UpdateSpawnerValue", function( len, ply )
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local toUpdate = net.ReadInt( 8 )
+        local newVec1 = net.ReadVector()
+        local newVec2 = net.ReadVector()
+        local newID = net.ReadString()
+
+        myTool.SpawnTable[toUpdate] = {myTool.SpawnTable[toUpdate][1], newVec1, newVec2, newID }
+    end )
+
+    net.Receive( "UpdateFlagValue", function( len, ply )
+        local myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local toUpdate = net.ReadInt( 8 )
+        local newVec = net.ReadVector()
+        local newRad = net.ReadInt( 16 )
+        local newLet = net.ReadString()
+        local newID = net.ReadString()
+
+        myTool.FlagTable[toUpdate] = { newLet, newVec, newRad, 0, newID }
     end )
 end
 
@@ -85,9 +126,9 @@ function TOOL:Init()
             for k, v in pairs( self.MapExtract ) do
                 local val = util.JSONToTable( v )
                 if val and tonumber( val[1] ) then --it's a spawn
-                    table.insert( self.SpawnTable, { tonumber( val[1] ), val[2], val[3] } )
+                    table.insert( self.SpawnTable, { tonumber( val[1] ), val[2], val[3], val[4] or "" } )
                 elseif val then --it's a flag
-                    table.insert( self.FlagTable, { val[1], val[2], val[3], tonumber( val[4] ), 0 } )
+                    table.insert( self.FlagTable, { val[1], val[2], val[3], tonumber( val[4] ), 0, val[6] or "" } )
                 end
             end
 
@@ -126,7 +167,6 @@ function TOOL:Think()
     end
 end
 
---//Places spawn point
 function TOOL:LeftClick( trace )
     if !trace.HitPos or ( IsValid( trace.Entity ) and !trace.Entity:IsWorld() ) then return false end --Has to be the ground
     if ( CLIENT ) then return true end
@@ -173,7 +213,6 @@ function TOOL:LeftClick( trace )
 	util.Effect( "ToolTracer", effectdata )
 end
 
---//Places Conquest flags
 function TOOL:RightClick( trace )
     if !trace.HitPos or ( IsValid( trace.Entity ) and !trace.Entity:IsWorld() ) then return false end --Has to be the ground
     if ( CLIENT ) then return true end
@@ -224,15 +263,19 @@ function TOOL:ClearValues()
     if SERVER then
         self.PosOne = nil
         self.PosTwo = nil
+        self.SpawnerID = nil
         self.StartedSpawnPlacement = false
         self.FlagPos = nil
         self.FlagSize = nil
+        self.FlagID = nil
         self.StartedFlagPlacement = false
     elseif CLIENT then
         self.PosOne = nil
         self.PosTwo = nil
+        self.SpawnerID = nil
         self.FlagPos = nil
         self.FlagSize = nil
+        self.FlagID = nil
     end
 end
 
@@ -291,6 +334,8 @@ function TOOL:Reload( trace )
 end
 
 function TOOL.BuildCPanel( CPanel )
+    local TOOL = LocalPlayer():GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+    print( TOOL, LocalPlayer():GetWeapon( "gmod_tool" ), LocalPlayer():GetWeapon( "gmod_tool" ).Tool )
     CPanel:AddControl( "Header", { Description = "#tool.ctdm_spawn.name" } )
     CPanel:AddControl( "Slider", { Description = "Sets which team the current player spawn is for", Label = "1 = Red, 2 = Blue", Command = "ctdm_spawn_team", Type = "Integer", Min = 1, Max = 2, Help = false })
     --CPanel:AddControl( "Button", { Text = "Save To Disc", Command = "ctdm_spawn_write_to_disc" } )
@@ -302,20 +347,204 @@ function TOOL.BuildCPanel( CPanel )
     local discWrite = vgui.Create( "DButton", CPanel )
     discWrite:Dock( TOP )
     discWrite:SetTall( 22 )
-    discWrite:DockMargin( 10, 22, 10, 22 )
+    discWrite:DockMargin( 10, 11, 10, 11 )
     discWrite:SetText( "Save To Disc" )
     discWrite.DoClick = function()
         net.Start( "ServerSaveToDisc" )
         net.SendToServer()
         LocalPlayer():ChatPrint( "Flags & Spawns have been saved! Find the file in data/tdm/tool/" .. game.GetMap() .. ".txt" )
-        LocalPlayer():ChatPrint( "From that file, you can delete any flag or spawn placements - the next update will provide an easier solution" )
+        TOOL.RebuildCPanel()
+        --LocalPlayer():ChatPrint( "From that file, you can delete any flag or spawn placements - the next update will provide an easier solution" )
     end
+
+    local refresh = vgui.Create( "DButton", CPanel )
+    refresh:Dock( TOP )
+    refresh:SetTall( 22 )
+    refresh:DockMargin( 10, 11, 10, 11 )
+    refresh:SetText( "Refresh Saved Info" )
+    refresh.DoClick = function()
+        TOOL.RebuildCPanel()
+    end
+
+    local function UpdateValues( num )
+        net.Start( "UpdateSpawnerValue" )
+            net.WriteInt( num, 8 )
+            net.WriteVector( TOOL.SpawnTable[num][2] )
+            net.WriteVector( TOOL.SpawnTable[num][3] )
+            net.WriteString( TOOL.SpawnTable[num][4] or "" )
+        net.SendToServer()
+    end
+    local function UpdateFlagValues( num )
+        net.Start( "UpdateFlagValue" )
+            net.WriteInt( num, 8 )
+            net.WriteVector( TOOL.FlagTable[num][2] )
+            net.WriteInt( TOOL.FlagTable[num][3], 16 )
+            net.WriteString( TOOL.FlagTable[num][1] )
+            net.WriteString( TOOL.FlagTable[num][5] or "" )
+        net.SendToServer()
+    end
+
+    function TOOL.RebuildCPanel()
+        if TOOL.clientInfo then
+            TOOL.clientInfo:Remove()
+        end
+
+        local clientInfo = vgui.Create( "DCategoryList", CPanel )
+        clientInfo:Dock( TOP )
+        clientInfo:SetTall( 600 )
+        clientInfo:DockMargin( 10, 11, 10, 11 )
+        TOOL.clientInfo = clientInfo
+
+        local warning = vgui.Create( "DLabel", clientInfo )
+        warning:SetTall( 20 )
+        warning:Dock( TOP )
+        warning:SetText( "Make sure you click Save To Disc in order to save ANY\nchanges made here - INCLUDING deleting!")
+        warning:SetAutoStretchVertical( true )
+        warning:SetTextColor( Color( 0, 0, 0, 200 ) )
+
+        local spawns1 = clientInfo:Add( "Saved Spawns - Red Team" )
+        local spawns2 = clientInfo:Add( "Saved Spawns - Blue Team" )
+        local flags = clientInfo:Add( "Saved Flags" )
+
+        for k, v in pairs( TOOL.SpawnTable ) do
+            local infoproperties
+            if v[1] == 1 then infoproperties = vgui.Create( "DProperties", spawns1 ) else infoproperties = vgui.Create( "DProperties", spawns2 ) end
+            infoproperties:SetTall( 192 )
+            infoproperties:Dock( TOP )
+
+            local info1x = infoproperties:CreateRow( "First Corner Position", "X Coord" )
+            info1x:Setup( "Integer" )
+            info1x:SetValue( v[2].x )
+            info1x.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][2].x = data
+                UpdateValues( k )
+            end
+            info1y = infoproperties:CreateRow( "First Corner Position", "Y Coord" )
+            info1y:Setup( "Integer" )
+            info1y:SetValue( v[2].y )
+            info1y.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][2].y = data
+                UpdateValues( k )
+            end
+            info1z = infoproperties:CreateRow( "First Corner Position", "Z Coord" )
+            info1z:Setup( "Integer" )
+            info1z:SetValue( v[2].z )
+            info1z.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][2].z = data
+                UpdateValues( k )
+            end
+
+            local info2x = infoproperties:CreateRow( "Second Corner Position", "X Coord" )
+            info2x:Setup( "Integer" )
+            info2x:SetValue( v[3].x )
+            info2x.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][3].x = data
+                UpdateValues( k )
+            end
+            info2y = infoproperties:CreateRow( "Second Corner Position", "Y Coord" )
+            info2y:Setup( "Integer" )
+            info2y:SetValue( v[3].y )
+            info2y.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][3].y = data
+                UpdateValues( k )
+            end
+            --[[info2z = infoproperties:CreateRow( "Second Corner Position", "Z Coord" )
+            info2z:Setup( "Integer" )
+            info2z:SetValue( v[3].z )
+            info2z.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][3].z = data
+            end]]
+
+            local extra = infoproperties:CreateRow( "Extra", "Spawner ID" )
+            extra:Setup( "String" )
+            extra:SetValue( v[4] or "" )
+            extra.DataChanged = function( self, data )
+                TOOL.SpawnTable[k][4] = data
+                UpdateValues( k )
+            end
+
+            local delete
+            if v[1] == 1 then delete = vgui.Create( "DButton", spawns1 ) else delete = vgui.Create( "DButton", spawns2 ) end
+            delete:SetTall( 20 )
+            delete:Dock( TOP )
+            delete:SetText( "Delete Spawn" )
+            delete.DoClick = function()
+                net.Start( "DeleteSpawn" )
+                    net.WriteInt( k, 8 )
+                net.SendToServer()
+                table.remove( TOOL.SpawnTable, k )
+                TOOL.RebuildCPanel()
+            end
+        end
+        for k, v in pairs( TOOL.FlagTable ) do
+            local infoproperties = vgui.Create( "DProperties", flags )
+            infoproperties:SetTall( 168 )
+            infoproperties:Dock( TOP )
+
+            local flagx = infoproperties:CreateRow( "Flag Position", "X Coord" )
+            flagx:Setup( "Integer" )
+            flagx:SetValue( v[2].x )
+            flagx.DataChanged = function( self, data )
+                TOOL.FlagTable[k][2].x = data
+                UpdateFlagValues( k )
+            end
+            local flagy = infoproperties:CreateRow( "Flag Position", "Y Coord" )
+            flagy:Setup( "Integer" )
+            flagy:SetValue( v[2].y )
+            flagy.DataChanged = function( self, data )
+                TOOL.FlagTable[k][2].y = data
+                UpdateFlagValues( k )
+            end
+            local flagz = infoproperties:CreateRow( "Flag Position", "Z Coord" )
+            flagz:Setup( "Integer" )
+            flagz:SetValue( v[2].z )
+            flagz.DataChanged = function( self, data )
+                TOOL.FlagTable[k][2].z = data
+                UpdateFlagValues( k )
+            end
+
+            local flagr = infoproperties:CreateRow( "Flag Interaction Values", "Circle radius" )
+            flagr:Setup( "Integer" )
+            flagr:SetValue( v[3] )
+            flagr.DataChanged = function( self, data )
+                TOOL.FlagTable[k][3] = tostring( math.Clamp( tonumber( data ) or 0, 0, 600 ) or 0 )
+                UpdateFlagValues( k )
+            end
+            local flagl = infoproperties:CreateRow( "Flag Interaction Values", "Flag Letter" )
+            flagl:Setup( "String" )
+            flagl:SetValue( v[1] )
+            flagl.DataChanged = function( self, data )
+                TOOL.FlagTable[k][1] = data
+                UpdateFlagValues( k )
+            end
+            local flagid = infoproperties:CreateRow( "Flag Interaction Values", "Flag ID" )
+            flagid:Setup( "String" )
+            flagid:SetValue( v[5] or "" )
+            flagid.DataChanged = function( self, data )
+                TOOL.FlagTable[k][5] = data
+                UpdateFlagValues( k )
+            end
+
+            local delete = vgui.Create( "DButton", flags )
+            delete:SetTall( 20 )
+            delete:Dock( TOP )
+            delete:SetText( "Delete Flag" )
+            delete.DoClick = function()
+                net.Start( "DeleteFlag" )
+                    net.WriteInt( k, 8 )
+                net.SendToServer()
+                table.remove( TOOL.FlagTable, k )
+                TOOL.RebuildCPanel()
+            end
+        end
+    end
+    TOOL.RebuildCPanel()
 end
 
 if CLIENT then
     myTool = myTool or TOOL
-    myTool.SpawnTable = {}
-    myTool.FlagTable = {}
+    myTool.SpawnTable = myTool.SpawnTable or {}
+    myTool.FlagTable = myTool.FlagTable or {}
     ColorTable = { Color( 255, 0, 0 ), Color( 0, 0, 255 ) }
 
     function OpenMenu( spawn )
@@ -379,11 +608,22 @@ if CLIENT then
                 myTool.PosTwoSep.y = data
             end
 
-            myTool.twoValThree = myTool.propertiesTwo:CreateRow( "Second Corner Position", "Z Coord" )
+            myTool.twoValThree = myTool.propertiesTwo:CreateRow( "Second Corner Position", "Spawner ID" )
             myTool.twoValThree:Setup( "String" )
-            myTool.twoValThree:SetValue( "Doesn't Edit" )
-            --[[myTool.twoValThree.DataChanged = function( self, data )
-                myTool.PosOneSep.z = data
+            myTool.twoValThree:SetValue( myTool.SpawnerID )
+            myTool.twoValThree.DataChanged = function( self, data )
+                myTool.SpawnerID = data
+            end
+
+            --[[myTool.propertiesThree = vgui.Create( "DProperties", myTool.main )
+            myTool.propertiesThree:SetPos( propertiesBuffer, (propertiesBuffer * 2) + titleBuffer + myTool.propertiesOne:GetTall() )
+            myTool.propertiesThree:SetSize( myTool.main:GetWide() - (titleBuffer * 2), myTool.main:GetTall() / 3 )
+
+            myTool.threeValOne = myTool.propertiesThree:CreateRow( "Spawner Interaction Values", "Spawner ID" )
+            myTool.threeValOne:Setup( "String" )
+            myTool.threeValOne:SetValue( myTool.SpawnerID )
+            myTool.threeValOne.DataChanged = function( self, data )
+                myTool.SpawnerID = data
             end]]
         else
             myTool.propertiesOne = vgui.Create( "DProperties", myTool.main )
@@ -428,6 +668,13 @@ if CLIENT then
             myTool.valFive.DataChanged = function( self, data )
                 myTool.FlagLetter = data
             end
+
+            myTool.valSix = myTool.propertiesTwo:CreateRow( "Flag Interaction Values", "Flag ID" )
+            myTool.valSix:Setup( "String" )
+            myTool.valSix:SetValue( myTool.FlagID )
+            myTool.valSix.DataChanged = function( self, data )
+                myTool.FlagID = data
+            end
         end
 
         myTool.accept = vgui.Create( "DButton" , myTool.main )
@@ -443,13 +690,15 @@ if CLIENT then
                     net.WriteInt( myTool.PosTeam, 3 )
                     net.WriteVector( pos1 )
                     net.WriteVector( pos2 )
-                    table.insert( myTool.SpawnTable, { myTool.PosTeam, pos1, pos2 } )
+                    net.WriteString( myTool.SpawnerID )
+                    table.insert( myTool.SpawnTable, { myTool.PosTeam, pos1, pos2, myTool.SpawnerID } ) --Used for 3D drawing
                 else
                     net.WriteInt( 2, 3 )
                     net.WriteString( myTool.FlagLetter )
                     net.WriteVector( Vector( myTool.FlagPos.x, myTool.FlagPos.y, myTool.FlagPos.z ) )
                     net.WriteInt( myTool.FlagSize, 16 )
-                    table.insert( myTool.FlagTable, { myTool.FlagLetter, Vector( myTool.FlagPos.x, myTool.FlagPos.y, myTool.FlagPos.z ), myTool.FlagSize, 0 } )
+                    net.WriteString( myTool.FlagID )
+                    table.insert( myTool.FlagTable, { myTool.FlagLetter, Vector( myTool.FlagPos.x, myTool.FlagPos.y, myTool.FlagPos.z ), myTool.FlagSize, 0, myTool.FlagID } ) --Used for 3D drawing
                 end
             net.SendToServer()
 
@@ -486,12 +735,15 @@ if CLIENT then
                 
                 myTool.PosTwo = myTool.PosTwoBackup
                 myTool.PosTwoSep = { x = myTool.PosTwoBackup.x, y = myTool.PosTwoBackup.y, z = myTool.PosTwoBackup.z }
+
+                myTool.SpawnerID = ""
             else
                 myTool.FlagPos = myTool.FlagPosBackup
                 myTool.FlagPosSep = { x = myTool.FlagPosBackup.x, y = myTool.FlagPosBackup.y, z = myTool.FlagPosBackup.z }
 
                 myTool.FlagSize = myTool.FlagSizeBackup
                 myTool.FlagLetter = ""
+                myTool.FlagID = ""
             end
 
             myTool.main:Close()
@@ -519,6 +771,7 @@ if CLIENT then
                 myTool.PosTwo = nil
             end
         end
+        myTool.SpawnerID = ""
     end )
 
     net.Receive( "UpdateFlagPosition", function()
@@ -531,6 +784,7 @@ if CLIENT then
             myTool.FlagSize = net.ReadInt( 16 )
             myTool.FlagSizeBackup = myTool.FlagSize
             myTool.FlagLetter = ""
+            myTool.FlagID = ""
         end
     end )
 
@@ -556,7 +810,7 @@ if CLIENT then
     end )
     
     surface.CreateFont( "FlagNames", { font = "Arial", size = 40 } )
-    hook.Add( "PostDrawOpaqueRenderables", "DrawEverything", function()
+    hook.Add( "PostDrawOpaqueRenderables", "DrawSpawnsFlags", function()
         if !LocalPlayer():Alive() or !LocalPlayer():GetWeapon( "gmod_tool" ).Tool then return end
         myTool = LocalPlayer():GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
         if not myTool or not myTool.IsHeld then return end

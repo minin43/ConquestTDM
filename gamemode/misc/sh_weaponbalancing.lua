@@ -1,6 +1,8 @@
---[[Notes about balancing:      -Unfinished-
-    MaxSpreadInc is the total amount the spread cone will get under all circumstances
-        A HipSpread of 0.12 seems to equal a MaxSpreadInc of 0.03
+--[[Some notes about balancing:
+    MaxSpreadInc is ideally Hip Spread / 4 + 0.02
+    SpreadPerShot feels bad any value > 0 on automatic weapons, as uncontrollable inaccuracy takes effect. Values of 0.001 - 0.003 are recommended for 
+        particularly inaccurate-feeling weapons, otherwise values of 0 work well (recoil is already heavily randomized, randomized^2 just feels plain bad)
+    Dunno how VelocitySensitivity plays into accuracy penalties, only that it does.
 ]]
 
 function RebalanceWeapons()
@@ -18,7 +20,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.7
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.002
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -39,7 +41,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.003
+        wep.SpreadPerShot = 0.001
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -58,7 +60,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.002
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -77,7 +79,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.005
         wep.VelocitySensitivity = 2
         wep.MaxSpreadInc = 0.1
-        wep.SpreadPerShot = 0.002
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 20
@@ -96,7 +98,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.6
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.003
+        wep.SpreadPerShot = 0.001
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -115,7 +117,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.6
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.003
+        wep.SpreadPerShot = 0.001
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -134,7 +136,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.9
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.002
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -153,7 +155,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.8
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.003
+        wep.SpreadPerShot = 0.001
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -172,7 +174,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.01
         wep.VelocitySensitivity = 1.5
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.003
+        wep.SpreadPerShot = 0.001
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -191,7 +193,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.005
         wep.VelocitySensitivity = 2
         wep.MaxSpreadInc = 0.12
-        wep.SpreadPerShot = 0.002
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 20
@@ -210,7 +212,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.001
         wep.VelocitySensitivity = 1.5
         wep.MaxSpreadInc = 0.05
-        wep.SpreadPerShot = 0.004
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -307,7 +309,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.002
         wep.VelocitySensitivity = 2.4
         wep.MaxSpreadInc = 0.45
-        wep.SpreadPerShot = 0.009
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 15
@@ -326,7 +328,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.002
         wep.VelocitySensitivity = 2.1
         wep.MaxSpreadInc = 0.45
-        wep.SpreadPerShot = 0.008
+        wep.SpreadPerShot = 0.0
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 10
@@ -347,7 +349,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.035
-        wep.SpreadPerShot = 0.003
+        wep.SpreadPerShot = 0.001
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 25
@@ -368,7 +370,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.3
         wep.MaxSpreadInc = 0.035
-        wep.SpreadPerShot = 0.006
+        wep.SpreadPerShot = 0.004
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 20
@@ -387,7 +389,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.1
         wep.MaxSpreadInc = 0.03
-        wep.SpreadPerShot = 0.005
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 30
@@ -406,7 +408,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.5
         wep.MaxSpreadInc = 0.06
-        wep.SpreadPerShot = 0.004
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 50
@@ -427,7 +429,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.2
         wep.MaxSpreadInc = 0.03
-        wep.SpreadPerShot = 0.005
+        wep.SpreadPerShot = 0.003
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 20
@@ -446,7 +448,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.6
         wep.MaxSpreadInc = 0.045
-        wep.SpreadPerShot = 0.004
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 15
@@ -465,7 +467,7 @@ function RebalanceWeapons()
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.4
         wep.MaxSpreadInc = 0.04
-        wep.SpreadPerShot = 0.004
+        wep.SpreadPerShot = 0.002
         wep.ClumpSpread = 0
         wep.Shots = 1
         wep.Primary.ClipSize = 40

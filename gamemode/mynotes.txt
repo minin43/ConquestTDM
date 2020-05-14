@@ -2,43 +2,16 @@
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Notes:
-01. 
+01. Add John Wick model to DL queue
+02. Server's still very laggy
+03. Info_player_spawn doesn't work
+04. Fix issue:
+[ERROR] addons/customizable_weaponry_2.0_349050451/lua/effects/cw_muzzleflash.lua:18: attempt to call method 'getFireParticles' (a nil value)
+  1. unknown - addons/customizable_weaponry_2.0_349050451/lua/effects/cw_muzzleflash.lua:18
+05. Look at weapon balancing
+06. Double XP weekend and happy hour timing was off
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 To-Test:
 
-
-
---[[    Playtest 1    ]]
-
----------------------------------------------------------------------------------------------------------------------------------------
-My notes:
-
----------------------------------------------------------------------------------------------------------------------------------------
-
-To-Test:
-
----------------------------------------------------------------------------------------------------------------------------------------
-
-Ignoring:
-13. Deathscreen perk listings should display their actual name and not ID
-03. Have a quick-shop button in the loadout menu
-
----------------------------------------------------------------------------------------------------------------------------------------
-
-Finished:
-05. Order the guns in the shop by what level they unlock in, so there's no so much scrolling to find the next weapon.
-02. Notify players of their new unlocks when they level up
-10. Playermodels should swap on each individual selection press, as well as on minimization (like weapons do)
-04. Maybe tell players how many guns they can buy in the loadout? "3 new weapons available for puchase"?
-14. Models that don't have "bodygroups/skins" enabled in their listing should be unable to set them in the loadout menu
-    a. Should look into "randomizations" of these skins, particularly the default skins for security/insurgent playermodels
-08. Default PMs are not correctly forced on team-swaps, this has to be remedied on both client and server, I believe
-06. Equipment wasn't loading correctly
--
-07. Functions in the anti-cheat testing weren't working correctly (seemed focused around playermodels)
-11. Check server performance, game seemed particularly laggy
-12. The new maps didn't work - need to add them to the roster (also why were the images all missing textures? Those SHOULD HAVE worked)
-15. RFB needs a sniper scope
-01. Check all the weapons are working OK with skins enabled (M1014 doesn't)
-09. "Selected" highlighting should be different from and more prominant than "hover" highlighting

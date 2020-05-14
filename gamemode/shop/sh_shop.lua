@@ -1,3 +1,58 @@
+--//This file is used to set up back end for the shop, including tables for weapon skins & player models
+--//Tokens = Prestige Tokens, earned via prestiging - Cash = regular shop currency, earned by playing the game - Credits = donator currency, earned by donating to the server
+
+--//    Weapon Skins    //--
+
+--//Quality goes from 0 (shit) to 5 (amazing) - I think I'll reserve 5 for special skins, 4 will be the default "really good" quality marker
+GM.SkinsMasterTable = {
+    { name = "Stone Blue", dir = "models/XQM/BoxFull_diffuse", quality = 1 },
+    { name = "Artic Breeze", dir = "models/XQM/CellShadedCamo_diffuse", quality = 1 },
+    { name = "Packed", dir = "models/XQM/LightLinesRed", quality = 4 },
+    { name = "Packed a Punch", dir = "models/XQM/LightLinesRed_tool", quality = 4 },
+    { name = "Polex", dir = "models/XQM/PoleX1_diffuse", quality = 1 },
+    { name = "Arctic Block", dir = "models/XQM/SquaredMatInverted", quality = 2 },
+    { name = "Grassy Knoll", dir = "models/XQM/WoodTexture_1", quality = 0 },
+    { name = "Black Hole", dir = "models/onfire", quality = 2 },
+    { name = "Viscera", dir = "models/zombie_fast/fast_zombie_sheet", quality = 2 },
+    { name = "Wisp", dir = "models/Airboat/airboat_blur02", quality = 3 },
+    { name = "Striped Slate", dir = "phoenix_storms/black_brushes", quality = 2 },
+    { name = "Vent", dir = "phoenix_storms/future_vents", quality = 1 },
+    --{ name = "Plasmid", dir = "plastic", quality = 2 }, --Doesn't seem to work in the menu M4
+    --{ name = "True Ice", dir = "ice_tool/ice_texture", quality = 3 }, --Also doesn't seem to work in the menu M4
+    { name = "Wireframed", dir = "models/wireframe", quality = 3 },
+    { name = "Chrome", dir = "debug/env_cubemap_model", quality = 4 },
+    { name = "Flow", dir = "models/shadertest/shader3", quality = 4 },
+    { name = "Red Flow", dir = "models/shadertest/shader4", quality = 4 },
+    { name = "Mosaic", dir = "models/shadertest/shader5", quality = 3 },
+    { name = "Stasis", dir = "models/props_combine/stasisshield_sheet", quality = 4 },
+    { name = "Juice", dir = "models/props_lab/Tank_Glass001", quality = 4 },
+    { name = "Mirror", dir = "models/screenspace", quality = 3 },
+    { name = "Flesh", dir = "models/flesh", quality = 2 },
+    { name = "ATTENTION!!!", dir = "phoenix_storms/stripes", quality = 1 },
+    { name = "Green Wire", dir = "phoenix_storms/wire/pcb_green", quality = 3 },
+    { name = "Red Wire", dir = "phoenix_storms/wire/pcb_red", quality = 3 },
+    { name = "Blue Wire", dir = "phoenix_storms/wire/pcb_blue", quality = 3 },
+    --
+    { name = "Flat Gray", dir = "phoenix_storms/gear", quality = 0 },
+    { name = "Energy Arc", dir = "Models/effects/splodearc_sheet", quality = 3 },
+    { name = "Orb Stasis", dir = "models/props_combine/portalball001_sheet", quality = 4 },
+    { name = "Shield", dir = "models/props_combine/com_shield001a", quality = 4 },
+    { name = "Glass", dir = "models/props_c17/frostedglass_01a", quality = 0 },
+    { name = "Cherry", dir = "models/props_combine/tprings_globe", quality = 4 },
+    { name = "Vantablack", dir = "models/rendertarget", quality = 3 },
+    { name = "Brick", dir = "brick/brick_model", quality = 1 },
+    { name = "Gutter", dir = "models/props_pipes/GutterMetal01a", quality = 0 },
+    { name = "Flannel", dir = "models/props_c17/FurnitureFabric003a", quality = 0 },
+    { name = "Space Junk", dir = "phoenix_storms/metalset_1-2", quality = 2 }--[[,
+    { name = "", dir = "", quality = 0 },
+    { name = "", dir = "", quality = 0 },
+    { name = "", dir = "", quality = 0 },
+    { name = "", dir = "", quality = 0 },
+    { name = "", dir = "", quality = 0 }]]
+}
+
+--//    Player models   //--
+
 GM.BuyableModels = {
     { name = "Alphatzech", model = "models/player/aphaztech.mdl", collection = "Gmod Tower", voiceovers = false, quality = 0 },
     { name = "Charple", model = "models/player/charple.mdl", collection = "HL2 Defaults", voiceovers = false, quality = 0 },
@@ -52,7 +107,56 @@ GM.BuyableModels = {
     --{ name = "", model = "", collection = "", voiceovers = false, quality = 0 },
 }
 
---//This references GAMEMODE.PlayerModels and IT'S table structure, NOT ABOVE
+--//    Shared shop backend    //--
+
+GM.WeaponSkins = {
+	--{name = "", directory = "", texture = Material( "" ), tokens = 1, cash = 0, credits = 0},
+}
+for k, v in pairs(GM.SkinsMasterTable) do
+	if v.quality == 0 then
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 1, cash = 50000, credits = 1, rarity = v.quality}
+	elseif v.quality == 1 then
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 2, cash = 100000, credits = 1, rarity = v.quality}
+	elseif v.quality == 2 then
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 3, cash = 0, credits = 1, rarity = v.quality}
+	elseif v.quality == 3 then
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 5, cash = 0, credits = 2, rarity = v.quality}
+	elseif v.quality == 4 then
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 10, cash = 0, credits = 2, rarity = v.quality}
+	else--if v.quality == 5 then
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 0, cash = 0, credits = 3, rarity = v.quality}
+	end
+end
+
+--//Any playermodels we add have the option for voiceovers, though I doubt any will get them - see cl_ and sv_character_interaction for specifics
+GM.PlayerModels = {
+	--{ name = "", model = "", tokens = 1, cash = 0, credits = 0, voiceovers = false },
+}
+for k, v in pairs(GM.BuyableModels) do
+    if v.quality == 1 then
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 2, cash = 100000, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+	elseif v.quality == 2 then
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 3, cash = 0, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+	elseif v.quality == 3 then
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 5, cash = 0, credits = 2, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+	elseif v.quality == 4 then
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 10, cash = 0, credits = 2, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+	elseif v.quality == 5 then
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 0, cash = 0, credits = 3, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+	else--if v.quality == 0 then
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 1, cash = 50000, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+	end
+end
+
+function GetSkinTableByDirectory( dir )
+    if !isstring(dir) then error("Function GetSkinTableByDirectory given non-string skin texture") end
+
+    for k, v in pairs( GAMEMODE.WeaponSkins ) do
+        if v.directory == dir then return v end
+    end
+    error( "Function GetSkinTableByDirectory given bad skin texture: " .. dir )
+end
+
 function GetModelTableByDirectory( dir )
     if !isstring(dir) then error("Function GetModelTableByDirectory given non-string skin texture") end
 

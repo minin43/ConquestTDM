@@ -1,0 +1,11 @@
+Future ideas:
+    - New Modes
+        - Shifting flags & spawns based on game performance
+            - Need to expand the workshop tool to inlcude invisible walls a la nZ
+            - Maps: zs_, gm_boreas
+        - I had an idea about something 1-life related, but IDK if it fits CTDM
+        - Some "advance" mode, like assault in UT2004
+    - New equipment
+        - Some ammo-giving shit
+        - More explosives, like a claymore
+    - 

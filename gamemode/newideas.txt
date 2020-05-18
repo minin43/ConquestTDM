@@ -8,4 +8,11 @@ Future ideas:
     - New equipment
         - Some ammo-giving shit
         - More explosives, like a claymore
-    - 
+    - New kill events & associated sounds
+        Last second save -> on flag saves at point > 17 or < 3
+        Big game hunter -> getting vendetta kills on the enemy MVP
+        Bottom feeder -> getting vendetta kills on the enemy bottom fragger
+        Killing machine -> end the game with the most kills
+        Juggernaut -> 
+        Maniac -> 
+        Warpath -> 

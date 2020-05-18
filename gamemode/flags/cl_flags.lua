@@ -110,13 +110,14 @@ net.Receive( "UpdateFlagInfo", function()
 	local pos = net.ReadVector()
 	local count = net.ReadInt( 6 )
 	local control = net.ReadInt( 3 )
-	local lastcontrol = net.ReadInt( 3 )
+    local lastcontrol = net.ReadInt( 3 )
 
 	GAMEMODE.FlagTable[ flag ] = { pos = pos, count = count, control = control, lastcontrol = lastcontrol }
 
     if progress:IsVisible() and count > 0 and count < 20 then
 		surface.PlaySound( "ui/hud_capping_flag_01_wave.mp3" ) --//Standard capture "tick" sound
-	end
+    end
+    print("UpdateFlagInfo")
 end )
 
 net.Receive( "IsOnFlag", function()
@@ -141,5 +142,10 @@ net.Receive( "DoesMapHaveFlagsCallback", function()
 end )
 
 net.Receive( "RequestFlagOrderCallback", function()
+    GAMEMODE.FlagTableOrdered = {}
     GAMEMODE.FlagTableOrdered = net.ReadTable() --//It's generally recommended you don't send tables, since they're expensive, but since this is infreqent, w/e
+end )
+
+net.Receive( "FullFlagReset", function()
+    GAMEMODE.FlagTable = {}
 end )

@@ -645,7 +645,8 @@ hook.Add( "HUDPaint", "HUD_Flags", function()
 			for order, flaginfo in pairs( GAMEMODE.FlagTableOrdered ) do
 				local flagname = flaginfo
 				flaginfo = GAMEMODE.FlagTable[ flagname ]
-				
+                if !flaginfo then return end
+                
 				surface.SetFont( "Flags" )
 				local col = Color( 255, 255, 255 )
 				if flaginfo.control == 1 or flaginfo.count == 0 then

@@ -57,15 +57,17 @@ function GM:RefreshCustomProps( doCleanUp )
                 local vector2 = Vector( v[1], v[2], v[3] )
 
                 local wall = ents.Create( "ctdm_invis_wall" )
-                wall:SetPos( vector1 )
-                --wall:SetMinBound( vector1 ) -- Just the position for now
-                wall:SetMaxBound( vector2 )
-                wall:Spawn()
-                wall:PhysicsInitBox( Vector(0,0,0), vector2 - vector1 )
+                if wall then
+                    wall:SetPos( vector1 )
+                    --wall:SetMinBound( vector1 ) -- Just the position for now
+                    wall:SetMaxBound( vector2 )
+                    wall:Spawn()
+                    wall:PhysicsInitBox( Vector(0,0,0), vector2 - vector1 )
 
-                local phys = wall:GetPhysicsObject()
-                if IsValid( phys ) then
-                    phys:EnableMotion( false )
+                    local phys = wall:GetPhysicsObject()
+                    if IsValid( phys ) then
+                        phys:EnableMotion( false )
+                    end
                 end
             end
         end

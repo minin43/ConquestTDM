@@ -250,9 +250,7 @@ net.Receive( "TeamSwapHook", function()
     GAMEMODE.TeamColor = colorScheme[ newteam ].TeamColor
 end )
 
-
-
-
-
-
-
+net.Receive( "SendSingleSound", function()
+    local snd = net.ReadString()
+    surface.PlaySound( snd )
+end )

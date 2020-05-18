@@ -1,5 +1,6 @@
 util.AddNetworkString( "SendFlags" )
 util.AddNetworkString( "FlagCapped" )
+util.AddNetworkString( "FullFlagReset" )
 	
 flags = flags or {}
 
@@ -850,9 +851,9 @@ end )
 
 if not flags[ game.GetMap() ] then return end
 
-function GM:SetupFlags( id )
-    self.FlagTable = self.FlagTable or {}
-    self.FlagFeedCheck = self.FlagFeedCheck or {}
+function GM:SetupFlags()
+    self.FlagTable = {}
+    self.FlagFeedCheck = {}
     --//Keys in this table are the flag "name" - duplicates do not exist this way
     --[[ Table format:
         pos = flag position
@@ -864,11 +865,18 @@ function GM:SetupFlags( id )
         lastcontrol = team that last controlled the flag before it neutralized - used for "SAVED FLAG"
         count = where the flag sits in terms of control, 0 = red control, 20 = blue control, 10 = neutral]]
 
-    if id then
+    net.Start( "FullFlagReset" )
+    net.Broadcast()
+
+    if GetGlobalInt( "ConquestResupply", 0 ) != 0 then
         for k, v in pairs( flags[ game.GetMap() ] ) do
-            if id == v[5] then
+            if tostring(GetGlobalInt( "ConquestResupply" )) == v[5] then
                 self.FlagTable[ v[ 1 ] ] = { pos = v[ 2 ], size = v[ 3 ], players = {}, redcount = 0, bluecount = 0, currentcontrol = 0, lastcontrol = 0, count = 10 }
             end
+        end
+
+        for k, v in pairs( player.GetAll() ) do
+            SendFlagOrder( v )
         end
     end
     if table.IsEmpty( self.FlagTable ) then
@@ -964,12 +972,21 @@ function SendCurrentFlagStatuses( ply )
 end
 
 function SendFlagOrder( ply )
-    local tosend = {}
-	for _, flagtable in pairs( flags[ game.GetMap() ] ) do
-		tosend[ #tosend + 1 ] = flagtable[ 1 ]
-	end
+    --if !GAMEMODE.FlagsOrdered then
+        GAMEMODE.FlagsOrdered = {}
+        for _, flagtable in pairs( flags[ game.GetMap() ] ) do
+            if GetGlobalInt( "ConquestResupply", 0 ) != 0 then
+                if tostring(GetGlobalInt( "ConquestResupply" )) == flagtable[5] then
+                    GAMEMODE.FlagsOrdered[ #GAMEMODE.FlagsOrdered + 1 ] = flagtable[ 1 ]
+                end
+            else
+                GAMEMODE.FlagsOrdered[ #GAMEMODE.FlagsOrdered + 1 ] = flagtable[ 1 ]
+            end
+        end
+    --end
+
 	net.Start( "RequestFlagOrderCallback" )
-		net.WriteTable( tosend )
+		net.WriteTable( GAMEMODE.FlagsOrdered )
 	net.Send( ply )
 end
 

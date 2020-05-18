@@ -15,16 +15,16 @@ local curSpawns = {}
 local nl = Vector( 0, 0, 0 )	
 
 --Made some minor adjustments to this function to get it to work with id-based spawns
-function refreshspawns( id )
+function refreshspawns()
 	local toApply = {}
 	local fi = file.Read( "tdm/spawns/" .. game.GetMap() .. ".txt", "DATA" )
     local exp = string.Explode( "\n", fi )
     local num = GetConVar( "tdm_showspawns" ):GetInt()
     
-    if id then
+    if GetGlobalInt( "ConquestResupply", 0 ) != 0 then
         for k, v in next, exp do
             local toAdd = util.JSONToTable( v )
-            if v[4] == id then
+            if toAdd[4] == tostring(GetGlobalInt( "ConquestResupply" )) then
                 table.insert( toApply, toAdd )
             end
         end

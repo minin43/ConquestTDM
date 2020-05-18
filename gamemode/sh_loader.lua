@@ -19,6 +19,7 @@ local toLoad = {
     money = true,
     perks = true,
     prestige = true,
+    resupply = true,
     scoreboard = true,
     shop = true,
     spawning = true,

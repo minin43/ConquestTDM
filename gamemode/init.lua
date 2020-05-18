@@ -62,22 +62,41 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_loader.lua" )
 
-local col = {}
-col[0] = Vector( 0, 0, 0 )
-col[1] = Vector( 1.0, .2, .2 )
-col[2] = Vector( .2, .2, 1.0 )
-
---load = load or {}
---preload = preload or {}
-
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
 	include( "/perks/" .. v )
 end
+
+util.AddNetworkString( "tdm_loadout" )
+util.AddNetworkString( "tdm_deathnotice" )
+util.AddNetworkString( "tdm_killcountnotice" )
+util.AddNetworkString( "DoWin" )
+util.AddNetworkString( "DoLose" )
+util.AddNetworkString( "DoTie" )
+util.AddNetworkString( "DoStart" )
+util.AddNetworkString( "StartAttTrack" )
+util.AddNetworkString( "GlobalChatColor" )
+util.AddNetworkString( "PlayerChatColor" )
+util.AddNetworkString( "AcceptedHelp" )
+util.AddNetworkString( "TeamSwapHook" )
+util.AddNetworkString( "ApplyWeaponSkin" )
+util.AddNetworkString( "SendSingleSound" )
 
 local _Ply = FindMetaTable( "Player" )
 function _Ply:AddScore( score )
 	local num = self:GetNWInt( "tdm_score" )
 	self:SetNWInt( "tdm_score", num + score )
+end
+
+function _Ply:SendSound( dir )
+    net.Start( "SendSingleSound" )
+        net.WriteString( dir )
+    net.Send( self )
+end
+
+function BroadcastSound( dir )
+    net.Start( "SendSingleSound" )
+        net.WriteString( dir )
+    net.Broadcast()
 end
 
 function _Ply:ChatPrintColor( ... )
@@ -106,24 +125,26 @@ function _Ply:ChatPrintColor( ... )
 	net.Send( self )
 end
 
+function GlobalChatPrintColor( ... )
+    for k, v in pairs( player.GetAll() ) do
+        v:ChatPrintColor( ... )
+    end
+	--[[local args = { ... }
+	local tab = {}
+
+	for k, v in pairs( args ) do
+		tab[ #tab + 1 ] = v
+	end
+
+	net.Start( "GlobalChatColor" )
+		net.WriteTable( tab )
+	net.Broadcast()]]
+end
+
 --[[local _flags = file.Find( "flags/*", "GAME" )
 for k, v in next, _flags do
 	resource.AddSingleFile( "flags/" .. v )
 end]]
-
-util.AddNetworkString( "tdm_loadout" )
-util.AddNetworkString( "tdm_deathnotice" )
-util.AddNetworkString( "tdm_killcountnotice" )
-util.AddNetworkString( "DoWin" )
-util.AddNetworkString( "DoLose" )
-util.AddNetworkString( "DoTie" )
-util.AddNetworkString( "DoStart" )
-util.AddNetworkString( "StartAttTrack" )
-util.AddNetworkString( "GlobalChatColor" )
-util.AddNetworkString( "PlayerChatColor" )
-util.AddNetworkString( "AcceptedHelp" )
-util.AddNetworkString( "TeamSwapHook" )
-util.AddNetworkString( "ApplyWeaponSkin" )
 
 CreateConVar( "tdm_friendlyfire", 0, FCVAR_NOTIFY, "1 to enable friendly fire, 0 to disable" )
 CreateConVar( "tdm_ffa", 0, FCVAR_NOTIFY, "1 to enable free-for-all mode, 0 to disable" )
@@ -173,19 +194,6 @@ local color_red = Color( 255, 0, 0 )
 local color_blue = Color( 0, 0, 255 )
 local color_green = Color( 102, 255, 51 )
 local color_white = Color( 255, 255, 255 )
-
-function GlobalChatPrintColor( ... )
-	local args = { ... }
-	local tab = {}
-
-	for k, v in pairs( args ) do
-		tab[ #tab + 1 ] = v
-	end
-
-	net.Start( "GlobalChatColor" )
-		net.WriteTable( tab )
-	net.Broadcast()
-end
 
 function GM:DoRedWin()
 	for k, v in pairs( team.GetPlayers( 1 ) ) do
@@ -569,6 +577,10 @@ local dontgive = {
 	"fas2_m67",
 	"seal6-claymore"
 }
+local col = {}
+col[0] = Vector( 0, 0, 0 )
+col[1] = Vector( 1.0, .2, .2 )
+col[2] = Vector( .2, .2, 1.0 )
 
 function GM:PlayerSpawn( ply )
 	if ply.curprimary then
@@ -812,12 +824,12 @@ hook.Add( "InitPostEntity", "RemoveDMEntities", function()
 			end
 		end
 
-		for k, v in pairs( ents.FindByClass( "func_breakable" ) ) do
+		--[[for k, v in pairs( ents.FindByClass( "func_breakable" ) ) do
 			SafeRemoveEntity( v )
 		end
 		for k, v in pairs( ents.FindByClass( "prop_dynamic" ) ) do
 			SafeRemoveEntity( v )
-		end
+		end]]
 	end )
 end )
 

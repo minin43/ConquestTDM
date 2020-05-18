@@ -589,7 +589,7 @@ function RebalanceWeapons()
     if weapons.Get( "cw_m3super90" ) then
         local wep = weapons.GetStored( "cw_m3super90" )
         wep.Slot = 0
-        wep.Damage = 8
+        wep.Damage = 9
         wep.FireDelay = 0.75
         wep.Recoil = 3
         wep.HipSpread = 0.04
@@ -608,7 +608,7 @@ function RebalanceWeapons()
     if weapons.Get( "cw_ber_spas12" ) then
         local wep = weapons.GetStored( "cw_ber_spas12" )
         wep.Slot = 0
-        wep.Damage = 9
+        wep.Damage = 10
         wep.FireDelay = 0.85
         wep.Recoil = 3
         wep.HipSpread = 0.04

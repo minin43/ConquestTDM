@@ -2,16 +2,13 @@
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 Notes:
-01. Add John Wick model to DL queue
 02. Server's still very laggy
-03. Info_player_spawn doesn't work
 04. Fix issue:
 [ERROR] addons/customizable_weaponry_2.0_349050451/lua/effects/cw_muzzleflash.lua:18: attempt to call method 'getFireParticles' (a nil value)
   1. unknown - addons/customizable_weaponry_2.0_349050451/lua/effects/cw_muzzleflash.lua:18
-05. Look at weapon balancing
 06. Double XP weekend and happy hour timing was off
 
-
 ---------------------------------------------------------------------------------------------------------------------------------------
-To-Test:
 
+Notes about easer egg hunt:
+Start date is 02/25/2020

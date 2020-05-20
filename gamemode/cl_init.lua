@@ -79,7 +79,8 @@ GM.Icons = {
 	},
 	Mapvote = { --//Any icons for the tags found in MapTable
 		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.sr
-		flags = Material( "vgui/flagIcon.png", "smooth" )
+        flags = Material( "vgui/flagIcon.png", "smooth" ),
+        resupply = Material( "vgui/resupply_icon.png", "smooth" )
     },
     Menu = {
         moneylocked = Material( "vgui/money_locked.png", "smooth" ),

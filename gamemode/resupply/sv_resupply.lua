@@ -24,7 +24,7 @@ hook.Add( "PostGamemodeLoaded", "SetResupply", function()
     end
 end )
 
-hook.Add( "RountTimerInc", "ResupplyCheck", function( secPassed, redTix, blueTix ) 
+hook.Add( "RountTimerInc", "ResupplyHalftime", function( secPassed, redTix, blueTix ) 
     if GetGlobalInt( "ConquestResupply" ) == 0 or ResupplyChecked then return end
     
     if secPassed == GAMEMODE.GameTime / 2 or (redTix <= GAMEMODE.Tickets / 2) or (blueTix <= GAMEMODE.Tickets / 2) then
@@ -78,7 +78,7 @@ hook.Add( "RountTimerInc", "ResupplyWarning", function( secPassed, redTix, blueT
     if secPassed == GAMEMODE.GameTime / 10 * 6 or redTix == GAMEMODE.Tickets / 10 * 6 or blueTix == GAMEMODE.Tickets / 10 * 6 then
         WarningChecked = true
         if redTix > blueTix then
-            GlobalChatPrintColor( color_green, "[Conquest Resupply]", color_red, GAMEMODE.redTeamName, Color(255, 255, 255), " are in the lead, the map may soon shift out of their favor!" )
+            GlobalChatPrintColor( color_green, "[Conquest Resupply] ", color_red, GAMEMODE.redTeamName, Color(255, 255, 255), " are in the lead, the map may soon shift out of their favor!" )
         elseif redTix < blueTix then
             GlobalChatPrintColor( color_green, "[Conquest Resupply] ", color_blue, GAMEMODE.blueTeamName, Color(255, 255, 255), " are in the lead, the map may soon shift out of their favor!" )
         else

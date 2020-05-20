@@ -854,6 +854,7 @@ if not flags[ game.GetMap() ] then return end
 function GM:SetupFlags()
     self.FlagTable = {}
     self.FlagFeedCheck = {}
+    self.RedDrain, self.BlueDrain = 0, 0
     --//Keys in this table are the flag "name" - duplicates do not exist this way
     --[[ Table format:
         pos = flag position

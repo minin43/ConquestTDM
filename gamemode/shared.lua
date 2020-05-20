@@ -180,10 +180,10 @@ if SERVER then
     resource.AddWorkshop( "150404359" ) --GMod Tower
     resource.AddWorkshop( "660726443" ) --Necris Part 1 - Yikes these are huge for 2 PMs
     resource.AddWorkshop( "660726791" ) --Necris Part 2
-    resource.AddWorkshop( "660726791" ) --Info_Player_Start
-    resource.AddWorkshop( "660726791" ) --R6 Kapkan
-    resource.AddWorkshop( "660726791" ) --Thanos
-    resource.AddWorkshop( "660726791" ) --GTA V Characters
+    resource.AddWorkshop( "161451189" ) --Info_Player_Start
+    resource.AddWorkshop( "572447657" ) --R6 Kapkan
+    resource.AddWorkshop( "1371823037" ) --Thanos
+    resource.AddWorkshop( "216408135" ) --GTA V Characters
     resource.AddWorkshop( "1843708002" ) --John Wick
 
 	util.AddNetworkString( "RequestTeams" )

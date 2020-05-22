@@ -128,7 +128,8 @@ function TOOL:Init()
                 if val and tonumber( val[1] ) then --it's a spawn
                     table.insert( self.SpawnTable, { tonumber( val[1] ), val[2], val[3], val[4] or "" } )
                 elseif val then --it's a flag
-                    table.insert( self.FlagTable, { val[1], val[2], val[3], tonumber( val[4] ), 0, val[6] or "" } )
+                    PrintTable(val)
+                    table.insert( self.FlagTable, { val[1], val[2], val[3], tonumber( val[4] ), val[5] or "" } )
                 end
             end
 
@@ -335,7 +336,7 @@ end
 
 function TOOL.BuildCPanel( CPanel )
     local TOOL = LocalPlayer():GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
-    print( TOOL, LocalPlayer():GetWeapon( "gmod_tool" ), LocalPlayer():GetWeapon( "gmod_tool" ).Tool )
+
     CPanel:AddControl( "Header", { Description = "#tool.ctdm_spawn.name" } )
     CPanel:AddControl( "Slider", { Description = "Sets which team the current player spawn is for", Label = "1 = Red, 2 = Blue", Command = "ctdm_spawn_team", Type = "Integer", Min = 1, Max = 2, Help = false })
     --CPanel:AddControl( "Button", { Text = "Save To Disc", Command = "ctdm_spawn_write_to_disc" } )
@@ -698,6 +699,7 @@ if CLIENT then
                     net.WriteVector( Vector( myTool.FlagPos.x, myTool.FlagPos.y, myTool.FlagPos.z ) )
                     net.WriteInt( myTool.FlagSize, 16 )
                     net.WriteString( myTool.FlagID )
+                    print("Sending serverside flag info with id: ", myTool.FlagID)
                     table.insert( myTool.FlagTable, { myTool.FlagLetter, Vector( myTool.FlagPos.x, myTool.FlagPos.y, myTool.FlagPos.z ), myTool.FlagSize, 0, myTool.FlagID } ) --Used for 3D drawing
                 end
             net.SendToServer()
@@ -811,9 +813,12 @@ if CLIENT then
     
     surface.CreateFont( "FlagNames", { font = "Arial", size = 40 } )
     hook.Add( "PostDrawOpaqueRenderables", "DrawSpawnsFlags", function()
-        if !LocalPlayer():Alive() or !LocalPlayer():GetWeapon( "gmod_tool" ).Tool then return end
-        myTool = LocalPlayer():GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
+        local ply = LocalPlayer()
+        if !ply:Alive() or !ply:GetWeapon( "gmod_tool" ).Tool then return end
+
+        myTool = ply:GetWeapon( "gmod_tool" ).Tool["ctdm_spawn"]
         if not myTool or not myTool.IsHeld then return end
+        
         --//Draw placed flags
         for k, v in next, myTool.FlagTable do
             local trace = v[ 2 ]

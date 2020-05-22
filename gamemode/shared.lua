@@ -19,8 +19,10 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
         id = Workshop ID
         size = Describes map size in mapvote
         img = Map icon directory
-        type = designated teams (hl2 teams, Insurgency teams, MW2 teams)
-        tags = Table containing extra string "flags" to indicate special properties about the map (sniper-friendly or whatever)
+        type = Designated teams (hl2 teams, Insurgency teams, MW2 teams)
+        extra = Table of behind-the-scenes "flags" to indicate special rules about the map that don't need displayed (nofall, for example)
+        mapevents = Table of map-created entities that can be used/called to run a given event in a map (used specifically in rp_limanskhospital, for example)
+        tags = Table of "flags" to indicate special properties about the map (sniper-friendly, for example) used only currently in mapvote
     ]]
 	
 	[ "gm_lasertag" ] = { id = 473594402, size = "Tiny", img = "vgui/maps/lasertag.png", type = "hl2",
@@ -119,7 +121,13 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "gm_battleground_nodes" ] = { id = 1425456348, size = "Massive", img = "vgui/maps/battleground.png", type = "hl2",
         tags = { } },
     [ "gm_boreas" ] = { id = 1572373847, size = "Massive", img = "vgui/maps/boreas.png", type = "hl2",
-    tags = { "resupply" } }
+    tags = { "resupply" } },
+    [ "npc_galleria_mess" ] = { id = 758683686, size = "Large", img = "vgui/maps/galleria.png", type = "hl2",
+    tags = { } }
+    [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", extra = { "Flashlights" }, mapevents = { 1576, 1577, 1578, 1579 }
+    tags = { } }
+    [ "gm_explore_tunnel" ] = { id = 1529025790, size = "Large", img = "vgui/maps/tunnel.png", type = "hl2",
+    tags = { } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
@@ -147,7 +155,7 @@ GM.TeamNames = {
     ins2 = { red = { "Insurgents" }, blue = { "Security" } }
 }
 
---//SteamDLs dependent on map type - currently used for playermodel downloads only when they're necessary
+--//SteamDLs dependent on map 'type' - currently used for playermodel downloads only when they're necessary, but any addon ID can be placed here
 GM.DependentDownloads = {
 	ins2 = {
 		1196565715, --Security Playermodels
@@ -239,12 +247,34 @@ if SERVER then
         end
 	end )
 
-	if GM.MapTable[ game.GetMap() ] and GM.MapTable[ game.GetMap() ].extra then
-		for k, v in pairs( GM.MapTable[ game.GetMap() ].extra ) do
-			if v == "NoFall" then
-				GM.PreventFallDamage = true
-			end
-		end
+    if GM.MapTable[ game.GetMap() ] then
+        if GM.MapTable[ game.GetMap() ].extra then
+            for k, v in pairs( GM.MapTable[ game.GetMap() ].extra ) do
+                if v == "NoFall" then
+                    GM.PreventFallDamage = true
+                elseif v == "Flashlights" then
+                    GM.PreventFlashlights = true
+                end
+            end
+        end
+
+        if GM.MapTable[ game.GetMap() ].mapevents then
+            timer.Create( "MapEventsTimer", 240, 0, function()
+                local newChoice
+
+                if #GM.MapTable[ game.GetMap() ].mapevents == 1 then
+                    newChoice = GM.MapTable[ game.GetMap() ].mapevents[1]
+                else
+                    GAMEMODE.LastMapEvent = GAMEMODE.LastMapEvent or 0
+                    newChoice = GM.MapTable[ game.GetMap() ].mapevents[ math.random( #GM.MapTable[ game.GetMap() ].mapevents ) ]
+                    while newChoice == GAMEMODE.LastMapEvent do
+                        newChoice = GM.MapTable[ game.GetMap() ].mapevents[ math.random( #GM.MapTable[ game.GetMap() ].mapevents ) ]
+                    end
+                end
+
+                ents.GetMapCreatedEntity( newChoice ):Fire("Use")
+            end )
+        end
 	end
 end
 
@@ -289,3 +319,9 @@ end
 function id( steamid )
 	return string.gsub( steamid, ":", "x" )
 end
+
+hook.Add( "PlayerSpawn", "PreventFlashlights", function( ply )
+    if GAMEMODE.PreventFlashlights and ply and ply:CanUseFlashlight() then
+        ply:AllowFlashlight( false )
+    end
+end )

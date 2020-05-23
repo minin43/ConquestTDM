@@ -40,9 +40,17 @@ vip.Players = {}
 
 vip.Groups = { --Multiplier %
 	vip = 0.10,
-	vipplus = 0.15,
+	["vip+"] = 0.15,
 	ultravip = 0.20,
 	staff = 0.05
+}
+
+vip.ULiBStaffRoles = {
+    dev = true,
+    superadmin = true,
+    admin = true,
+    operator = true,
+    trialmod = true
 }
 
 if not file.Exists( "tdm/usergroups.txt", "DATA" ) then
@@ -61,7 +69,7 @@ else
 	end
 end
 
---DOES NOT save to a file, only sets the player's "usergroup"
+--DOES NOT save to a file, only sets the player's "usergroup" (we don't actually touch ply:SetUserGroup, since it's used by ULX/ULiB)
 function vip.SetVip( ply, group )
     vip.Players[ id(ply:SteamID()) ] = group
 end
@@ -86,10 +94,21 @@ hook.Add( "PlayerInitialSpawn", "SetUserGroup", function( ply )
     if file.Exists( "tdm/users/vip/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
         local vipgroup = file.Read( "tdm/users/vip/" .. id( ply:SteamID() ) .. ".txt" )
         vip.SetVip( ply, vipgroup )
+        --print("Player has CTDM VIP file")
     else
-        print("Checking for ULiB usergroup - currently not working")
-        local ulibcontent = file.Read( "ulib/users.txt" )
-        --PrintTable(string.Explode( "\n", ulibcontent))
+        print("Checking for ULiB usergroup", ply:GetUserGroup())
+        --local ulibcontent = file.Read( "ulib/users.txt" )
+
+        local role = string.lower(ply:GetUserGroup())
+        if vip.Groups[ role ] then
+            vip.SaveVip( ply, vip.Groups[ role ] )
+            --print("Player has ULiB usergroup, saving now as CTDM VIP file")
+        elseif vip.ULiBStaffRoles[ role ] then
+            vip.SaveVip( ply, "staff" )
+            --print("Player has STAFF ULiB usergroup, saving now as CTDM VIP file")
+        else
+            --print("Does not exist")
+        end
 	end
 end )
 

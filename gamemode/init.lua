@@ -63,7 +63,10 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_loader.lua" )
 
 for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
-	include( "/perks/" .. v )
+    local sepFileName = string.Explode( "_", v )
+    if !sepFileName[2] then
+        include( "/perks/" .. v )
+    end
 end
 
 util.AddNetworkString( "tdm_loadout" )

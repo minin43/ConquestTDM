@@ -123,7 +123,7 @@ net.Receive( "GetUnlockedModels", function( len, ply )
 
         GAMEMODE.RecacheUnlockedTable[ ply ].model = false
     end
-
+    
     net.Start( "GetUnlockedModelsCallback" )
         net.WriteTable( GAMEMODE.UnlockedMasterTable[ ply ].model )
     net.Send( ply )
@@ -142,7 +142,7 @@ net.Receive( "GetUnlockedPerks", function( len, ply )
         GAMEMODE.UnlockedMasterTable[ ply ].perk = tosend
         GAMEMODE.RecacheUnlockedTable[ ply ].perk = false
     end
-    
+
     net.Start( "GetUnlockedPerksCallback" )
         net.WriteTable( GAMEMODE.UnlockedMasterTable[ ply ].perk )
     net.Send( ply )

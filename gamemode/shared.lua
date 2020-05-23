@@ -123,9 +123,9 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "gm_boreas" ] = { id = 1572373847, size = "Massive", img = "vgui/maps/boreas.png", type = "hl2",
     tags = { "resupply" } },
     [ "npc_galleria_mess" ] = { id = 758683686, size = "Large", img = "vgui/maps/galleria.png", type = "hl2",
-    tags = { } }
-    [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", extra = { "Flashlights" }, mapevents = { 1576, 1577, 1578, 1579 }
-    tags = { } }
+    tags = { } },
+    [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", extra = { "Flashlights" }, mapevents = { 1576, 1577, 1578, 1579 },
+    tags = { } },
     [ "gm_explore_tunnel" ] = { id = 1529025790, size = "Large", img = "vgui/maps/tunnel.png", type = "hl2",
     tags = { } }
 

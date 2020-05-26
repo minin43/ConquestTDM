@@ -10,15 +10,19 @@
 local color_red, color_green, color_blue = Color(244, 67, 54), Color(76, 175, 80), Color(33, 150, 243),
 
 hook.Add( "PostGamemodeLoaded", "SetResupply", function()
-    local isResupply = false
-    for k, v in pairs( GAMEMODE.MapTable[ game.GetMap() ].tags ) do
-        if v == "resupply" then isResupply = true end
-    end
-    
-    if isResupply then
-        SetGlobalInt( "ConquestResupply", 2 )
-        GAMEMODE:SetupFlags()
-        refreshspawns()
+    if GAMEMODE.MapTable[ game.GetMap() ].tags then
+        local isResupply = false
+        for k, v in pairs( GAMEMODE.MapTable[ game.GetMap() ].tags ) do
+            if v == "resupply" then isResupply = true end
+        end
+        
+        if isResupply then
+            SetGlobalInt( "ConquestResupply", 2 )
+            GAMEMODE:SetupFlags()
+            refreshspawns()
+        else
+            SetGlobalInt( "ConquestResupply", 0 )
+        end
     else
         SetGlobalInt( "ConquestResupply", 0 )
     end

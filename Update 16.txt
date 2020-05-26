@@ -1,0 +1,38 @@
+Update 1.16 - Re-launch Update (live 5/25/2020)
+1. **8** new maps
+- dm_drift
+- de_paris_subway
+- cs_east_borough
+- gm_battleground_nodes
+- gm_boreas
+- npc_galleria_mess
+- rp_limanskhospital
+- gm_explore_tunnel
+2. New game "type": Conquest Resupply. Plays like a standard conquest game but the map shifts halfway through the game depending on who's winning & losing. Currently enabled for 1 map: gm_boreas
+3. Weapons received new balancing
+- Assault rifles and SMGs have had their randomized spray patterns reduced significantly or to nothing. This should make shots land loads more consistently.
+- M3 Super 90 and SPAS-12 have both received small damage buffs
+- Spreadsheet found at https://docs.google.com/spreadsheets/d/1d9TbkQBZr8WpzEM1EtNd64b8EA9_2OokHf701kYT_fw/edit#gid=0
+4. Lifeline received small buff to scaling movement speed
+5. Other new features
+- New perk: Deadly Weapon, "After reaching 4 kills in one life, equip a 1-shot-kill sniper with 1 bullet loaded. Earning a kill with it refreshes all weapon ammo and player heatlh."
+- New shop (implements weapon skins and player models, also absorbed the shop functionality of the old loadout menu)
+- New loadout (allows for skin and player model customization)
+- New help menu with new shop & loadout menu explanations
+- Mapvote now has exit button
+- Can now accept donations, implemented VIP roles
+- F1-F4 now all have new, unique functionality
+- Players are now notified of their unlocks when they unlock them
+- Introduced net-spoofing functionality to the server
+- Sandbox tool can now edit flags & spawns in the +menu menu, as well as spawn invisible walls to be spawned in the server
+- Introduced a treasure hunt/easter egg for players to find
+- Introduced ULX admin commands
+6. Shitload of bug fixing and code cleaning
+- Cleaned up timed events so they should be more consistent (although still not yet perfect, I don't think)
+- Cleaned up mapvote's icon explanations
+- Cleaned up a bunch of flavor text
+- Fixed some rare errors that would occur in the deathscreen
+- Fixed vulture executions not actually executing the player
+
+
+

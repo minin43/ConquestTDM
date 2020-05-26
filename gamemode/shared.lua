@@ -124,9 +124,9 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     tags = { "resupply" } },
     [ "npc_galleria_mess" ] = { id = 758683686, size = "Large", img = "vgui/maps/galleria.png", type = "hl2",
     tags = { } },
-    [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", extra = { "Flashlights" }, mapevents = { 1576, 1577, 1578, 1579 },
+    [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", mapevents = { 1576, 1577, 1578, 1579 },
     tags = { } },
-    [ "gm_explore_tunnel" ] = { id = 1529025790, size = "Large", img = "vgui/maps/tunnel.png", type = "hl2",
+    [ "gm_explore_tunnels" ] = { id = 1529025790, size = "Large", img = "vgui/maps/tunnel.png", type = "hl2",
     tags = { } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
@@ -262,13 +262,13 @@ if SERVER then
             timer.Create( "MapEventsTimer", 240, 0, function()
                 local newChoice
 
-                if #GM.MapTable[ game.GetMap() ].mapevents == 1 then
-                    newChoice = GM.MapTable[ game.GetMap() ].mapevents[1]
+                if #GAMEMODE.MapTable[ game.GetMap() ].mapevents == 1 then
+                    newChoice = GAMEMODE.MapTable[ game.GetMap() ].mapevents[1]
                 else
                     GAMEMODE.LastMapEvent = GAMEMODE.LastMapEvent or 0
-                    newChoice = GM.MapTable[ game.GetMap() ].mapevents[ math.random( #GM.MapTable[ game.GetMap() ].mapevents ) ]
+                    newChoice = GAMEMODE.MapTable[ game.GetMap() ].mapevents[ math.random( #GAMEMODE.MapTable[ game.GetMap() ].mapevents ) ]
                     while newChoice == GAMEMODE.LastMapEvent do
-                        newChoice = GM.MapTable[ game.GetMap() ].mapevents[ math.random( #GM.MapTable[ game.GetMap() ].mapevents ) ]
+                        newChoice = GAMEMODE.MapTable[ game.GetMap() ].mapevents[ math.random( #GAMEMODE.MapTable[ game.GetMap() ].mapevents ) ]
                     end
                 end
 

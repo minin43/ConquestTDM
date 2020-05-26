@@ -19,6 +19,7 @@ function GM:QueueIcon( player, perk, duration )
 end
 
 function RegisterPerk( name, value, lvl, hint )
+    print("RegisterPerk called with params:", name, value, lvl)
 	table.insert( GM.Perks, { name, value, lvl, hint } )
 	table.sort( GM.Perks, function( a, b ) return a[ 3 ] < b[ 3 ] end )
 end
@@ -38,4 +39,8 @@ function GetPerkTable( perkid )
         end
     end
     return false
+end
+
+for k, v in pairs( file.Find( "tdm/gamemode/perks/perks/*.lua", "LUA" ) ) do
+    include( "/perks/" .. v )
 end

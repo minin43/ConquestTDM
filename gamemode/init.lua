@@ -62,13 +62,6 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_loader.lua" )
 
-for k, v in pairs( file.Find( "tdm/gamemode/perks/*.lua", "LUA" ) ) do
-    local sepFileName = string.Explode( "_", v )
-    if !sepFileName[2] then
-        include( "/perks/" .. v )
-    end
-end
-
 util.AddNetworkString( "tdm_loadout" )
 util.AddNetworkString( "tdm_deathnotice" )
 util.AddNetworkString( "tdm_killcountnotice" )

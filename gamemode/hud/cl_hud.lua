@@ -2,6 +2,7 @@ GM.DefaultScheme = Color( 255, 255, 255, 200 )
 GM.RedScheme = Color( 175, 0, 0, 150)
 GM.BlueScheme = Color( 0, 0, 255, 150)
 GM.CurrentScheme = GM.DefaultScheme
+GM.Release = "Release 06032020"
 local draw = draw
 local hook = hook
 local math = math
@@ -404,7 +405,7 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 	--Gamemode name & version number
 	surface.SetTextColor( colorScheme[0]["GamemodeVersionText"] )
 	surface.SetTextPos( 32, 38 + infoheight + info2height ) --Align it with grey box in the top left hand corner rectangle set above
-	surface.DrawText( GAMEMODE.Version .. " Release 05252020" )
+	surface.DrawText( GAMEMODE.Version .. " " .. GAMEMODE.Release )
 end )
 
 --//Draws the damage indicator 
@@ -427,7 +428,7 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	if !LocalPlayer():Alive() or LocalPlayer():Team() == 0 then return end
 
 	--//Health
-	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() + 100 ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 	draw.SimpleText( "HP", "Health", ScrW() - 160, ScrH() - 105, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 54, ScrH() - 65, colorScheme[0]["MaxHPTextShadow"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 	draw.SimpleText( "/ " .. LocalPlayer():GetMaxHealth() .. " MAX", "Health", ScrW() - 56, ScrH() - 65, colorScheme[0]["MaxHPText"], TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )

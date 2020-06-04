@@ -1,0 +1,6 @@
+Update 1.16 Hotfix Update
+1. Fixed issue preventing 2 perks, deadly weapon and double jump, from appearing in the perk listings
+2. Fixed issue with gm_explore_tunnels being misnamed in server files
+3. Fixed issue with mapevents not running correctly
+4. Forgot to update HUD gamemode gamemode release info
+5. Sorted perk files into a separate sub-folde

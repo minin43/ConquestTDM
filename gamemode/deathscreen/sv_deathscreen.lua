@@ -1,14 +1,19 @@
+util.AddNetworkString( "CloseDeathScreen" )
+util.AddNetworkString( "StartDeathScreen" )
+util.AddNetworkString( "UpdateDeathScreen" )
+
 function GM:PlayerDeathThink( ply )
 	if ply.NextSpawnTime and ply.NextSpawnTime > CurTime() then 
 		return
 	end
 	if ply:KeyPressed( IN_JUMP ) then
 		ply:Spawn()
-		umsg.Start( "CloseDeathScreen", ply )
-		umsg.End()
+        net.Start( "CloseDeathScreen" )
+        net.Send( ply )
 	end
 end
 
+--This is fuckin' awful
 hook.Add( "Think", "GetWeps", function()
 	for k, v in next, player.GetAll() do
 		if IsValid( v ) and v:Alive() then
@@ -23,9 +28,8 @@ hook.Add( "Think", "GetWeps", function()
 end )
 
 hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
-
-	ply.NextSpawnTime = CurTime() + 4.5
-	ply:SendLua( [[surface.PlaySound( "ui/UI_HUD_OutOfBounds_Count_Wave.mp3" )]] )
+    ply.NextSpawnTime = CurTime() + 4.5
+    ply:SendSound( "ui/UI_HUD_OutOfBounds_Count_Wave.mp3" )
 	
 	--//If what you died to wasn't a player, defaulting to your own fault (this includes trigger_hurt, trigger_kill, worldspawn, and more)
 	if !att:IsPlayer() then att = ply elseif ply:IsBot() then return true end
@@ -37,7 +41,7 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	local attacker = att or ply
 
 	--//Killshot position
-	local hitgroup
+	local hitgroup = "suicide"
 	if dmginfo:IsBulletDamage() then
 		local throwaway = ply:LastHitGroup()
 		if throwaway == HITGROUP_HEAD then
@@ -95,33 +99,32 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 
 	--//Flavor timer
 	timer.Simple( 1.5, function()
-		ply.num = 3
+		ply.num = 3 --3 seconds, after the deathscreen shows up, before you can spawn (total of 4.5 seconds before respawning)
 		
-		umsg.Start( "DeathScreen", ply )
-			umsg.Short( ply.num )
-			umsg.Entity( attacker )
-			umsg.Entity( ply )
-			umsg.String( perk )
-			umsg.String( hitgroup )
-			umsg.String( wepused )
-			umsg.String( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
-			umsg.String( damagedone )
-			umsg.String( title )
-			umsg.Bool( wasVendetta )
-		umsg.End()
+        net.Start( "StartDeathScreen" )
+            net.WriteInt( ply.num, 4 )
+            net.WriteEntity( attacker )
+            net.WriteEntity( ply )
+            net.WriteString( perk )
+            net.WriteString( hitgroup )
+            net.WriteString( wepused )
+            net.WriteString( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
+            net.WriteString( damagedone )
+            net.WriteString( title )
+            net.WriteBool( wasVendetta )
+        net.Send( ply )
 		
 		local stid = ply:SteamID()
 		timer.Create( "SendUpdates_" .. stid, 1, 3, function()
-			if ply:IsValid() and ply:IsPlayer() then
-			
-				umsg.Start( "UpdateDeathScreen", ply )
-					ply.num = ply.num - 1
-					if ply.num < 0 then
-						ply.num = 0
-					end
-					umsg.Short( ply.num )
-				umsg.End()
-				
+			if ply:IsValid() and ply:IsPlayer() and !ply:Alive() then
+                ply.num = ply.num - 1
+                if ply.num < 0 then
+                    ply.num = 0
+                end
+
+                net.Start( "UpdateDeathScreen" )
+					net.WriteInt( ply.num, 4 )
+				net.Send( ply )
 			end
 		end )
 	end )
@@ -129,8 +132,8 @@ end )
 
 hook.Add( "PlayerSpawn", "closeds", function( ply )
 	if ply:IsBot() then return end
-	umsg.Start( "CloseDeathScreen", ply )
-	umsg.End()
+    net.Start( "CloseDeathScreen" )
+    net.Send( ply )
 	GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount = GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount + 1
 end )
 

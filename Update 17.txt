@@ -1,0 +1,38 @@
+Update 1.17
+1. Due to the speed in which some games complete, I've increased the total ticket amount from 200 to 300 tickets in conquest maps
+2. New chat commands!
+  - Type "!time" or "/time" to view hours spent on the server
+  - Type "!help" or "/help" to view some quick tips
+3. New killfeed announcements!
+  - "Big Game Hunter" plays if you kill a person vendetta'd against you, and they're top on the leaderboard
+  - "Bottom Feed" plays if you kill a person vendetta'd against you, and they're bottom of the leaderboard
+  - "Last Second Save" if you clear a flag moments before it's captured
+4. 10 new guns!
+  - Icarus-37, a slam-fire shotgun that fires faster the longer you shoot it
+  - Knife Kitty's HK416, an old classic coming back (mirrors the balancing of the AR-15)
+  - ACR-E, finally an ACR for everyone who's been itching for one (mirrors the balancing of the R5)
+  - The Black Ops II pack has been added!
+    - M27 (Mirrors the balancing of the G36C)
+    - Peacekeeper (Mirrors the balancing of the AUG-A3)
+    - MP7 (yes, there's 2 now, mirrors the balancing of the original one)
+    - HAMR (mirrors the balancing of the M249)
+    - R870 MCS (mirrors the balancing of the M3 Super 90)
+    - B23R
+    - Dragunov SVD
+5. 3 new perks!
+  - Entrench: "Remaining still provides an outgoing 15% damage boost for, and an incoming 10% damage reduction buff against, all damage types."
+  - Expertise: "Your proficiency with weapons enables you to perform certain actions, such as reloading, better than normal."
+  - Vampir: "Your health slowly drains, but damaging enemies heals you and can overheal you, capping at 150 hp."
+6. Balancing changes
+  - RFB has had its damage increase from 48 to 58 in an attempt to make it a viable option
+  - Regeneration has had its regeneration rate increased from 120% to 140%, to help keep it competitive across all current and new life-giving perks
+  - Spawn-protection now lasts an additional 100 units away from the initial spawning point (this was triggering the end of the protection far more frequently than the timer)
+  - Players with spawn-protection also appear more transparent than previous
+7. Miscellaneous changes/improvements
+  - Thornmail now displays a crosshair icon on the attacking player, indicating the damage reversal
+  - Removed all skin-based attachments from weapons, something that should have been done with 1.16
+  - Frag grenades are now properly given to players
+
+PERK ORDER AND WEAPON ORDER HAVE BEEN MOVED TO MAKE ROOM FOR THE NEW PERKS AND WEAPONS, I APOLOGIZE IF THIS DISRUPTS ANYONE'S GAMEPLAY
+
+Find the weapon spreadsheet here: https://docs.google.com/spreadsheets/d/1d9TbkQBZr8WpzEM1EtNd64b8EA9_2OokHf701kYT_fw/edit#gid=0

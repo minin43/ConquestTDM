@@ -27,22 +27,21 @@ surface.CreateFont( "ds_spawn", {
 } )	
 
 local time
-local Main
 local grow
 local showtext
-usermessage.Hook( "DeathScreen", function( um )
+net.Receive( "StartDeathScreen", function()
 	surface.PlaySound( "ui/UX_Deploy_DeployTImer_Wave.mp3" )
 
-	time = um:ReadShort()
-	local att = um:ReadEntity() --attacker
-	local vic = um:ReadEntity() --victim
-	local perk = um:ReadString() --attacker's perk
-	local hitgroup = um:ReadString() --where the last bullet landed
-	local wep = um:ReadString() --weapon used
-	local killstreak = um:ReadString() --Killstreak
-	local damagedone = um:ReadString() --Damage you did to attacker their & your life
-	local title = um:ReadString()
-	local wasVendetta = um:ReadBool() --If your killer was vendetta'd against you
+	time = net.ReadInt( 4 )
+	local att = net.ReadEntity() --attacker
+	local vic = net.ReadEntity() --victim
+	local perk = net.ReadString() --attacker's perk
+	local hitgroup = net.ReadString() --where the last bullet landed
+	local wep = net.ReadString() --weapon used
+	local killstreak = net.ReadString() --Killstreak
+	local damagedone = net.ReadString() --Damage you did to attacker their & your life
+	local title = net.ReadString()
+	local wasVendetta = net.ReadBool() --If your killer was vendetta'd against you
 	local Vendetta = false --For when your killer becomes your vendetta
 	
 	if wep and weapons.Get( wep ) then
@@ -57,41 +56,41 @@ usermessage.Hook( "DeathScreen", function( um )
 
 	GAMEMODE.VendettaList = GAMEMODE.VendettaList or { }
 	
-	Main = vgui.Create( "DFrame" )
-	Main:SetSize( 775, 125 )
-	Main:Center()
-	Main:SetTitle( "" )
-	Main:ShowCloseButton( false )
-    Main.Paint = function()
-        if not Main then return end
+	GAMEMODE.DeathMain = vgui.Create( "DFrame" )
+	GAMEMODE.DeathMain:SetSize( 775, 125 )
+	GAMEMODE.DeathMain:Center()
+	GAMEMODE.DeathMain:SetTitle( "" )
+	GAMEMODE.DeathMain:ShowCloseButton( false )
+    GAMEMODE.DeathMain.Paint = function()
+        if not GAMEMODE.DeathMain then return end
 		surface.SetDrawColor( 0, 0, 0, 75 )
-		surface.DrawRect( 0, 0, Main:GetWide(), Main:GetTall() - 30 )
+		surface.DrawRect( 0, 0, GAMEMODE.DeathMain:GetWide(), GAMEMODE.DeathMain:GetTall() - 30 )
 		surface.SetDrawColor( 0, 0, 0, 150 )
-		surface.DrawRect( 0, Main:GetTall() - 30, Main:GetWide(), 30 )
+		surface.DrawRect( 0, GAMEMODE.DeathMain:GetTall() - 30, GAMEMODE.DeathMain:GetWide(), 30 )
 	end
 	local attID, vicID = id( att:SteamID() ), id( vic:SteamID() )
-	Main.Think = function()
+	GAMEMODE.DeathMain.Think = function()
 		if GAMEMODE.VendettaPlayers[ attID ] == att then
 			Vendetta = true
 		end
 	end
 
 	--Draws killer's image
-	local AttAvatar = vgui.Create( "AvatarImage", Main )
+	local AttAvatar = vgui.Create( "AvatarImage", GAMEMODE.DeathMain )
 	AttAvatar:SetPos( 3, 3 )
-	AttAvatar:SetSize( Main:GetTall() - 36, Main:GetTall() - 36 )
+	AttAvatar:SetSize( GAMEMODE.DeathMain:GetTall() - 36, GAMEMODE.DeathMain:GetTall() - 36 )
 	AttAvatar:SetPlayer( att, 64 )
 	
 	--Draws "Killer:"
-	local title1 = vgui.Create( "DLabel", Main )
-	title1:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 16 )
+	local title1 = vgui.Create( "DLabel", GAMEMODE.DeathMain )
+	title1:SetPos( AttAvatar:GetWide() + 5, GAMEMODE.DeathMain:GetTall() / 16 )
 	title1:SetFont( "ds_spawn" )
 	title1:SetTextColor( Color( 255, 255, 255, 200) )
 	title1:SetText( "Killer:" )
 	title1:SizeToContents()
 	
 	--Draws killer's name
-	local name = vgui.Create( "DLabel", Main )
+	local name = vgui.Create( "DLabel", GAMEMODE.DeathMain )
 	name:SetPos( title1:GetWide() + AttAvatar:GetWide() + 11, -5 )
 	name:SetFont( "ds_name" )
 	name:SetTextColor( Color( 255, 255, 255 ) )
@@ -113,26 +112,26 @@ usermessage.Hook( "DeathScreen", function( um )
 	name:SizeToContents()
 	
 	--Draws "Perk:"
-	local title2 = vgui.Create( "DLabel", Main )
-	--title2:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 3 - 3) --Old position
-	title2:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5)
+	local title2 = vgui.Create( "DLabel", GAMEMODE.DeathMain )
+	--title2:SetPos( AttAvatar:GetWide() + 5, GAMEMODE.DeathMain:GetTall() / 3 - 3) --Old position
+	title2:SetPos( AttAvatar:GetWide() + 5, GAMEMODE.DeathMain:GetTall() / 2 + 5)
 	title2:SetFont( "ds_spawn" )
 	title2:SetTextColor( Color( 255, 255, 255, 200) )
 	title2:SetText( "Perk: " .. perk )
 	title2:SizeToContents()
 	
 	--Draws "Weapon:" 
-	local title3 = vgui.Create( "DLabel", Main)
-	--title3:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 2 + 5) --Old position
-	title3:SetPos( AttAvatar:GetWide() + 5, Main:GetTall() / 3 - 3)
+	local title3 = vgui.Create( "DLabel", GAMEMODE.DeathMain)
+	--title3:SetPos( AttAvatar:GetWide() + 5, GAMEMODE.DeathMain:GetTall() / 2 + 5) --Old position
+	title3:SetPos( AttAvatar:GetWide() + 5, GAMEMODE.DeathMain:GetTall() / 3 - 3)
 	title3:SetFont( "ds_spawn" )
 	title3:SetTextColor( Color( 255, 255, 255, 200) )
 	title3:SetText( "Weapon: " .. wep )
 	title3:SizeToContents() 
 	
 	--Draw hitgroup information (killed by: bullet to stomach)
-	local title4 = vgui.Create( "DLabel", Main)
-	title4:SetPos( Main:GetWide() / 3 * 2, Main:GetTall() / 3 - 3)
+	local title4 = vgui.Create( "DLabel", GAMEMODE.DeathMain)
+	title4:SetPos( GAMEMODE.DeathMain:GetWide() / 3 * 2, GAMEMODE.DeathMain:GetTall() / 3 - 3)
 	title4:SetFont( "ds_spawn" )
 	title4:SetTextColor( Color( 255, 255, 255, 200) )
 	local reason
@@ -149,8 +148,8 @@ usermessage.Hook( "DeathScreen", function( um )
 	title4:SizeToContents() 
 	
 	--Draw killer's killstreak
-	local title5 = vgui.Create( "DLabel", Main)
-	title5:SetPos( Main:GetWide() / 3 * 2, Main:GetTall() / 2 + 5)
+	local title5 = vgui.Create( "DLabel", GAMEMODE.DeathMain)
+	title5:SetPos( GAMEMODE.DeathMain:GetWide() / 3 * 2, GAMEMODE.DeathMain:GetTall() / 2 + 5)
 	title5:SetFont( "ds_spawn" )
 	title5:SetTextColor( Color( 255, 255, 255, 200) )
 	killstreak = tonumber( killstreak ) or 0
@@ -158,26 +157,26 @@ usermessage.Hook( "DeathScreen", function( um )
 	title5:SizeToContents() 
 
 	--Damage done
-	local done = vgui.Create( "DLabel", Main )
-	--done:SetPos( Main:GetWide() / 3 + 10, Main:GetTall() / 3 - 3 ) --Old position
-	done:SetPos( Main:GetWide() / 3 + 30, Main:GetTall() / 2 + 5 )
+	local done = vgui.Create( "DLabel", GAMEMODE.DeathMain )
+	--done:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 10, GAMEMODE.DeathMain:GetTall() / 3 - 3 ) --Old position
+	done:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 30, GAMEMODE.DeathMain:GetTall() / 2 + 5 )
 	done:SetFont( "ds_spawn" )
 	done:SetTextColor( Color( 255, 255, 255, 200) )
 	done:SetText( "Damage done: " .. math.Truncate( math.Clamp( tonumber( damagedone ), 0, att:GetMaxHealth() ) ) )
 	done:SizeToContents()
 
 	--Health remaining
-	local left = vgui.Create( "DLabel", Main )
-	--left:SetPos( Main:GetWide() / 3 + 10, Main:GetTall() / 2 + 5 ) --Old position
-	left:SetPos( Main:GetWide() / 3 + 30, Main:GetTall() / 3 - 3 )
+	local left = vgui.Create( "DLabel", GAMEMODE.DeathMain )
+	--left:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 10, GAMEMODE.DeathMain:GetTall() / 2 + 5 ) --Old position
+	left:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 30, GAMEMODE.DeathMain:GetTall() / 3 - 3 )
 	left:SetFont( "ds_spawn" )
 	left:SetTextColor( Color( 255, 255, 255, 200) )
 	left:SetText( "Health remaining: " .. math.Clamp( att:Health(), 0, att:GetMaxHealth() ) )
 	left:SizeToContents()
 	
 	--Bottom bar
-	local spawnin = vgui.Create( "DLabel", Main )
-	spawnin:SetPos( 6, Main:GetTall() - 27 )
+	local spawnin = vgui.Create( "DLabel", GAMEMODE.DeathMain )
+	spawnin:SetPos( 6, GAMEMODE.DeathMain:GetTall() - 27 )
 	spawnin:SetFont( "ds_spawn" )
 	spawnin:SetTextColor( Color( 255, 255, 255 ) )
 	spawnin:SetText( "" )
@@ -192,40 +191,33 @@ usermessage.Hook( "DeathScreen", function( um )
 		spawnin:SizeToContents()
 	end
 
-	local vendettaNotice = vgui.Create( "DLabel", Main )
+	local vendettaNotice = vgui.Create( "DLabel", GAMEMODE.DeathMain )
 	vendettaNotice:SetFont( "ds_spawn" )
 	vendettaNotice:SetTextColor( Color( 250, 100, 100 ) )
 	vendettaNotice:SetText( "" )
 	vendettaNotice.Think = function()
-		if not (Main and Main:IsValid()) then return end
+		if not (GAMEMODE.DeathMain and GAMEMODE.DeathMain:IsValid()) then return end
 		if Vendetta then
 			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!")
 		end
 		vendettaNotice:SizeToContents()
-		vendettaNotice:SetPos( Main:GetWide() - vendettaNotice:GetWide() - 6, Main:GetTall() - 27 )
+		vendettaNotice:SetPos( GAMEMODE.DeathMain:GetWide() - vendettaNotice:GetWide() - 6, GAMEMODE.DeathMain:GetTall() - 27 )
 	end
 
-	--[[local vendettaNotice2 = vgui.Create( "DLabel", Main )
-	vendettaNotice2:SetFont( "ds_spawn" )
-	vendettaNotice2:SetTextColor( Color( 250, 250, 100 ) )
-	if wasVendetta then vendettaNotice2:SetText( "You were " .. att:Nick() .. "'s' vendetta!" ) else vendettaNotice2:SetText( "" ) end
-	vendettaNotice2.Think = function()
-		if not Main and Main:IsValid() then return end
-		vendettaNotice2:SizeToContents()
-		vendettaNotice2:SetPos( Main:GetWide() - vendettaNotice2:GetWide() - 6, Main:GetTall() - 27 )
-	end]]
-	
-	usermessage.Hook( "CloseDeathScreen", function()
-		Main:Remove()
-	end )
 end )
 
-usermessage.Hook( "UpdateDeathScreen", function( um )
-	local t = um:ReadShort()
+net.Receive( "UpdateDeathScreen", function()
+	local t = net.ReadInt( 4 )
 	time = t
 	if time > 0 then
 		surface.PlaySound( "ui/UX_Deploy_DeployTImer_Wave.mp3" )
 	elseif time == 0 then
 		surface.PlaySound( "ui/UX_Deploy_DeployReady_Wave.mp3" )
 	end
+end )
+
+net.Receive( "CloseDeathScreen", function()
+    if GAMEMODE.DeathMain and GAMEMODE.DeathMain:IsValid() then
+        GAMEMODE.DeathMain:Close()
+    end
 end )

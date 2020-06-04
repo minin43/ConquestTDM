@@ -1,11 +1,13 @@
 --[[Some notes about balancing:
-    MaxSpreadInc is ideally Hip Spread / 4 + 0.02
+    MaxSpreadInc is ideally Hip Spread / 4 + 0.02?
     SpreadPerShot feels bad any value > 0 on automatic weapons, as uncontrollable inaccuracy takes effect. Values of 0.001 - 0.003 are recommended for 
         particularly inaccurate-feeling weapons, otherwise values of 0 work well (recoil is already heavily randomized, randomized^2 just feels plain bad)
     Dunno how VelocitySensitivity plays into accuracy penalties, only that it does.
 ]]
 
 function RebalanceWeapons()
+    print("Balancing the weapons...")
+
     --//Primary Weapons
 
     --// ARs //--
@@ -221,6 +223,92 @@ function RebalanceWeapons()
         wep.SpeedDec = 50
     end
 
+    if weapons.Get( "bo2r_m27" ) then
+        local wep = weapons.GetStored( "bo2r_m27" )
+        wep.Slot = 0
+        wep.Damage = 28
+        wep.FireDelay = 0.08
+        wep.Recoil = 0.95
+        wep.HipSpread = 0.12
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.4
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.0
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 30
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.15
+        wep.SpeedDec = 50
+    end
+
+    if weapons.Get( "cw_killdrix_acre" ) then
+        local wep = weapons.GetStored( "cw_killdrix_acre" )
+        wep.Slot = 0
+        wep.Damage = 26
+        wep.FireDelay = 0.072
+        wep.Recoil = 0.9
+        wep.HipSpread = 0.12
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.6
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.001
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 30
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.15
+        wep.SpeedDec = 50
+
+        wep.ReloadSpeed = 1.5
+
+        --Adjusts what scopes are seen by the player (I've removed a few extra attachments I didn't want/like), attachments are still manually set in sv_stattrak
+        wep.Attachments[1] = {header = "Sight", offset = {850, -100},  atts = {"md_microt1","md_eotech","md_aimpoint"}}
+        wep.Attachments[4] = nil
+        wep.Attachments[5] = nil
+    end
+
+    if weapons.Get( "bo2r_peacekeeper" ) then
+        local wep = weapons.GetStored( "bo2r_peacekeeper" )
+        wep.Slot = 0
+        wep.Damage = 28
+        wep.FireDelay = 0.08
+        wep.Recoil = 0.97
+        wep.HipSpread = 0.12
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.9
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.0
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 30
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.15
+        wep.SpeedDec = 50
+    end
+
+    if weapons.Get( "cw_kk_hk416" ) then
+        local wep = weapons.GetStored( "cw_kk_hk416" )
+        wep.Slot = 0
+        wep.Damage = 27
+        wep.FireDelay = 0.078
+        wep.Recoil = 0.92
+        wep.HipSpread = 0.12
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.7
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.0
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 30
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.13
+        wep.SpeedDec = 50
+
+        --Adjusts what scopes are seen by the player (I've removed a bunch of extra scopes I didn't want/like), attachments are still manually set in sv_stattrak
+        wep.Attachments[1] = {header = "Sight", offset = {550, -475}, atts = {"bg_hk416_foldsight","md_fas2_eotech","md_fas2_holo","md_cod4_aimpoint_v2","md_cod4_acog_v2","md_fas2_leupold"}}
+    end
+
     --// Snipers //--
 
     if weapons.Get( "cw_b196" ) then
@@ -321,7 +409,7 @@ function RebalanceWeapons()
     if weapons.Get( "cw_weapon_rfb" ) then
         local wep = weapons.GetStored( "cw_weapon_rfb" )
         wep.Slot = 0
-        wep.Damage = 48
+        wep.Damage = 52
         wep.FireDelay = 0.13
         wep.Recoil = 1.75
         wep.HipSpread = 0.35
@@ -334,6 +422,26 @@ function RebalanceWeapons()
         wep.Primary.ClipSize = 10
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.19
+        wep.SpeedDec = 60
+    end
+
+    if weapons.Get( "bo2r_svu" ) then
+        local wep = weapons.GetStored( "bo2r_svu" )
+        wep.PrintName = "Dragunov SVU"
+        wep.Slot = 0
+        wep.Damage = 52
+        wep.FireDelay = 0.11
+        wep.Recoil = 1.6
+        wep.HipSpread = 0.35
+        wep.AimSpread = 0.002
+        wep.VelocitySensitivity = 2.4
+        wep.MaxSpreadInc = 0.45
+        wep.SpreadPerShot = 0.0
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 20
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.22
         wep.SpeedDec = 60
     end
 
@@ -476,10 +584,51 @@ function RebalanceWeapons()
         wep.SpeedDec = 30
     end
 
+    if weapons.Get( "bo2r_mp7" ) then
+        local wep = weapons.GetStored( "bo2r_mp7" )
+        wep.Slot = 0
+        wep.Damage = 25
+        wep.FireDelay = 0.075
+        wep.Recoil = 0.9
+        wep.HipSpread = 0.06
+        wep.AimSpread = 0.025
+        wep.VelocitySensitivity = 1.4
+        wep.MaxSpreadInc = 0.04
+        wep.SpreadPerShot = 0.002
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 40
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.23
+        wep.SpeedDec = 30
+    end
+
     --// LMGs //--
 
     if weapons.Get( "cw_official_m249" ) then
         local wep = weapons.GetStored( "cw_official_m249" )
+        wep.Slot = 0
+        wep.Damage = 32
+        wep.FireDelay = 0.085
+        wep.Recoil = 1.8
+        wep.HipSpread = 0.18
+        wep.AimSpread = 0.006
+        wep.VelocitySensitivity = 1.0
+        wep.MaxSpreadInc = 0.22
+        wep.SpreadPerShot = 0.004
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 100
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.35
+        wep.SpeedDec = 70
+        wep.Trivia = { } --//Removes the line "Accurate aimed fire is not possible without the use of a bipod", as all LMGs will utilize that mechanic
+
+        wep.RecoilToSpread = 0.8
+    end
+
+    if weapons.Get( "bo2r_hamr" ) then
+        local wep = weapons.GetStored( "bo2r_hamr" )
         wep.Slot = 0
         wep.Damage = 32
         wep.FireDelay = 0.085
@@ -664,6 +813,44 @@ function RebalanceWeapons()
         wep.SpeedDec = 20
     end
 
+    if weapons.Get( "bo2r_870mcs" ) then
+        local wep = weapons.GetStored( "bo2r_870mcs" )
+        wep.Slot = 0
+        wep.Damage = 9
+        wep.FireDelay = 0.75
+        wep.Recoil = 3
+        wep.HipSpread = 0.04
+        wep.AimSpread = 0.005
+        wep.VelocitySensitivity = 1.1
+        wep.MaxSpreadInc = 0.06
+        wep.SpreadPerShot = 0.01
+        wep.ClumpSpread = 0.0325
+        wep.Shots = 16
+        wep.Primary.ClipSize = 6
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.8
+        wep.SpeedDec = 40
+    end
+
+    if weapons.Get( "cwc_icarus37" ) then
+        local wep = weapons.GetStored( "cwc_icarus37" )
+        wep.Slot = 0
+        wep.Damage = 6
+        wep.FireDelay = 0.65
+        wep.Recoil = 2.5
+        wep.HipSpread = 0.04
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.1
+        wep.MaxSpreadInc = 0.06
+        wep.SpreadPerShot = 0.01
+        wep.ClumpSpread = 0.035
+        wep.Shots = 16
+        wep.Primary.ClipSize = 6
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.31
+        wep.SpeedDec = 40
+    end
+
     --// Pistols & Mini-SMGs //--
 
     if weapons.Get( "cw_p99" ) then
@@ -825,6 +1012,25 @@ function RebalanceWeapons()
         wep.SpeedDec = 25
     end
 
+    if weapons.Get( "bo2r_b23r" ) then
+        local wep = weapons.GetStored( "bo2r_b23r" )
+        wep.Slot = 1
+        wep.Damage = 22
+        wep.FireDelay = 0.085
+        wep.Recoil = 0.95
+        wep.HipSpread = 0.03
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.0
+        wep.MaxSpreadInc = 0.09
+        wep.SpreadPerShot = 0.005
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        --wep.Primary.ClipSize = 8
+        --wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.12
+        wep.SpeedDec = 25
+    end
+
     --//Tertiary Weapons
     if weapons.Get( "weapon_fists" ) then
         local wep = weapons.GetStored( "weapon_fists" )
@@ -889,4 +1095,11 @@ hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
             end
         end
     end]]
+end )
+
+hook.Add( "OnEntityCreated", "BalanceTheM203", function( ent )
+    if ent:GetClass() == "cw_40mm_explosive" then
+        ent.BlastDamage = 80 --100 is the default value
+        ent.BlastRadius = 384 --384 is the default value
+    end
 end )

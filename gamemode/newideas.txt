@@ -1,18 +1,25 @@
 Future ideas:
     - New Modes
-        - Shifting flags & spawns based on game performance
-            - Need to expand the workshop tool to inlcude invisible walls a la nZ
-            - Maps: zs_, gm_boreas
-        - I had an idea about something 1-life related, but IDK if it fits CTDM
         - Some "advance" mode, like assault in UT2004
     - New equipment
         - Some ammo-giving shit
         - More explosives, like a claymore
     - New kill events & associated sounds
-        Last second save -> on flag saves at point > 17 or < 3
-        Big game hunter -> getting vendetta kills on the enemy MVP
-        Bottom feeder -> getting vendetta kills on the enemy bottom fragger
         Killing machine -> end the game with the most kills
         Juggernaut -> 
         Maniac -> 
         Warpath -> 
+    - Deathscreen should display titles above or below the name, not before it
+    - Balancing concerns:
+        - gm_boreas
+        - npc_galleria_mess, red side
+        - cs_east_borough, stairs that look into red spawn
+    - Add new guns:
+        - HK416, old favorite
+        - Killdrix's ACR
+        - BlOps 2 pack, old favorites
+        - That kickass Icarus37
+    - Tooltips should pop up in the deathscreen if players keep dying to enemies running a specific perk
+    - Perk ideas
+        - Donasan - shooting friendlies heals them
+        - Perk MASTERY (essentially is play-to-win, after reaching an achievement with the perk, get extra bonuses)

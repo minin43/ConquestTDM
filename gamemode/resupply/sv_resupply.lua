@@ -7,10 +7,10 @@
     if red team (team 1) is doing poorly and needs help, or 3 if blue team/team 2 needs help.
 ]]
 
-local color_red, color_green, color_blue = Color(244, 67, 54), Color(76, 175, 80), Color(33, 150, 243),
+local color_red, color_green, color_blue = Color(244, 67, 54), Color(76, 175, 80), Color(33, 150, 243)
 
 hook.Add( "PostGamemodeLoaded", "SetResupply", function()
-    if GAMEMODE.MapTable[ game.GetMap() ].tags then
+    if GAMEMODE.MapTable[ game.GetMap() ] and GAMEMODE.MapTable[ game.GetMap() ].tags then
         local isResupply = false
         for k, v in pairs( GAMEMODE.MapTable[ game.GetMap() ].tags ) do
             if v == "resupply" then isResupply = true end

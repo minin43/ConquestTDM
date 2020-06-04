@@ -10,7 +10,8 @@ hook.Add( "EntityTakeDamage", "Thornmail", function( ply, dmginfo )
 			end
 
 			net.Start( "TookThornmailDamage" )
-			net.Send( dmginfo:GetAttacker() )
+            net.Send( dmginfo:GetAttacker() )
+            GAMEMODE:QueueIcon( att, "thornmail" )
 		end
 	end
 end )

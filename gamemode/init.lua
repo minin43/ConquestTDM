@@ -10,7 +10,7 @@ GM.DefaultWalkSpeed = 180
 GM.DefaultRunSpeed = 300
 GM.DefaultJumpPower = 170
 GM.PostGameCountdown = 20 --Amount of time after the game has ended players can whack each other with crowbars, before the mapvote starts
-GM.Tickets = 200 --Number of tickets on conquest maps
+GM.Tickets = 300 --Number of tickets on conquest maps
 GM.GameTime = 1200 --Number of seconds for the game to conclude in seconds - currently 20 minutes
 
 --This also exists in cl_init. It should be in a shared file, but I'm lazy, so any changes made to this should also be made to the client copy
@@ -544,9 +544,11 @@ function giveLoadout( ply )
 			end )
 		end
 		
-		if loadout.extra then
-			if loadout.extra == "grenades" then
-				ply:RemoveAmmo( 2, "Frag Grenades" )
+        if loadout.extra then
+            print("loadout.extra print: ", loadout.extra)
+            if loadout.extra == "grenades" then
+                print("grenades debug")
+				--ply:RemoveAmmo( 2, "Frag Grenades" )
 				ply:GiveAmmo( 2, "Frag Grenades", true )
 			elseif loadout.extra == "attachment" then
 				CustomizableWeaponry.giveAttachments( ply, CustomizableWeaponry.registeredAttachmentsSKey, true )
@@ -612,10 +614,8 @@ function GM:PlayerSpawn( ply )
 	ply:AllowFlashlight( true )
 	ply:StartSpawnProtection( 5 ) --//Moved to sv_customspawns
 	ply:SetNoCollideWithTeammates( true )
-	ply:ConCommand( "cw_simple_telescopics 0" )
-    print("timedebug1")
-    giveLoadout( ply )
-    print("timedebug2")
+    ply:ConCommand( "cw_simple_telescopics 0" )
+    
     GAMEMODE.PlayerLoadouts[ ply ] = GAMEMODE.PlayerLoadouts[ ply ] or {}
     if GAMEMODE.PlayerLoadouts[ ply ].playermodel then
         ply:SetModel( GAMEMODE.PlayerLoadouts[ ply ].playermodel )
@@ -650,6 +650,8 @@ function GM:PlayerSpawn( ply )
 	end
 
     ply:RemoveAllAmmo()
+    giveLoadout( ply )
+
 	timer.Simple( 1, function()
 		if ply:IsPlayer() then
 			for k, v in pairs( ply:GetWeapons() ) do
@@ -672,10 +674,9 @@ function GM:PlayerSpawn( ply )
     end )
     
     hook.Call( "PostGiveLoadout", nil, ply )
-
 	net.Start( "StartAttTrack" )
-	net.Send( ply )
-    print("timedebug3")
+    net.Send( ply )
+    
 	return false
 end
 

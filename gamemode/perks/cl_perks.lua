@@ -8,7 +8,11 @@ GM.PerkIcons = {
     [ "vulture" ] = Material( "vgui/vulture_icon.png" ),
     [ "leech" ] = Material( "vgui/leech_icon.png" ),
     [ "spawn" ] = Material( "vgui/spawn_icon.png" ),
-    [ "bleedout" ] = Material( "vgui/bleedout_icon.png" )
+    [ "bleedout" ] = Material( "vgui/bleedout_icon.png" ),
+    [ "thornmail" ] = Material( "vgui/thornmail_icon.png" ),
+    [ "entrench" ] = Material( "vgui/entrench_icon.png" ),
+    [ "overheal" ] = Material( "vgui/overheal_boost.png" ),
+    [ "overheal_drain" ] = Material( "vgui/overheal_drain.png")
 }
 
 net.Receive( "QueueUpIcon", function()
@@ -50,6 +54,24 @@ net.Receive("DeadlyWeaponVictim", function()
 
     surface.PlaySound("perks/deadlyweapon/execute_warning" .. toPlay .. "_amplified.ogg")
 end)
+
+net.Receive( "ExpertiseStats", function()
+    local wepclass = net.ReadString()
+    local ExpertiseReloadBuff = net.ReadFloat()
+    local ExpertiseHandlingBuff = net.ReadFloat()
+    local ExpertiseRecoilBuff = net.ReadFloat()
+
+    timer.Simple(0, function()
+        local wep = LocalPlayer():GetWeapon( wepclass )
+        if wep and wep:IsValid() then
+            wep.ReloadSpeed = wep.ReloadSpeed * (1 + ExpertiseReloadBuff)
+            wep.ReloadSpeed_Orig = wep.ReloadSpeed_Orig * (1 + ExpertiseReloadBuff)
+            --wep.SpeedDec = wep.SpeedDec * (1 - ExpertiseHandlingBuff)
+            wep.Recoil = wep.Recoil * (1 - ExpertiseRecoilBuff)
+            wep.Recoil_Orig = wep.Recoil_Orig * (1 - ExpertiseRecoilBuff)
+        end
+    end )
+end )
 
 GM.CrosshairIconSize = 32
 GM.CrosshairIconBuffer = 8

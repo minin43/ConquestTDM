@@ -18,6 +18,7 @@ SCORECOUNTS = {
     DENIED = 100,
     VENDETTA = 50,
     VENDETTA_HUMILIATION = 200,
+    VENDETTA_HUMILIATION_SPECIAL = 250,
     MIDAIR = 50,
     SKEET = 100,
     
@@ -50,6 +51,38 @@ SCORECOUNTS = {
     ROUND_LOST = 100,
     ROUND_TIED = 250
 }
+
+function GetBestPlayerByTeam( id )
+    local bestplayer
+    local highestscore
+    for k, v in pairs( team.GetPlayers( id ) ) do
+        if !bestplayer then
+            bestplayer = v
+            highestscore = v:GetNWInt( "tdm_score", 1 )
+        elseif highestscore < v:GetNWInt( "tdm_score", 1 ) then
+            bestplayer = v
+            highestscore = v:GetNWInt( "tdm_score", 1 )
+        end
+    end
+
+    return bestplayer
+end
+
+function GetWorstPlayerByTeam( id )
+    local worstplayer
+    local lowestscore
+    for k, v in pairs( team.GetPlayers( id ) ) do
+        if !worstplayer then
+            worstplayer = v
+            lowestscore = v:GetNWInt( "tdm_score", 1 )
+        elseif lowestscore > v:GetNWInt( "tdm_score", 1 ) then
+            worstplayer = v
+            lowestscore = v:GetNWInt( "tdm_score", 1 )
+        end
+    end
+
+    return worstplayer
+end
 
 function AddNotice(ply, text, score, type, color)
     if GAMEMODE.pointGainDisabled then return end
@@ -104,7 +137,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     GAMEMODE.KillInfoTracking[ attID ].KillSpree = GAMEMODE.KillInfoTracking[ attID ].KillSpree or 0
 
     if vicID == attID then GAMEMODE.KillInfoTracking[ attID ].KillsThisLife = 0 return end
-    if !att:IsPlayer() or !att:IsValid() or !vic:IsValid() or att == vic or att:GetActiveWeapon() == NULL then
+    if !att:IsPlayer() or !att:IsValid() or !vic:IsValid() or att == vic or att:GetActiveWeapon() == NULL or !vic:IsPlayer() then
         return
     end
 
@@ -146,9 +179,20 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     GAMEMODE.VendettaList[ attID ].ActiveSaves = GAMEMODE.VendettaList[ attID ].ActiveSaves or { }
     --//When you're their vendetta, and kill them anyway
     if GAMEMODE.VendettaList[ vicID ].ActiveSaves[ attID ] then --and GAMEMODE.VendettaList[ vicID ][ attID ] > self:GetVendettaRequirement( vic ) then
-        AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
-        totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION
-        SoundToSend = "eradication"
+        local numenemies = #team.GetPlayers( vic:GetTeam() )
+        if numenemies > 2 and GetBestPlayerByTeam(vic:Team()) == vic then
+            AddNotice( att, "BIG GAME HUNTER", SCORECOUNTS.VENDETTA_HUMILIATION_SPECIAL, NOTICETYPES.EXTRA )
+            totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION_SPECIAL
+            SoundToSend = "biggamehunter"
+        elseif numenemies > 2 and GetWorstPlayerByTeam(vic:Team()) == vic then
+            AddNotice( att, "BOTTOM FEEDER", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
+            totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION
+            SoundToSend = "bottomfeeder"
+        else
+            AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
+            totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION
+            SoundToSend = "eradication"
+        end
         hook.Call( "KillFeedHumiliator", GAMEMODE, att )
         hook.Call( "KillFeedHumiliated", GAMEMODE, vic )
     --//When they're your vendetta
@@ -208,6 +252,21 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
             AddNotice(att, "FLAG ATTACK", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
             totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
             hook.Call( "KillFeedFlagAttack", GAMEMODE, att )
+
+            local remainingplayers, shouldrun
+            if att:Team() == 1 then
+                remainingplayers = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].bluecount
+                shouldrun = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].count < 3
+            else
+                remainingplayers = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].redcount
+                shouldrun = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].count > 17
+            end
+
+            if shouldrun and remainingplayers == 0 then
+                AddNotice(att, "LAST SECOND SAVE", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
+                totalpointcount = totalpointcount + SCORECOUNTS.FLAG_ATT_DEF
+                SoundToSend = "lastsecondsave"
+            end
         end
         if GAMEMODE.FlagFeedCheck[ att ] then
             AddNotice(att, "FLAG DEFENSE", SCORECOUNTS.FLAG_ATT_DEF, NOTICETYPES.EXTRA)
@@ -218,7 +277,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     
     --//Afterlife Check
     --print("Afterlife Check", att:Alive(), not att:Alive() )
-    if not att:Alive() then
+    if not att:Alive() or att:Health() == 0 then
         AddNotice(att, "AFTERLIFE", SCORECOUNTS.AFTERLIFE, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.AFTERLIFE
         hook.Call( "KillFeedAfterlife", GAMEMODE, att )
@@ -282,7 +341,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
         totalpointcount = totalpointcount + SCORECOUNTS.DENIED
         SoundToSend = "denied"
         hook.Call( "KillFeedEndKillspree", GAMEMODE, att )
-    elseif GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife >= 5 then --If the victim has hit a DOMINATING killstreak
+    elseif GAMEMODE.KillInfoTracking[ vicID ].KillsThisLife >= 5 then --If the victim has hit a DOMINATING killstreak or better
         AddNotice(att, "REJECTED KILLSTREAK", SCORECOUNTS.DENIED, NOTICETYPES.EXTRA)
         totalpointcount = totalpointcount + SCORECOUNTS.DENIED
         SoundToSend = "rejected"
@@ -364,7 +423,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     end
     
     if vip.GetVip( att ) then
-        AddNotice( att, "VIP BONUS", totalpointcount * vip.Groups[ vip.GetVip( att ) ], NOTICETYPES.EXTRA )
+        AddNotice( att, "VIP BONUS", math.Round( totalpointcount * vip.Groups[ vip.GetVip( att ) ] ), NOTICETYPES.EXTRA )
     end
 
     local eventpointmultiplier = 1

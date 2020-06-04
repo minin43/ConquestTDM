@@ -7,7 +7,8 @@ GM.MapvoteButtonTall = ScrH() / 4
 GM.IconExplanations = {
     flags = " map has conquest flags",
     snipers = " sniper-friendly map",
-    event = " random event used"
+    event = " random event used",
+    resupply = " special event during halftime"
 }
 
 net.Receive( "BeginMapvote", function()

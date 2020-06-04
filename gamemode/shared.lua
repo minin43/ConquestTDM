@@ -178,7 +178,11 @@ if SERVER then
     resource.AddWorkshop( "1584952306" ) --TEC-9
     resource.AddWorkshop( "1805065429" ) --R5
     resource.AddWorkshop( "374453458" ) --AAC Honeybadger
-
+    resource.AddWorkshop( "1373175654" ) --Icarus-37
+    resource.AddWorkshop( "388093141" ) --BlOps 2 pack
+    resource.AddWorkshop( "354842171" ) --HK-316
+    resource.AddWorkshop( "605564693" ) --ACR-E
+    
     --Server Content
     resource.AddWorkshop( "1386774614" ) --CTDM Files (CTDM content pack part 1)
     resource.AddWorkshop( "1819579704" ) --CTDM Files (CTDM content pack part 3)

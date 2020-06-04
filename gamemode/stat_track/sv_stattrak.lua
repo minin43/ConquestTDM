@@ -95,18 +95,6 @@ wep_att[ "cw_vss" ] = {
 }
 
 wep_att[ "cw_b196" ] = {
-	{ "bg_bl96_paint1", 0 },
-	{ "bg_bl96_paint2", 0 },
-	{ "bg_bl96_paint3", 0 },
-	{ "bg_bl96_paint4", 0 },
-	{ "bg_bl96_paint5", 0 },
-	{ "bg_bl96_paint6", 0 },
-	{ "bg_bl96_paint7", 0 },
-	{ "bg_bl96_paint8", 0 },
-	{ "bg_bl96_paint9", 0 },
-	{ "bg_bl96_paint10", 0 },
-	{ "bg_bl96_paint11", 0 },
-	{ "bg_bl96_paint12", 0 },
 	{ "md_csgo_556", 0 },
 	{ "md_microt1", 10 },
 	{ "md_saker", 20 },
@@ -170,9 +158,98 @@ wep_att[ "cw_weapon_rfb" ] = {
     { "md_acog", 110 },
 }
 
+wep_att[ "bo2r_svu" ] = {
+    { "bo2_acog_sniper", 10 },
+    { "md_tundra9mm", 20 },
+    { "bo2_fmj", 30 }
+}
+
+wep_att[ "bo2r_m27" ] = {
+    { "bo2_reddot", 10 },
+	{ "md_tundra9mm", 20 },
+	{ "bo2_mms", 30 },
+	{ "bo2_grip", 40 },
+	{ "bo2_eotech", 50 },
+	{ "bo2_acog", 60 },
+	{ "bo2_fmj", 70 }
+}
+
+wep_att[ "bo2r_peacekeeper" ] = {
+    { "bo2_reddot", 10 },
+	{ "md_tundra9mm", 20 },
+	{ "bo2_mms", 30 },
+	{ "bo2_grip", 40 },
+	{ "bo2_eotech", 50 },
+	{ "bo2_fmj", 60 }
+}
+
+wep_att[ "bo2r_870mcs" ] = {
+    { "bo2_reddot", 10 },
+    { "md_tundra9mm", 20 },
+    { "bo2_mms", 30 }
+}
+
+wep_att[ "bo2r_hamr" ] = {
+	{ "bo2_reddot", 10 },
+	{ "md_tundra9mm", 20 },
+	{ "bo2_mms", 30 },
+	{ "bo2_grip", 40 },
+	{ "bo2_eotech", 50 },
+	{ "bo2_acog", 60 },
+	{ "bo2_fmj", 70 }
+}
+
+wep_att[ "bo2r_mp7" ] = {
+    { "bo2_reddot", 10 },
+	{ "md_tundra9mm", 20 },
+	{ "bo2_mms", 30 },
+	{ "bo2_grip", 40 },
+	{ "bo2_eotech", 50 },
+	{ "bo2_fmj", 60 }
+}
+
+wep_att[ "bo2r_b23r" ] = {
+    { "md_tundra9mm", 10 },
+    { "bo2_fmj", 20 }
+}
+
+wep_att[ "cw_kk_hk416" ] = {
+    { "bg_hk416_foldsight", 0 },
+	{ "md_fas2_eotech", 10 },
+	{ "md_saker", 20 },
+	{ "bg_hk416_longbarrel", 30 },
+	{ "md_fas2_holo", 40 },
+	{ "md_foregrip", 50 },
+	{ "bg_hk416_34rndmag", 60 },
+	{ "md_cod4_aimpoint_v2", 70 },
+	{ "bg_hk416_heavystock", 80 },
+	{ "md_anpeq15", 90 },
+	{ "md_cod4_acog_v2", 100 },
+	{ "md_backup_reflex", 110 },
+    { "bg_hk416_silencer", 120 },
+    { "md_hk416_bipod", 130 },
+	{ "md_fas2_leupold", 140 },
+	{ "bg_hk416_cmag", 150 },
+	{ "bg_hk416_nostock", 160 },
+	{ "md_magnifier_scope", 170 },
+	{ "md_m203", 180 },
+	{ "am_magnum", 190 },
+	{ "am_matchgrade", 200 }
+}
+
+wep_att[ "cw_killdrix_acre" ] = {
+	{ "md_microt1", 10 },
+	{ "md_saker", 20 },
+	{ "md_eotech", 30 },
+	{ "md_anpeq15", 40 },
+	{ "md_aimpoint", 50 },
+	{ "am_magnum", 60 },
+	{ "am_matchgrade", 70 }
+}
+
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
 function ConstructAttachmentLists()
-	print( "(Re)constructing attachment lists..." )
+	print( "Auto-constructing attachment hierarchies..." )
 	
 	for k, v in pairs( weapons.GetList() ) do
 		if v.Base == "cw_base" and !wep_att[ v.ClassName ] then --If cw2.0 weapon and not pre-done

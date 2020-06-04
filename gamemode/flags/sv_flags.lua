@@ -754,9 +754,9 @@ flags[ "gm_boreas" ] = {
     { "C", Vector(-10137.0938, -8473.5313, -10319.9688), 88.0, 0.0, "1" },
 
     { "A", Vector(-255.8438, 3455.9375, -6399.9688), 402.0, 0.0, "2" },
-    { "B", Vector(65.5313, 4802.625, -6399.9688), 278.0, 0.0, "2" },
-    { "C", Vector(748.75, 4423.8125, -6271.9688), 90.0, 0.0, "2" },
-    { "D", Vector(1748.2813, 3855.5, -6319.9688), 290.0, 0.0, "2" },
+    --{ "B", Vector(65.5313, 4802.625, -6399.9688), 278.0, 0.0, "2" },
+    { "B", Vector(748.75, 4423.8125, -6271.9688), 90.0, 0.0, "2" },
+    { "C", Vector(1748.2813, 3855.5, -6319.9688), 290.0, 0.0, "2" },
 
     { "A", Vector(2335.2188, 2508.1875, -6399.9688), 317.0, 0.0, "3" },
     { "B", Vector(1425.5625, 3080.2813, -6271.9688), 134.0, 0.0, "3" },
@@ -1025,13 +1025,13 @@ timer.Create( "FlagCheck", 1, 0, function()
         --end
 	end
 
-	--//We'll need to count how many players are on the zone, and what the team majority is
+    --//We'll need to count how many players are on the zone, and what the team majority is
 	for flagname, flagtable in pairs( GAMEMODE.FlagTable ) do
 		--//These were intially local vars, but fuckit let's save them to the table in case we need them for some odd reason in the future
 		flagtable.redcount = 0
 		flagtable.players.redTeam = {}
 		flagtable.bluecount = 0
-		flagtable.players.blueTeam = {}
+        flagtable.players.blueTeam = {}
 		for ply, teamid in pairs( flagtable.players ) do
 			if teamid == 1 then
 				flagtable.redcount = flagtable.redcount + 1
@@ -1039,7 +1039,7 @@ timer.Create( "FlagCheck", 1, 0, function()
 			elseif teamid == 2 then
 				flagtable.bluecount = flagtable.bluecount + 1
 				flagtable.players.blueTeam[ #flagtable.players.blueTeam + 1 ] = ply
-			end
+            end
 		end
 		
 		--//If there's a difference by team, give the team with the most players the difference in count towards capturing - none if none
@@ -1114,12 +1114,12 @@ hook.Add( "Think", "CheckIfOnFlag", function()
 				net.Start( "IsOnFlag" )
 					net.WriteString( flagname )
                 net.Send( ply )
-                GAMEMODE.FlagFeedCheck[ ply ] = true
+                GAMEMODE.FlagFeedCheck[ ply ] = flagname
 			else
 				net.Start( "IsOffFlag" )
 					net.WriteString( flagname )
                 net.Send( ply )
-                GAMEMODE.FlagFeedCheck[ ply ] = false
+                GAMEMODE.FlagFeedCheck[ ply ] = nil
 			end
 		end
 	end
@@ -1136,7 +1136,7 @@ end )
 hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
     for _, ply in pairs( plytable ) do
         for _, wep in pairs( ply:GetWeapons() ) do
-			if weapons.Get(wep:GetClass()).Slot < 3 then
+			if weapons.Get(wep:GetClass()) and weapons.Get(wep:GetClass()).Slot < 3 then
             	ply:GiveAmmo( wep:GetMaxClip1(), wep:GetPrimaryAmmoType(), true )
 			end
         end

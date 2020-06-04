@@ -97,7 +97,7 @@ end)
 hook.Add( "PlayerButtonDown", "PreventL115Drop", function( ply, bind )
     if bind == KEY_Q and IsValid( ply ) and ply:Team() != 0 and !ply.spawning then
         local wep = ply:GetActiveWeapon()
-        if wep and wep:GetClass() == "cw_l115" then
+        if wep and wep:IsValid() and wep:GetClass() == "cw_l115" then
             ply:StripWeapon( wep )
             GAMEMODE.WeaponCounter[ply] = 0
         end

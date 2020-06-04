@@ -85,10 +85,12 @@ function MapOptionButton:Paint()
     draw.NoTexture()
 
     for k, v in pairs( self.tags ) do
-        surface.SetMaterial( GAMEMODE.Icons.Mapvote[ v ] )
-        surface.SetDrawColor( 76, 175, 80, 255 )
-        surface.DrawTexturedRect( ( 4 * k ) + ( 32 * ( k - 1 ) ), 4, 32, 32 )
-        draw.NoTexture()
+        if GAMEMODE.Icons.Mapvote[ v ] then
+            surface.SetMaterial( GAMEMODE.Icons.Mapvote[ v ] )
+            surface.SetDrawColor( 76, 175, 80, 255 )
+            surface.DrawTexturedRect( ( 4 * k ) + ( 32 * ( k - 1 ) ), 4, 32, 32 )
+            draw.NoTexture()
+        end
     end
 
     surface.SetDrawColor( 255, 255, 255 )

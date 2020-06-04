@@ -38,7 +38,7 @@ vgui.Register( "LoganButton", basebutton, "DButton" )
 
 --//
 
---//The slider object itself, 
+--//A custom slider object, used in my custom DNumSlider, since I didn't like how it looked
 local baseslider = {}
 AccessorFunc( baseslider, "m_fSlideX", "SlideX" )
 AccessorFunc( baseslider, "m_fSlideY", "SlideY" )
@@ -165,7 +165,7 @@ vgui.Register( "BaseSlider", baseslider, "DPanel" )
 
 --//
 
---I don't like the default DNumSlider look, plus DNumberScratch is stupid
+--I don't like the default DNumSlider look, plus DNumberScratch is stupid, so I customized it a bit. Used for setting model stance, model skin, and any bodygroups
 local newslider =  {}
 newslider.MinValue = 0
 newslider.MaxValue = 10
@@ -281,6 +281,33 @@ vgui.Register( "LoganSlider", newslider, "DPanel" )
 
 --//
 
+--Seems some players don't realize there's a shop, a button in the loadout menu should help with that
+local shopbutton = {}
+
+function shopbutton:Paint()
+    surface.SetTextColor( 0, 0, 0, 220 )
+    if self.hover then
+        surface.SetTextColor( GAMEMODE.TeamColor )
+    end
+    surface.SetFont( "Exo-24-600" )
+    local w, h = surface.GetTextSize( "Open Shop" )
+    surface.SetTextPos( self:GetWide() / 2 - (w / 2), self:GetTall() / 2 - ( h / 2 ) - 2 )
+    surface.DrawText( "Open Shop" )
+    return true
+end
+
+function shopbutton:DoClick()
+    surface.PlaySound( GAMEMODE.ButtonSounds.Accept[ math.random( #GAMEMODE.ButtonSounds.Accept ) ] )
+    GAMEMODE.LoadoutMain:Close()
+    GAMEMODE.TeamColor = GAMEMODE.oldcolor
+    GAMEMODE:OpenShop()
+end
+
+vgui.Register( "LoadoutToShop", shopbutton, "LoganButton" )
+
+--//
+
+--Needed to create my own DModelPanel if I wanted the model to be able to hold a gun
 local playermodelpanel = {}
 playermodelpanel.RebelModels = { "models/player/group03/male_01.mdl", "models/player/group03/male_02.mdl", "models/player/group03/male_03.mdl", "models/player/group03/male_04.mdl",
     "models/player/group03/male_05.mdl", "models/player/group03/male_06.mdl", "models/player/group03/male_07.mdl", "models/player/group03/male_08.mdl", "models/player/group03/male_09.mdl" }
@@ -816,7 +843,7 @@ function playermodelpanelbuttons:DoClick()
                 end
             end
 
-            for k, v in ipairs( order ) do        
+            for k, v in pairs( order ) do        
                 for k2, v2 in pairs( v ) do
                     local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
                     button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
@@ -951,7 +978,7 @@ function weaponskinoptions:DoClick()
         end )
     else
         self.moving = true
-
+        print("debug1")
         self.listpanel = vgui.Create( "DPanel", self.trueparent )
         self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * (#self.skins + 1), self.trueparent:GetTall() / 2 - GAMEMODE.TitleBar ) )
         self.listpanel:SetPos( 0, self.trueparent:GetTall() )
@@ -981,6 +1008,7 @@ function weaponskinoptions:DoClick()
         end
 
         if !self.listpanel.scrollpanel then
+            print("debug2")
             self.listpanel.scrollpanel = vgui.Create( "DScrollPanel", self.listpanel )
             self.listpanel.scrollpanel:SetPos( 0, 0 )
             self.listpanel.scrollpanel:SetSize( self.listpanel:GetWide(), self.listpanel:GetTall() )
@@ -1052,13 +1080,13 @@ function weaponskinoptions:DoClick()
             end
 
             local order = {}
-            for k, v in pairs( GAMEMODE.MySkins ) do
+            for k, v in pairs( GAMEMODE.MySkins ) do --Used to order skins together
                 order[ GAMEMODE.SkinsMasterTable[ v ].quality ] = order[ GAMEMODE.SkinsMasterTable[ v ].quality ] or {}
                 order[ GAMEMODE.SkinsMasterTable[ v ].quality ][ #order[ GAMEMODE.SkinsMasterTable[ v ].quality ] + 1 ] = GAMEMODE.SkinsMasterTable[ v ]
             end
             
-            for k, v in ipairs( order ) do
-                for _, skintable in ipairs( v ) do
+            for k, v in pairs( order ) do
+                for _, skintable in pairs( v ) do
                     local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
                     button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
                     button:Dock( TOP )
@@ -1233,6 +1261,10 @@ function primariespanel:RepopulateList()
         end
     end
 
+    local shopbutton = vgui.Create( "LoadoutToShop", self.scrollpanel )
+    shopbutton:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+    shopbutton:Dock( TOP )
+
     self:SelectWeapon()
 end
 
@@ -1386,6 +1418,10 @@ function secondariespanel:RepopulateList()
             end
         end
     end
+
+    local shopbutton = vgui.Create( "LoadoutToShop", self.scrollpanel )
+    shopbutton:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+    shopbutton:Dock( TOP )
 end
 
 function secondariespanel:SelectWeapon( wepclass )
@@ -1518,12 +1554,12 @@ function equipmentpanel:RepopulateList()
     end
 
     if #GAMEMODE.UnlockedEquipment == 0 then
-        local noequip = vgui.Create( "DPanel", self.scrollpanel )
+        --[[local noequip = vgui.Create( "DPanel", self.scrollpanel )
         noequip:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
         noequip:Dock( TOP )
         noequip.Paint = function()
             draw.SimpleText( "No equipment", "Exo-24-600", noequip:GetWide() / 2, noequip:GetTall() / 2, GAMEMODE.TeamColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-        end
+        end]]
     else
         for _, weptable in pairs( GAMEMODE.UnlockedEquipment ) do
             local button = vgui.Create( "EquipmentButton", self.scrollpanel )
@@ -1534,6 +1570,10 @@ function equipmentpanel:RepopulateList()
             self.scrollpanel.buttons[ weptable[2] ] = button
         end
     end
+
+    local shopbutton = vgui.Create( "LoadoutToShop", self.scrollpanel )
+    shopbutton:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+    shopbutton:Dock( TOP )
 end
 
 function equipmentpanel:SelectWeapon( wepclass )

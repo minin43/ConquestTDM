@@ -62,7 +62,7 @@ net.Receive( "StartDeathScreen", function()
 	GAMEMODE.DeathMain:SetTitle( "" )
 	GAMEMODE.DeathMain:ShowCloseButton( false )
     GAMEMODE.DeathMain.Paint = function()
-        if not GAMEMODE.DeathMain then return end
+        if not GAMEMODE.DeathMain or not GAMEMODE.DeathMain:IsValid() then return end
 		surface.SetDrawColor( 0, 0, 0, 75 )
 		surface.DrawRect( 0, 0, GAMEMODE.DeathMain:GetWide(), GAMEMODE.DeathMain:GetTall() - 30 )
 		surface.SetDrawColor( 0, 0, 0, 150 )

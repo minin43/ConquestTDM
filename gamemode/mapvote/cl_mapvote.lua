@@ -37,7 +37,13 @@ net.Receive( "PlayerVotedUpdate", function()
         ErrorNoHalt( "Client received non-existant player's vote!\n", ply )
     else
         if GAMEMODE.PlayerVotes[ ply ] then
-            GAMEMODE.MapvoteOptions[ GAMEMODE.PlayerVotes[ ply ] ]:AddVotes( -1 )
+            if not GAMEMODE.MapvoteOptions[ GAMEMODE.PlayerVotes[ ply ] ] then
+                ErrorNoHalt("MAPVOTE DEBUG - CHECK CONSOLE")
+                print("player vote: ", GAMEMODE.PlayerVotes[ ply ], "\nlisting:")
+                PrintTable( GAMEMODE.MapvoteOptions )
+            else
+                GAMEMODE.MapvoteOptions[ GAMEMODE.PlayerVotes[ ply ] ]:AddVotes( -1 )
+            end
         end
         GAMEMODE.PlayerVotes[ ply ] = choice
         GAMEMODE.MapvoteOptions[ choice ]:AddVotes( 1 )

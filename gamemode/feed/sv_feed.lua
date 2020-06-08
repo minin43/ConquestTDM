@@ -179,7 +179,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
     GAMEMODE.VendettaList[ attID ].ActiveSaves = GAMEMODE.VendettaList[ attID ].ActiveSaves or { }
     --//When you're their vendetta, and kill them anyway
     if GAMEMODE.VendettaList[ vicID ].ActiveSaves[ attID ] then --and GAMEMODE.VendettaList[ vicID ][ attID ] > self:GetVendettaRequirement( vic ) then
-        local numenemies = #team.GetPlayers( vic:GetTeam() )
+        local numenemies = #team.GetPlayers( vic:Team() )
         if numenemies > 2 and GetBestPlayerByTeam(vic:Team()) == vic then
             AddNotice( att, "BIG GAME HUNTER", SCORECOUNTS.VENDETTA_HUMILIATION_SPECIAL, NOTICETYPES.EXTRA )
             totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION_SPECIAL

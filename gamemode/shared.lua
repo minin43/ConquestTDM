@@ -85,7 +85,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "de_halo_battlecreek" ] = { id = 1769486134, size = "Small", img = "vgui/maps/battlecreek.png",
         tags = { } },
     [ "de_stad" ] = { id = 1751765989, size = "Large", img = "vgui/maps/stad.png", type = "ins2",
-        tags = { } },
+        tags = { "snipers" } },
     --//Update 1.10
     [ "cs_siege_csgo" ] = { id = 1745687579, size = "Massive", img = "vgui/maps/siege.png", type = "ins2",
         tags = { } },

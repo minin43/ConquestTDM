@@ -102,7 +102,10 @@ net.Receive( "Announcer", function()
         [ "TOP GUN" ] = "ut3sounds/topgun.mp3",
         [ "SHAFT-MASTER" ] = "ut3sounds/shaftmaster.mp3",
         [ "eradication" ] = "ut3sounds/eradication.mp3",
-        [ "retribution" ] = "ut3sounds/retribution.mp3"
+        [ "retribution" ] = "ut3sounds/retribution.mp3",
+        [ "biggamehunter" ] = "ut3sounds/biggamehunter.mp3",
+        [ "bottomfeeder" ] = "ut3sounds/bottomfeeder.mp3",
+        [ "lastsecondsave" ] = "ut3sounds/lastsecondsave.mp3"
         --[ "roadkill" ] = "ut3sounds/roadkill.mp3"
     }
 

@@ -780,19 +780,23 @@ end
 
 --//Used in server-side menu code to check for players running net messages with values the player set - cheaters
 function CaughtCheater( ply, reason )
+    print(os.date( "%H:%M:%S - %d/%m/%Y", os.time() ))
     print("Caught a cheater! Check data/tdm/cheaters for more information!")
 	if ply:IsValid() and ply:IsPlayer() then
-		local plyID = ply:SteamID()
-		local datetime = os.date( "%H:%M:%S - %d/%m/%Y", os.time() ) --This is a string
-		local currentname = ply:Nick()
+        local plyID = ply:SteamID()
+        local nick = ply:Nick()
 
-		if not file.Exists( "tdm/cheaters/" .. id( ply:SteamID() ) .. ".txt", "DATA" ) then
-			file.Write( "tdm/cheaters/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { datetime = { plyID, currentname, reason } } ) )
-		else
-			local contents = util.JSONToTable( file.Read( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt" ) )
-			contents[ datetime ] = { plyID, currentname, reason }
-			file.Write( "tdm/users/models/" .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( contents ) )
-		end
+        local date = os.date("%d/%m/%Y", os.time())
+        local time = os.date("%H:%M:%S", os.time())
+        local datetime = date .. " - " .. time
+        
+        local dir = "tdm/cheaters/" .. date
+
+        if not file.Exists( dir, "DATA" ) then
+            file.CreateDir( dir )
+        end
+
+		file.Write( dir .. id( ply:SteamID() ) .. ".txt", util.TableToJSON( { datetime = { plyID, currentname, reason } } ) )
 		--//Maybe do some kind of update even or something - notify superadmins to check the file
 	end
 end

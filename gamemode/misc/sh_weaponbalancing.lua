@@ -328,6 +328,8 @@ function RebalanceWeapons()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = wep.FireDelay + 0.01
         wep.SpeedDec = 60
+
+        wep.Attachments[5] = nil
     end
 
     if weapons.Get( "cw_tac338" ) then
@@ -347,6 +349,8 @@ function RebalanceWeapons()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = wep.FireDelay + 0.01
         wep.SpeedDec = 60
+
+        wep.Attachments[1] = {header = "Sight", offset = {500, -600}, atts = {"md_rmr", "md_microt1", "md_aimpoint", "md_eotech", "md_schmidt_shortdot", "md_acog", "md_nightforce_nxs"}}
     end
 
     if weapons.Get( "cw_wf_m200" ) then
@@ -366,6 +370,8 @@ function RebalanceWeapons()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = wep.FireDelay + 0.01
         wep.SpeedDec = 60
+
+        wep.Attachments[1] = {header = "Sight", offset = {400, -600}, atts = {"md_rmr", "md_microt1", "md_aimpoint", "md_eotech", "md_schmidt_shortdot", "md_acog", "md_nightforce_nxs"}}
     end
 
     if weapons.Get( "cw_l115" ) then

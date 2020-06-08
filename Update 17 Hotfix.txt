@@ -1,0 +1,8 @@
+1.17 Hotfix
+- Fixed small error related to deathscreen
+- Properly queuedd BigGameHunter, BottomFeeder, and LastSecondSave to play
+- Reworked cheater-detection backend formatting
+- Stopped errors from running during mapvote when players vote for a non-existent map
+- Fixed improper attachment displaying
+- Balanced Vampir so the drain amount remains lower and the minimum life is higher
+- Chat commands should now be 100% working

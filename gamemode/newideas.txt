@@ -15,11 +15,9 @@ Future ideas:
         - npc_galleria_mess, red side
         - cs_east_borough, stairs that look into red spawn
     - Add new guns:
-        - HK416, old favorite
-        - Killdrix's ACR
-        - BlOps 2 pack, old favorites
-        - That kickass Icarus37
+        - COBOL Fate
     - Tooltips should pop up in the deathscreen if players keep dying to enemies running a specific perk
     - Perk ideas
         - Donasan - shooting friendlies heals them
         - Perk MASTERY (essentially is play-to-win, after reaching an achievement with the perk, get extra bonuses)
+    - Add CSS

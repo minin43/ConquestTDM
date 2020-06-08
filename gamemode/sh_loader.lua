@@ -2,6 +2,7 @@
 
 local toLoad = {
     character_interactions = true,
+    chat = true,
     deathscreen = true,
     donations = true,
     events = true,

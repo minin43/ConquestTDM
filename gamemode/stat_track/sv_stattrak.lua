@@ -110,21 +110,23 @@ wep_att[ "cw_b196" ] = {
 	{ "am_matchgrade", 120 }
 }
 
-wep_att[ "cw_tac338" ] = {
+--[[wep_att[ "cw_tac338" ] = {
     { "md_nightforce_nxs", 0 },
 	{ "md_rmr", 10 },
 	{ "md_saker", 20 },
 	{ "bg_tac338_short_barrel", 30 },
 	{ "md_anpeq15", 40 },
 	{ "md_bipod", 50 },
-	{ "md_microt1", 60 },
-	{ "md_aimpoint", 70 },
+    { "md_microt1", 60 },
+    { "md_snip2_light_suppressor", 70 },
+    { "md_aimpoint", 80 },
+    
 	{ "md_eotech", 80 },
 	{ "md_schmidt_shortdot", 90 },
 	{ "md_acog", 100 },
 	{ "am_magnum", 110 },
 	{ "am_matchgrade", 120 }
-}
+}]]
 
 wep_att[ "cw_wf_m200" ] = {
     { "md_nightforce_nxs", 0 },
@@ -178,7 +180,7 @@ wep_att[ "bo2r_peacekeeper" ] = {
     { "bo2_reddot", 10 },
 	{ "md_tundra9mm", 20 },
 	{ "bo2_mms", 30 },
-	{ "bo2_grip", 40 },
+	{ "bo2_grip_peace", 40 },
 	{ "bo2_eotech", 50 },
 	{ "bo2_fmj", 60 }
 }

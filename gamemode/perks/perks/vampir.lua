@@ -1,5 +1,5 @@
-GM.VampirDrainMins = { [0] = 100, 40, 30 } --The minimum life you'll drain to after being out of combat for too long, scales with 1, 2, and 3+ players on the enemy team
-GM.VampirDrainRates = { [0] = 0, 1, 2 } --Drain rates per second, scales with 1, 2, and 3+ players on the enemy team
+GM.VampirDrainMins = { [0] = 100, 40 } --The minimum life you'll drain to after being out of combat for too long, scales with # players on the enemy team
+GM.VampirDrainRates = { [0] = 0, 1 } --Drain rates per second, scales with # players on the enemy team
 GM.VampirDamageDrain = 0.30 --% of damage that is added to your health
 GM.VampirDrainCap = 150 --Max HP cap
 
@@ -10,10 +10,10 @@ hook.Add( "PlayerSpawn", "VampirSpawn", function( ply )
                 if !ply:Alive() then timer.Remove( ply:SteamID() .. "VampTimer" ) return end
 
                 local numEnemies = #team.GetPlayers( (ply:Team() % 2) + 1 )
-                local drainlimit = GAMEMODE.VampirDrainMins[ numEnemies ] or 20 --20 is for 3+ players on the enemy team
+                local drainlimit = GAMEMODE.VampirDrainMins[ numEnemies ] or 30
                 if ply:Health() <= drainlimit then return end
 
-                local drainrate = GAMEMODE.VampirDrainRates[ numEnemies ] or 3 --3 is for 3+ players on the enemy team
+                local drainrate = GAMEMODE.VampirDrainRates[ numEnemies ] or 2
                 ply:SetHealth( math.max(ply:Health() - drainrate, (GAMEMODE.VampirDrainMins[ numEnemies ] or 20)) )
             end )
         end

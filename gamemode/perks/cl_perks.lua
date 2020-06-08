@@ -12,7 +12,7 @@ GM.PerkIcons = {
     [ "thornmail" ] = Material( "vgui/thornmail_icon.png" ),
     [ "entrench" ] = Material( "vgui/entrench_icon.png" ),
     [ "overheal" ] = Material( "vgui/overheal_boost.png" ),
-    [ "overheal_drain" ] = Material( "vgui/overheal_drain.png")
+    [ "overheal_drain" ] = Material( "vgui/overheal_drain.png" )
 }
 
 net.Receive( "QueueUpIcon", function()

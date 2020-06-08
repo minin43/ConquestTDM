@@ -159,24 +159,34 @@ net.Receive( "SetLoadout", function( len, ply )
     local pmskin = newloadout[5][2]
     local pmbgroups = newloadout[5][3]
 
-    if !OwnsWeapon( primary, ply ) or !OwnsWeapon( secondary, ply ) or !OwnsWeapon( equipment, ply ) then
-        print("cheat1")
-        CaughtCheater( ply, "Attempted to spawn with weapon they don't have access to.")
+    if !OwnsWeapon( primary, ply ) then
+        CaughtCheater(ply, "Attempted to spawn with primary they don't have access to - " .. primary)
         return
     end
+    if !OwnsWeapon( secondary, ply ) then
+        CaughtCheater(ply, "Attempted to spawn with secondary they don't have access to - " .. primary)
+        return
+    end
+    if !OwnsWeapon( equipment, ply ) then
+        CaughtCheater(ply, "Attempted to spawn with equipment they don't have access to - " .. primary)
+        return
+    end
+
     if perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ] then
-        print("cheat2")
-        CaughtCheater( ply, "Attempted to spawn with perk they don't have access to.")
+        CaughtCheater( ply, "Attempted to spawn with perk they don't have access to - " .. perk .. ", " .. lvl.GetLevel( ply ))
         return
     end
     if !OwnsModel( pm, ply ) then
-        print("cheat3")
-        CaughtCheater( ply, "Attempted to spawn with model they don't have access to.")
+        CaughtCheater(ply, "Attempted to spawn with model they don't have access to - " .. pm)
         return
     end
+
     if !OwnsWepSkin( primaryskin, ply ) or !OwnsWepSkin( secondaryskin, ply ) then
-        print("cheat4")
-        CaughtCheater( ply, "Attempted to spawn with weapon skin they don't have access to.")
+        CaughtCheater(ply, "Attempted to spawn with primary weapon skin they don't have access to - ", primaryskin)
+        return
+    end
+    if !OwnsWepSkin( secondaryskin, ply ) then
+        CaughtCheater(ply, "Attempted to spawn with secondary weapon skin they don't have access to - ", secondaryskin)
         return
     end
 

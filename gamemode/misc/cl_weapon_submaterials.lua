@@ -42,6 +42,7 @@ net.Receive( "ApplyWeaponSkin", function()
 
     if LocalPlayer():GetWeapon( wepclass ) then
         local model = LocalPlayer():GetWeapon( wepclass ).CW_VM
+        if !model then return end
         
         local exclusiontable = {}
         for k, v in pairs( GAMEMODE.WeaponSubmaterialExclusions[wepclass] ) do

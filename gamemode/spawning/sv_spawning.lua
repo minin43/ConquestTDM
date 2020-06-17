@@ -62,13 +62,15 @@ function refreshspawns()
 end
 
 function GM:RespawnPlayer( ply )
+    if !ply or !ply:Alive() then return end
+    
     local spawnAreas = {}
     for k, v in pairs( curSpawns ) do
         if v[1] == ply:Team() then
             spawnAreas[ #spawnAreas + 1 ] = v
         end
     end
-
+    
     if #spawnAreas > 0 then
         local chosenSpawn = spawnAreas[ math.random( #spawnAreas ) ]
         local bound1 = chosenSpawn[ 2 ]
@@ -76,36 +78,42 @@ function GM:RespawnPlayer( ply )
 		local locationx = math.random( bound1.x, bound2.x )
 		local locationy = math.random( bound1.y, bound2.y )
         local z = bound1.z + 5
-        
+        local guessSpawn = Vector( locationx, locationy, z )
+
         local preventInfLoop = 0
         while true do
-			local dontgetstuck = ents.FindInSphere( vec, 50 )
+			local dontgetstuck = ents.FindInSphere( guessSpawn, 50 )
             local safe = true
             
 			for k, v in next, dontgetstuck do
-				if IsValid( v ) and isentity( v ) then
-					safe = false
+				if IsValid( v ) and (v:IsPlayer() or string.find( v:GetClass(), "prop")) then
+                    safe = false
+                    
 					locationx = math.random( bound1.x, bound2.x )
-					locationy = math.random( bound1.y, bound2.y )
+                    locationy = math.random( bound1.y, bound2.y )
+                    guessSpawn = Vector( locationx, locationy, z )
 					break
 				end
 			end
             
             if safe then
-                local vec = Vector( locationx, locationy, z )
-				ply:SetPos( vec )
-				ply.SpawnPos = vec
+				ply:SetPos( guessSpawn )
+				ply.SpawnPos = guessSpawn
 				break
             end
 
             preventInfLoop = preventInfLoop + 1
             if preventInfLoop >= 30 then
+                Error( "Could not find suitable spawn after 30 attempts, using map defaults... ", chosenSpawn )
                 break
             end
 		end
     end
 end
-hook.Add( "PlayerSpawn", "OverrideSpawnLocations", GM.RespawnPlayer( GM ) )
+
+hook.Add( "PlayerSpawn", "OverrideSpawnLocations", function( ply )
+    GAMEMODE:RespawnPlayer( ply )
+end )
 
 --[[hook.Add( "PlayerSpawn", "OverrideSpawnLocations", function( ply )	
 	local availablespawns = false	

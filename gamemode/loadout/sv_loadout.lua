@@ -209,10 +209,9 @@ hook.Add( "PlayerInitialSpawn", "SetupPrecacheEnvironment", function( ply )
     GAMEMODE.UnlockedMasterTable[ ply ] = {wep = {}, skin = {}, model = {}, perk = {}}
     GAMEMODE.UnlockedMasterTableClassKey[ ply ] = {wep = {}, skin = {}, model = {}}
     GAMEMODE.EquippedWeapons[ ply ] = {}
-end ) 
+end )
 
-util.AddNetworkString( "CTDMDropWeapon" )
-net.Receive( "CTDMDropWeapon", function( len, ply )
+function GM:DropWeapon( ply )
     if !ply.spawning and ply:Alive() then
         local todrop = ply:GetActiveWeapon()
 
@@ -251,6 +250,11 @@ net.Receive( "CTDMDropWeapon", function( len, ply )
             end
         end
     end
+end
+
+util.AddNetworkString( "CTDMDropWeapon" )
+net.Receive( "CTDMDropWeapon", function( len, ply )
+    GAMEMODE:DropWeapon( ply )
 end )
 
 --Since the standard CW2 drop function doesn't create a wep ent, but prop_physics or some shit, we have to do this hacky work-around
@@ -354,6 +358,7 @@ hook.Add( "OnEntityCreated", "DeleteCW2Drops", function( wep )
 end)
 
 --Reset backend saved data on player death
-hook.Add( "PlayerDeath", "ClearWeapons", function( ply )
+hook.Add( "PlayerDeath", "Clear&DropWeapons", function( ply )
+    GAMEMODE:DropWeapon( ply )
 	GAMEMODE.EquippedWeapons[ ply ] = {}
 end )

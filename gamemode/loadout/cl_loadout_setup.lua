@@ -399,7 +399,6 @@ function playermodelpanel:SetModel( strModelName, strModelName2 )
 end
 
 function playermodelpanel:DrawModel()
-
 	local curparent = self
 	local leftx, topy = self:LocalToScreen( 0, 0 )
 	local rightx, bottomy = self:LocalToScreen( self:GetWide(), self:GetTall() )
@@ -429,11 +428,9 @@ function playermodelpanel:DrawModel()
 	end
 
 	render.SetScissorRect( 0, 0, 0, 0, false )
-
 end
 
 function playermodelpanel:Paint( w, h )
-
 	if ( !IsValid( self.Entity ) ) then return end
 
 	local x, y = self:LocalToScreen( 0, 0 )
@@ -1167,6 +1164,12 @@ vgui.Register( "WeaponSkinButton", weaponskinoptions, "DButton" )
 local primariesbutton = {}
 
 function primariesbutton:Paint()
+    if self.weapontable.vip then
+        surface.SetDrawColor( GAMEMODE.ColorRarities[ 3 ] )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.vipIcon )
+        surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
+    end
+
     surface.SetDrawColor( GAMEMODE.TeamColor )
     surface.SetMaterial( GAMEMODE.typematerials[ self.weapontable.type ] )
     surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
@@ -1327,6 +1330,12 @@ vgui.Register( "PrimariesPanel", primariespanel, "DPanel" )
 local secondariesbutton = {}
 
 function secondariesbutton:Paint()
+    if self.weapontable.vip then
+        surface.SetDrawColor( GAMEMODE.ColorRarities[ 3 ] )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.vipIcon )
+        surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
+    end
+
     surface.SetDrawColor( GAMEMODE.TeamColor )
     surface.SetMaterial( GAMEMODE.typematerials[ self.weapontable.type ] )
     surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
@@ -1483,6 +1492,12 @@ vgui.Register( "SecondariesPanel", secondariespanel, "DPanel" )
 local equipmentbutton = {}--table.Copy( basebutton )
 
 function equipmentbutton:Paint()
+    if self.weapontable.vip then
+        surface.SetDrawColor( GAMEMODE.ColorRarities[ 3 ] )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.vipIcon )
+        surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
+    end
+
     surface.SetDrawColor( GAMEMODE.TeamColor )
     surface.SetMaterial( GAMEMODE.typematerials[ self.weapontable.type ] )
     surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
@@ -1621,6 +1636,12 @@ perksbutton.selectedmove = 0
 
 function perksbutton:Paint()
     if !self.startdraw then return end
+
+    --[[if self.weapontable.vip then
+        surface.SetDrawColor( GAMEMODE.ColorRarities[ 3 ] )
+        surface.SetMaterial( GAMEMODE.Icons.Menu.vipIcon )
+        surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
+    end]]
 
     if self.selected then
         surface.SetDrawColor( GAMEMODE.TeamColor )

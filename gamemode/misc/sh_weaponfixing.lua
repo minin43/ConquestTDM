@@ -114,7 +114,6 @@ hook.Add( "InitPostEntity", "FixWeapons", function()
 
     if weapons.Get( "weapon_cbox" ) then
         local wep = weapons.GetStored( "weapon_cbox" )
-
         function wep:Initialize()
             self:SetWeaponHoldType( "normal" )
             self:DrawShadow( false )
@@ -126,48 +125,57 @@ hook.Add( "InitPostEntity", "FixWeapons", function()
             end
 
             self:SetRenderMode( RENDERMODE_TRANSCOLOR )
-            --self.Owner:SetRenderMode( RENDERMODE_TRANSCOLOR )
+            self.LastState = false
         end
+
+        hook.Add( "PrePlayerDraw", "CBoxStealth", function( pl )
+            return
+        end )
 
         function wep:IsHiding()
             return self:GetStealth() and self:IsUnderBox() and self.LerpMul < 0.1 --and PlayerIsntMoving( self.Owner )    --PlayerIsntMoving function can be found in entrench.lua
         end
 
-        function wep:DrawWorldModel()
-            if not IsValid( self.Owner ) then self:DrawModel() return end
-            if not self:IsUnderBox() and self.LerpMul > 0.8 then return end
+        if SERVER then
+            util.AddNetworkString( "UpdateCBoxHidden" )
+            util.AddNetworkString( "UpdateCBoxRevealed" )
+
+            net.Receive( "UpdateCBoxHidden", function( len, ply )
+                ply:SetColor( Color( 255, 255, 255, 30 ) )
+                ply:SetRenderMode( RENDERMODE_TRANSALPHA )
+                --ply:GetActiveWeapon():SetRenderMode( RENDERMODE_TRANSALPHA )
+                --ply:GetActiveWeapon():SetColor( Color( 255, 255, 255, 50 ) )
+            end )
+            net.Receive( "UpdateCBoxRevealed", function( len, ply )
+                ply:SetColor( Color( 255, 255, 255, 255 ) )
+            end )
+        end
         
-            local pos = self.Owner:GetPos()
-            local ang = Angle( 0, self.Owner:EyeAngles().y, 0 )
-            
-            pos = pos + ( ang:Forward() * 10 )
-            
-            local bone_pos, bone_ang = self.Owner:GetBonePosition( self.Owner:LookupBone( "ValveBiped.Bip01_Spine1" ) )
-            
-            bone_pos = bone_pos + ( ang:Forward() * 10 )
-            bone_pos.z = bone_pos.z - 15
-            
-            bone_ang:RotateAroundAxis( bone_ang:Forward(), 90 )
-            bone_ang:RotateAroundAxis( bone_ang:Right(), -40 )
-            bone_ang.y = ang.y -- box will spin around really fast in certain angles unless we make it the same in both
-            
-            if self:IsUnderBox() then
-                local vel = self.Owner:GetVelocity():Length2D()
-                local mul = math.Clamp( vel / 40, 0, 1 )
-                self.LerpMul = Lerp( FrameTime() * 10, self.LerpMul, mul )
-            else
-                self.LerpMul = Lerp( FrameTime() * 10, self.LerpMul, 1 )
-            end
-            
-            self:SetRenderOrigin( pos * ( 1 - self.LerpMul ) + bone_pos * self.LerpMul )
-            self:SetRenderAngles( ang * ( 1 - self.LerpMul ) + bone_ang * self.LerpMul )
-            self:SetModelScale( 1.2, 0 )
-            
-            self:DrawModel()
-            self:SetColor( 255, 255, 255, 255 )
-            if self:IsHiding() then
-                self:SetColor( 255, 255, 255, 100 )
-            end
+        if CLIENT then
+            hook.Add( "Think", "CBoxThink2", function()
+                local ply = LocalPlayer()
+                if !ply:Alive() or ply:Team() == 0 then return end
+
+                ply.CBoxReset = ply.CBoxReset or false
+                local wep = ply:GetActiveWeapon()
+                if wep and IsValid( wep ) and wep:GetClass() == "weapon_cbox" then
+                    if (wep.LastState == false and wep:IsUnderBox()) or ply.CBoxReset then
+                        wep.LastState = true
+                        net.Start("UpdateCBoxHidden")
+                        net.SendToServer()
+                    elseif wep.LastState == true and !wep:IsUnderBox() then
+                        wep.LastState = false
+                        net.Start("UpdateCBoxRevealed")
+                        net.SendToServer()
+                    end
+                    ply.CBoxReset = false
+                elseif ply.CBoxReset == false then
+                    ply.CBoxReset = true
+                    wep.LastState = false
+                    net.Start("UpdateCBoxRevealed")
+                    net.SendToServer()
+                end
+            end) 
         end
     end
 

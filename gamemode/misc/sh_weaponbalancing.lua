@@ -488,7 +488,7 @@ hook.Add( "InitPostEntity", "WeaponBalancing", function()
     --It's a secondary, LUL
     if weapons.Get( "cw_contender" ) then
         local wep = weapons.GetStored( "cw_contender" )
-        wep.Slot = 0
+        wep.Slot = 1
         wep.Damage = 100
         --wep.FireDelay = 1.5
         wep.Recoil = 2.5

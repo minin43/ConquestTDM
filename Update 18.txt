@@ -32,11 +32,16 @@ Quality of Life Improvements
  4. Titles menu is now slightly bigger
 
 Balance Changes
- 1. gm_boreas has had its starting play area expanded slightly and received a new, 4th flag
+ 1. gm_boreas has had its starting play area expanded slightly and received a new, 4th flag, as well as a bunch of new props to block lines of sight
  2. Players now receive 1 less 40MM grenade on regular spawn, and 2 less 40MM grenades when spawning with packrate
- 3. 
 
 Misc Changes
  1. Typing "!discord" or "/discord" in chat will print the discord link
  2. Gamemode-related console message printing now all get appropraite [CTDM] tag
  3. Separated weapon balancing and weapon fixing into 2 different backend files
+ 4. Tier 1 skins and playermodels are now $50,000 more expensive. Tier 2 skins and playermodels can no longer be purchased with cash (but can still be purchased with prestige tokens)
+
+UPDATES TO VIP
+ 1. UltraVIP has had its price reduced by $5, from $20 to $15
+ 2. VIP, VIP+, and UltraVIP all now have access to special VIP-only weapons (they can be found in your loadout menu instantly)
+ 3. Base VIP no longer gives any donator credits

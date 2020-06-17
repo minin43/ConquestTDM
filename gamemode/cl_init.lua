@@ -105,7 +105,9 @@ GM.Icons = {
         creditsIcon = Material( "vgui/donator_credits_icon.png", "smooth" ),
         creditsIconSmall = Material( "vgui/donator_credits_icon_small.png", "smooth" ),
         bodygroupsIcon = Material( "vgui/bodygroups_icon.png", "smooth" ),
-        voiceoverIcon = Material( "vgui/voiceover_icon.png", "smooth" )
+        voiceoverIcon = Material( "vgui/voiceover_icon.png", "smooth" ),
+        bodyarmorIcon = Material( "vgui/bodyarmor_icon.png", "smooth" ),
+        vipIcon = Material( "vgui/vip_icon.png", "smooth" )
     }
 }
 

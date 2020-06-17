@@ -196,6 +196,7 @@ net.Receive( "StartDeathScreen", function()
 		spawnin:SizeToContents()
 	end
 
+    local name = att:Nick()
 	local vendettaNotice = vgui.Create( "DLabel", GAMEMODE.DeathMain )
 	vendettaNotice:SetFont( "ds_spawn" )
 	vendettaNotice:SetTextColor( Color( 250, 100, 100 ) )
@@ -203,7 +204,7 @@ net.Receive( "StartDeathScreen", function()
 	vendettaNotice.Think = function()
 		if not (GAMEMODE.DeathMain and GAMEMODE.DeathMain:IsValid()) then return end
 		if Vendetta then
-			vendettaNotice:SetText( att:Nick() .. " is now your vendetta!")
+			vendettaNotice:SetText( name .. " is now your vendetta!")
 		end
 		vendettaNotice:SizeToContents()
 		vendettaNotice:SetPos( GAMEMODE.DeathMain:GetWide() - vendettaNotice:GetWide() - 6, GAMEMODE.DeathMain:GetTall() - 27 )

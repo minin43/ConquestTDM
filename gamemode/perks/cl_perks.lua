@@ -21,12 +21,12 @@ GM.MiscIcons = {
 net.Receive( "QueueUpIcon", function()
     local icon = net.ReadString()
     local dur = net.ReadFloat()
-
+    
     --//Don't wanna set these in the global scope or they'll never change if someone changes their resolution
     GAMEMODE.ScreenWide = ScrW()
     GAMEMODE.ScreenTall = ScrH()
 
-    if not GAMEMODE.PerkIcons[ icon ] or not GAMEMODE.MiscIcons[ icon ] then return end
+    if not GAMEMODE.PerkIcons[ icon ] and not GAMEMODE.MiscIcons[ icon ] then return end
 
     --//Here we check if the icon is already being displayed, and if so, reseting its duration to the new duration
     for k, v in pairs( GAMEMODE.IconQueue ) do
@@ -41,6 +41,7 @@ net.Receive( "QueueUpIcon", function()
             return
         end
     end
+    
     GAMEMODE.IconQueue[ #GAMEMODE.IconQueue + 1 ] = { icon = GAMEMODE.PerkIcons[ icon ] or GAMEMODE.MiscIcons[ icon ], duration = dur, fade = 0.5 }
 end )
 

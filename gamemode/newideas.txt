@@ -10,13 +10,11 @@ Future ideas:
         - npc_galleria_mess, red side
         - cs_east_borough, stairs that look into red spawn
         - de_boston has spawns on the wrong side of the map, and red team has 2 spawns
+        - de_keystone, easy for both spawns to be spawnkilled from, red has it worse
     - Perk ideas
         - Donasan - shooting friendlies heals them
         - Perk MASTERY (essentially is play-to-win, after reaching an achievement with the perk, get extra bonuses)
     - Add CSS CORRECTLY
-    - Invis box
-    - Test everything, check for content addon errors with mw2 maps
-    - Why does Resupply bug out when moving players to new spawns?
     - Rework Deathscreen, split it into 3 sections: 
         1. name & title (title should go ABOVE the name, not before it)
         2. extra fun info (all currently shown info, plus kills on and deaths against for this game)

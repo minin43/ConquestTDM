@@ -196,7 +196,7 @@ if SERVER then
     --CTDM content pack part 2 is the now-removed White Snow guns (shotgun + 2 lmgs)
     resource.AddWorkshop( "1423470073" ) --Impulse Grenade
     resource.AddWorkshop( "180842642" ) --Medkit (unused) and adrenaline
-    resource.AddWorkshop( "1459958949" ) --Ballistic Vests
+    --resource.AddWorkshop( "1459958949" ) --Ballistic Vests    -    Not necessary, included in with content pack 1
     resource.AddWorkshop( "317267606" ) --MGS Box
     resource.AddWorkshop( "682125090" ) --Portable force field grenade
     

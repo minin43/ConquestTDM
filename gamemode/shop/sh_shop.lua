@@ -114,9 +114,9 @@ GM.WeaponSkins = {
 }
 for k, v in pairs(GM.SkinsMasterTable) do
 	if v.quality == 0 then
-		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 1, cash = 50000, credits = 1, rarity = v.quality}
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 1, cash = 100000, credits = 1, rarity = v.quality}
 	elseif v.quality == 1 then
-		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 2, cash = 100000, credits = 1, rarity = v.quality}
+		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 2, cash = 0, credits = 1, rarity = v.quality}
 	elseif v.quality == 2 then
 		GM.WeaponSkins[#GM.WeaponSkins + 1] = {name = v.name, directory = v.dir, texture = Material(v.dir), tokens = 3, cash = 0, credits = 1, rarity = v.quality}
 	elseif v.quality == 3 then
@@ -134,7 +134,7 @@ GM.PlayerModels = {
 }
 for k, v in pairs(GM.BuyableModels) do
     if v.quality == 1 then
-        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 2, cash = 100000, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 2, cash = 0, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
 	elseif v.quality == 2 then
         GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 3, cash = 0, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
 	elseif v.quality == 3 then
@@ -144,7 +144,7 @@ for k, v in pairs(GM.BuyableModels) do
 	elseif v.quality == 5 then
         GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 0, cash = 0, credits = 3, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
 	else--if v.quality == 0 then
-        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 1, cash = 50000, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
+        GM.PlayerModels[#GM.PlayerModels + 1] = {name = v.name, model = v.model, tokens = 1, cash = 100000, credits = 1, voiceovers = v.voiceovers, collection = v.collection, quality = v.quality, bodygroups = v.bodygroups}
 	end
 end
 

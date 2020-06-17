@@ -117,7 +117,6 @@ net.Receive( "UpdateFlagInfo", function()
     if progress:IsVisible() and count > 0 and count < 20 then
 		surface.PlaySound( "ui/hud_capping_flag_01_wave.mp3" ) --//Standard capture "tick" sound
     end
-    print("UpdateFlagInfo")
 end )
 
 net.Receive( "IsOnFlag", function()

@@ -78,6 +78,11 @@ function vip.GetVip( ply )
     return vip.Players[ id(ply:SteamID()) ] or false
 end
 
+function vip.IsVip( ply )
+    local role = vip.GetVip( ply )
+    return vip.Groups[ role ] or vip.ULiBStaffRoles[ ply:GetUserGroup() ]
+end
+
 --Saves the provided group name to a file
 function vip.SaveVip( ply, group )
     if vip.Groups[ group ] then
@@ -96,7 +101,7 @@ hook.Add( "PlayerInitialSpawn", "SetUserGroup", function( ply )
         vip.SetVip( ply, vipgroup )
         --print("Player has CTDM VIP file")
     else
-        print("Checking for ULiB usergroup", ply:GetUserGroup())
+        print("[CTDM] Checking for ULiB usergroup on " .. ply:Nick() .. " - ", ply:GetUserGroup())
         --local ulibcontent = file.Read( "ulib/users.txt" )
 
         local role = string.lower(ply:GetUserGroup())

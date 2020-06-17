@@ -192,7 +192,7 @@ local function CreateScoreboard()
 	end
 
 	local ScoreboardHeight = math.Clamp( 56 + heightCalc + 2, 56 + 34, ScrH() - ( ScrH() / 8 ) )
-	print( ScoreboardHeight )
+	--print( ScoreboardHeight )
 	red = vgui.Create( "DFrame" )
 	red:ShowCloseButton( false )
 	red:SetDraggable( false )

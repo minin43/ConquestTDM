@@ -1,23 +1,23 @@
 Future ideas:
     - New Modes
         - Some "advance" mode, like assault in UT2004
-    - New equipment
-        - Some ammo-giving shit
-        - More explosives, like a claymore
     - New kill events & associated sounds
         Killing machine -> end the game with the most kills
         Juggernaut -> 
         Maniac -> 
         Warpath -> 
-    - Deathscreen should display titles above or below the name, not before it
     - Balancing concerns:
-        - gm_boreas
         - npc_galleria_mess, red side
         - cs_east_borough, stairs that look into red spawn
-    - Add new guns:
-        - COBOL Fate
-    - Tooltips should pop up in the deathscreen if players keep dying to enemies running a specific perk
+        - de_boston has spawns on the wrong side of the map, and red team has 2 spawns
     - Perk ideas
         - Donasan - shooting friendlies heals them
         - Perk MASTERY (essentially is play-to-win, after reaching an achievement with the perk, get extra bonuses)
-    - Add CSS
+    - Add CSS CORRECTLY
+    - Invis box
+    - Test everything, check for content addon errors with mw2 maps
+    - Why does Resupply bug out when moving players to new spawns?
+    - Rework Deathscreen, split it into 3 sections: 
+        1. name & title (title should go ABOVE the name, not before it)
+        2. extra fun info (all currently shown info, plus kills on and deaths against for this game)
+        3. tooltip if needed (if you keep dying to a specific perk)

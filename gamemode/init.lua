@@ -38,7 +38,44 @@ GM.DefaultModels = {
 		"models/player/ins_security_heavy.mdl",
 		"models/player/ins_security_light.mdl",
 		"models/player/ins_security_standard.mdl"
-	}
+    },
+    Spetsnaz = {
+        "models/mw2guy/rus/gassoldier.mdl",
+        "models/mw2guy/rus/soldier_a.mdl",
+        "models/mw2guy/rus/soldier_c.mdl",
+        "models/mw2guy/rus/soldier_d.mdl",
+        "models/mw2guy/rus/soldier_e.mdl",
+        "models/mw2guy/rus/soldier_f.mdl"
+    },
+    OpFor = {
+        "models/cod players/opfor1.mdl",
+        "models/cod players/opfor3.mdl",
+        "models/cod players/opfor4.mdl",
+        "models/cod players/opfor6.mdl"
+    },
+    --[[Militia = {
+
+    },]]
+    Rangers = {
+        "models/codmw2/codmw2.mdl",
+        "models/codmw2/codmw2h.mdl",
+        "models/codmw2/codmw2he.mdl",
+        "models/codmw2/codmw2m.mdl"
+    },
+    --[[Seals = {
+
+    },]]
+    [ "TF 141" ] = {
+        "models/mw2guy/bz/bzgb01.mdl",
+        "models/mw2guy/bz/bzghost.mdl",
+        "models/mw2guy/bz/tfbz01.mdl",
+        "models/mw2guy/bz/tfbz02.mdl",
+        "models/mw2guy/bz/tfbz03.mdl",
+        "models/mw2guy/bz/tfbzca01.mdl",
+        "models/mw2guy/bz/tfbzca02.mdl",
+        "models/mw2guy/bz/tfbzw01.mdl",
+        "models/mw2guy/bz/tfbzw02.mdl"
+    }
 }
 GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
 GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels
@@ -545,11 +582,14 @@ function giveLoadout( ply )
 		end
 		
         if loadout.extra then
-            print("loadout.extra print: ", loadout.extra)
             if loadout.extra == "grenades" then
-                print("grenades debug")
 				--ply:RemoveAmmo( 2, "Frag Grenades" )
-				ply:GiveAmmo( 2, "Frag Grenades", true )
+                ply:GiveAmmo( 2, "Frag Grenades", true )
+                
+            elseif loadout.extra == "flak" then
+                GAMEMODE.BodyArmorUsers[ ply ] = "flak"
+            elseif loadout.extra == "hyperweave" then
+                GAMEMODE.BodyArmorUsers[ ply ] = "hyperweave"
 			elseif loadout.extra == "attachment" then
 				CustomizableWeaponry.giveAttachments( ply, CustomizableWeaponry.registeredAttachmentsSKey, true )
 			else
@@ -657,7 +697,9 @@ function GM:PlayerSpawn( ply )
 			for k, v in pairs( ply:GetWeapons() ) do
 				local x = v:GetPrimaryAmmoType()
 				local y = v:Clip1()
-				local give = true
+                local give = true
+                
+                --v:SetClip1(y)
 				
 				for k2, v2 in next, dontgive do
 					if v2 == v then
@@ -669,7 +711,7 @@ function GM:PlayerSpawn( ply )
 					ply:GiveAmmo( ( y * 3 ), x, true )
 				end
 			end
-			ply:GiveAmmo( 2, "40MM", true )
+			ply:GiveAmmo( 1, "40MM", true )
 		end
     end )
     
@@ -848,8 +890,8 @@ hook.Add( "PlayerDeath", "DamageIndicatorClear", function( vic )
 	umsg.End()
 end )
 
+--//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
 hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
-    --//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
 	if GAMEMODE.ValidModels[ ply:GetModel() ] then
         GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
     else

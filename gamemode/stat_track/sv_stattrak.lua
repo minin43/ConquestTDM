@@ -110,7 +110,7 @@ wep_att[ "cw_b196" ] = {
 	{ "am_matchgrade", 120 }
 }
 
---[[wep_att[ "cw_tac338" ] = {
+wep_att[ "cw_tac338" ] = {
     { "md_nightforce_nxs", 0 },
 	{ "md_rmr", 10 },
 	{ "md_saker", 20 },
@@ -118,15 +118,19 @@ wep_att[ "cw_b196" ] = {
 	{ "md_anpeq15", 40 },
 	{ "md_bipod", 50 },
     { "md_microt1", 60 },
-    { "md_snip2_light_suppressor", 70 },
-    { "md_aimpoint", 80 },
-    
-	{ "md_eotech", 80 },
-	{ "md_schmidt_shortdot", 90 },
-	{ "md_acog", 100 },
-	{ "am_magnum", 110 },
-	{ "am_matchgrade", 120 }
-}]]
+    { "bg_snip_tac338_8_mag", 70 },
+    { "bg_snip_tac338_rest_cheeks_up", 80 },
+	{ "md_improved_bolt", 90 },
+	{ "md_aimpoint", 100 },
+	{ "md_snip2_light_suppressor", 110 },
+	{ "bg_snip2_special_bipod", 120 },
+	{ "md_eotech", 130 },
+	{ "md_heavy_muzzle_brake", 140 },
+	{ "md_schmidt_shortdot", 150 },
+	{ "md_acog", 160 },
+	{ "am_magnum", 170 },
+	{ "am_matchgrade", 180 }
+}
 
 wep_att[ "cw_wf_m200" ] = {
     { "md_nightforce_nxs", 0 },
@@ -249,9 +253,20 @@ wep_att[ "cw_killdrix_acre" ] = {
 	{ "am_matchgrade", 70 }
 }
 
+wep_att[ "cw_contender" ] = {
+    { "bg_g2caccu", 0 },
+	{ "md_microt1", 10 },
+	{ "md_saker", 20 },
+	{ "md_eotech", 30 },
+    { "md_aimpoint", 50 },
+    { "md_acog", 60 },
+	{ "am_magnum", 70 },
+	{ "am_matchgrade", 80 }
+}
+
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
 function ConstructAttachmentLists()
-	print( "Auto-constructing attachment hierarchies..." )
+	print( "[CTDM] Auto-constructing attachment hierarchies..." )
 	
 	for k, v in pairs( weapons.GetList() ) do
 		if v.Base == "cw_base" and !wep_att[ v.ClassName ] then --If cw2.0 weapon and not pre-done
@@ -376,7 +391,7 @@ function UpdateAttKillTracking( ply, wepclass )
 end
 
 hook.Add( "DoPlayerDeath", "ST_PlayerDeath", function( ply, att, dmginfo )
-	print( ply, att, dmginfo:GetInflictor() )
+	print( att, "killed", ply, "with", dmginfo:GetInflictor() )
 	if ply and ply:IsValid() and att and att:IsValid() and att:IsPlayer() and att ~= ply then
 
 		local wepclass = dmginfo:GetInflictor():GetClass()
@@ -421,7 +436,7 @@ end )
 
 hook.Add( "PlayerSpawn", "ST_PlayerSpawn", function( ply )
 	timer.Simple( 0.5, function()
-        if ply == nil then return end
+        if !ply:IsValid() then return end
 		local weps = ply:GetWeapons()
 		st[ ply ] = weps
 		

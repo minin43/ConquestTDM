@@ -256,10 +256,10 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
             local remainingplayers, shouldrun
             if att:Team() == 1 then
                 remainingplayers = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].bluecount
-                shouldrun = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].count < 3
+                shouldrun = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].count > 17
             else
                 remainingplayers = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].redcount
-                shouldrun = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].count > 17
+                shouldrun = GAMEMODE.FlagTable[ GAMEMODE.FlagFeedCheck[ vic ] ].count < 3
             end
 
             if shouldrun and remainingplayers == 0 then

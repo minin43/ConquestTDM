@@ -37,10 +37,10 @@ if GM.MapTable[ game.GetMap() ] then
     if GM.MapTable[ game.GetMap() ].id and not CSSMaps[ game.GetMap() ] then
         resource.AddWorkshop( tostring( GM.MapTable[ game.GetMap() ].id ) )
     else
-        print( "[WARNING:MAP]" .. game.GetMap() .. " is NOT set up to auto-download on player join" )
+        print( "[CTDM WARNING:MAP]" .. game.GetMap() .. " is NOT set up to auto-download on player join" )
     end
 else
-	print( "[WARNING:MAP] Map is NOT registered to work with the mapvote, this may be due to lack of spawn/flag placements" )
+	print( "[CTDM WARNING:MAP] Map is NOT registered to work with the mapvote, this may be due to lack of spawn/flag placements" )
 end
 
 for k, v in pairs( GM.MapTable ) do
@@ -96,13 +96,16 @@ function StartRTV( starter )
 
     timer.Create( "RTVTimer", 1, GAMEMODE.RTVTime, function()
         if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
-            hook.Run( "StartMapvote" )
+            hook.Run( "StartMapvote", true )
         end
     end )
 end
 
-hook.Add( "StartMapvote", "RunMapvote", function( winner )
+hook.Add( "StartMapvote", "RunMapvote", function( preventRepeat, test1, test2 )
+    print("Hook StartMapvote called, with param: ", preventRepeat, test1, test2)
     if timer.Exists( "MapvoteCountdown" ) then return end
+
+    if preventRepeat and preventRepeat == 0 then preventRepeat = false end
 
     file.Write( "tdm/lastmap.txt", game.GetMap() )
 
@@ -129,7 +132,7 @@ hook.Add( "StartMapvote", "RunMapvote", function( winner )
             GAMEMODE.MapTable[ mapName ] = nil
         end
     end
-    GAMEMODE.VoteOptions[ 7 ] = { name = "repeat", info = { custom = true, img = lastmapimg } }
+    GAMEMODE.VoteOptions[ 7 ] = { name = "repeat", info = { custom = true, img = lastmapimg, disable = preventRepeat or false } }
     GAMEMODE.VoteOptions[ 8 ] = { name = "random", info = { custom = true } }
     GAMEMODE.VoteOptions[ 9 ] = { name = "legend", info = { custom = true } }
     

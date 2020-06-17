@@ -121,13 +121,18 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "gm_battleground_nodes" ] = { id = 1425456348, size = "Massive", img = "vgui/maps/battleground.png", type = "hl2",
         tags = { } },
     [ "gm_boreas" ] = { id = 1572373847, size = "Massive", img = "vgui/maps/boreas.png", type = "hl2",
-    tags = { "resupply" } },
+        tags = { "resupply" } },
     [ "npc_galleria_mess" ] = { id = 758683686, size = "Large", img = "vgui/maps/galleria.png", type = "hl2",
-    tags = { } },
+        tags = { } },
     [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", mapevents = { 1576, 1577, 1578, 1579 },
-    tags = { } },
+        tags = { } },
     [ "gm_explore_tunnels" ] = { id = 1529025790, size = "Large", img = "vgui/maps/tunnel.png", type = "hl2",
-    tags = { } }
+        tags = { } },
+    --Update 1.18
+    [ "sh_matlane_a2" ] = { id = 903231200, size = "Massive", img = "vgui/maps/.png", type = "ins2",
+        tags = { } },
+    [ "gm_desert_factory" ] = { id = 2096153942, size = "Midsize", img = "vgui/maps/.png", type = "ins2",
+        tags = { "snipers" } },
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
@@ -145,12 +150,11 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	
 	--[[[ "" ] = { id = 0, size = "", img = "vgui/maps/.png", type = "",
         tags = { } },]]
-	--More maps: de_secretcamp
 }
 
 --//Team names - randomized if more than 1
 GM.TeamNames = {
-    mw2 = { red = { "Spetsnaz", "OpFor"--[[, "Milita"]] }, blue = { "TF 141", "Rangers", "Seals" }},
+    mw2 = { red = { "Spetsnaz", "OpFor"--[[, "Milita"]] }, blue = { "TF 141", "Rangers"--[[, "Seals"]] }},
     hl2 = { red = { "Rebels" }, blue = { "Combine" } },
     ins2 = { red = { "Insurgents" }, blue = { "Security" } }
 }
@@ -160,14 +164,17 @@ GM.DependentDownloads = {
 	ins2 = {
 		1196565715, --Security Playermodels
 		1202342807 --Insurgent Playermodels
-	}
+    },
+    mw2 = {
+        176238701 --Spetsnaz, OpFor, 141, and Ranger Playermodels
+    }
 }
 
 if SERVER then
     --Weapons
 	resource.AddWorkshop( "349050451" ) --CW2.0 Base
 	resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
-	resource.AddWorkshop( "1698026320" ) --The 6 new guns (CTDM content pack part 2)
+	resource.AddWorkshop( "2125483966" ) --The 6 new guns (CTDM content pack guns)
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO
     resource.AddWorkshop( "1555980538" ) --Sniper pack
@@ -182,10 +189,20 @@ if SERVER then
     resource.AddWorkshop( "388093141" ) --BlOps 2 pack
     resource.AddWorkshop( "354842171" ) --HK-316
     resource.AddWorkshop( "605564693" ) --ACR-E
+    resource.AddWorkshop( "357365610" ) --PP-19 Bizon
+    resource.AddWorkshop( "708840802" ) --LR300
+    resource.AddWorkshop( "426465571" ) --G2 Contender
+    resource.AddWorkshop( "391446992" ) --Silverballer
+    --CTDM content pack part 2 is the now-removed White Snow guns (shotgun + 2 lmgs)
+    resource.AddWorkshop( "1423470073" ) --Impulse Grenade
+    resource.AddWorkshop( "180842642" ) --Medkit (unused) and adrenaline
+    resource.AddWorkshop( "1459958949" ) --Ballistic Vests
+    resource.AddWorkshop( "317267606" ) --MGS Box
+    resource.AddWorkshop( "682125090" ) --Portable force field grenade
     
     --Server Content
-    resource.AddWorkshop( "1386774614" ) --CTDM Files (CTDM content pack part 1)
-    resource.AddWorkshop( "1819579704" ) --CTDM Files (CTDM content pack part 3)
+    resource.AddWorkshop( "1386774614" ) --CTDM Files (CTDM content pack part 1) - general content
+    resource.AddWorkshop( "1819579704" ) --CTDM Files (CTDM content pack part 3) - all sounds
     resource.AddWorkshop( "512986704" ) --Knife Kitty's Hitmarker
 
     --Playermodels
@@ -203,7 +220,7 @@ if SERVER then
 
 	if GM.MapTable[ game.GetMap() ] then 
 		local mapType = GM.MapTable[ game.GetMap() ].type
-		if mapType and mapType != "mw2" then
+		if mapType then
 			local redOptions = #GM.TeamNames[ mapType ].red
 			local blueOptions = #GM.TeamNames[ mapType ].blue
 
@@ -215,9 +232,6 @@ if SERVER then
 					resource.AddWorkshop( v )
 				end
 			end
-		else --To be removed when mw2 models are added
-			GM.redTeamName = "Rebels" --To be removed when mw2 models are added
-			GM.blueTeamName = "Combine" --To be removed when mw2 models are added
 		end
 	end
 	

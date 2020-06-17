@@ -22,7 +22,7 @@ end )
 
 hook.Add( "EntityTakeDamage", "VampirDrain", function( vic, dmginfo )
     local att = dmginfo:GetAttacker()
-    if CheckPerk( att ) == "vampir" and vic:IsPlayer() and dmginfo:IsBulletDamage() then
+    if CheckPerk( att ) == "vampir" and vic:IsPlayer() and dmginfo:IsBulletDamage() and att:Team() != vic:Team() then
         local toheal = dmginfo:GetDamage() * GAMEMODE.VampirDamageDrain
         local leechicon = att:Health() + toheal <= 100
 

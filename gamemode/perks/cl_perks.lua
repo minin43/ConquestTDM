@@ -2,37 +2,46 @@
 
 GM.IconQueue = { }
 GM.PerkIcons = {
-    [ "vendetta" ] = Material( "vgui/vendetta_icon.png" ),
-    [ "headpopper" ] = Material( "vgui/headpopper_icon.png" ),
-    [ "pyro" ] = Material( "vgui/pyro_icon.png" ),
-    [ "vulture" ] = Material( "vgui/vulture_icon.png" ),
-    [ "leech" ] = Material( "vgui/leech_icon.png" ),
-    [ "spawn" ] = Material( "vgui/spawn_icon.png" ),
-    [ "bleedout" ] = Material( "vgui/bleedout_icon.png" ),
-    [ "thornmail" ] = Material( "vgui/thornmail_icon.png" ),
-    [ "entrench" ] = Material( "vgui/entrench_icon.png" ),
-    [ "overheal" ] = Material( "vgui/overheal_boost.png" ),
-    [ "overheal_drain" ] = Material( "vgui/overheal_drain.png" )
+    vendetta = Material( "vgui/vendetta_icon.png" ),
+    headpopper = Material( "vgui/headpopper_icon.png" ),
+    pyro = Material( "vgui/pyro_icon.png" ),
+    vulture = Material( "vgui/vulture_icon.png" ),
+    leech = Material( "vgui/leech_icon.png" ),
+    spawn = Material( "vgui/spawn_icon.png" ),
+    bleedout = Material( "vgui/bleedout_icon.png" ),
+    thornmail = Material( "vgui/thornmail_icon.png" ),
+    entrench = Material( "vgui/entrench_icon.png" )
+}
+GM.MiscIcons = {
+    overheal = Material( "vgui/overheal_boost.png" ),
+    overheal_drain = Material( "vgui/overheal_drain.png" ),
+    bodyarmor = Material( "vgui/bodyarmor_icon.png" )
 }
 
 net.Receive( "QueueUpIcon", function()
-    local perk = net.ReadString()
+    local icon = net.ReadString()
     local dur = net.ReadFloat()
 
     --//Don't wanna set these in the global scope or they'll never change if someone changes their resolution
     GAMEMODE.ScreenWide = ScrW()
     GAMEMODE.ScreenTall = ScrH()
 
-    if not GAMEMODE.PerkIcons[ perk ] then return end
+    if not GAMEMODE.PerkIcons[ icon ] or not GAMEMODE.MiscIcons[ icon ] then return end
 
     --//Here we check if the icon is already being displayed, and if so, reseting its duration to the new duration
     for k, v in pairs( GAMEMODE.IconQueue ) do
-        if v.icon == GAMEMODE.PerkIcons[ perk ] then
+        if v.icon == GAMEMODE.PerkIcons[ icon ] then
             v.duration = dur + CurTime()
             return
         end
     end
-    GAMEMODE.IconQueue[ #GAMEMODE.IconQueue + 1 ] = { icon = GAMEMODE.PerkIcons[ perk ], duration = dur, fade = 0.5 }
+    for k, v in pairs( GAMEMODE.IconQueue ) do
+        if v.icon == GAMEMODE.MiscIcons[ icon ] then
+            v.duration = dur + CurTime()
+            return
+        end
+    end
+    GAMEMODE.IconQueue[ #GAMEMODE.IconQueue + 1 ] = { icon = GAMEMODE.PerkIcons[ icon ] or GAMEMODE.MiscIcons[ icon ], duration = dur, fade = 0.5 }
 end )
 
 GM.DeadlyWeaponSounds = {}

@@ -550,3 +550,11 @@ surface.CreateFont( "ExoInfoFont", { font = "Exo 2", size = 24, weight = 400 } )
 net.Receive( "StartLoadoutDirect", function()
     GAMEMODE:LoadoutMenu()
 end )
+
+--The only hook that gets binds sent to it?
+hook.Add( "PlayerBindPress", "DropWeapon", function( ply, bind, pressed )
+    if ply:Alive() and (bind == "+menu" or bind == "+ctdm_dropweapon") then
+        net.Start( "CTDMDropWeapon" )
+        net.SendToServer()
+    end
+end )

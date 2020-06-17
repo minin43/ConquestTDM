@@ -1,6 +1,6 @@
 util.AddNetworkString( "IceScreen" )
 util.AddNetworkString( "EndIceScreen" )
-GM.SlawBackups = GM.SlawBackups or {}
+GM.MovementBackups = GM.MovementBackups or {} --Some dependencies exist for this in sh_weaponbalancing
 GM.ChilledPlayers = {}
 
 function SlowDown( ply, damage )
@@ -16,10 +16,10 @@ function SlowDown( ply, damage )
 
     if not timer.Exists( "frostbite_" .. ply:SteamID() ) then
 
-        GAMEMODE.SlawBackups[ id( ply:SteamID() ) ] = {}
-        GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].walk = ply:GetWalkSpeed()
-        GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].run = ply:GetRunSpeed()
-        GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].jump = ply:GetJumpPower()
+        GAMEMODE.MovementBackups[ id( ply:SteamID() ) ] = {}
+        GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].walk = ply:GetWalkSpeed()
+        GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].run = ply:GetRunSpeed()
+        GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].jump = ply:GetJumpPower()
 
         ply:SetWalkSpeed( ply:GetWalkSpeed() * ( 1 - MovementSlow / 100 ) )
         ply:SetRunSpeed( ply:GetRunSpeed() * ( 1 - MovementSlow / 100 ) )
@@ -30,9 +30,9 @@ function SlowDown( ply, damage )
 
         timer.Create( "frostbite_" .. ply:SteamID(), Timer, 1, function()
             if !ply:Alive() then return end
-            ply:SetWalkSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].walk )
-            ply:SetRunSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].run )
-            ply:SetJumpPower( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].jump )
+            ply:SetWalkSpeed( GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].walk )
+            ply:SetRunSpeed( GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].run )
+            ply:SetJumpPower( GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].jump )
 
             GAMEMODE.ChilledPlayers[ ply ] = false
 
@@ -42,9 +42,9 @@ function SlowDown( ply, damage )
     else
         timer.Adjust( "frostbite_" .. ply:SteamID(), Timer, 1, function()
             if !ply:Alive() then return end
-            ply:SetWalkSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].walk )
-            ply:SetRunSpeed( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].run )
-            ply:SetJumpPower( GAMEMODE.SlawBackups[ id( ply:SteamID() ) ].jump )
+            ply:SetWalkSpeed( GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].walk )
+            ply:SetRunSpeed( GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].run )
+            ply:SetJumpPower( GAMEMODE.MovementBackups[ id( ply:SteamID() ) ].jump )
 
             GAMEMODE.ChilledPlayers[ ply ] = false
 

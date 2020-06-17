@@ -32,8 +32,18 @@ function weaponinfo:SetFont( fnt )
 end
 
 function weaponinfo:CreateStats( wepclass )
+    local weptable = RetrieveWeaponTable( wepclass )
     local wep = weapons.GetStored( wepclass )
-    if !wep then return end
+    if !wep then
+        if IsNonSwepEquipment( wepclass ) then
+            wep = {}
+            wep.Base = ""
+            wep.PrintName = weptable[1]
+        else 
+            return
+        end
+    end
+    wep.Description = weptable.desc
 
     self.wepinfo = {
         { value = "Damage",     display = "Damage",     barfill = 0,    min = 0,        max = 120,  scale = "up" },
@@ -76,6 +86,7 @@ function weaponinfo:CreateStats( wepclass )
         end
     else
         self.DisplayStats = false
+        self.Display = markup.Parse( "<font=Exo-24-600><colour=88,88,88>" .. wep.Description .. "</colour></font>", self:GetWide() - 16 )
     end
 
     self.bar = Material( "vgui/ryg_gradient.png", "noclamp" )
@@ -84,7 +95,7 @@ end
 
 function weaponinfo:Paint()
     if !self or !self.draw then return end
-    --print("wtf")
+    
     surface.SetFont( self.font )
     local headerw, headert = surface.GetTextSize( self.weaponname )
     surface.SetTextColor( GAMEMODE.TeamColor )
@@ -115,7 +126,7 @@ function weaponinfo:Paint()
             end
         end
     else
-        --Pretty much only for equipment, should display some description
+        self.Display:Draw( self:GetWide() / 2, 44, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
     end
     return true
 end
@@ -375,7 +386,12 @@ weaponsshop.modeloffsets = { --FOR MOST GUNS: pos = Vector( x coord (reversed), 
     [ "cw_fiveseven" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -2.5, 13.5, -3.5 ) },
     [ "r5" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -10.5, 10, -1.5 ) },
     [ "cw_tr09_auga3" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -8.5, 13.5, -3 ) },
-    [ "cw_m1014" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 9, -1 ) }--[[,
+    [ "cw_m1014" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 9, -1 ) },
+    [ "sg_adrenaline" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 0, 10, -3 ) },
+    [ "weapon_hexshield" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 0, 2, -1 ) },
+    [ "impulse_grenade" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 0, 2, -1 ) },
+    [ "flak" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 0, -2, -10 ) },
+    [ "hyperweave" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( 0, -2, -10 ) }--[[,
     [ "cw_flash_grenade" ] = { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
     { cam = Vector( 0, 35, 0 ), lookat = Vector( 0, 0, 0 ), pos = Vector( -6, 13.5, -1 ) },
@@ -499,7 +515,16 @@ function weaponsshop:SelectWeapon( wep, butID )
 
     self.selectedweapon = wep
     local wep = weapons.GetStored( wep )
-    if !wep then return end
+    if !wep then
+        if IsNonSwepEquipment( self.selectedweapon ) then
+            local newTable = RetrieveWeaponTable( self.selectedweapon )
+            wep = {}
+            wep.WorldModel = newTable[4]
+            wep.PrintName = newTable[1]
+        else 
+            return
+        end
+    end
 
     self.modelpanel = self.modelpanel or vgui.Create( "DModelPanel", self )
     self.modelpanel:SetSize( self:GetWide() / 2, self:GetTall() / 2 )

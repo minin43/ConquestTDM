@@ -12,7 +12,7 @@ GM.IconExplanations = {
 }
 
 net.Receive( "BeginMapvote", function()
-    GAMEMODE.MapList = net.ReadTable() --Keys numbers, values are table containing a name and a subtable containing map ID, map size, and screenshot directory
+    GAMEMODE.MapList = net.ReadTable() --Keys are numbers, values are table containing a name and a subtable containing map ID, map size, and screenshot directory
     GAMEMODE.MapvoteTimeLeft = 10
     GAMEMODE.PlayerVotes = { } --Used to record each player's vote
     GAMEMODE.MapvoteOptions = { } --Contains the custom button vgui elements
@@ -131,7 +131,7 @@ function GM:DrawMapvote()
 
                 self.MapvoteOptions[ v.name ] = dumby
             elseif v.name == "repeat" then
-                if self.MapTable[ game.GetMap() ] then
+                if self.MapTable[ game.GetMap() ] and !v.info.disable then
                     local dumby = vgui.Create( "RepeatOption", self.MapvoteMain )
                     dumby:SetFont( "MapFont" )
                     dumby:SetMapName( "repeat" )

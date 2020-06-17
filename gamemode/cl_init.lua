@@ -51,12 +51,16 @@ GM.Icons = {
 		InsurgentsColor = Color( 255, 255, 255 ), --//white, because the icon comes pre-colored
 		Security = Material( "vgui/securityicon.png", "noclamp smooth" ),
 		SecurityColor = Color( 255, 255, 255 ), --//white, because the icon comes pre-colored
-		Spetsnaz = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-		OpFor = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
+        Spetsnaz = Material( "vgui/spetsnazIcon.png", "noclamp smooth" ),
+        SpetsnazColor = Color( 255, 255, 255 ), --//white, because the icon comes pre-colored
+        OpFor = Material( "vgui/opforIcon.png", "noclamp smooth" ),
+        OpForColor = Color( 255, 255, 255 ), --//white, because the icon comes pre-colored
 		Milita = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-		[ "TF 141" ] = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-		Rangers = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" ),
-		Seals = Material( "tdm/ic_account_circle_white_24dp.png", "noclamp smooth" )
+        [ "TF 141" ] = Material( "vgui/tf141Icon.png", "noclamp smooth" ),
+        [ "TF 141Color" ] = Color( 255, 255, 255 ), --//white, because the icon comes pre-colored
+        Rangers = Material( "vgui/rangersIcon.png", "noclamp smooth" ),
+        RangersColor = Color( 255, 255, 255 ), --//white, because the icon comes pre-colored
+		Seals = Material( "vgui/ic_account_circle_white_24dp.png", "noclamp smooth" )
 	},
 	Weapons = {
 		primary = Material( "vgui/primary_icon.png", "smooth" ),
@@ -145,7 +149,7 @@ GM.DefaultModels = {
 		"models/player/group03/male_09.mdl"
 	},
 	Combine = {
-		"models/player/police.mdl"
+		"models/player/police.mdl" --//Unfortunately, only the metropolice model works consistently with cw2.0 animations
 	},
 	Insurgents = {
 		"models/player/ins_insurgent_heavy.mdl",
@@ -156,7 +160,44 @@ GM.DefaultModels = {
 		"models/player/ins_security_heavy.mdl",
 		"models/player/ins_security_light.mdl",
 		"models/player/ins_security_standard.mdl"
-	}
+    },
+    Spetsnaz = {
+        "models/mw2guy/rus/gassoldier.mdl",
+        "models/mw2guy/rus/soldier_a.mdl",
+        "models/mw2guy/rus/soldier_c.mdl",
+        "models/mw2guy/rus/soldier_d.mdl",
+        "models/mw2guy/rus/soldier_e.mdl",
+        "models/mw2guy/rus/soldier_f.mdl"
+    },
+    OpFor = {
+        "models/cod players/opfor1.mdl",
+        "models/cod players/opfor3.mdl",
+        "models/cod players/opfor4.mdl",
+        "models/cod players/opfor6.mdl"
+    },
+    --[[Militia = {
+
+    },]]
+    Rangers = {
+        "models/codmw2/codmw2.mdl",
+        "models/codmw2/codmw2h.mdl",
+        "models/codmw2/codmw2he.mdl",
+        "models/codmw2/codmw2m.mdl"
+    },
+    --[[Seals = {
+
+    },]]
+    [ "TF 141" ] = {
+        "models/mw2guy/bz/bzgb01.mdl",
+        "models/mw2guy/bz/bzghost.mdl",
+        "models/mw2guy/bz/tfbz01.mdl",
+        "models/mw2guy/bz/tfbz02.mdl",
+        "models/mw2guy/bz/tfbz03.mdl",
+        "models/mw2guy/bz/tfbzca01.mdl",
+        "models/mw2guy/bz/tfbzca02.mdl",
+        "models/mw2guy/bz/tfbzw01.mdl",
+        "models/mw2guy/bz/tfbzw02.mdl"
+    }
 }
 GM.DefaultModels[ "Red Team" ] = GM.DefaultModels.Rebels
 GM.DefaultModels[ "Blue Team" ] = GM.DefaultModels.Rebels

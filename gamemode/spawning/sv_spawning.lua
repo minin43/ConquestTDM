@@ -12,7 +12,7 @@ CreateConVar( "tdm_showspawns", "1", FCVAR_ARCHIVE, "0 = off, 1 = everyone, 2 = 
 util.AddNetworkString( "debug_showspawns" )
 
 local curSpawns = {}
-local nl = Vector( 0, 0, 0 )	
+local nl = Vector( 0, 0, 0 )
 
 --Made some minor adjustments to this function to get it to work with id-based spawns
 function refreshspawns()
@@ -61,7 +61,53 @@ function refreshspawns()
 	end
 end
 
-hook.Add( "PlayerSpawn", "OverrideSpawnLocations", function( ply )	
+function GM:RespawnPlayer( ply )
+    local spawnAreas = {}
+    for k, v in pairs( curSpawns ) do
+        if v[1] == ply:Team() then
+            spawnAreas[ #spawnAreas + 1 ] = v
+        end
+    end
+
+    if #spawnAreas > 0 then
+        local chosenSpawn = spawnAreas[ math.random( #spawnAreas ) ]
+        local bound1 = chosenSpawn[ 2 ]
+		local bound2 = chosenSpawn[ 3 ]
+		local locationx = math.random( bound1.x, bound2.x )
+		local locationy = math.random( bound1.y, bound2.y )
+        local z = bound1.z + 5
+        
+        local preventInfLoop = 0
+        while true do
+			local dontgetstuck = ents.FindInSphere( vec, 50 )
+            local safe = true
+            
+			for k, v in next, dontgetstuck do
+				if IsValid( v ) and isentity( v ) then
+					safe = false
+					locationx = math.random( bound1.x, bound2.x )
+					locationy = math.random( bound1.y, bound2.y )
+					break
+				end
+			end
+            
+            if safe then
+                local vec = Vector( locationx, locationy, z )
+				ply:SetPos( vec )
+				ply.SpawnPos = vec
+				break
+            end
+
+            preventInfLoop = preventInfLoop + 1
+            if preventInfLoop >= 30 then
+                break
+            end
+		end
+    end
+end
+hook.Add( "PlayerSpawn", "OverrideSpawnLocations", GM.RespawnPlayer( GM ) )
+
+--[[hook.Add( "PlayerSpawn", "OverrideSpawnLocations", function( ply )	
 	local availablespawns = false	
 	for k, v in next, curSpawns do
 		if v[ 1 ] == ply:Team() then
@@ -102,7 +148,7 @@ hook.Add( "PlayerSpawn", "OverrideSpawnLocations", function( ply )
 			end
 		end			
 	end
-end )
+end )]]
 
 concommand.Add( "debug_showspawns", function( ply )
 	local num = GetConVar( "tdm_showspawns" ):GetInt()

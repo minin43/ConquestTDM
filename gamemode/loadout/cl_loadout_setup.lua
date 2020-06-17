@@ -784,7 +784,8 @@ function playermodelpanelbuttons:DoClick()
                     order[ #order + 1 ] = {}
                     order[ GAMEMODE.PlayerModels[ v ].collection ] = #order
                 end
-                table.insert( order[ order[ GAMEMODE.PlayerModels[ v ].collection ] ], GAMEMODE.PlayerModels[ v ] )
+                --table.insert( order[ order[ GAMEMODE.PlayerModels[ v ].collection ] ], GAMEMODE.PlayerModels[ v ] )
+                order[ order[ GAMEMODE.PlayerModels[ v ].collection ] ][ #order[ order[ GAMEMODE.PlayerModels[ v ].collection ] ] + 1 ] = GAMEMODE.PlayerModels[ v ]
             end
 
             local default = vgui.Create( "DButton", self.listpanel.scrollpanel )
@@ -843,7 +844,9 @@ function playermodelpanelbuttons:DoClick()
                 end
             end
 
-            for k, v in pairs( order ) do        
+            for k, v in pairs( order ) do    
+                if !istable( v ) then continue end
+
                 for k2, v2 in pairs( v ) do
                     local button = vgui.Create( "DButton", self.listpanel.scrollpanel )
                     button:SetSize( self.listpanel.scrollpanel:GetWide(), 56 )
@@ -978,7 +981,7 @@ function weaponskinoptions:DoClick()
         end )
     else
         self.moving = true
-        print("debug1")
+        
         self.listpanel = vgui.Create( "DPanel", self.trueparent )
         self.listpanel:SetSize( self:GetWide(), math.min( GAMEMODE.TitleBar * (#self.skins + 1), self.trueparent:GetTall() / 2 - GAMEMODE.TitleBar ) )
         self.listpanel:SetPos( 0, self.trueparent:GetTall() )
@@ -1008,7 +1011,6 @@ function weaponskinoptions:DoClick()
         end
 
         if !self.listpanel.scrollpanel then
-            print("debug2")
             self.listpanel.scrollpanel = vgui.Create( "DScrollPanel", self.listpanel )
             self.listpanel.scrollpanel:SetPos( 0, 0 )
             self.listpanel.scrollpanel:SetSize( self.listpanel:GetWide(), self.listpanel:GetTall() )

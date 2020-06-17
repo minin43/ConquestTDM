@@ -754,9 +754,9 @@ flags[ "gm_boreas" ] = {
     { "C", Vector(-10137.0938, -8473.5313, -10319.9688), 88.0, 0.0, "1" },
 
     { "A", Vector(-255.8438, 3455.9375, -6399.9688), 402.0, 0.0, "2" },
-    --{ "B", Vector(65.5313, 4802.625, -6399.9688), 278.0, 0.0, "2" },
-    { "B", Vector(748.75, 4423.8125, -6271.9688), 90.0, 0.0, "2" },
-    { "C", Vector(1748.2813, 3855.5, -6319.9688), 290.0, 0.0, "2" },
+    { "B", Vector(-292.21875, 5159.53125, -6111.96875), 192.0, 0.0, "2" },
+    { "C", Vector(748.75, 4423.8125, -6271.9688), 90.0, 0.0, "2" },
+    { "D", Vector(1748.2813, 3855.5, -6319.9688), 290.0, 0.0, "2" },
 
     { "A", Vector(2335.2188, 2508.1875, -6399.9688), 317.0, 0.0, "3" },
     { "B", Vector(1425.5625, 3080.2813, -6271.9688), 134.0, 0.0, "3" },
@@ -780,6 +780,20 @@ flags[ "gm_explore_tunnels" ] = {
     { "B", Vector( 259.9063, -2239.6875, 16.0313 ), 282.0, 0.0, },
     { "C", Vector( 1012.7813, -1204.75, 16.0313 ), 269.0, 0.0, },
     { "D", Vector( 47.5625, -324.375, 16.0313 ), 166.0, 0.0, }
+}
+
+flags[ "sh_matlane_a2" ] = {
+    { "A", Vector( 1718.0313, -368.8125, 16.0313 ), 278.0, 0.0 },
+    { "B", Vector( 2047.75, -1407.75, 24.0313 ), 239.0, 0.0 },
+    { "C", Vector( 1040.8125, -3023.5625, 576.0313 ), 514.0, 0.0 },
+    { "D", Vector( -512.1875, 1023.7813, 16.0313 ), 448.0, 0.0 },
+    { "E", Vector( 1456.0625, 2046.1563, 240.0313 ), 350.0, 0.0 }
+}
+
+flags[ "gm_desert_factory" ] = {
+    { "A", Vector( 95.6563, 417.5938, 288.0313 ), 389.0, 0.0 },
+    { "B", Vector( -147.9375, -1095.4063, -176 ), 517.0, 0.0 },
+    { "C", Vector( -109, 2036.0938, -152.5313 ), 408.0, 0.0 },
 }
 
 --[[flags[ "" ] = {
@@ -1137,7 +1151,8 @@ hook.Add( "FlagCaptured", "GiveAmmoCapture", function( _, _, plytable )
     for _, ply in pairs( plytable ) do
         for _, wep in pairs( ply:GetWeapons() ) do
 			if weapons.Get(wep:GetClass()) and weapons.Get(wep:GetClass()).Slot < 3 then
-            	ply:GiveAmmo( wep:GetMaxClip1(), wep:GetPrimaryAmmoType(), true )
+                ply:GiveAmmo( wep:GetMaxClip1(), wep:GetPrimaryAmmoType(), true )
+                ply:EmitSound( "items/ammopickup.wav" )
 			end
         end
     end

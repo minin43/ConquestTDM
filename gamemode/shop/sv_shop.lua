@@ -172,8 +172,8 @@ end )
 net.Receive( "BuyModel", function( len, ply )
 	local num = net.ReadInt( 8 )
 	local currency = net.ReadString()
-	local pmodel = GAMEMODE.PlayerModels[ num ]
-	--print(num, GAMEMODE.PlayerModels[ num ], currency)
+    local pmodel = GAMEMODE.PlayerModels[ num ]
+    
 	local price = GAMEMODE.PlayerModels[ num ][ currency ]
 	if currency == "tokens" then --Prestige Tokens
 		if price > prestige.GetTokens( ply ) then CaughtCheater( ply, "Sent net message BuyModel for a skin they don't have the " .. currency .. " for" ) return end

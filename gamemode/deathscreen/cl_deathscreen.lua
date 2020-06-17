@@ -26,13 +26,11 @@ surface.CreateFont( "ds_spawn", {
 	antialias = true 
 } )	
 
-local time
-local grow
-local showtext
+GM.RespawnTime = 0
 net.Receive( "StartDeathScreen", function()
-	surface.PlaySound( "ui/UX_Deploy_DeployTImer_Wave.mp3" )
+	surface.PlaySound( "ui/ux_deploy_deploytimer_wave.mp3" )
 
-	time = net.ReadInt( 4 )
+	GAMEMODE.RespawnTime = net.ReadInt( 4 )
 	local att = net.ReadEntity() --attacker
 	local vic = net.ReadEntity() --victim
 	local perk = net.ReadString() --attacker's perk
@@ -64,15 +62,22 @@ net.Receive( "StartDeathScreen", function()
     GAMEMODE.DeathMain.Paint = function()
         if not GAMEMODE.DeathMain or not GAMEMODE.DeathMain:IsValid() then return end
 		surface.SetDrawColor( 0, 0, 0, 75 )
-		surface.DrawRect( 0, 0, GAMEMODE.DeathMain:GetWide(), GAMEMODE.DeathMain:GetTall() - 30 )
+        surface.DrawRect( 0, 0, GAMEMODE.DeathMain:GetWide(), GAMEMODE.DeathMain:GetTall() - 30 )
+
 		surface.SetDrawColor( 0, 0, 0, 150 )
-		surface.DrawRect( 0, GAMEMODE.DeathMain:GetTall() - 30, GAMEMODE.DeathMain:GetWide(), 30 )
+        surface.DrawRect( 0, GAMEMODE.DeathMain:GetTall() - 30, GAMEMODE.DeathMain:GetWide(), 30 )
+        surface.DrawLine( 0, 0, 0, GAMEMODE.DeathMain:GetTall() - 30 )
+        surface.DrawLine( 0, 0, GAMEMODE.DeathMain:GetWide(), 0 )
+        surface.DrawLine( GAMEMODE.DeathMain:GetWide() - 1, 0, GAMEMODE.DeathMain:GetWide() - 1, GAMEMODE.DeathMain:GetTall() - 30 )
 	end
 	local attID, vicID = id( att:SteamID() ), id( vic:SteamID() )
 	GAMEMODE.DeathMain.Think = function()
 		if GAMEMODE.VendettaPlayers[ attID ] == att then
 			Vendetta = true
-		end
+        end
+        if LocalPlayer():Alive() then
+            GAMEMODE.DeathMain:Close()
+        end
 	end
 
 	--Draws killer's image
@@ -98,11 +103,11 @@ net.Receive( "StartDeathScreen", function()
 		name:SetText( "World" )
 	else
 		if att and att:IsPlayer() and att:Name() and vic != att then
-			if title == "" then
+			--if title == "" then
 				name:SetText( att:Name() )
-			else
+			--[[else
 				name:SetText( "[" .. GAMEMODE:GetTitleTable( title ).title .. "] " .. att:Name() )
-			end
+			end]]
 		elseif vic == att then
 			name:SetText( "Yourself")
 		else
@@ -131,7 +136,7 @@ net.Receive( "StartDeathScreen", function()
 	
 	--Draw hitgroup information (killed by: bullet to stomach)
 	local title4 = vgui.Create( "DLabel", GAMEMODE.DeathMain)
-	title4:SetPos( GAMEMODE.DeathMain:GetWide() / 3 * 2, GAMEMODE.DeathMain:GetTall() / 3 - 3)
+	title4:SetPos( GAMEMODE.DeathMain:GetWide() / 3 * 2 + 10, GAMEMODE.DeathMain:GetTall() / 3 - 3)
 	title4:SetFont( "ds_spawn" )
 	title4:SetTextColor( Color( 255, 255, 255, 200) )
 	local reason
@@ -149,7 +154,7 @@ net.Receive( "StartDeathScreen", function()
 	
 	--Draw killer's killstreak
 	local title5 = vgui.Create( "DLabel", GAMEMODE.DeathMain)
-	title5:SetPos( GAMEMODE.DeathMain:GetWide() / 3 * 2, GAMEMODE.DeathMain:GetTall() / 2 + 5)
+	title5:SetPos( GAMEMODE.DeathMain:GetWide() / 3 * 2 + 10, GAMEMODE.DeathMain:GetTall() / 2 + 5)
 	title5:SetFont( "ds_spawn" )
 	title5:SetTextColor( Color( 255, 255, 255, 200) )
 	killstreak = tonumber( killstreak ) or 0
@@ -159,7 +164,7 @@ net.Receive( "StartDeathScreen", function()
 	--Damage done
 	local done = vgui.Create( "DLabel", GAMEMODE.DeathMain )
 	--done:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 10, GAMEMODE.DeathMain:GetTall() / 3 - 3 ) --Old position
-	done:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 30, GAMEMODE.DeathMain:GetTall() / 2 + 5 )
+	done:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 50, GAMEMODE.DeathMain:GetTall() / 2 + 5 )
 	done:SetFont( "ds_spawn" )
 	done:SetTextColor( Color( 255, 255, 255, 200) )
 	done:SetText( "Damage done: " .. math.Truncate( math.Clamp( tonumber( damagedone ), 0, att:GetMaxHealth() ) ) )
@@ -168,7 +173,7 @@ net.Receive( "StartDeathScreen", function()
 	--Health remaining
 	local left = vgui.Create( "DLabel", GAMEMODE.DeathMain )
 	--left:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 10, GAMEMODE.DeathMain:GetTall() / 2 + 5 ) --Old position
-	left:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 30, GAMEMODE.DeathMain:GetTall() / 3 - 3 )
+	left:SetPos( GAMEMODE.DeathMain:GetWide() / 3 + 50, GAMEMODE.DeathMain:GetTall() / 3 - 3 )
 	left:SetFont( "ds_spawn" )
 	left:SetTextColor( Color( 255, 255, 255, 200) )
 	left:SetText( "Health remaining: " .. math.Clamp( att:Health(), 0, att:GetMaxHealth() ) )
@@ -181,10 +186,10 @@ net.Receive( "StartDeathScreen", function()
 	spawnin:SetTextColor( Color( 255, 255, 255 ) )
 	spawnin:SetText( "" )
 	spawnin.Think = function()
-		if time == 0 then
+		if GAMEMODE.RespawnTime == 0 then
 			spawnin:SetText( "Press [space] to spawn" )
-		elseif time > 0 and time < 6 then
-			spawnin:SetText( "Spawning in " .. tostring( time ) .. "..." )
+		elseif GAMEMODE.RespawnTime > 0 and GAMEMODE.RespawnTime < 6 then
+			spawnin:SetText( "Spawning in " .. tostring( GAMEMODE.RespawnTime ) .. "..." )
 		else
 			spawnin:SetText( "Spawning in 5..." )
 		end	
@@ -208,10 +213,10 @@ end )
 
 net.Receive( "UpdateDeathScreen", function()
 	local t = net.ReadInt( 4 )
-	time = t
-	if time > 0 then
-		surface.PlaySound( "ui/UX_Deploy_DeployTImer_Wave.mp3" )
-	elseif time == 0 then
+	GAMEMODE.RespawnTime = t
+	if GAMEMODE.RespawnTime > 0 then
+		surface.PlaySound( "ui/ux_deploy_deploytimer_wave.mp3" )
+	elseif GAMEMODE.RespawnTime == 0 then
 		surface.PlaySound( "ui/UX_Deploy_DeployReady_Wave.mp3" )
 	end
 end )

@@ -64,7 +64,7 @@ function GM:QueueIcon( player, perk, duration )
 end
 
 function RegisterPerk( name, value, lvl, hint )
-    print("RegisterPerk called with params:", name, value, lvl)
+    print("[CTDM] Registering new perk:" .. name)
 	table.insert( GM.Perks, { name, value, GM.PerkLevelsOverride[ value ] or lvl, hint } )
 	table.sort( GM.Perks, function( a, b ) return a[ 3 ] < b[ 3 ] end )
 end

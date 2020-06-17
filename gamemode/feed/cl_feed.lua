@@ -37,10 +37,6 @@ surface.CreateFont("FeedCountBlur", {
     antialias = 1 
 })
 
---[[print("Attempting creation of UT3 fonts")
-surface.CreateFont( "UT3", { font = "Unreal Tournament", size = 125, antialias = false, shadow = false, outline = true } )
-surface.CreateFont( "UT3-Back", { font = "Unreal Tournament", size = 128, antialias = false, shadow = false, outline = true } )]]
-
 NOTICETYPES = {
     KILL = 1,
     FLAG = 2,

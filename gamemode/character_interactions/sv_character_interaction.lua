@@ -23,7 +23,31 @@ GM.ValidModels = { --//This table is used to check if a player's model is valid 
     [ "models/player/ins_insurgent_standard.mdl" ] = "insurgent",
     [ "models/player/ins_security_heavy.mdl" ] = "security",
     [ "models/player/ins_security_light.mdl" ] = "security",
-    [ "models/player/ins_security_standard.mdl" ] = "security"--[[,
+    [ "models/player/ins_security_standard.mdl" ] = "security",
+    [ "models/mw2guy/rus/gassoldier.mdl" ] = "spetsnaz",
+    [ "models/mw2guy/rus/soldier_a.mdl" ] = "spetsnaz",
+    [ "models/mw2guy/rus/soldier_c.mdl" ] = "spetsnaz",
+    [ "models/mw2guy/rus/soldier_d.mdl" ] = "spetsnaz",
+    [ "models/mw2guy/rus/soldier_e.mdl" ] = "spetsnaz",
+    [ "models/mw2guy/rus/soldier_f.mdl" ] = "spetsnaz",
+    [ "models/cod players/opfor1.mdl" ] = "opfor",
+    [ "models/cod players/opfor3.mdl" ] = "opfor",
+    [ "models/cod players/opfor4.mdl" ] = "opfor",
+    [ "models/cod players/opfor6.mdl" ] = "opfor",
+    [ "models/codmw2/codmw2.mdl" ] = "rangers",
+    [ "models/codmw2/codmw2h.mdl" ] = "rangers",
+    [ "models/codmw2/codmw2he.mdl" ] = "rangers",
+    [ "models/codmw2/codmw2m.mdl" ] = "rangers",
+    [ "models/mw2guy/bz/bzgb01.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/bzghost.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbz01.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbz02.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbz03.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbzca01.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbzca02.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbzw01.mdl" ] = "tf141",
+    [ "models/mw2guy/bz/tfbzw02.mdl" ] = "tf141"
+    --[[,
     [ "" ] = "",
     [ "" ] = "",
     [ "" ] = "",
@@ -85,7 +109,7 @@ GM.AvailableTypes = { --Available types: "selfDeath, selfDamage, teamDeath, enem
         [ "enemyDeath" ] = 10,
         [ "selfReload" ] = 6,
         [ "selfSpawn" ] = false,
-        [ "selfGrenade" ] = 3,
+        [ "selfGrenade" ] = 6,
         [ "selfStep" ] = false,
         [ "path" ] = "mw2/opfor/"
     },
@@ -93,10 +117,10 @@ GM.AvailableTypes = { --Available types: "selfDeath, selfDamage, teamDeath, enem
         [ "selfDeath" ] = 3,
         [ "selfDamage" ] = 3,
         [ "teamDeath" ] = 4,
-        [ "enemyDeath" ] = 9,
+        [ "enemyDeath" ] = 10,
         [ "selfReload" ] = 6,
         [ "selfSpawn" ] = false,
-        [ "selfGrenade" ] = 3,
+        [ "selfGrenade" ] = 6,
         [ "selfStep" ] = false,
         [ "path" ] = "mw2/spetsnaz/"
     },
@@ -118,11 +142,11 @@ GM.AvailableTypes = { --Available types: "selfDeath, selfDamage, teamDeath, enem
         [ "enemyDeath" ] = 10,
         [ "selfReload" ] = 6,
         [ "selfSpawn" ] = false,
-        [ "selfGrenade" ] = 2,
+        [ "selfGrenade" ] = 5,
         [ "selfStep" ] = false,
         [ "path" ] = "mw2/rangers/"
     },
-    [ "seals" ] = {
+    --[[[ "seals" ] = {
         [ "selfDeath" ] = 4,
         [ "selfDamage" ] = 3,
         [ "teamDeath" ] = 4,
@@ -132,7 +156,7 @@ GM.AvailableTypes = { --Available types: "selfDeath, selfDamage, teamDeath, enem
         [ "selfGrenade" ] = 3,
         [ "selfStep" ] = false,
         [ "path" ] = "mw2/seals/"
-    },
+    },]]
     [ "tf141" ] = {
         [ "selfDeath" ] = 5,
         [ "selfDamage" ] = 4,
@@ -140,7 +164,7 @@ GM.AvailableTypes = { --Available types: "selfDeath, selfDamage, teamDeath, enem
         [ "enemyDeath" ] = 10,
         [ "selfReload" ] = 6,
         [ "selfSpawn" ] = false,
-        [ "selfGrenade" ] = 3,
+        [ "selfGrenade" ] = 6,
         [ "selfStep" ] = false,
         [ "path" ] = "mw2/tf141/"
     }
@@ -153,6 +177,7 @@ GM.CombineCallsigns = {
 
 --//Strictly for Combine deaths, plays some Overwatch radio chatter like the metropolice sometimes do
 --//This is fucking messy.
+--/Disabled since the sounds don't like auto-playing, and since players aren't dead for long enough for the string to play 
 function GM:DoPostDeathRadio( ply )
     if !self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds then
         self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds = {}
@@ -170,7 +195,7 @@ function GM:DoPostDeathRadio( ply )
         [5] = CreateSound( ply, "hl2/combine/deathradio/allteamsrespond.ogg", filter ),
         [6] = CreateSound( ply, "hl2/combine/deathradio/off" .. math.random( 4 ) .. ".ogg", filter )
     }
-    PrintTable( self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.TableToPlay  )
+    --PrintTable( self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.TableToPlay  )
     self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.TimerName = "DeathSounds" .. id( ply:SteamID() )
     self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.Current = self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.TableToPlay[1]
     self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds.Current:SetSoundLevel( 40 )
@@ -195,7 +220,7 @@ end
 
 --//We're assuming this function gets good values every time
 function GM:DoPlayerSound( ply, sound )
-    --//Since DoPlayerSounds is called in the PlayerDeath hook, where ply is still counted as alive, this sould prevent any sounds from playing post-death
+    --//Since DoPlayerSounds is called in the PlayerDeath hook, where ply is still counted as alive, this should prevent any sounds from playing post-death
     if not ply:Alive() then return end
 
     local mandatoryPlays = { selfDamage = true, selfDeath = true, selfStep = true }
@@ -231,8 +256,9 @@ function GM:DoPlayerSound( ply, sound )
     self.PlayedSounds[ id( ply:SteamID() ) ][ series ][ randomNumberFromSounds ]:Play()
     self.PlayedSounds[ id( ply:SteamID() ) ].ActiveSound = self.PlayedSounds[ id( ply:SteamID() ) ][ series ][ randomNumberFromSounds ]
 
-   --[[if series == "combine" and sound == "selfDeath" then
-        timer.Simple( 3.5, function()
+    --/Disabled since the sounds don't like auto-playing, and since players aren't dead for long enough for the string to play 
+    --[[if series == "combine" and sound == "selfDeath" then
+        timer.Simple( 1.5, function()
             self:DoPostDeathRadio( ply )
         end )
     end]]
@@ -318,10 +344,85 @@ end )
     end )
 end )]]
 
---//selfGrenade
-
 --//selfStep
 hook.Add( "PlayerFootstep", "DoSelfStepSound", function( ply, pos, foot, sound, volume, rf )
     GAMEMODE:DoPlayerSound( ply, "selfStep" )
     return true
 end )
+
+--//selfGrenade
+--Was originally going to utilize CW's own callback feature, but since it doesn't seem any of the callbacks provide user info, just have to overwrite instead
+if CustomizableWeaponry then
+    --[[CustomizableWeaponry.callbacks:addNew( "finishThrowGrenade", "DoGrenadeSound", function()
+        print("test cw callback", self)
+        PrintTable(CustomizableWeaponry.callbacks)
+    end )]]
+    local pinPullAnims = {"pullpin", "pullpin2", "pullpin3", "pullpin4"}
+    local SP = game.SinglePlayer()
+
+    function CustomizableWeaponry.quickGrenade:throw()
+        local CT = CurTime()
+        
+        self:setGlobalDelay(1.9)
+        self:SetNextPrimaryFire(CT + 1.9)
+        
+        if SERVER and SP then
+            SendUserMessage("CW20_THROWGRENADE", self.Owner)
+        end
+        
+        self.dt.State = CW_ACTION
+        
+        if (not SP and IsFirstTimePredicted()) or SP then
+            if self:filterPrediction() then
+                self:EmitSound("CW_HOLSTER")
+            end
+            
+            CustomizableWeaponry.callbacks.processCategory(self, "beginThrowGrenade")
+            
+            if CLIENT then
+                CustomizableWeaponry.actionSequence.new(self, 0.45, nil, function()
+                    self.GrenadePos.z = -10
+                    self.grenadeTime = CurTime() + 1.5
+                    self:playAnim(table.Random(pinPullAnims), 1, 0, self.CW_GREN)
+                end)
+                
+                CustomizableWeaponry.actionSequence.new(self, 0.5, nil, function()
+                    surface.PlaySound("weapons/pinpull.wav")
+                end)
+                
+                CustomizableWeaponry.actionSequence.new(self, 1.1, nil, function()
+                    self:playAnim("throw", 1.1, 0, self.CW_GREN)
+                end)
+            end
+            
+            if SERVER then
+                CustomizableWeaponry.actionSequence.new(self, 0.3, nil, function()
+                    self.canDropGrenade = true
+                end)
+            
+                CustomizableWeaponry.actionSequence.new(self, 0.5, nil, function()
+                    self.liveGrenade = true
+                end)
+            
+                CustomizableWeaponry.actionSequence.new(self, 1.15, nil, function()
+                    local nade = CustomizableWeaponry.quickGrenade:createThrownGrenade(self.Owner)
+                    CustomizableWeaponry.quickGrenade:applyThrowVelocity(self.Owner, nade, throwVelocity, addVelocity)
+                    
+                    self.liveGrenade = false
+                    self.canDropGrenade = false
+                    self.Owner:RemoveAmmo(1, "Frag Grenades")
+                    
+                    CustomizableWeaponry.callbacks.processCategory(self, "finishThrowGrenade")
+
+                    GAMEMODE:DoPlayerSound( self.Owner, "selfGrenade" ) --My only inclusion
+                end)
+            end
+            
+            CustomizableWeaponry.actionSequence.new(self, 1.8, nil, function()
+                local delay = CustomizableWeaponry.quickGrenade.postGrenadeWeaponDelay
+                self:SetNextPrimaryFire(CT + delay)
+                self:SetNextSecondaryFire(CT + delay)
+            end)
+        end
+    end
+end

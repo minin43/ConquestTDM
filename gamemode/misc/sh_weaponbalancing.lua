@@ -5,8 +5,8 @@
     Dunno how VelocitySensitivity plays into accuracy penalties, only that it does.
 ]]
 
-function RebalanceWeapons()
-    print("Balancing the weapons...")
+hook.Add( "InitPostEntity", "WeaponBalancing", function()
+    print("[CTDM] Balancing the weapons...")
 
     --//Primary Weapons
 
@@ -309,6 +309,36 @@ function RebalanceWeapons()
         wep.Attachments[1] = {header = "Sight", offset = {550, -475}, atts = {"bg_hk416_foldsight","md_fas2_eotech","md_fas2_holo","md_cod4_aimpoint_v2","md_cod4_acog_v2","md_fas2_leupold"}}
     end
 
+    --Not being added until it works properly in MP
+    --[[if weapons.Get( "cwc_fate" ) then
+        local wep = weapons.GetStored( "cwc_fate" )
+        wep.Slot = 0
+        --Balancing can be found in sh_weaponfixing.lua, as the way the weapon is written, default values aren't used when swapping between firing modes
+    end]]
+
+    if weapons.Get( "cw_tr09_lr300" ) then
+        local wep = weapons.GetStored( "cw_tr09_lr300" )
+        wep.Slot = 0
+        wep.Damage = 33
+        wep.FireDelay = 0.0923
+        wep.Recoil = 1.2
+        wep.HipSpread = 0.12
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.6
+        wep.MaxSpreadInc = 0.05
+        wep.SpreadPerShot = 0.001
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 30
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.13
+        wep.SpeedDec = 50
+
+        wep.Chamberable = false
+        wep.Attachments[1] = {header = "Sight", offset = {500, -400}, atts = {"md_microt1", "md_eotech", "md_aimpoint", "md_schmidt_shortdot", "md_acog"}}
+        wep.Attachments["impulse 100"] = nil
+    end
+
     --// Snipers //--
 
     if weapons.Get( "cw_b196" ) then
@@ -350,6 +380,8 @@ function RebalanceWeapons()
         wep.SpreadCooldown = wep.FireDelay + 0.01
         wep.SpeedDec = 60
 
+        wep.PreventQuickScoping = false
+        wep.ForceBackToHipAfterAimedShot = true
         wep.Attachments[1] = {header = "Sight", offset = {500, -600}, atts = {"md_rmr", "md_microt1", "md_aimpoint", "md_eotech", "md_schmidt_shortdot", "md_acog", "md_nightforce_nxs"}}
     end
 
@@ -371,6 +403,8 @@ function RebalanceWeapons()
         wep.SpreadCooldown = wep.FireDelay + 0.01
         wep.SpeedDec = 60
 
+        wep.PreventQuickScoping = false
+        wep.ForceBackToHipAfterAimedShot = true
         wep.Attachments[1] = {header = "Sight", offset = {400, -600}, atts = {"md_rmr", "md_microt1", "md_aimpoint", "md_eotech", "md_schmidt_shortdot", "md_acog", "md_nightforce_nxs"}}
     end
 
@@ -451,6 +485,28 @@ function RebalanceWeapons()
         wep.SpeedDec = 60
     end
 
+    --It's a secondary, LUL
+    if weapons.Get( "cw_contender" ) then
+        local wep = weapons.GetStored( "cw_contender" )
+        wep.Slot = 0
+        wep.Damage = 100
+        --wep.FireDelay = 1.5
+        wep.Recoil = 2.5
+        wep.HipSpread = 0.35
+        wep.AimSpread = 0.001
+        wep.VelocitySensitivity = 3.0
+        wep.MaxSpreadInc = 0.4
+        wep.SpreadPerShot = 0.1
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 1
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = wep.FireDelay + 0.01
+        wep.SpeedDec = 25
+
+        wep.Attachments[1] = {header = "Sight", offset = {0, -500},  atts = {"md_microt1", "md_eotech", "md_aimpoint", "md_acog", "bg_g2caccu"}}
+    end
+
     --// SMGs //--
 
     if weapons.Get( "cw_ump45" ) then
@@ -510,6 +566,8 @@ function RebalanceWeapons()
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.13
         wep.SpeedDec = 30
+
+        wep.PrintName = "CZ Scorpion Evo"
     end
 
     if weapons.Get( "cw_ber_p90" ) then
@@ -606,6 +664,25 @@ function RebalanceWeapons()
         wep.Primary.ClipSize = 40
         wep.Primary.DefaultClip	= wep.Primary.ClipSize
         wep.SpreadCooldown = 0.23
+        wep.SpeedDec = 30
+    end
+
+    if weapons.Get( "cw_bizongsm" ) then
+        local wep = weapons.GetStored( "cw_bizongsm" )
+        wep.Slot = 0
+        wep.Damage = 26
+        wep.FireDelay = 0.08
+        wep.Recoil = 0.9
+        wep.HipSpread = 0.05
+        wep.AimSpread = 0.025
+        wep.VelocitySensitivity = 1.5
+        wep.MaxSpreadInc = 0.06
+        wep.SpreadPerShot = 0.002
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 65
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.07
         wep.SpeedDec = 30
     end
 
@@ -1037,75 +1114,66 @@ function RebalanceWeapons()
         wep.SpeedDec = 25
     end
 
+    if weapons.Get( "cw_silverballer" ) then
+        local wep = weapons.GetStored( "cw_silverballer" )
+        wep.Slot = 1
+        wep.Damage = 33
+        wep.FireDelay = 0.15
+        wep.Recoil = 1
+        wep.HipSpread = 0.04
+        wep.AimSpread = 0.01
+        wep.VelocitySensitivity = 1.25
+        wep.MaxSpreadInc = 0.036
+        wep.SpreadPerShot = 0.005
+        wep.ClumpSpread = 0
+        wep.Shots = 1
+        wep.Primary.ClipSize = 7
+        wep.Primary.DefaultClip	= wep.Primary.ClipSize
+        wep.SpreadCooldown = 0.18
+        wep.SpeedDec = 20
+    end
+
     --//Tertiary Weapons
+
     if weapons.Get( "weapon_fists" ) then
         local wep = weapons.GetStored( "weapon_fists" )
-        wep.Slot = 2
+        wep.Slot = 3
         wep.HitDistance = 48 + 15 --48 is the original distance
         --//Damage is calculated with RNG, will need to re-create the fists weapon and add damage modification
     end
 
-    if weapons.Get( "cw_flash_grenade" ) then
-        local wep = weapons.GetStored( "cw_flash_grenade" )
-        wep.Slot = 2
-    end
-
-    if weapons.Get( "cw_smoke_grenade" ) then
-        local wep = weapons.GetStored( "cw_smoke_grenade" )
-        wep.Slot = 2
-    end
-
-    local medkits = { "weapon_medkit", "medkit_slow", "medkit_fast", "medkit_full" }
-    for k, v in pairs( medkits ) do 
+    --Most balancing for these equipment can be found natively in the entities folder, or in sh_weaponfixing.lua
+    local standardEquip = { "cw_flash_grenade", "cw_smoke_grenade", "impulse_grenade", "weapon_hexshield", "weapon_cbox", "sg_adrenaline", "weapon_medkit", "medkit_slow",
+                                "medkit_fast", "medkit_full" }
+    for k, v in pairs( standardEquip ) do 
         if weapons.Get( v ) then
             local wep = weapons.GetStored( v )
             wep.Slot = 2
         end
     end
-
-end
-
-hook.Add( "InitPostEntity", "WeaponBaseFixes", function()
-    RebalanceWeapons()
-
-	local wepbase = weapons.GetStored( "cw_base" )
-    function wepbase:unloadWeapon()
-        return
-    end
-
-    --Fixes the error when spectating someone first-person and they open their attachments
-    function CustomizableWeaponry:hasAttachment(ply, att, lookIn)
-        if not self.useAttachmentPossessionSystem then
-            return true
-        end
-        
-        lookIn = lookIn or ply.CWAttachments
-        
-        local has = hook.Call("CW20HasAttachment", nil, ply, att, lookIn)
-        
-        if (lookIn and lookIn[att]) or has then
-            return true
-        end
-        
-        return false
-    end
-	
-    --[[function CustomizableWeaponry:decodeAttachmentString(str)
-        self.CWAttachments = self.CWAttachments or {}
-        
-        local result = string.Explode(" ", str)
-        print("dicks - decodeAttachmentString", str)
-        if self.CWAttachments and self.CWAttachments != nil then
-            for k, v in pairs(result) do
-                self.CWAttachments[v] = true
-            end
-        end
-    end]]
+    
 end )
 
-hook.Add( "OnEntityCreated", "BalanceTheM203", function( ent )
+hook.Add( "OnEntityCreated", "EntBalancing&Fixing", function( ent )
     if ent:GetClass() == "cw_40mm_explosive" then
         ent.BlastDamage = 80 --100 is the default value
         ent.BlastRadius = 384 --384 is the default value
+    end
+
+    if ent:GetClass() == "hexshield_grenade" then
+        function ent:Event_Pickup()
+            if ( CurTime() < self.PickupTime ) then return end
+    
+            self.Events[ 1 ] = nil
+            self.DisableWeld = true
+    
+            --[[local wep = ents.Create( "weapon_hexshield" )
+            wep:SetPos( self:GetPos() )
+            wep:SetAngles( self:GetAngles() )
+            wep:Spawn()
+            wep:Activate()]]
+
+            self:Remove()
+        end
     end
 end )

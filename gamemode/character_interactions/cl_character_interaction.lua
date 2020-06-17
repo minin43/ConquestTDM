@@ -44,7 +44,7 @@ GM.AvailableTypes = {
         [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
         [ "musicStart" ] = true,
-        [ "announcerStart" ] = true,
+        [ "announcerStart" ] = false,
         [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "ins2/security/",
@@ -56,7 +56,7 @@ GM.AvailableTypes = {
         [ "musicLose" ] = true,
         [ "announcerLose" ] = false,
         [ "musicStart" ] = true,
-        [ "announcerStart" ] = true,
+        [ "announcerStart" ] = false,
         [ "musicTie" ] = false,
         [ "announcerTie" ] = false,
         [ "path" ] = "ins2/insurgent/",
@@ -65,24 +65,24 @@ GM.AvailableTypes = {
     --//MW2 Sounds
     [ "opfor" ] = {
         [ "musicWin" ] = true,
-        [ "announcerWin" ] = false,
+        [ "announcerWin" ] = 3,
         [ "musicLose" ] = true,
-        [ "announcerLose" ] = false,
+        [ "announcerLose" ] = 3,
         [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "musicTie" ] = true,
-        [ "announcerTie" ] = true,
+        [ "musicTie" ] = false,
+        [ "announcerTie" ] = false,
         [ "path" ] = "mw2/opfor/"
     },
     [ "spetsnaz" ] = {
         [ "musicWin" ] = true,
-        [ "announcerWin" ] = true,
+        [ "announcerWin" ] = 3,
         [ "musicLose" ] = true,
-        [ "announcerLose" ] = true,
+        [ "announcerLose" ] = 3,
         [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "musicTie" ] = true,
-        [ "announcerTie" ] = true,
+        [ "musicTie" ] = false,
+        [ "announcerTie" ] = false,
         [ "path" ] = "mw2/spetsnaz/"
     },
     --[[[ "militia" ] = {
@@ -98,16 +98,16 @@ GM.AvailableTypes = {
     },]]
     [ "rangers" ] = {
         [ "musicWin" ] = true,
-        [ "announcerWin" ] = true,
+        [ "announcerWin" ] = 3,
         [ "musicLose" ] = true,
-        [ "announcerLose" ] = true,
+        [ "announcerLose" ] = 3,
         [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "musicTie" ] = true,
-        [ "announcerTie" ] = true,
+        [ "musicTie" ] = false,
+        [ "announcerTie" ] = false,
         [ "path" ] = "mw2/rangers/"
     },
-    [ "seals" ] = {
+    --[[[ "seals" ] = {
         [ "musicWin" ] = true,
         [ "announcerWin" ] = true,
         [ "musicLose" ] = true,
@@ -117,21 +117,23 @@ GM.AvailableTypes = {
         [ "musicTie" ] = true,
         [ "announcerTie" ] = true,
         [ "path" ] = "mw2/seals/"
-    },
+    },]]
     [ "tf141" ] = {
         [ "musicWin" ] = true,
-        [ "announcerWin" ] = true,
+        [ "announcerWin" ] = 3,
         [ "musicLose" ] = true,
-        [ "announcerLose" ] = true,
+        [ "announcerLose" ] = 3,
         [ "musicStart" ] = true,
         [ "announcerStart" ] = true,
-        [ "musicTie" ] = true,
-        [ "announcerTie" ] = true,
+        [ "musicTie" ] = false,
+        [ "announcerTie" ] = false,
         [ "path" ] = "mw2/tf141/"
     },
 }
 
-function GM:DoGameSound( soundName, isVoice, numVariance )
+local noFadeTeams = {tf141 = true, seals = true, rangers = true, milita = true, spetsnaz = true, opfor = true}
+
+function GM:DoGameSound( soundName, isVoice, numVariance, noFade )
     if numVariance then
         numVariance = math.random( numVariance )
     else
@@ -160,14 +162,16 @@ function GM:DoGameSound( soundName, isVoice, numVariance )
         self.PlayedSounds.Current = self.PlayedSounds[ self.AnnouncerType ][ soundName ]
 
         timer.Simple( 25, function()
-            self.PlayedSounds[ self.AnnouncerType ][ soundName ]:FadeOut( 5 )
+            if self.PlayedSounds.Current:IsPlaying() and !noFade then
+                self.PlayedSounds[ self.AnnouncerType ][ soundName ]:FadeOut( 5 )
+            end
         end )
     end
 end
 
 function GM:DoStartSounds()
     if self.AvailableTypes[ self.AnnouncerType ].musicStart then
-        self:DoGameSound( "musicStart" )
+        self:DoGameSound( "musicStart", nil, nil, noFadeTeams[ self.AnnouncerType ] )
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerStart then
         timer.Simple( 2, function()
@@ -183,7 +187,7 @@ end
 function GM:DoWinSounds()
     if LocalPlayer():Team() == 0 then return end
     if self.AvailableTypes[ self.AnnouncerType ].musicWin then
-        self:DoGameSound( "musicWin" )
+        self:DoGameSound( "musicWin", nil, nil, noFadeTeams[ self.AnnouncerType ] )
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerWin then
         timer.Simple( 2, function()
@@ -199,7 +203,7 @@ end
 function GM:DoLoseSounds()
     if LocalPlayer():Team() == 0 then return end
     if self.AvailableTypes[ self.AnnouncerType ].musicLose then
-        self:DoGameSound( "musicLose" )
+        self:DoGameSound( "musicLose", nil, nil, noFadeTeams[ self.AnnouncerType ] )
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerLose then
         timer.Simple( 2, function()
@@ -215,7 +219,7 @@ end
 function GM:DoTieSounds()
     if LocalPlayer():Team() == 0 then return end
     if self.AvailableTypes[ self.AnnouncerType ].musicTie then
-        self:DoGameSound( "musicTie" )
+        self:DoGameSound( "musicTie", nil, nil, noFadeTeams[ self.AnnouncerType ] )
     end
     if self.AvailableTypes[ self.AnnouncerType ].announcerTie then
         timer.Simple( 2, function()

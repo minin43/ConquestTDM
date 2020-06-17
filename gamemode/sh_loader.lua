@@ -35,7 +35,9 @@ local toLoad = {
 function IncludeNewFile( fileName, directory )
     local sepFileName = string.Explode( "_", fileName )
     local toUse = directory .. "/" .. fileName
-    --print("including new file...", fileName, directory)
+
+    print("[CTDM] including new file: " .. fileName)
+
     if sepFileName[1] == "sv" then
         if SERVER then include( toUse ) end
     elseif sepFileName[1] == "sh" then

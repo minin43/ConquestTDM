@@ -53,18 +53,36 @@ GM.WeaponsList = {
 	--//Equipment
     --[[{ "Fists", 				"weapon_fists", 	1, "models/weapons/c_arms_citizen.mdl", 			0, type = "eq", slot = 3,
         desc = "Give 'em the 'ol 1-2" },]]
-	{ "Flash Grenades", 	"cw_flash_grenade",	6, "models/weapons/w_eq_flashbang.mdl", 			4000, type = "eq", slot = 3,
+	{ "Flash Grenades", 	"cw_flash_grenade",	8, "models/weapons/w_eq_flashbang.mdl", 			5000,   type = "eq",    slot = 3,
         desc = "2x flashbangs which blind all players near the grenade when detonated." },
-	{ "Slow Medkit", 		"medkit_slow",		12, "models/weapons/w_medkit.mdl",					10000, type = "eq", slot = 3,
+	{ "Slow Medkit", 		"medkit_slow",		16, "models/weapons/w_medkit.mdl",					5000,   type = "eq",    slot = 3,
         desc = "Heal friendlies 10 HP with the primary attack, or yourself with the secondary attack. Slowly regenerates ammo." },
-	{ "Smoke Grenades", 	"cw_smoke_grenade", 19, "models/weapons/w_eq_smokegrenade.mdl", 		10000, type = "eq", slot = 3,
+    { "Flak Jacket",        "flak",             24, "models/dayz/vest_police.mdl",                  10000,  type = "eq",    slot = 3,
+        desc = "Reduces damage from explosions by 75%." },
+	{ "Smoke Grenades", 	"cw_smoke_grenade", 32, "models/weapons/w_eq_smokegrenade.mdl",         15000,  type = "eq",    slot = 3,
         desc = "3x smoke grenades to block sightlines." },
-	{ "Fast Medkit", 		"medkit_fast", 		27, "models/weapons/w_medkit.mdl", 					20000, type = "eq", slot = 3,
+    { "Adrenaline Shot",    "sg_adrenaline",    40, "models/pg_props/pg_stargate/pg_shot.mdl",      20000,  type = "eq",    slot = 3,   --Outside addon/SWEP
+        desc = "Heals the user slightly, and grants a temporary movement boost." },
+    { "Impulse Grenade",    "impulse_grenade",  48, "models/impulse_grenade/impulse_grenade.mdl",   20000,  type = "eq",    slot = 3,   --Outside addon/SWEP
+        desc = "2x impulse grenades, launches yourself and enemies into the air." },
+	{ "Fast Medkit", 		"medkit_fast", 		56, "models/weapons/w_medkit.mdl", 					25000,  type = "eq",    slot = 3,
         desc = "Heal friendlies 20 HP with the primary attack, or yourself with the secondary attack. Limited ammo capacity. Slowly regenerates ammo." },
-	{ "Frag Grenade x2",	"grenades", 		36, "models/weapons/w_cw_fraggrenade_thrown.mdl",	20000, type = "eq", slot = 3,
+	{ "Frag Grenade x2",	"grenades", 		64, "models/weapons/w_cw_fraggrenade_thrown.mdl",	30000,  type = "eq",    slot = 3,
         desc = "2x frag grenades. Kills stuff. Does not damage yourself or friendlies." },
-    { "Large Medkit", 		"medkit_full", 		46, "models/weapons/w_medkit.mdl", 					30000, type = "eq", slot = 3,
-        desc = "Heal yourself 1/2 your missing HP with the secondary attack. Cannot heal friendlies. Large ammo capacity. Extremely slowly regenerates ammo." }
+    { "Hyperweave Vest",    "hyperweave",       72, "models/danguyenvest/militaryvest.mdl",         35000,  type = "eq",    slot = 3,
+        desc = "Reduces damage from high-caliber weapons by 10% and damage from explosions by 50%." },
+    { "Large Medkit", 		"medkit_full", 		80, "models/weapons/w_medkit.mdl", 					40000,  type = "eq",    slot = 3,
+        desc = "Heal yourself 1/2 your missing HP with the secondary attack. Cannot heal friendlies. Large ammo capacity. Extremely slowly regenerates ammo." },
+    { "Hexshield Grenade",  "weapon_hexshield", 88, "models/weapons/w_hexshield_grenade.mdl",       40000,  type = "eq",    slot = 3,  --Outside addon/SWEP
+        desc = "Generates a temporary force field anyone can enter and exit." },
+    --//VIP Weapons
+    --{ "CODOL FATE",         "cwc_fate",         0, "models/weapons/cwc_fate/w_rif_m4a1.mdl",        0, type = "ar", slot = 1, vip = true },
+    { "The Box",            "weapon_cbox",      0, "models/gmod_tower/stealth box/box.mdl",         0, type = "eq", slot = 3, vip = true,
+        desc = "Crouching with this equipped renders you nearly-invisible, perfect for surprise attacks. Left-click to taunt other players." },
+    { "LR300",              "cw_tr09_lr300",    0, "models/weapons/therambotnic09/w_cw2_lr300.mdl", 0, type = "ar", slot = 1, vip = true },
+    { "PP19 Bizon",         "cw_bizongsm",      0, "models/cw2/gsm/w_gsm_bizon.mdl",                0, type = "smg", slot = 1, vip = true },
+    { "G2 Contender",       "cw_contender",     0, "models/cw2/pistols/w_contender.mdl",            0, type = "sr", slot = 2, vip = true },
+    { "Silverballer",       "cw_silverballer",  0, "models/weapons/w_silverballer.mdl",             0, type = "pt", slot = 2, vip = true },
 }
 
 function RetrieveWeaponName( wepclass )
@@ -133,6 +151,15 @@ function isUnique( class )
     for k, v in pairs( GAMEMODE.WeaponsList ) do
         if class == v[ 2 ] then
             return true
+        end
+    end
+    return false
+end
+
+function IsNonSwepEquipment( class )
+    for k, v in pairs( GAMEMODE.WeaponsList ) do
+        if class == v[ 2 ] then
+            return !weapons.Get( class )
         end
     end
     return false

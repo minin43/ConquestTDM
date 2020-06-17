@@ -10,7 +10,7 @@ function GM:OpenTitles()
     if self.TitleMain and self.TitleMain:IsValid() then return end
 
     self.TitleMain = vgui.Create( "DFrame" )
-    self.TitleMain:SetSize( 600, 500 )
+    self.TitleMain:SetSize( 700, 600 )
 	self.TitleMain:SetTitle( "" )
 	self.TitleMain:SetVisible( true )
 	self.TitleMain:SetDraggable( false )

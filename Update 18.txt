@@ -1,0 +1,42 @@
+Update 1.18	Out 00/00/2020
+
+New Content
+ 1. Added 4 new factions to play on CoD maps, like highrise and terminal (includes 4 of the 6 factions I had playermodels for)
+    - This includes new player callouts, new music, game announcer voice lines, and player models
+ 2. 2 new maps, sh_matlane (thanks to KEKSQUAD), and gm_desert_factory (thanks to Lucid)
+ 3. 5 new equipment items
+    - Flak Jacket (reduces explosive damage)
+    - Hyperweave vest (reduces explosive damage and high-damage-weaponry damage)
+    - Adrenaline shot (regain small amount of missing health and get a speed boost for 30 seconds)
+    - 2x Impulse grenades (launches yourself and enemies into the air for goofy funtime and also fall damage death)
+    - Hexshield grenade (creates a special barrier around the grenade when it lands that protects against projectiles and bullets)
+ 4. VIP members get 5 new VIP-only weapons
+    - The Box (from MGS - DOES NOT FULLY CLOAK THE PLAYER, but does render them almost-invisible)
+    - LR300 assault rifle (mirrors the balancing of the AK-74)
+    - PP-19 Bizon smg (mirrors the balancing of the P90)
+    - G2 Contender sniper rifle (it's a SECONDARY, mirrors the balancing of the L96)
+    - The Silverballer pistol (mirrors the balancing of the M1911)
+
+Bugfixes
+ 1. "Last Second Save" kill event should now play correctly
+ 2. Playermodel selecting and skin selection should now work 100% in the loadout menu
+ 3. Players using Vampir can no longer heal off shooting friendlies
+ 4. Resupply maps should no longer bug out and crash the server, and players should now spawn properly
+ 5. 2x frag grenades, and other non-SWEP equipment options, now no longer bug out the shop screen, and properly display their item description
+ 6. TAC .338 should now be getting all of the attachments available for unlocking
+
+Quality of Life Improvements
+ 1. RockTheVote calls disable the "replay map" button
+ 2. Weapons now drop on the "+menu" bind (this defaults to q), but will also drop on the new bind "+ctdm_dropweapon"
+ 3. TAC .338 and M200 have been tweaked to help quickscoping feel better (may be reverted)
+ 4. Titles menu is now slightly bigger
+
+Balance Changes
+ 1. gm_boreas has had its starting play area expanded slightly and received a new, 4th flag
+ 2. Players now receive 1 less 40MM grenade on regular spawn, and 2 less 40MM grenades when spawning with packrate
+ 3. 
+
+Misc Changes
+ 1. Typing "!discord" or "/discord" in chat will print the discord link
+ 2. Gamemode-related console message printing now all get appropraite [CTDM] tag
+ 3. Separated weapon balancing and weapon fixing into 2 different backend files

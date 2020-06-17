@@ -61,13 +61,17 @@ hook.Add( "RountTimerInc", "ResupplyHalftime", function( secPassed, redTix, blue
                     v:ScreenFade( SCREENFADE.OUT, Color( 0, 0, 0 ), 1, 4 )
                 end
             end
-            timer.Simple( 1.5, function()
+            timer.Simple( 2, function()
+                local ratio = 1 / #player.GetAll()
                 for k, v in pairs( player.GetAll() ) do
                     if v:Team() == 1 or v:Team() == 2 then
-                        v:Spawn()
-                        v:UnLock()
-                        net.Start( "DoStart" )
-                        net.Send( v )
+                        timer.Simple( k * ratio, function()
+                            v:Spawn()
+                            v:UnLock()
+                            GAMEMODE.RespawnPlayer( v )
+                            net.Start( "DoStart" )
+                            net.Send( v )
+                        end )
                     end
                 end
                 GAMEMODE.PreventTeamSwitching = false

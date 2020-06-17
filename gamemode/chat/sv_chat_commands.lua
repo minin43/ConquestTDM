@@ -4,8 +4,6 @@
 local color_red, color_green, color_blue = Color(244, 67, 54), Color(76, 175, 80), Color(33, 150, 243)
 
 hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
-    print("DontRockTheVoteBaby - ", ply, msg)
-
     if #player.GetAll() == 1 then return end
     local stringCheck = string.lower( msg )
     if GAMEMODE.EquippedTitles[ id( ply:SteamID() ) ] then
@@ -47,7 +45,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
                     if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
                         GlobalChatPrintColor( "[RTV] Enough votes have been cast, rocking the vote..." )
                         timer.Simple( 3, function()
-                            hook.Run( "StartMapvote" )
+                            hook.Run( "StartMapvote", true )
                         end )
                         timer.Remove( "RTVTimer" )
                         timer.Create( "RTVCooldownTimer", GAMEMODE.RTVCooldown, 1, function() end ) --Just so we don't get a second RTV called while in mapvote
@@ -62,7 +60,6 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
 end )
 
 hook.Add( "PlayerSay", "TimePlayedCheck", function( ply, msg, teamOnly )
-    print("TimePlayedCheck - ", ply, msg)
     if string.StartWith( msg, "/time" ) or string.StartWith( msg, "!time" ) then
         local timespent = tonumber( ply:GetPData( "g_time", "1" ) )
         ply:ChatPrintColor( color_green, ply:Nick(), Color(255, 255, 255), ", you've spent ", color_green, timespent .. " minutes", Color(255, 255, 255), " playing on the server,",
@@ -72,9 +69,15 @@ hook.Add( "PlayerSay", "TimePlayedCheck", function( ply, msg, teamOnly )
 end )
 
 hook.Add( "PlayerSay", "HelpCheck", function( ply, msg, teamOnly )
-    print("HelpCheck - ", ply, msg)
     if string.StartWith( msg, "/help" ) or string.StartWith( msg, "!help" ) then
         ply:ChatPrintColor( Color(255, 255, 255), "Press F1 to open the menu. Use +context_menu (defaults to c) to customize your gun. The community exists on discord, join with the textbox button!" )
+        return ""
+    end
+end )
+
+hook.Add( "PlayerSay", "DiscordLink", function( ply, msg, teamonly )
+    if string.StartWith( msg, "/discord" ) or string.StartWith( msg, "!discord" ) then
+        GlobalChatPrintColor( Color(255,255,255), "The discord link is: ", color_green, "https://discord.gg/uBSwRbB" )
         return ""
     end
 end )

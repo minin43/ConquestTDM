@@ -2,6 +2,7 @@
 GM.UnlockedMasterTable = GM.UnlockedMasterTable or {}
 GM.UnlockedMasterTableClassKey = GM.UnlockedMasterTableClassKey or {}
 GM.RecacheUnlockedTable = GM.RecacheUnlockedTable or {}
+GM.EquippedWeapons = GM.EquippedWeapons or {}
 
 util.AddNetworkString( "GetUnlockedWeapons" )
 util.AddNetworkString( "GetUnlockedWeaponsCallback" )
@@ -63,7 +64,7 @@ net.Receive( "GetUnlockedWeapons", function( len, ply )
         GAMEMODE.UnlockedMasterTable[ ply ].wep = {}
         GAMEMODE.UnlockedMasterTableClassKey[ ply ].wep = {}
         for k, v in pairs( GAMEMODE.WeaponsList ) do
-            if throwaway[ v[ 2 ] ] or (v[ 3 ] == 0 and v[ 5 ] == 0) then
+            if throwaway[ v[ 2 ] ] or (v[ 3 ] == 0 and v[ 5 ] == 0 and !v.vip) or (v.vip and vip.IsVip( ply )) then
                 table.insert( GAMEMODE.UnlockedMasterTable[ ply ].wep, k )
                 GAMEMODE.UnlockedMasterTableClassKey[ ply ].wep[ v[2] ] = true
             end
@@ -207,165 +208,152 @@ hook.Add( "PlayerInitialSpawn", "SetupPrecacheEnvironment", function( ply )
     GAMEMODE.RecacheUnlockedTable[ ply ] = {wep = true, skin = true, model = true, perk = true}
     GAMEMODE.UnlockedMasterTable[ ply ] = {wep = {}, skin = {}, model = {}, perk = {}}
     GAMEMODE.UnlockedMasterTableClassKey[ ply ] = {wep = {}, skin = {}, model = {}}
+    GAMEMODE.EquippedWeapons[ ply ] = {}
 end ) 
 
-function FixExploit( ply, wep )
-	ply:StripWeapon( wep )
-	local ent = ents.Create( wep )
-	ent:SetPos( ply:GetPos() )
-	ent:Spawn()
-end
+util.AddNetworkString( "CTDMDropWeapon" )
+net.Receive( "CTDMDropWeapon", function( len, ply )
+    if !ply.spawning and ply:Alive() then
+        local todrop = ply:GetActiveWeapon()
 
---To remove when I rework weapon pickup
-function CheckWeapons()
-	for k, v in next, player.GetAll() do
-		if v and v ~= NULL and IsValid( v ) and v:Alive() then
-			if v:GetWeapons() then
-				local foundp = false
-				local founds = false
-				local founde = false
-				for q, w in next, v:GetWeapons() do
-					if isPrimary( w:GetClass() ) then
-						if foundp then
-							FixExploit( v, w:GetClass() )
-						else
-							v.curprimary = w:GetClass()
-							foundp = true
-						end
-					elseif isSecondary( w:GetClass() ) then
-						if founds then
-							FixExploit( v, w:GetClass() )
-						else
-							v.cursecondary = w:GetClass() 
-							founds = true
-						end
-					elseif isExtra( w:GetClass() ) then
-						if founde then
-							FixExploit( v, w:GetClass() )
-						else
-							v.curextra = w:GetClass()
-							founde = true
-						end
-					end
-				end
-				if foundp == false then
-					v.curprimary = nil
-				end
-				if founds == false then
-					v.cursecondary = nil
-				end
-				if founde == false then
-					v.curextra = nil
-				end
-			end
-		end
-	end
-end
-hook.Add( "Think", "CheckPlayersWeapons", CheckWeapons )
-
---//Disabling because we only want players dropping their weapons when they pick up a different one
---To remove when I rework weapon pickup
-hook.Add( "PlayerButtonDown", "DropWeapons", function( ply, bind ) 
-	if bind == KEY_Q then
-		if not ply.spawning then
-			if ply and IsValid( ply ) and ply:IsPlayer() and ply:Team() ~= nil and ply:Team() ~= 0 then
-				if ply:GetActiveWeapon() and ply:GetActiveWeapon() ~= NULL then
-					if isExtra( ply:GetActiveWeapon():GetClass() ) then
-						return
-					end
-					local wep = ply:GetActiveWeapon()
-					local toSpawn = ents.Create( wep:GetClass() )
-					toSpawn:SetClip1( wep:Clip1() )
-					toSpawn:SetClip2( wep:Clip2() )
-					ply:StripWeapon( wep:GetClass() )
-					toSpawn:SetPos( ply:GetShootPos() + ( ply:GetAimVector() * 20 ) )
-					toSpawn:Spawn()
-					toSpawn.rspawn = true
-					timer.Simple( 0.5, function()
-						toSpawn.rspawn = nil
-					end )
-					timer.Simple( 15, function()
-                        if toSpawn == nil or !toSpawn:IsValid() or toSpawn:GetOwner() == nil then 
-                            return 
-                        end -- fixed by cobalt 1/30/16
-						if toSpawn:GetOwner():IsValid() and toSpawn:GetOwner():IsPlayer() then 
-						else
-							toSpawn:Remove()
-						end
-					end )
-					local phys = toSpawn:GetPhysicsObject()
-					if phys and IsValid( phys ) and phys ~= NULL then
-						phys:SetVelocity( ply:EyeAngles():Forward() * 300 )
-					end
-				end
-			end
-		end
-	end
+        if !todrop or !todrop:IsValid() or isExtra( todrop:GetClass() ) then return end
+        
+        if CustomizableWeaponry and todrop.Base == "cw_base" then
+            ply:ConCommand( "cw_dropweapon" )
+            if todrop.Slot == 0 then
+                GAMEMODE.EquippedWeapons[ ply ].prim = nil
+            elseif todrop.Slot == 1 then
+                GAMEMODE.EquippedWeapons[ ply ].sec = nil
+            end
+        else
+            local toSpawn = ents.Create( todrop:GetClass() )
+            toSpawn:SetClip1( todrop:Clip1() )
+            toSpawn:SetClip2( todrop:Clip2() )
+            ply:StripWeapon( todrop:GetClass() )
+            toSpawn:SetPos( ply:GetShootPos() + ( ply:GetAimVector() * 20 ) )
+            toSpawn:Spawn()
+            toSpawn.rspawn = true
+            timer.Simple( 0.5, function()
+                toSpawn.rspawn = nil
+            end )
+            timer.Simple( 15, function()
+                if toSpawn == nil or !toSpawn:IsValid() or toSpawn:GetOwner() == nil then 
+                    return 
+                end -- fixed by cobalt 1/30/16
+                if toSpawn:GetOwner():IsValid() and toSpawn:GetOwner():IsPlayer() then 
+                else
+                    toSpawn:Remove()
+                end
+            end )
+            local phys = toSpawn:GetPhysicsObject()
+            if phys and IsValid( phys ) and phys ~= NULL then
+                phys:SetVelocity( ply:EyeAngles():Forward() * 300 )
+            end
+        end
+    end
 end )
 
---//The point of this is to remove one magazine's worth of ammo from the player's ammo pool - WAS written extremely poorly
-function GM:WeaponEquip( wep )
-	timer.Simple( 0, function() -- this will call the following on the next frame
-		if IsValid( wep ) and wep:GetOwner() then
-			if wep.Base == "cw_base" then
-				wep:GetOwner():RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
-			end
-		end
-	end )
-end
+--Since the standard CW2 drop function doesn't create a wep ent, but prop_physics or some shit, we have to do this hacky work-around
+hook.Add( "OnEntityCreated", "AlterCW2Pickup", function( wep )
+    if wep:GetClass() == "cw_dropped_weapon" then
+        function wep:canPickup(activator)
+            if !activator:IsPlayer() then return end
+            
+            local canPickupWeapon
+            local weptable = RetrieveWeaponTable( self:GetWepClass() )
+            local canPickupAttachments = false
 
---To remove when I rework weapon pickup
+            if self.giveAttachmentsOnPickup then
+                canPickupAttachments = not CustomizableWeaponry:hasSpecifiedAttachments(activator, self.stringAttachmentIDs)
+            end
+
+            --Coulda been a table... buuuuuuut... I'm feeling lazy
+            if weptable.slot == 1 then
+                if GAMEMODE.EquippedWeapons[ activator ].prim == nil then
+                    canPickupWeapon = true
+                else
+                    if GAMEMODE.EquippedWeapons[ activator ].prim == self:GetWepClass() then
+                        activator:GiveAmmo( self.magSize, weapons.GetStored( self:GetWepClass() ).Primary.Ammo )
+                        if !canPickupAttachments then
+                            self:Remove()
+                        end
+                    end
+                end
+            elseif weptable.slot == 2 then
+                if GAMEMODE.EquippedWeapons[ activator ].sec == nil then
+                    canPickupWeapon = true
+                else
+                    if GAMEMODE.EquippedWeapons[ activator ].sec == self:GetWepClass() then
+                        activator:GiveAmmo( self.magSize, weapons.GetStored( self:GetWepClass() ).Primary.Ammo )
+                        if !canPickupAttachments then
+                            self:Remove()
+                        end
+                    end
+                end
+            elseif weptable.slot == 3 then
+                if GAMEMODE.EquippedWeapons[ activator ].equip == nil then
+                    canPickupWeapon = true
+                else
+                    if GAMEMODE.EquippedWeapons[ activator ].equip == self:GetWepClass() then
+                        activator:GiveAmmo( self.magSize, weapons.GetStored( self:GetWepClass() ).Primary.Ammo )
+                        if !canPickupAttachments then
+                            self:Remove()
+                        end
+                    end
+                end
+            end
+            
+            return canPickupWeapon, canPickupAttachments
+        end
+    end
+end )
+
+--When we equip a weapon, mark down which type it is, so we don't pick up others in the future
+hook.Add( "WeaponEquip", "WeaponEquippingShit", function( wep, ply )
+    --If the weapon isn't CW2.0, removes 1 mag of ammo from the player's ammo pool - used to be written really shittily
+	timer.Simple( 0, function()
+		if IsValid( wep ) and IsValid( ply ) then
+			if wep.Base != "cw_base" then
+				ply:RemoveAmmo( wep:Clip1(), wep:GetPrimaryAmmoType() )
+			end
+		end
+    end )
+    
+    local wepclass = wep:GetClass()
+    if isPrimary( wepclass ) then
+        GAMEMODE.EquippedWeapons[ ply ].prim = wepclass
+    elseif isSecondary( wepclass ) then
+        GAMEMODE.EquippedWeapons[ ply ].sec = wepclass
+    elseif isExtra( wepclass ) then
+        GAMEMODE.EquippedWeapons[ ply ].equip = wepclass
+    end
+end )
+
+--CW2 guns need not apply, prevents doubling up on weapons if we start introducing non-CW2 primaries and secondaries
 hook.Add( "PlayerCanPickupWeapon", "NoAutoPickup", function( ply, wep )
-	--return --This will be done with a button prompt
+    if wep.Base == "cw_base" then return end
+
 	if isPrimary( wep:GetClass() ) then
-		if ply.curprimary == nil then
-			if wep.rspawn then
-				return false
-			else
-				return true
-			end
-		else
-			return false
-		end
-	elseif isSecondary( wep:GetClass() ) then
-		if ply.cursecondary == nil then
-			if wep.rspawn then
-				return false
-			else		
-				return true
-			end
-		else
-			return false
-		end
-	elseif isExtra( wep:GetClass() ) then
-		if ply.curextra == nil then
-			if wep.rspawn then
-				return false
-			else		
-				return true
-			end
-		else
-			return false
-		end
+        return GAMEMODE.EquippedWeapons[ ply ].prim == nil
+    elseif isSecondary( wep:GetClass() ) then
+        return GAMEMODE.EquippedWeapons[ ply ].sec == nil
+    elseif isExtra( wep:GetClass() ) then
+        return
 	end
 end )
 
 --//Used to remove dropped weapons to prevent entity buildup
-hook.Add( "PlayerDeath", "ClearDroppedWeapons", function( ply )
-	if ply.LastUsedWep then
-		if !isUnique( ply.LastUsedWep) and !isExtra( ply.LastUsedWep ) then
-			local ent = ents.Create( ply.LastUsedWep )
-			ent:SetPos( ply:GetPos() )
-			ent:Spawn()
-			timer.Simple( 60, function()
-				if ent and ent:IsValid() then
-					ent:Remove()
-				end
-			end )
-		end
-	end
-	--To remove when I rework weapon pickup
-	ply.curprimary = nil
-	ply.cursecondary = nil
-	ply.curextra = nil
+hook.Add( "OnEntityCreated", "DeleteCW2Drops", function( wep )
+    if wep:GetClass() == "cw_dropped_weapon" then
+        timer.Simple( 60, function()
+            if wep and wep:IsValid() then
+                wep:Remove()
+            end
+        end )
+    end
+end)
+
+--Reset backend saved data on player death
+hook.Add( "PlayerDeath", "ClearWeapons", function( ply )
+	GAMEMODE.EquippedWeapons[ ply ] = {}
 end )

@@ -24,7 +24,7 @@ hook.Add( "PostGiveLoadout", "Packrat", function( ply )
 				ply:GiveAmmo( ( y * 6 ), x, true )
 			end
 		end
-		ply:GiveAmmo( 4, "40MM", true )
+		ply:GiveAmmo( 2, "40MM", true )
 	end
 end )
 

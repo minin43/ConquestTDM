@@ -265,7 +265,7 @@ wep_att[ "cw_contender" ] = {
 }
 
 --//Constructs a list of attachments for each CW2.0 gun, whether it's used or not. A lot less time consuming than manually adding each attachment to a table with a kill value
-function ConstructAttachmentLists()
+function GM:ConstructAttachmentLists()
 	print( "[CTDM] Auto-constructing attachment hierarchies..." )
 	
 	for k, v in pairs( weapons.GetList() ) do
@@ -321,7 +321,15 @@ function ConstructAttachmentLists()
 		end
 	end
 end
-hook.Add( "InitPostEntity", "ST_ConstructAttachmentLists", ConstructAttachmentLists )
+
+ConstructAttachmentLists = GM.ConstructAttachmentLists
+hook.Add( "InitPostEntity", "ST_ConstructAttachmentLists", function()
+    if GAMEMODE.BalanceWeapons and !GAMEMODE.BalancedWeapons then
+        GAMEMODE.BalancedWeapons = true
+        GAMEMODE:BalanceWeapons()
+        GAMEMODE:ConstructAttachmentLists()
+    end
+end )
 
 function GetStatTrak( ply, wep )
 	if not ply:GetPData( wep ) then

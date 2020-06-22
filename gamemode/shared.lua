@@ -2,7 +2,7 @@ GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Cobalt, Whuppo, Logan"
 GM.Email = "lobsterlogan43@yahoo.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.16"
+GM.Version = "Conquest Team Deathmatch V. 1.18"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
@@ -124,15 +124,20 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
         tags = { "resupply" } },
     [ "npc_galleria_mess" ] = { id = 758683686, size = "Large", img = "vgui/maps/galleria.png", type = "hl2",
         tags = { } },
-    [ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", mapevents = { 1576, 1577, 1578, 1579 },
-        tags = { } },
+    --[ "rp_limanskhospital" ] = { id = 1805815551, size = "Midsize", img = "vgui/maps/limansk.png", type = "ins2", mapevents = { 1576, 1577, 1578, 1579 },
+        --tags = { } },
     [ "gm_explore_tunnels" ] = { id = 1529025790, size = "Large", img = "vgui/maps/tunnel.png", type = "hl2",
         tags = { } },
     --Update 1.18
-    [ "sh_matlane_a2" ] = { id = 903231200, size = "Massive", img = "vgui/maps/.png", type = "ins2",
+    [ "sh_matlane_a2" ] = { id = 903231200, size = "Massive", img = "vgui/maps/matlane.png", type = "ins2",
         tags = { } },
-    [ "gm_desert_factory" ] = { id = 2096153942, size = "Midsize", img = "vgui/maps/.png", type = "ins2",
+    [ "gm_desert_factory" ] = { id = 2096153942, size = "Midsize", img = "vgui/maps/desert_factory.png", type = "ins2",
         tags = { "snipers" } },
+    --Update 1.19
+    [ "ttt_tarnish_v1" ] = { id = 551416188, size = "Midsize", img = "vgui/maps/tarnish.png", type = "ins2",
+        tags = { } },
+    [ "ttt_cod4_vacant" ] = { id = 176894422, size = "Midsize", img = "vgui/maps/vacant.png", type = "mw2",
+        tags = { } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
 	--[ "ttt_bf3_scrapmetal" ] = { id = 228105814, size = "Large", img = "vgui/maps/bf3_scrapmetal.png", type = "mw2" }, --Incredibly unoptimized, bad on framerates
@@ -173,7 +178,8 @@ GM.DependentDownloads = {
 if SERVER then
     --Weapons
 	resource.AddWorkshop( "349050451" ) --CW2.0 Base
-	resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
+    resource.AddWorkshop( "358608166" ) --CW2.0 Extra Weapons
+    resource.AddWorkshop( "707343339" ) --CW2.0 melee
 	resource.AddWorkshop( "2125483966" ) --The 6 new guns (CTDM content pack guns)
 	resource.AddWorkshop( "934839887" ) --The L96
 	resource.AddWorkshop( "526188110" ) --Scorpion EVO

@@ -11,6 +11,8 @@ Future ideas:
         - cs_east_borough, stairs that look into red spawn
         - de_boston has spawns on the wrong side of the map, and red team has 2 spawns
         - de_keystone, easy for both spawns to be spawnkilled from, red has it worse
+        - rp_limansk blue side spawn fucking SUCKS
+        - gm_lasertag could use new spawns
     - Perk ideas
         - Donasan - shooting friendlies heals them
         - Perk MASTERY (essentially is play-to-win, after reaching an achievement with the perk, get extra bonuses)
@@ -19,3 +21,5 @@ Future ideas:
         1. name & title (title should go ABOVE the name, not before it)
         2. extra fun info (all currently shown info, plus kills on and deaths against for this game)
         3. tooltip if needed (if you keep dying to a specific perk)
+    - Loadouts can carry across maps
+    - Scoreboard should look at extra VIP groups

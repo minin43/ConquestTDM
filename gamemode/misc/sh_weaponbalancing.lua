@@ -5,7 +5,7 @@
     Dunno how VelocitySensitivity plays into accuracy penalties, only that it does.
 ]]
 
-hook.Add( "InitPostEntity", "WeaponBalancing", function()
+function GM:BalanceWeapons()
     print("[CTDM] Balancing the weapons...")
 
     --//Primary Weapons
@@ -1144,7 +1144,7 @@ hook.Add( "InitPostEntity", "WeaponBalancing", function()
 
     --Most balancing for these equipment can be found natively in the entities folder, or in sh_weaponfixing.lua
     local standardEquip = { "cw_flash_grenade", "cw_smoke_grenade", "impulse_grenade", "weapon_hexshield", "weapon_cbox", "sg_adrenaline", "weapon_medkit", "medkit_slow",
-                                "medkit_fast", "medkit_full" }
+                                "medkit_fast", "medkit_full", "cw_extrema_ratio_official" }
     for k, v in pairs( standardEquip ) do 
         if weapons.Get( v ) then
             local wep = weapons.GetStored( v )
@@ -1152,6 +1152,15 @@ hook.Add( "InitPostEntity", "WeaponBalancing", function()
         end
     end
     
+    --GAMEMODE:ConstructAttachmentLists()
+end
+
+hook.Add( "InitPostEntity", "WeaponBalancing", function()
+    if GAMEMODE.ConstructAttachmentLists and !GAMEMODE.BalancedWeapons then
+        GAMEMODE:BalanceWeapons()
+        GAMEMODE:ConstructAttachmentLists()
+        GAMEMODE.BalancedWeapons = true
+    end
 end )
 
 hook.Add( "OnEntityCreated", "EntBalancing&Fixing", function( ent )

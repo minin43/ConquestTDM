@@ -606,6 +606,7 @@ function giveLoadout( ply )
 		end
     end
     
+    ply:Give( "cw_extrema_ratio_official" )
     ply:Give( "weapon_fists" )
 end
 

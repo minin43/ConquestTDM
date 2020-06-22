@@ -108,6 +108,14 @@ GM.Icons = {
         voiceoverIcon = Material( "vgui/voiceover_icon.png", "smooth" ),
         bodyarmorIcon = Material( "vgui/bodyarmor_icon.png", "smooth" ),
         vipIcon = Material( "vgui/vip_icon.png", "smooth" )
+    },
+    Scoreboard = {
+        vipIcon = Material( "icon16/award_star_bronze_3.png" ),
+        [ "vip+Icon" ] = Material( "icon16/award_star_silver_3.png" ),
+        ultravipIcon = Material( "icon16/award_star_gold_3.png" ),
+        staffIcon = Material( "icon16/shield.png" ),
+        adminIcon = Material( "icon16/key.png" ),
+        ownerIcon = Material( "icon16/star.png" )
     }
 }
 

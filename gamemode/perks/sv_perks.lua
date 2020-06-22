@@ -70,11 +70,20 @@ function RegisterPerk( name, value, lvl, hint )
 end
 
 function CheckPerk( ply )
-	if ply:IsPlayer() and GAMEMODE.PlayerLoadouts[ ply ] ~= nil then
+	--[[if ply:IsPlayer() and GAMEMODE.PlayerLoadouts[ ply ] ~= nil then
 		if ply.perk and GAMEMODE.PlayerLoadouts[ ply ].perk then
 			return GAMEMODE.PlayerLoadouts[ ply ].perk
 		end
-	end
+    end]]
+    if ply and ply:IsValid() and ply:IsPlayer() then
+        if GAMEMODE.PerkTracking[ id( ply:SteamID() ) ] then
+            return GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk 
+        elseif GAMEMODE.PlayerLoadouts[ ply ] then
+            return GAMEMODE.PlayerLoadouts[ ply ].perk
+        else
+            return "none"
+        end
+    end
 end
 
 function GetPerkTable( perkid )

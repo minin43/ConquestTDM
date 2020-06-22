@@ -14,83 +14,30 @@ local muteicon = Material( "icon16/sound.png" )
 local cardicon = Material( "icon16/vcard.png" )
 local deadicon = Material( "icon16/status_offline.png" )
 
-local levelgroups = {
-	{ 101, "101", "materials/ranks/101.png"},
-	{ 102, "102", "materials/ranks/102.png"},
-	{ 103, "103", "materials/ranks/103.png"},
-	{ 104, "104", "materials/ranks/104.png"},
-	{ 105, "105", "materials/ranks/105.png"},
-	{ 106, "106", "materials/ranks/106.png"},
-	{ 107, "107", "materials/ranks/107.png"},
-	{ 108, "108", "materials/ranks/108.png"},
-	{ 109, "109", "materials/ranks/109.png"},
-	{ 110, "110", "materials/ranks/110.png"},
-	{ 111, "111", "materials/ranks/111.png"},
-	{ 112, "112", "materials/ranks/112.png"},
-	{ 113, "113", "materials/ranks/113.png"},
-	{ 114, "114", "materials/ranks/114.png"},
-	{ 115, "115", "materials/ranks/115.png"},
-	{ 116, "116", "materials/ranks/116.png"},
-	{ 117, "117", "materials/ranks/117.png"},
-	{ 118, "118", "materials/ranks/118.png"},
-	{ 119, "119", "materials/ranks/119.png"},
-	{ 120, "120", "materials/ranks/120.png"},
-	{ 121, "121", "materials/ranks/121.png"},
-	{ 122, "122", "materials/ranks/122.png"},
-	{ 123, "123", "materials/ranks/123.png"},
-	{ 124, "124", "materials/ranks/124.png"},
-	{ 125, "125", "materials/ranks/125.png"},
-	{ 126, "126", "materials/ranks/126.png"},
-	{ 127, "127", "materials/ranks/127.png"},
-	{ 128, "128", "materials/ranks/128.png"},
-	{ 129, "129", "materials/ranks/129.png"},
-	{ 130, "130", "materials/ranks/130.png"},
-	{ 131, "General", "materials/ranks/Reach-General.png" },
-	{ 132, "General [Grade 1]", "materials/ranks/Reach-GeneralG1.png" },
-	{ 133, "General [Grade 2]", "materials/ranks/Reach-GeneralG2.png" },
-	{ 134, "General [Grade 3]", "materials/ranks/Reach-GeneralG3.png" },
-	{ 135, "General [Grade 4]", "materials/ranks/Reach-GeneralG4.png" },
-	{ 136, "Field Marshall", "materials/ranks/Reach-FieldMarshall.png" },
-	{ 137, "Hero", "materials/ranks/Reach-Hero.png" },
-	{ 138, "Legend", "materials/ranks/Reach-Legend.png" },
-	{ 139, "Mythic", "materials/ranks/Reach-Mythic.png" },
-	{ 140, "Noble", "materials/ranks/Reach-Noble.png" },
-	{ 141, "Eclipse", "materials/ranks/Reach-Eclipse.png" },
-	{ 142, "Nova", "materials/ranks/Reach-Nova.png" },
-	{ 143, "Forerunner", "materials/ranks/Reach-Forerunner.png" },
-	{ 144, "Reclaimer", "materials/ranks/Reach-Reclaimer.png" },
-	{ 145, "Inheritor", "materials/ranks/Reach-Inheritor.png" },
-	{ 146, "New", "materials/ranks/Reach-New.png" },
-	{ 150, "150", "materials/ranks/150.png" }
-}
+local levelgroups = {} --Since I don't allow people to go above 100, this became useless
 
 local icongroups = {
-	{ "operator", "Operator", "icon16/shield.png" }, 
-	{ "admin", "Admin", "icon16/shield.png" },
-	{ "superadmin", "Super Admin", "icon16/shield.png" },
-	{ "headadmin", "Head Admin", "icon16/shield.png" },
-	{ "coowner", "Co-Owner", "icon16/shield.png" },
-	{ "ultravip", "Ultra VIP", "icon16/star.png" },
-	{ "vip+", "VIP+", "icon16/star.png" },
-	{ "vip", "VIP", "icon16/star.png" },
-	{ "VIP Admin", "Admin", "icon16/star.png" },
-	{ "VIP Operator", "Operator", "icon16/star.png" }
 }
 
-local colors = {
-	{ "creator", Color( 255, 0, 0, 255 ) },
-	{ "vip", Color( 56, 177, 242, 255 ) },
-	{ "vip+", Color( 56, 177, 242, 255 ) },
-	{ "ultravip", Color( 56, 177, 242, 255 ) },
-	{ "owner", Color( 200, 0, 0, 255 ) },
-	{ "coowner", Color( 200, 0, 0, 255 ) },
-	{ "betatester", Color( 180, 180, 180, 255 ) },
-	{ "superadmin", Color( 0, 230, 0, 255 ) },
-	{ "admin", Color( 220, 180, 0, 255 ) },
-	{ "limitedadmin", Color( 205, 127, 50, 255 ) },
-	{ "headadmin", Color( 255, 20, 147, 255 ) },
-	{ "user", Color( 255, 255, 255 ) }
+local scoreboardIcons = {
 }
+
+local vipInfo = {
+    vip = { col = Color(  52, 152, 219 ), icons = { GM.Icons.Scoreboard.vipIcon } },
+	["vip+"] = { col = Color( 155, 89, 182 ), icons = { GM.Icons.Scoreboard[ "vip+Icon" ] } },
+	ultravip = { col = Color( 173, 20, 87 ), icons = { GM.Icons.Scoreboard.ultravipIcon } },
+    vipmod = { col = Color( 52, 152, 219 ), icons = { GM.Icons.Scoreboard.staffIcon, GM.Icons.Scoreboard.vipIcon } },
+    ["vip+mod"] = { col = Color( 155, 89, 182 ), icons = { GM.Icons.Scoreboard.staffIcon, GM.Icons.Scoreboard[ "vip+Icon" ] } },
+    ultravipmod = { col = Color( 173, 20, 87 ), icons = { GM.Icons.Scoreboard.staffIcon, GM.Icons.Scoreboard.ultravipIcon } },
+    dev = { col = Color( 241, 196, 15 ), icons = { GM.Icons.Scoreboard.staffIcon, GM.Icons.Scoreboard.adminIcon, GM.Icons.Scoreboard.ownerIcon } },
+    superadmin = { col = Color( 241, 196, 15 ), icons = { GM.Icons.Scoreboard.staffIcon, GM.Icons.Scoreboard.adminIcon } },
+    admin = { col = Color( 46, 204, 113 ), icons = { GM.Icons.Scoreboard.staffIcon } },
+    operator = { col = Color( 26, 188, 156 ), icons = { GM.Icons.Scoreboard.staffIcon } },
+    trialmod = { col = Color( 26, 188, 156 ), icons = { GM.Icons.Scoreboard.staffIcon } },
+    user = { col = Color( 0, 0, 0 ), icons = {} }
+}
+
+local colors = {}
 
 local headers = {
 	"Score",
@@ -268,7 +215,11 @@ local function CreateScoreboard()
 	dlist2:SetSpacing( 2 )
 	
 	AddSpacer( 1, 1 )
-	AddSpacer( 1, 2 )
+    AddSpacer( 1, 2 )
+    
+    --[[for k, v in pairs( player.GetAll() ) do
+        local 
+    end]]
 	
 	for k, v in next, team.GetSortedPlayers( 1 ) do
         if !IsValid( v ) then continue end
@@ -282,33 +233,8 @@ local function CreateScoreboard()
 			end
 		end
 
-		local col
-		local group = v:GetUserGroup()
-		for k, v in next, colors do
-			if group == v[ 1 ] then
-				col = v[ 2 ]
-				break
-			end
-		end
-
-		local rank
-		for l, m in next, icongroups do
-			if v:SteamID() == m[ 1 ] then
-				rank = Material( m[ 3 ] )
-				break
-			elseif group == m[ 1 ] then
-				rank = Material( m[ 3 ] )
-				break
-			end
-		end
-
-		local prestige
-		for j, n in next, levelgroups do
-			if tonumber( v:GetNWString( "level" ) ) == n[ 1 ] then
-				prestige = Material( n[ 3 ] )
-				break
-			end
-		end
+        local col = vipInfo[ v:GetUserGroup() ].col or Color( 0, 0, 0 )
+        local rank = vipInfo[ v:GetUserGroup() ].icons or {}
 
 		local btn = p:Add( "DButton" )
 		btn:SetPos( 0, 0 )
@@ -343,15 +269,7 @@ local function CreateScoreboard()
 					draw.SimpleText( text, "Exo 2 Content Blur", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 					draw.SimpleText( text, "Exo 2 Content", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42, btn:GetTall() / 2 - 1, black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 				else
-					if ( tonumber( v:GetNWString( "level" ) ) ) > 100 then
-						surface.SetMaterial( prestige )
-						surface.SetDrawColor( black )
-						surface.DrawTexturedRect( btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 16 + 1, 6 + 1, 16, 16 )
-						surface.SetDrawColor( white )
-						surface.DrawTexturedRect( btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 16, 6, 16, 16 )
-						draw.SimpleText( text, "Exo 2 Content Blur", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 19 + 1, btn:GetTall() / 2 + 1 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-						draw.SimpleText( text, "Exo 2 Content", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 19, btn:GetTall() / 2 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-					elseif ( tonumber( v:GetNWString( "level" ) ) ) >= 100 then
+					if ( tonumber( v:GetNWString( "level" ) ) ) >= 100 then
 						draw.SimpleText( text, "Exo 2 Content Blur", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 + 1, btn:GetTall() / 2 + 1 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 						draw.SimpleText( text, "Exo 2 Content", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42, btn:GetTall() / 2 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 					else
@@ -363,17 +281,16 @@ local function CreateScoreboard()
 				width = width + _width - 2
 			end
 
-			--ANATA NO NAMAE WA NAN DESU KA
-			if rank then
-				surface.SetMaterial( rank )
-				surface.SetDrawColor( white )
-				surface.DrawTexturedRect( 39, 6, 16, 16 )
-				draw.SimpleText( v:Nick(), "Exo 2 Content Blur", 39 + 16 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-				draw.SimpleText( v:Nick(), "Exo 2 Content", 39 + 16, btn:GetTall() / 2 - 1, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			else
-				draw.SimpleText( v:Nick(), "Exo 2 Content Blur", 39 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-				draw.SimpleText( v:Nick(), "Exo 2 Content", 39, btn:GetTall() / 2 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			end
+            local count = 0
+            for k, v in pairs( rank ) do
+                surface.SetMaterial( v )
+                surface.SetDrawColor( white )
+                surface.DrawTexturedRect( (count * 17) + 32, 6, 16, 16 )
+                count = count + 1
+            end
+
+            draw.SimpleText( v:Nick(), "Exo 2 Content Blur", (count * 17) + 34 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+            draw.SimpleText( v:Nick(), "Exo 2 Content", (count * 17) + 34, btn:GetTall() / 2 - 1, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		
 			surface.SetDrawColor( 0, 0, 0, 64 )
 			surface.DrawRect( 0, btn:GetTall() - 1, btn:GetWide(), 1 )
@@ -624,33 +541,8 @@ local function CreateScoreboard()
 			end
 		end
 
-		local col
-		local group = v:GetUserGroup()
-		for k, v in next, colors do
-			if group == v[ 1 ] then
-				col = v[ 2 ]
-				break
-			end
-		end
-
-		local rank
-		for l, m in next, icongroups do
-			if v:SteamID() == m[ 1 ] then
-				rank = Material( m[ 3 ] )
-				break
-			elseif group == m[ 1 ] then
-				rank = Material( m[ 3 ] )
-				break
-			end
-		end
-
-		local prestige
-		for j, n in next, levelgroups do
-			if tonumber( v:GetNWString( "level" ) ) == n[ 1 ] then
-				prestige = Material( n[ 3 ] )
-				break
-			end
-		end
+		local col = vipInfo[ v:GetUserGroup() ].col or Color( 0, 0, 0 )
+        local rank = vipInfo[ v:GetUserGroup() ].icons or {}
 
 		local btn = p:Add( "DButton" )
 		btn:SetPos( 0, 0 )
@@ -685,15 +577,7 @@ local function CreateScoreboard()
 					draw.SimpleText( text, "Exo 2 Content Blur", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 					draw.SimpleText( text, "Exo 2 Content", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42, btn:GetTall() / 2 - 1, black, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 				else
-					if ( tonumber( v:GetNWString( "level" ) ) ) > 100 then
-						surface.SetMaterial( prestige )
-						surface.SetDrawColor( black )
-						surface.DrawTexturedRect( btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 16 + 1, 6 + 1, 16, 16 )
-						surface.SetDrawColor( white )
-						surface.DrawTexturedRect( btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 16, 6, 16, 16 )
-						draw.SimpleText( text, "Exo 2 Content Blur", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 19 + 1, btn:GetTall() / 2 + 1 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-						draw.SimpleText( text, "Exo 2 Content", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 - 19, btn:GetTall() / 2 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-					elseif ( tonumber( v:GetNWString( "level" ) ) ) >= 100 then
+					if ( tonumber( v:GetNWString( "level" ) ) ) >= 100 then
 						draw.SimpleText( text, "Exo 2 Content Blur", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42 + 1, btn:GetTall() / 2 + 1 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 						draw.SimpleText( text, "Exo 2 Content", btn:GetWide() - width - ( 29 * ( k - 1 ) ) - 20 - 42, btn:GetTall() / 2 - 1, Color( 218, 165, 32 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 					else
@@ -705,17 +589,16 @@ local function CreateScoreboard()
 				width = width + _width - 2
 			end
 
-			--ANATA NO NAMAE WA NAN DESU KA
-			if rank then
-				surface.SetMaterial( rank )
-				surface.SetDrawColor( white )
-				surface.DrawTexturedRect( 39, 6, 16, 16 )
-				draw.SimpleText( v:Nick(), "Exo 2 Content Blur", 39 + 16 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-				draw.SimpleText( v:Nick(), "Exo 2 Content", 39 + 16, btn:GetTall() / 2 - 1, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			else
-				draw.SimpleText( v:Nick(), "Exo 2 Content Blur", 39 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-				draw.SimpleText( v:Nick(), "Exo 2 Content", 39, btn:GetTall() / 2 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-			end
+			local count = 0
+            for k, v in pairs( rank ) do
+                surface.SetMaterial( v )
+                surface.SetDrawColor( white )
+                surface.DrawTexturedRect( (count * 17) + 32, 6, 16, 16 )
+                count = count + 1
+            end
+
+            draw.SimpleText( v:Nick(), "Exo 2 Content Blur", (count * 17) + 34 + 1, btn:GetTall() / 2 + 1 - 1, black, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+            draw.SimpleText( v:Nick(), "Exo 2 Content", (count * 17) + 34, btn:GetTall() / 2 - 1, col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		
 			surface.SetDrawColor( 0, 0, 0, 64 )
 			surface.DrawRect( 0, btn:GetTall() - 1, btn:GetWide(), 1 )

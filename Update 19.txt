@@ -1,0 +1,29 @@
+Update 1.19	Out 00/00/2020
+
+New Content
+ 1. 2 new maps: ttt_cod4_vacant, and ttt_tarnish_v1
+
+Bugfixes
+ 1. The following maps have all received exploit fixes:
+    - de_boston
+    - de_halo_battlecreek
+    - gm_boreas
+    - ttt_mw2_scrapyard
+    - ttt_mw2_terminal
+ 2. Fixed issues with certain weapons giving non-existent attachments
+ 3. Fixed issue with perk tracking, and being able to game certain perks by editing your loadout while alive
+
+Quality of Life Improvements
+ 1. Added the Extrema Ratio melee weapon, given to everyone on spawn (along with your fists)
+ 2. Added new Scoreboard icons, for all VIP roles, as well as staff roles
+
+Balance Changes
+ 1. The following maps have all received balance changes:
+    - de_boston, had some of the map sectioned off and spawns swapped
+    - de_halo_battlecreek, spawns cleaned up, teleporter has been opened up, and added a center flag (no longer a TDM map)
+    - gm_desert_factory, added stairs and props in, so both sides can easily get to the center flag
+    - gm_lasertag, reworked spawn areas
+    - de_keystone_beta, added props in to protect both spawns from spawn-camping
+
+Misc Changes
+ 1. Removed rp_limanks from the map queue, until blue spawn is fixed & rebalanced

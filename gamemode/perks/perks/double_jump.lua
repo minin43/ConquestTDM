@@ -14,6 +14,7 @@ tf2_dbjumpsound = {
 }
 
 hook.Add( "SetupMove", "DoubleJump", function( ply, mv, cmd )
+    if !ply:Alive() then return end
 	ply.CanDoubleJump = ply.CanDoubleJump and true
 
 	if CheckPerk( ply ) == "doublejump" then

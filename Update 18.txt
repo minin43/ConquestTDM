@@ -1,4 +1,4 @@
-Update 1.18	Out 00/00/2020
+Update 1.18	Out 06/17/2020
 
 New Content
  1. Added 4 new factions to play on CoD maps, like highrise and terminal (includes 4 of the 6 factions I had playermodels for)
@@ -33,7 +33,7 @@ Quality of Life Improvements
 
 Balance Changes
  1. gm_boreas has had its starting play area expanded slightly and received a new, 4th flag, as well as a bunch of new props to block lines of sight
- 2. Players now receive 1 less 40MM grenade on regular spawn, and 2 less 40MM grenades when spawning with packrate
+ 2. Players now receive 1 less 40MM grenade on regular spawn, and 2 less 40MM grenades when spawning with packrat
 
 Misc Changes
  1. Typing "!discord" or "/discord" in chat will print the discord link

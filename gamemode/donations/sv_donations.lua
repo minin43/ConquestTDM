@@ -42,7 +42,10 @@ vip.Groups = { --Multiplier %
 	vip = 0.10,
 	["vip+"] = 0.15,
 	ultravip = 0.20,
-	staff = 0.05
+    staff = 0.05,
+    vipmod = 0.15,
+    ["vip+mod"] = 0.20,
+    ultravipmod = 0.25
 }
 
 vip.ULiBStaffRoles = {

@@ -233,8 +233,16 @@ local function CreateScoreboard()
 			end
 		end
 
-        local col = vipInfo[ v:GetUserGroup() ].col or Color( 0, 0, 0 )
-        local rank = vipInfo[ v:GetUserGroup() ].icons or {}
+        local col
+        local rank
+        local group = string.lower(v:GetUserGroup())
+        if vipInfo[ group ] then
+            col = vipInfo[ group ].col or Color( 0, 0, 0 )
+            rank = vipInfo[ group ].icons or {}
+        else
+            col = Color( 0, 0, 0 )
+            rank = {}
+        end
 
 		local btn = p:Add( "DButton" )
 		btn:SetPos( 0, 0 )
@@ -541,8 +549,16 @@ local function CreateScoreboard()
 			end
 		end
 
-		local col = vipInfo[ v:GetUserGroup() ].col or Color( 0, 0, 0 )
-        local rank = vipInfo[ v:GetUserGroup() ].icons or {}
+		local col
+        local rank
+        local group = string.lower(v:GetUserGroup())
+        if vipInfo[ group ] then
+            col = vipInfo[ group ].col or Color( 0, 0, 0 )
+            rank = vipInfo[ group ].icons or {}
+        else
+            col = Color( 0, 0, 0 )
+            rank = {}
+        end
 
 		local btn = p:Add( "DButton" )
 		btn:SetPos( 0, 0 )

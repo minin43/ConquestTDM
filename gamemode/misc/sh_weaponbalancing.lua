@@ -1151,16 +1151,12 @@ function GM:BalanceWeapons()
             wep.Slot = 2
         end
     end
-    
-    --GAMEMODE:ConstructAttachmentLists()
 end
 
-hook.Add( "InitPostEntity", "WeaponBalancing", function()
-    if GAMEMODE.ConstructAttachmentLists and !GAMEMODE.BalancedWeapons then
-        GAMEMODE:BalanceWeapons()
-        GAMEMODE:ConstructAttachmentLists()
-        GAMEMODE.BalancedWeapons = true
-    end
+hook.Add( "PostWeaponFixing", "WeaponBalancing", function()
+    GAMEMODE:BalanceWeapons()
+
+    hook.Call( "PostWeaponBalancing", GAMEMODE )
 end )
 
 hook.Add( "OnEntityCreated", "EntBalancing&Fixing", function( ent )

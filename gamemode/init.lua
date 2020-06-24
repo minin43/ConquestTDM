@@ -315,9 +315,10 @@ function GM:EndRound( win )
 		if timer.RepsLeft( "notify_players" ) % 5 == 0 then
 			GlobalChatPrintColor( color_white, "Mapvote will start in ", color_green, tostring( timer.RepsLeft( "notify_players" ) ) .. " seconds", color_white, "." )
 		end
-	end )
+    end )
+    
 	timer.Simple( self.PostGameCountdown, function()
-		hook.Call( "StartMapvote", nil, win )
+		hook.Call( "StartMapvote", GAMEMODE, win )
 		if MAPVOTE then
 			MAPVOTE:StartMapVote()
 		end

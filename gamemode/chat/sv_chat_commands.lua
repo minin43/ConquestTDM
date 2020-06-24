@@ -45,7 +45,7 @@ hook.Add( "PlayerSay", "DontRockTheVoteBaby", function( ply, msg, teamOnly )
                     if GAMEMODE.TotalRTVVotes >= GAMEMODE.NecessaryRTVVotes then
                         GlobalChatPrintColor( "[RTV] Enough votes have been cast, rocking the vote..." )
                         timer.Simple( 3, function()
-                            hook.Run( "StartMapvote", true )
+                            hook.Run( "StartMapvote", nil, true )
                         end )
                         timer.Remove( "RTVTimer" )
                         timer.Create( "RTVCooldownTimer", GAMEMODE.RTVCooldown, 1, function() end ) --Just so we don't get a second RTV called while in mapvote

@@ -451,6 +451,7 @@ hook.Add( "InitPostEntity", "FixWeapons", function()
         end
     end]]
 
+    hook.Call( "PostWeaponFixing", GAMEMODE )
 end )
 
 --FOV altering necessary for the adrenaline shot changes

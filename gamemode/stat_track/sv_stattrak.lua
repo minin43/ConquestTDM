@@ -323,12 +323,10 @@ function GM:ConstructAttachmentLists()
 end
 
 ConstructAttachmentLists = GM.ConstructAttachmentLists
-hook.Add( "InitPostEntity", "ST_ConstructAttachmentLists", function()
-    if GAMEMODE.BalanceWeapons and !GAMEMODE.BalancedWeapons then
-        GAMEMODE.BalancedWeapons = true
-        GAMEMODE:BalanceWeapons()
-        GAMEMODE:ConstructAttachmentLists()
-    end
+hook.Add( "PostWeaponBalancing", "ConstructAttachmentLists", function()
+    ConstructAttachmentLists()
+
+    hook.Run( "PostAttachmentConstruction" )
 end )
 
 function GetStatTrak( ply, wep )

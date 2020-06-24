@@ -1,8 +1,8 @@
 GM.Name = "Conquest Team Deathmatch"
-GM.Author = "Cobalt, Whuppo, Logan"
-GM.Email = "lobsterlogan43@yahoo.com"
+GM.Author = "Logan, Whuppo, Cobalt"
+GM.Email = "conquesttdm@gmail.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.18"
+GM.Version = "Conquest Team Deathmatch V. 1.19"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 
@@ -137,6 +137,22 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
     [ "ttt_tarnish_v1" ] = { id = 551416188, size = "Midsize", img = "vgui/maps/tarnish.png", type = "ins2",
         tags = { } },
     [ "ttt_cod4_vacant" ] = { id = 176894422, size = "Midsize", img = "vgui/maps/vacant.png", type = "mw2",
+        tags = { } },
+    [ "ttt_cwoffice2019_v3" ] = { id = 1659123269, size = "Large", img = "vgui/maps/office2019.png", type = "ins2",
+        tags = { } },
+    [ "ttt_heaven" ] = { id = 877419567, size = "Large", img = "vgui/maps/heaven.png", --type = "ins2",
+        tags = { "snipers" } },
+    [ "ttt_zeta" ] = { id = 2112794784, size = "Midsize", img = "vgui/maps/zeta.png", type = "hl2",
+        tags = { } },
+    [ "dm_canals" ] = { id = 108953008, size = "Midisze", img = "vgui/maps/canals.png", type = "hl2",
+        tags = { } },
+    [ "dm_powerhouse" ] = { id = 1644225588, size = "Midisze", img = "vgui/maps/powerhouse.png", type = "hl2", --This map comes in a pack, should use the others
+        tags = { } },
+    [ "dm_steamlab" ] = { id = 1644225588, size = "Small", img = "vgui/maps/steamlab.png", type = "hl2",
+        tags = { } },
+    [ "dm_runoff" ] = { id = 1644225588, size = "Midisze", img = "vgui/maps/runoff.png", type = "hl2", mapevents = { 1593 },
+        tags = { } },
+    [ "dm_underpass" ] = { id = 1644225588, size = "Small", img = "vgui/maps/underpass.png", type = "hl2",
         tags = { } }
 
     --[ "ba_halo_beavercreek" ] = { id = 1727665956, size = "Small", img = "vgui/maps/beavercreek.png" }, --Unbalanced
@@ -151,7 +167,6 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 	--[ "sh_lockdown" ] = { id = 261713202, size = "Large", img = "vgui/maps/lockdown.png", type = "hl2" }, --A copy of a map we already have
 	--[ "ttt_lazertag" ] = { id = 206405740, size = "Large", img = "vgui/maps/lazertag2.png", type = "hl2" }, --Unpopular
 	--[ "ttt_gunkanjima_v2" ] = { id = 229000479, size = "Small", img = "vgui/maps/gunkanjima.png", type = "ins2" }, --Unbalanced/unfun
-	--[ "dm_canals" ] = { id = 108953008, size = "Large", img = "vgui/maps/canals.png", type = "hl2" }, --Need better spawns
 	
 	--[[[ "" ] = { id = 0, size = "", img = "vgui/maps/.png", type = "",
         tags = { } },]]

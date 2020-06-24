@@ -101,11 +101,8 @@ function StartRTV( starter )
     end )
 end
 
-hook.Add( "StartMapvote", "RunMapvote", function( preventRepeat, test1, test2 )
-    print("Hook StartMapvote called, with param: ", preventRepeat, test1, test2)
+hook.Add( "StartMapvote", "RunMapvote", function( winningTeam, preventRepeat )
     if timer.Exists( "MapvoteCountdown" ) then return end
-
-    if preventRepeat and preventRepeat == 0 then preventRepeat = false end
 
     file.Write( "tdm/lastmap.txt", game.GetMap() )
 

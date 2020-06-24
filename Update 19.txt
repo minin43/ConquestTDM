@@ -1,7 +1,17 @@
 Update 1.19	Out 00/00/2020
 
 New Content
- 1. 2 new maps: ttt_cod4_vacant, and ttt_tarnish_v1
+ 1. 10 new maps:
+    - ttt_cod4_vacant
+    - ttt_tarnish_v1
+    - ttt_cwoffice2019_v3
+    - ttt_heaven
+    - ttt_zeta
+    - dm_canals (an old classic that was retired)
+    - dm_powerhouse (an old AMR classic)
+    - dm_steamlab (another AMR classic)
+    - dm_runoff
+    - dm_underpass
 
 Bugfixes
  1. The following maps have all received exploit fixes:
@@ -12,6 +22,7 @@ Bugfixes
     - ttt_mw2_terminal
  2. Fixed issues with certain weapons giving non-existent attachments
  3. Fixed issue with perk tracking, and being able to game certain perks by editing your loadout while alive
+ 4. Fixed issue with mapvote not correctly identifying when to allow voting for a map re-play
 
 Quality of Life Improvements
  1. Added the Extrema Ratio melee weapon, given to everyone on spawn (along with your fists)
@@ -24,6 +35,11 @@ Balance Changes
     - gm_desert_factory, added stairs and props in, so both sides can easily get to the center flag
     - gm_lasertag, reworked spawn areas
     - de_keystone_beta, added props in to protect both spawns from spawn-camping
+ 2. A few weapons have received small nerfs/buffs
+    - AK-74 (and the LR-300 as a result) has received a small damage buff, 33 damage -> 35 damage
+    - MP9 has received a small recoil buff, value of 0.82 -> value of 0.72  (surpasses MP5 as the lowest-recoil SMG)
+    - VSS has received a recoil nerf, value of 1.13 -> 1.17
+      Find spreadsheet here: https://docs.google.com/spreadsheets/d/1d9TbkQBZr8WpzEM1EtNd64b8EA9_2OokHf701kYT_fw/edit#gid=0
 
 Misc Changes
  1. Removed rp_limanks from the map queue, until blue spawn is fixed & rebalanced

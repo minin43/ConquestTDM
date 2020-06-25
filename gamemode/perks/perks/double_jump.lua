@@ -1,4 +1,4 @@
-hook.Add( "PlayerSpawn", "DoubleJumpIncreease", function( ply )
+hook.Add( "PostGivePlayerLoadout", "DoubleJumpIncreease", function( ply )
 	timer.Simple( 0, function()
 		if CheckPerk( ply ) == "doublejump" then
 			ply:SetJumpPower( GAMEMODE.DefaultJumpPower + 40 )

@@ -74,7 +74,7 @@ hook.Add("PlayerDeath", "DeadlyWeapon", function(vic, inf, att)
 	end
 end )
 
-hook.Add("PlayerSpawn", "DeadlyWeaponSetup", function(ply)
+hook.Add("PostGivePlayerLoadout", "DeadlyWeaponSetup", function(ply)
     GAMEMODE.WeaponCounter[ply] = 0
 end)
 

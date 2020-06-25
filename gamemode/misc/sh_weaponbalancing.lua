@@ -112,7 +112,7 @@ function GM:BalanceWeapons()
     if weapons.Get( "cw_ak74" ) then
         local wep = weapons.GetStored( "cw_ak74" )
         wep.Slot = 0
-        wep.Damage = 33
+        wep.Damage = 35
         wep.FireDelay = 0.0923
         wep.Recoil = 1.2
         wep.HipSpread = 0.12
@@ -319,7 +319,7 @@ function GM:BalanceWeapons()
     if weapons.Get( "cw_tr09_lr300" ) then
         local wep = weapons.GetStored( "cw_tr09_lr300" )
         wep.Slot = 0
-        wep.Damage = 33
+        wep.Damage = 35
         wep.FireDelay = 0.0923
         wep.Recoil = 1.2
         wep.HipSpread = 0.12
@@ -535,7 +535,7 @@ function GM:BalanceWeapons()
         wep.Slot = 0
         wep.Damage = 23
         wep.FireDelay = 0.067
-        wep.Recoil = 0.82
+        wep.Recoil = 0.72
         wep.HipSpread = 0.047
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.3
@@ -615,7 +615,7 @@ function GM:BalanceWeapons()
         wep.Slot = 0
         wep.Damage = 31
         wep.FireDelay = 0.09
-        wep.Recoil = 1.1
+        wep.Recoil = 1.17
         wep.HipSpread = 0.055
         wep.AimSpread = 0.025
         wep.VelocitySensitivity = 1.6
@@ -1142,9 +1142,14 @@ function GM:BalanceWeapons()
         --//Damage is calculated with RNG, will need to re-create the fists weapon and add damage modification
     end
 
+    if weapons.Get( "cw_extrema_ratio_official" ) then
+        local wep = weapons.GetStored( "cw_extrema_ratio_official" )
+        wep.Slot = 3
+    end
+
     --Most balancing for these equipment can be found natively in the entities folder, or in sh_weaponfixing.lua
     local standardEquip = { "cw_flash_grenade", "cw_smoke_grenade", "impulse_grenade", "weapon_hexshield", "weapon_cbox", "sg_adrenaline", "weapon_medkit", "medkit_slow",
-                                "medkit_fast", "medkit_full", "cw_extrema_ratio_official" }
+                                "medkit_fast", "medkit_full" }
     for k, v in pairs( standardEquip ) do 
         if weapons.Get( v ) then
             local wep = weapons.GetStored( v )

@@ -555,7 +555,15 @@ function giveLoadout( ply )
     end
 
 	local loadout = GAMEMODE.PlayerLoadouts[ ply ]
-	if( loadout ) then
+    if( loadout ) then
+        if loadout.perk then
+			local t = loadout.perk
+			ply[t] = true
+			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = t
+		else
+			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = "none"
+        end
+        
 		ply:Give( loadout.primary or "cw_ar15" )
         ply:Give( loadout.secondary or "" )
         
@@ -597,18 +605,12 @@ function giveLoadout( ply )
 				ply:Give( loadout.extra )
 			end
 		end
-		
-		if loadout.perk then
-			local t = loadout.perk
-			ply[t] = true
-			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = t
-		else
-			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = "none"
-		end
     end
     
-    ply:Give( "cw_extrema_ratio_official" )
+    --ply:Give( "cw_extrema_ratio_official" )
     ply:Give( "weapon_fists" )
+
+    hook.Call( "PostGivePlayerKit", GAMEMODE, ply )
 end
 
 local dontgive = {
@@ -717,7 +719,7 @@ function GM:PlayerSpawn( ply )
 		end
     end )
     
-    hook.Call( "PostGiveLoadout", nil, ply )
+    hook.Call( "PostGivePlayerLoadout", GAMEMODE, ply )
 	net.Start( "StartAttTrack" )
     net.Send( ply )
     
@@ -893,7 +895,7 @@ hook.Add( "PlayerDeath", "DamageIndicatorClear", function( vic )
 end )
 
 --//Moved here from sv_character_interaction since startMusic is dependent on InteractionType
-hook.Add( "PostGiveLoadout", "FirstLoadoutSpawn", function( ply )
+hook.Add( "PostGivePlayerLoadout", "FirstLoadoutSpawn", function( ply )
 	if GAMEMODE.ValidModels[ ply:GetModel() ] then
         GAMEMODE.InteractionList[ id( ply:SteamID() ) ] = GAMEMODE.ValidModels[ ply:GetModel() ]
     else

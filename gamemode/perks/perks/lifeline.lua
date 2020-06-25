@@ -16,7 +16,7 @@ local function UpdateMovement( ply )
     ply:SetJumpPower( math.Round( lldefaultjump + ( ( lljumpdiff * 2 ) * ( 1 - ( ply:Health() / ply:GetMaxHealth() ) ) ) ) )
 end
 
-hook.Add( "PostGiveLoadout", "LifelineSpawn", function( ply )
+hook.Add( "PostGivePlayerLoadout", "LifelineSpawn", function( ply )
 	if CheckPerk( ply ) == "lifeline" then
 		GAMEMODE.PerkTracking.LifelineList[ ply ] = true
 		healthtracking[ ply ] = ply:GetMaxHealth()

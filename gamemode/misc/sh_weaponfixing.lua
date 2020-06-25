@@ -522,3 +522,12 @@ else
         end
     end )
 end
+
+if SERVER then
+    hook.Add("CW_canPenetrate", "riot_shield_canPenetrate", function(ent, traceData, direction)
+        if (ent:GetModel() == "models/effects/hexshield.mdl") or 
+          (ent:GetModel() == "models/ershield/ershield.mdl") then
+            return false -- Suppress bullet penetration
+        end
+    end)
+end

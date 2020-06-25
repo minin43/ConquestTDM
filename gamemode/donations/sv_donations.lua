@@ -42,10 +42,10 @@ vip.Groups = { --Multiplier %
 	vip = 0.10,
 	["vip+"] = 0.15,
 	ultravip = 0.20,
-    staff = 0.05,
-    vipmod = 0.15,
-    ["vip+mod"] = 0.20,
-    ultravipmod = 0.25
+    staff = 0.05, --base staff bonus
+    vipmod = 0.15, --vip + staff
+    ["vip+mod"] = 0.20, --vip+ + staff
+    ultravipmod = 0.25 --ultravip + staff
 }
 
 vip.ULiBStaffRoles = {
@@ -83,7 +83,7 @@ end
 
 function vip.IsVip( ply )
     local role = vip.GetVip( ply )
-    return vip.Groups[ role ] or vip.ULiBStaffRoles[ ply:GetUserGroup() ]
+    return vip.Groups[ role ] or vip.ULiBStaffRoles[ string.lower(ply:GetUserGroup()) ]
 end
 
 --Saves the provided group name to a file
@@ -109,7 +109,7 @@ hook.Add( "PlayerInitialSpawn", "SetUserGroup", function( ply )
 
         local role = string.lower(ply:GetUserGroup())
         if vip.Groups[ role ] then
-            vip.SaveVip( ply, vip.Groups[ role ] )
+            vip.SaveVip( ply, role )
             --print("Player has ULiB usergroup, saving now as CTDM VIP file")
         elseif vip.ULiBStaffRoles[ role ] then
             vip.SaveVip( ply, "staff" )

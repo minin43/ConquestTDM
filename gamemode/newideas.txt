@@ -20,3 +20,6 @@ Future ideas:
         3. tooltip if needed (if you keep dying to a specific perk)
     - Loadouts can carry across maps
     - Scoreboard should look at extra VIP groups
+    - Add back in PhD Flopper? Since now we have anti-explosive equipment, also can reduce movespeed shortly after using it?
+    - Dropping/picking up weapons should save the skin
+    - Random map choice should pick a map that suits the size of the players on

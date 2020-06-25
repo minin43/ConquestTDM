@@ -1,4 +1,4 @@
-hook.Add( "PostGiveLoadout", "Hunter", function( ply )
+hook.Add( "PostGivePlayerLoadout", "Hunter", function( ply )
 	if CheckPerk( ply ) == "hunter" then
 		ply:SetWalkSpeed( GAMEMODE.DefaultWalkSpeed - 40 )
 		ply:SetRunSpeed( GAMEMODE.DefaultRunSpeed + 80 )

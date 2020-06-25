@@ -7,7 +7,7 @@ local dontgive = {
 	"seal6-claymore"
 }
 
-hook.Add( "PostGiveLoadout", "Packrat", function( ply )
+hook.Add( "PostGivePlayerLoadout", "Packrat", function( ply )
 	if CheckPerk( ply ) == "packrat" then
 		for k, v in next, ply:GetWeapons() do
 			local x = v:GetPrimaryAmmoType()

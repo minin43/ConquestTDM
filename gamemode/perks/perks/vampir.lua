@@ -3,7 +3,7 @@ GM.VampirDrainRates = { [0] = 0, 1 } --Drain rates per second, scales with # pla
 GM.VampirDamageDrain = 0.30 --% of damage that is added to your health
 GM.VampirDrainCap = 150 --Max HP cap
 
-hook.Add( "PlayerSpawn", "VampirSpawn", function( ply )
+hook.Add( "PostGivePlayerLoadout", "VampirSpawn", function( ply )
     timer.Simple( 0, function()
         if CheckPerk( ply ) == "vampir" then
             timer.Create( ply:SteamID() .. "VampTimer", 1, 0, function()

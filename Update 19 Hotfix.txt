@@ -1,0 +1,2 @@
+- Fixed an issue with non-staff VIP roles not being loaded correctly
+- Added in a script that prevents bullets from penetrating the hex shield's shield

@@ -17,7 +17,7 @@ util.AddNetworkString( "SetLoadout" )
 function OwnsWeapon( wepclass, ply )
     if !wepclass then return true end
 
-    if IsDefaultWeapon( wepclass ) then
+    if IsDefaultWeapon( wepclass ) or GAMEMODE.AllowFullShop then
         return true
     end
     
@@ -173,7 +173,7 @@ net.Receive( "SetLoadout", function( len, ply )
         return
     end
 
-    if perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ] then
+    if perk and lvl.GetLevel( ply ) < GetPerkTable(perk)[ 3 ] and !GAMEMODE.AllowFullShop then
         CaughtCheater( ply, "Attempted to spawn with perk they don't have access to - " .. perk .. ", " .. lvl.GetLevel( ply ))
         return
     end
@@ -202,6 +202,11 @@ net.Receive( "SetLoadout", function( len, ply )
         playermodelskin = pmskin,
         playermodelbodygroups = pmbgroups
     }
+    if !ply:Alive() and ply.NextSpawnTime <= CurTime() then
+        ply:Spawn()
+        net.Start( "CloseDeathScreen" )
+        net.Send( ply )
+    end
 end )
 
 hook.Add( "PlayerInitialSpawn", "SetupPrecacheEnvironment", function( ply )
@@ -258,13 +263,13 @@ net.Receive( "CTDMDropWeapon", function( len, ply )
 end )
 
 --Since the standard CW2 drop function doesn't create a wep ent, but prop_physics or some shit, we have to do this hacky work-around
-hook.Add( "OnEntityCreated", "AlterCW2Pickup", function( wep )
+hook.Add( "OnEntityCreated", "AlterCW2Pickup", function( wepent )
     if wep:GetClass() == "cw_dropped_weapon" then
-        function wep:canPickup(activator)
+        function wepent:canPickup(activator)
             if !activator:IsPlayer() then return end
             
             local canPickupWeapon
-            local weptable = RetrieveWeaponTable( self:GetWepClass() )
+            local weptable = RetrieveWeaponTable( self:GetWepClass() ) --GetWepClass is a CW2.0 function
             local canPickupAttachments = false
 
             if self.giveAttachmentsOnPickup then
@@ -309,6 +314,42 @@ hook.Add( "OnEntityCreated", "AlterCW2Pickup", function( wep )
             
             return canPickupWeapon, canPickupAttachments
         end
+
+        function wepent:setWeapon(wep)
+            self:SetWepClass(wep:GetClass())
+            self.magSize = wep:Clip1()
+            self.containedAttachments = {} -- for shit like loading them onto a weapon
+            self.stringAttachmentIDs = {} -- for shit like displaying the attachment names and giving them to the player upon pickup
+            self.useDelay = CurTime() + 1
+            
+            self:SetModel(wep.WorldModel)
+            self:SetMaterial( wep:GetMaterial() --[[or GAMEMODE.PlayerLoadouts[ wep:GetOwner() ]] )
+            self:PhysicsInit(SOLID_VPHYSICS)
+            self:SetMoveType(MOVETYPE_VPHYSICS)
+            self:SetSolid(SOLID_VPHYSICS)
+            self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+            local phys = self:GetPhysicsObject()
+
+            if phys and phys:IsValid() then
+                phys:Wake()
+            end
+            
+            for key, data in pairs(wep.Attachments) do
+                if data.last then
+                    self.containedAttachments[key] = data.last
+                    self.stringAttachmentIDs[#self.stringAttachmentIDs + 1] = data.atts[data.last]
+                end
+            end
+            
+            self.M203Chamber = wep.M203Chamber
+        end
+
+        --[[local weptable = RetrieveWeaponTable( self:GetClass() )
+        if weptable then
+            if weptable.slot == 1 then
+                GAMEMODE.PlayerLoadouts[ ply ]
+            end
+        end]]
     end
 end )
 
@@ -358,7 +399,7 @@ hook.Add( "OnEntityCreated", "DeleteCW2Drops", function( wep )
 end)
 
 --Reset backend saved data on player death
-hook.Add( "PlayerDeath", "Clear&DropWeapons", function( ply )
+hook.Add( "DoPlayerDeath", "Clear&DropWeapons", function( ply, att, dmginfo ) 
     GAMEMODE:DropWeapon( ply )
 	GAMEMODE.EquippedWeapons[ ply ] = {}
 end )

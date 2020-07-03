@@ -177,7 +177,7 @@ GM.CombineCallsigns = {
 
 --//Strictly for Combine deaths, plays some Overwatch radio chatter like the metropolice sometimes do
 --//This is fucking messy.
---/Disabled since the sounds don't like auto-playing, and since players aren't dead for long enough for the string to play 
+--/Unused since the sounds don't like auto-playing, and since players aren't dead for long enough for the string to play 
 function GM:DoPostDeathRadio( ply )
     if !self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds then
         self.PlayedSounds[ id( ply:SteamID() ) ][ "combine" ].DeathSounds = {}
@@ -353,10 +353,6 @@ end )
 --//selfGrenade
 --Was originally going to utilize CW's own callback feature, but since it doesn't seem any of the callbacks provide user info, just have to overwrite instead
 if CustomizableWeaponry then
-    --[[CustomizableWeaponry.callbacks:addNew( "finishThrowGrenade", "DoGrenadeSound", function()
-        print("test cw callback", self)
-        PrintTable(CustomizableWeaponry.callbacks)
-    end )]]
     local pinPullAnims = {"pullpin", "pullpin2", "pullpin3", "pullpin4"}
     local SP = game.SinglePlayer()
 

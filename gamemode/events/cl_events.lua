@@ -1,9 +1,6 @@
 surface.CreateFont( "MenuAnnouncements", { font = "Exo 2", size = 20, weight = 400 } )
 surface.CreateFont( "MenuAnnouncementsBold", { font = "Exo 2", size = 20, weight = 600 } )
 
---[[GM.ActiveEvents = {}
-GM.EventTimers = {}]]
-
 --//Called in teamselect as well
 net.Start( "RequestActiveEvents" )
 net.SendToServer()
@@ -112,3 +109,16 @@ function GM:DrawEventStatuses( parentFrame )
         end
     end
 end
+
+hook.Add( "InitPostEntity", "CheckSingleEvents", function()
+    net.Start( "RequestSingleEventStatus" )
+    net.SendToServer()
+
+    net.Receive( "RequestSingleEventStatusCallback", function()
+        GAMEMODE.SingleEventID = net.ReadString()
+        local eventtable = RetrieveEventTable( GAMEMODE.SingleEventID )
+        if eventtable then
+            eventtable.func()
+        end
+    end )
+end )

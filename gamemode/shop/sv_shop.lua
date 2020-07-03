@@ -14,7 +14,7 @@ util.AddNetworkString( "BuyModelCallback" )
 
 util.AddNetworkString( "StartPMPrecache" )
 
---[[ Found in sh_shop, this is just how the tables are structured - WeaponsList found in sh_loadout
+--[[ Found in sh_shop, this is just how the tables are structured - WeaponsList is found in sh_loadout
 GM.WeaponSkins = {
 	{ name = "", directory = "", texture = Material( "" ), tokens = 1, cash = 0, credits = 0 },
 }

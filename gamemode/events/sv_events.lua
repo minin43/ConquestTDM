@@ -1,17 +1,13 @@
 util.AddNetworkString( "StartedNewEvent" )
 util.AddNetworkString( "RequestActiveEvents" )
 util.AddNetworkString( "RequestActiveEventsCallback" )
+util.AddNetworkString( "RequestSingleEventStatus" )
+util.AddNetworkString( "RequestSingleEventStatusCallback" )
 
 GM.ActiveEvents = {}
 GM.EventTimers = GM.EventTimers or {}
 GM.EventTimers.Active = GM.EventTimers.Active or {}
 GM.EventTimers.Dormant = GM.EventTimers.Dormant or {}
-
-GM.EventTableFunctions = {
-    instagib = function()
-
-    end
-}
 
 --//Counts how many seconds have passed from the start of the year to the given time
 function GetTimeInSeconds( tab )
@@ -205,10 +201,14 @@ function SendPlayersEventTimes( ply )
 end
 
 function StartSingleEvent( eventID )
-
+    local eventtable = RetrieveEventTable( eventID )
+    if eventtable then
+        eventtable.func()
+        GAMEMODE.SingleEventID = eventID
+    end
 end
 
---//When the server changes maps or boots up, check to see if any event should be running
+--//When the server changes maps or boots up, check to see if any timed event should be running
 hook.Add( "Initialize", "CheckTimeBasedEventsAtMatchStart", function()
     local dateData = os.date( "*t", os.time() )
 
@@ -241,6 +241,14 @@ hook.Add( "Initialize", "CheckTimeBasedEventsAtMatchStart", function()
     CreateTimedEventTimers()
 end )
 
+--//When the server changes map or boots up, check to see if any single-game event should start
+hook.Add( "Initialize", "StartSingleMatchEvents", function()
+    if file.Exists( "tdm/newevent.txt" ) then
+        local event = file.Read( "tdm/newevent.txt", "DATA" )
+        StartSingleEvent( event )
+        --file.Delete( "tdm/newevent.txt" ) Disabled while I test
+    end
+end )
 --[[
     > PrintTable( os.date( "*t", os.time() ) )...
     day	    =	22
@@ -256,4 +264,10 @@ end )
 
 net.Receive( "RequestActiveEvents", function( len, ply )
     SendPlayersEventTimes( ply )
+end )
+
+net.Receive( "RequestSingleEventStatus", function( len, ply )
+    net.Start( "RequestSingleEventStatusCallback" )
+        net.WriteString( GAMEMODE.SingleEventID or "" )
+    net.Send( ply )
 end )

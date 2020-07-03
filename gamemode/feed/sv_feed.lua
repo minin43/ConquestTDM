@@ -52,38 +52,6 @@ SCORECOUNTS = {
     ROUND_TIED = 250
 }
 
-function GetBestPlayerByTeam( id )
-    local bestplayer
-    local highestscore
-    for k, v in pairs( team.GetPlayers( id ) ) do
-        if !bestplayer then
-            bestplayer = v
-            highestscore = v:GetNWInt( "tdm_score", 1 )
-        elseif highestscore < v:GetNWInt( "tdm_score", 1 ) then
-            bestplayer = v
-            highestscore = v:GetNWInt( "tdm_score", 1 )
-        end
-    end
-
-    return bestplayer
-end
-
-function GetWorstPlayerByTeam( id )
-    local worstplayer
-    local lowestscore
-    for k, v in pairs( team.GetPlayers( id ) ) do
-        if !worstplayer then
-            worstplayer = v
-            lowestscore = v:GetNWInt( "tdm_score", 1 )
-        elseif lowestscore > v:GetNWInt( "tdm_score", 1 ) then
-            worstplayer = v
-            lowestscore = v:GetNWInt( "tdm_score", 1 )
-        end
-    end
-
-    return worstplayer
-end
-
 function AddNotice(ply, text, score, type, color)
     if GAMEMODE.pointGainDisabled then return end
 
@@ -184,16 +152,18 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
             AddNotice( att, "BIG GAME HUNTER", SCORECOUNTS.VENDETTA_HUMILIATION_SPECIAL, NOTICETYPES.EXTRA )
             totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION_SPECIAL
             SoundToSend = "biggamehunter"
+            hook.Call( "KillFeedBGH", GAMEMODE, att )
         elseif numenemies > 2 and GetWorstPlayerByTeam(vic:Team()) == vic then
             AddNotice( att, "BOTTOM FEEDER", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
             totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION
             SoundToSend = "bottomfeeder"
+            hook.Call( "KillFeedBottomFeeder", GAMEMODE, att )
         else
             AddNotice( att, "ERADICATION", SCORECOUNTS.VENDETTA_HUMILIATION, NOTICETYPES.EXTRA )
             totalpointcount = totalpointcount + SCORECOUNTS.VENDETTA_HUMILIATION
             SoundToSend = "eradication"
+            hook.Call( "KillFeedHumiliator", GAMEMODE, att )
         end
-        hook.Call( "KillFeedHumiliator", GAMEMODE, att )
         hook.Call( "KillFeedHumiliated", GAMEMODE, vic )
     --//When they're your vendetta
     elseif GAMEMODE.VendettaList[ attID ].ActiveSaves[ vicID ] then
@@ -326,7 +296,7 @@ hook.Add( "PlayerDeath", "AddNotices", function( vic, wep, att )
                         attacker.AttFromAssist = attacker.AttFromAssist - 400
                     end
 
-                    hook.Call( "KillFeedAssist", GAMEMODE, att )
+                    hook.Call( "KillFeedAssist", GAMEMODE, attacker )
                 end
             --[[else
                 GAMEMODE.AssistTable[ vicID ][ attacker ] = nil]]

@@ -212,7 +212,7 @@ util.AddNetworkString( "ReducedDamage" )
 local PlayerClass = FindMetaTable( "Player" )
 
 function PlayerClass:StartSpawnProtection( length )
-	if GetGlobalBool( "RoundFinished" ) then return end
+	if GetGlobalBool( "RoundFinished" ) or GAMEMODE.Realism then return end
 
 	length = length or 5
 

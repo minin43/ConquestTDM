@@ -547,6 +547,7 @@ function giveLoadout( ply )
     if !ply:IsPlayer() or ply:IsBot() then return end
     
 	GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] = GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ] or { }
+	GAMEMODE.PreventLoadout = GAMEMODE.PreventLoadout or {}
 	ply:StripWeapons()
 
 	if GetGlobalBool( "RoundFinished" ) then
@@ -556,7 +557,7 @@ function giveLoadout( ply )
 
 	local loadout = GAMEMODE.PlayerLoadouts[ ply ]
     if( loadout ) then
-        if loadout.perk then
+        if loadout.perk and !GAMEMODE.PreventLoadout.perk then
 			local t = loadout.perk
 			ply[t] = true
 			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = t
@@ -564,11 +565,15 @@ function giveLoadout( ply )
 			GAMEMODE.PerkTracking[ id( ply:SteamID() ) ].ActivePerk = "none"
         end
         
-		ply:Give( loadout.primary or "cw_ar15" )
-        ply:Give( loadout.secondary or "" )
-        
-        ApplyWeaponSkin( ply, loadout.primary, loadout.primaryskin )
-        ApplyWeaponSkin( ply, loadout.secondary, loadout.secondaryskin )
+		if !GAMEMODE.PreventLoadout.primary then
+			ply:Give( loadout.primary or "cw_ar15" )
+			ApplyWeaponSkin( ply, loadout.primary, loadout.primaryskin )
+		end
+
+		if !GAMEMODE.PreventLoadout.secondary then
+	        ply:Give( loadout.secondary or "" )
+			ApplyWeaponSkin( ply, loadout.secondary, loadout.secondaryskin )
+		end
 
 		--This sets previous attachments up for the guns
 		if GAMEMODE.SavedAttachmentLists[ id( ply:SteamID() ) ][ loadout.primary ] then
@@ -590,7 +595,7 @@ function giveLoadout( ply )
 			end )
 		end
 		
-        if loadout.extra then
+        if loadout.extra and !GAMEMODE.PreventLoadout.equipment then
             if loadout.extra == "grenades" then
 				--ply:RemoveAmmo( 2, "Frag Grenades" )
                 ply:GiveAmmo( 2, "Frag Grenades", true )
@@ -609,6 +614,12 @@ function giveLoadout( ply )
     
     --ply:Give( "cw_extrema_ratio_official" )
     ply:Give( "weapon_fists" )
+
+	if GAMEMODE.PreventLoadout.forced then
+		for k, v in pairs( GAMEMODE.PreventLoadout.forced ) do
+			ply:Give( v )
+		end
+	end
 
     hook.Call( "PostGivePlayerKit", GAMEMODE, ply )
 end

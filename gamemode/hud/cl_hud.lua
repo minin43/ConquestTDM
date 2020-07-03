@@ -100,7 +100,7 @@ hitpos = {}
 local hpdrain = 0
 
 usermessage.Hook( "damage", function( msg )
-	if GetConVarNumber( "hud_indicator" ) == 0 then return end
+	if GetConVarNumber( "hud_indicator" ) == 0 or GAMEMODE.Realism then return end
 
 	local dmg = msg:ReadVector()
 	local pos = LocalPlayer():GetPos()
@@ -202,7 +202,7 @@ local overlayTable = {
 }
 --//Handles perk overlays, net.Receive's found lower in file. Surface draws are drawn in order, so important overlays should be drawn last
 hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
-    if not LocalPlayer():Alive() then 
+    if not LocalPlayer():Alive() or GAMEMODE.Realism then 
         overlayTable.slaw_rate = 0
         overlayTable.bleedout_rate = 0
         return 
@@ -255,6 +255,8 @@ end )
 
 --//Spawn Protection text - fades when spawn protection is gone
 hook.Add( "HUDPaint", "HUD_SpawnOverlay", function()
+	if GAMEMODE.Realism then return end
+
 	if GAMEMODE.ShouldDrawProtection then 
 		overlayTable.spawn_rate = 1
 	else
@@ -316,7 +318,6 @@ hook.Add( "HUDPaint", "HUD_LowHealth", function()
 
 	CurrentHP = math.Clamp( CurrentHP, 0, maxhp )
 	hpdrain = math.Clamp( hpdrain, 0, maxhp )
-	
 end )
 
 --//Draws the round information: time, score, flag status, as well as the "change team/loadout" keys
@@ -410,7 +411,7 @@ end )
 
 --//Draws the damage indicator 
 hook.Add( "HUDPaint", "HUD_NearMiss", function()
-	if LocalPlayer():Alive() then
+	if LocalPlayer():Alive() and !GAMEMODE.Realism then
 		for k, v in next, hitpos do
 			surface.SetMaterial( damage ) --*v[2]
 			surface.SetDrawColor( alterColorRGB(colorScheme[0]["DamageIndicatorShade"], 0, 0, 0, 255 * v[2]) )
@@ -425,7 +426,7 @@ end )
 
 --//Draws Health, Ammo
 hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
-	if !LocalPlayer():Alive() or LocalPlayer():Team() == 0 then return end
+	if !LocalPlayer():Alive() or LocalPlayer():Team() == 0 or GAMEMODE.Realism then return end
 
 	--//Health
 	draw.SimpleText( math.Clamp( LocalPlayer():Health(), 0, LocalPlayer():GetMaxHealth() + 100 ), "HealthBG", ScrW() - 210, ScrH() - 65, GAMEMODE.CurrentScheme, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
@@ -478,6 +479,20 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 			
 		end
 	end]]
+end )
+
+local bombimage = Material( "" )
+hook.Add( "HUDPaint", "HUD_CampfireBomb", function()
+	if GAMEMODE.CampfireBomb then
+		surface.SetDrawColor( 255, 255, 255 )
+		surface.SetMaterial( bombimage )
+		surface.DrawTexturedRect( ScrW() - 260, ScrH() - 169, 64, 64 )
+		if GAMEMODE.CampfireBomb <= 10 then
+			draw.SimpleText( GAMEMODE.CampfireBomb, "DermaDefault", ScrW() - 228, ScrH() - 137, colorScheme[0]["GameTimerLow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		else
+			draw.SimpleText( GAMEMODE.CampfireBomb, "DermaDefault", ScrW() - 228, ScrH() - 137, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		end
+	end
 end )
 
 --//Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
@@ -788,6 +803,7 @@ end )
 --Grenade indicator
 surface.CreateFont( "nade", { font = "Arial", size = 30, weight = 4000 } )
 local function nade()
+	if GAMEMODE.Realism then return end
 	if not LocalPlayer() then LocalPlayer = LocalPlayer end
 	local dist = 800
 	if LocalPlayer():Team() ~= 0 then
@@ -840,6 +856,7 @@ hook.Add( "PostPlayerDraw", "hud_icon", function( ply )
 end )
 
 hook.Add( "PreDrawHalos", "AddHalos", function()
+	if GAMEMODE.Realism then return end
 	if GetConVarNumber( "tdm_ffa" ) == 1 then
 		return
 	end
@@ -992,131 +1009,6 @@ surface.CreateFont( "wsmall", {
  weight = 0,
  antialias = true
 } )
-
-local data
-hook.Add( "PostDrawOpaqueRenderables", "DrawWeaponHints", function()
-	local ent = LocalPlayer():GetEyeTrace().Entity
-	if ent then
-		if IsValid( ent ) and ent:IsWeapon() and ent:GetPos():Distance( LocalPlayer():GetPos() ) <= 400 then
-            local data = data or weapons.Get( ent:GetClass() )
-            if not IsValid( data ) then return end
-			
-			function GetInfo( check, check2 )
-				if check then
-					return check
-				elseif check2 then
-					return check2
-				else
-					return 0
-				end
-			end
-			
-			local info = {
-				[ 1 ] = GetInfo( data.PrintName, data.ClassName ),
-				[ 2 ] = GetInfo( data.Damage, data.Primary.Damage ),
-				[ 3 ] = GetInfo( data.HipCone, data.Primary.Spray ),
-				[ 4 ] = GetInfo( data.AimCone, data.Primary.Cone ),
-				[ 5 ] = GetInfo( data.ReloadTime ),
-				[ 6 ] = GetInfo( data.Recoil, data.Primary.KickUp ),
-				[ 7 ] = GetInfo( ent.Primary.ClipSize )
-			}
-			
-			local ang = LocalPlayer():EyeAngles()
-			local pos = ent:GetPos() + ang:Up()
-		 
-			ang:RotateAroundAxis( ang:Forward(), 90 )
-			ang:RotateAroundAxis( ang:Right(), 90 )
-
-			cam.Start3D2D( pos, Angle( 0, ang.y, 90 ), 0.1 )
-				surface.SetDrawColor( Color( 0, 0, 0, 150 ) )
-				surface.DrawRect( -250, -70, 500, -390 )
-				local tc = {
-					x = -250,
-					y = -390 - 70
-				}
-				
-				draw.DrawText( info[ 1 ], "wlarge", 0, tc.y - 10, color_white, TEXT_ALIGN_CENTER )
-				surface.SetDrawColor( color_white )
-				surface.DrawLine( tc.x + 50, tc.y + 97, tc.x + 450, tc.y + 100 )
-				
-				local col0
-				local text0
-				if info[ 2 ] >= 40 then
-					col0 = Color( 0, 255, 0, 255 )
-				elseif info[ 2 ] <= 25 then
-					col0 = Color( 255, 0, 0, 255 )
-				else
-					col0 = Color( 255, 210, 0, 255 )
-				end
-				
-				draw.DrawText( "Damage", "wsmall", tc.x + 20, tc.y + 102, col0, TEXT_ALIGN_LEFT )
-				draw.DrawText( info[ 2 ], "wsmall", tc.x + 480, tc.y + 102, col0, TEXT_ALIGN_RIGHT )
-				
-				local col
-				local text
-				if info[ 4 ] >= 0.01 then
-					col = Color( 255, 0, 0, 255 )
-					text = "Poor"
-				elseif info[ 4 ] <= 0.001 then
-					col = Color( 0, 255, 0, 255 )
-					text = "Good"
-				else
-					col = Color( 255, 210, 0, 255 )
-					text = "Average"
-				end
-				draw.DrawText( "Accuracy", "wsmall", tc.x + 20, tc.y + 154, col, TEXT_ALIGN_LEFT )
-				draw.DrawText( text, "wsmall", tc.x + 480, tc.y + 154, col, TEXT_ALIGN_RIGHT )
-				
-				local col2
-				if info[ 5 ] then
-					text2 = info[ 5 ] .. "s"
-					if info[ 5 ] >= 3 then
-						col2 = Color( 255, 0, 0, 255 )
-					elseif info[ 5 ] < 2 then
-						col2 = Color( 0, 255, 0, 255 )
-					else
-						col2 = Color( 255, 210, 0, 255 )
-					end
-				elseif info[ 5 ] == nil then
-					col2 = color_white
-					text2 = "N/A"
-				end
-				
-				draw.DrawText( "Reload", "wsmall", tc.x + 20, tc.y + 206, col2, TEXT_ALIGN_LEFT )
-				draw.DrawText( text2, "wsmall", tc.x + 480, tc.y + 206, col2, TEXT_ALIGN_RIGHT )
-				
-				local col3
-				local text3
-				if info[ 6 ] >= 1.5 then
-					col3 = Color( 255, 0, 0, 255 )
-					text3 = "High"
-				elseif info[ 6 ] <= 0.7 then
-					col3 = Color( 0, 255, 0, 255 )
-					text3 = "Low"
-				else
-					col3 = Color( 255, 210, 0, 255 )
-					text3 = "Average"
-				end
-				draw.DrawText( "Recoil", "wsmall", tc.x + 20, tc.y + 258, col3, TEXT_ALIGN_LEFT )
-				draw.DrawText( text3, "wsmall", tc.x + 480, tc.y + 258, col3, TEXT_ALIGN_RIGHT )
-				
-				local col4
-				if info[ 7 ] > 30 then
-					col4 = Color( 0, 255, 0, 255 )
-				elseif info[ 7 ] <= 20 then
-					col4 = Color( 255, 0, 0, 255 )
-				else
-					col4 = Color( 255, 210, 0, 255 )
-				end
-				
-				draw.DrawText( "Clip Size", "wsmall", tc.x + 20, tc.y + 310, col4, TEXT_ALIGN_LEFT )
-				draw.DrawText( info[ 7 ], "wsmall", tc.x + 480, tc.y + 310, col4, TEXT_ALIGN_RIGHT )
-				
-			cam.End3D2D()
-			
-		end
-	end
-end )
 
 --First person death
  hook.Add( "CalcView", "CalcView:GmodDeathView", function( player, origin, angles, fov )

@@ -1265,6 +1265,24 @@ function primariespanel:RepopulateList()
             end
         end
     end
+    if GAMEMODE.AllowFullShop and #GAMEMODE.TempUnlockedPrimaries > 0 then
+        local throwaway = vgui.Create( "DPanel", self.scrollpanel )
+        throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+        throwaway:Dock( TOP )
+        throwaway.Paint = function( panel, w, h )
+            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        for k, v in pairs( GAMEMODE.TempUnlockedPrimaries ) do
+            for _, weptable in pairs( v ) do
+                local button = vgui.Create( "PrimariesButton", self.scrollpanel )
+                button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+                button:Dock( TOP )
+                button:SetTrueParent( self, k )
+                button:SetWeapon( weptable[2] )
+                self.scrollpanel.buttons[ weptable[2] ] = button
+            end
+        end
+    end
 
     local shopbutton = vgui.Create( "LoadoutToShop", self.scrollpanel )
     shopbutton:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
@@ -1430,6 +1448,25 @@ function secondariespanel:RepopulateList()
         end
     end
 
+    if GAMEMODE.AllowFullShop and #GAMEMODE.TempUnlockedSecondaries > 0 then
+        local throwaway = vgui.Create( "DPanel", self.scrollpanel )
+        throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+        throwaway:Dock( TOP )
+        throwaway.Paint = function( panel, w, h )
+            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        for k, v in pairs( GAMEMODE.TempUnlockedSecondaries ) do
+            for _, weptable in pairs( v ) do
+                local button = vgui.Create( "SecondariesButton", self.scrollpanel )
+                button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+                button:Dock( TOP )
+                button:SetTrueParent( self, k )
+                button:SetWeapon( weptable[2] )
+                self.scrollpanel.buttons[ weptable[2] ] = button
+            end
+        end
+    end
+
     local shopbutton = vgui.Create( "LoadoutToShop", self.scrollpanel )
     shopbutton:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
     shopbutton:Dock( TOP )
@@ -1588,6 +1625,25 @@ function equipmentpanel:RepopulateList()
         end
     end
 
+    if GAMEMODE.AllowFullShop and #GAMEMODE.TempUnlockedEquipment > 0 then
+        local throwaway = vgui.Create( "DPanel", self.scrollpanel )
+        throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+        throwaway:Dock( TOP )
+        throwaway.Paint = function( panel, w, h )
+            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        for k, v in pairs( GAMEMODE.TempUnlockedEquipment ) do
+            for _, weptable in pairs( v ) do
+                local button = vgui.Create( "EquipmentButton", self.scrollpanel )
+                button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+                button:Dock( TOP )
+                button:SetTrueParent( self, k )
+                button:SetWeapon( weptable[2] )
+                self.scrollpanel.buttons[ weptable[2] ] = button
+            end
+        end
+    end
+
     local shopbutton = vgui.Create( "LoadoutToShop", self.scrollpanel )
     shopbutton:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
     shopbutton:Dock( TOP )
@@ -1637,7 +1693,7 @@ perksbutton.selectedmove = 0
 function perksbutton:Paint()
     if !self.startdraw then return end
 
-    --[[if self.weapontable.vip then
+    --[[if self.weapontable.vip then    -Disabled since there's not a spot cut out to display the icon
         surface.SetDrawColor( GAMEMODE.ColorRarities[ 3 ] )
         surface.SetMaterial( GAMEMODE.Icons.Menu.vipIcon )
         surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
@@ -1702,7 +1758,7 @@ function perkspanel:DoSetup()
     net.Start( "GetUnlockedPerks" )
     net.SendToServer()
 
-    --Because perks aren't sent to the client (even though they could be...) this is ran and handled differently from the weapons
+    --Because perks aren't seen clientside (even though they should be...) this is ran and handled differently from the weapons
     net.Receive( "GetUnlockedPerksCallback", function()
         GAMEMODE.Perks = net.ReadTable()
         self:RepopulateList()
@@ -1763,23 +1819,40 @@ function perkspanel:RepopulateList()
         button:SetPerkTable( perktable )
         self.scrollpanel.buttons[ perktable[2] ] = button
     end
+    if GAMEMODE.AllowFullShop and #GAMEMODE.Perks.locked > 0 then
+        local throwaway = vgui.Create( "DPanel", self.scrollpanel )
+        throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+        throwaway:Dock( TOP )
+        throwaway.Paint = function( panel, w, h )
+            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+    end
     for _, perktable in ipairs( GAMEMODE.Perks.locked ) do
-        local locked = vgui.Create( "DPanel", self.scrollpanel )
-        locked:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
-        locked:Dock( TOP )
-        locked.Paint = function( panel )
-            if !locked then return end
-            surface.SetTextColor( 0, 0, 0, 220 )
-            surface.SetFont( "Exo-24-600" )
-            local w, h = surface.GetTextSize( perktable[ 1 ] )
-            surface.SetTextPos( 12, panel:GetTall() / 2 - ( h / 2 ) - 2 )
-            surface.DrawText( perktable[ 1 ] )
+        if GAMEMODE.AllowFullShop then
+            local button = vgui.Create( "PerksButton", self.scrollpanel )
+            button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+            button:Dock( TOP )
+            button:SetTrueParent( self )
+            button:SetPerkTable( perktable )
+            self.scrollpanel.buttons[ perktable[2] ] = button
+        else
+            local locked = vgui.Create( "DPanel", self.scrollpanel )
+            locked:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+            locked:Dock( TOP )
+            locked.Paint = function( panel )
+                if !locked then return end
+                surface.SetTextColor( 0, 0, 0, 220 )
+                surface.SetFont( "Exo-24-600" )
+                local w, h = surface.GetTextSize( perktable[ 1 ] )
+                surface.SetTextPos( 12, panel:GetTall() / 2 - ( h / 2 ) - 2 )
+                surface.DrawText( perktable[ 1 ] )
 
-            surface.SetFont( "Exo-16-500" )
-            surface.SetTextColor( colorScheme[1].TeamColor )
-            surface.SetTextPos( 24, panel:GetTall() / 2 + ( h / 2 ) - 4 )
-            surface.DrawText( "Unlocks at Level " .. perktable[ 3 ] )
-            return true
+                surface.SetFont( "Exo-16-500" )
+                surface.SetTextColor( colorScheme[1].TeamColor )
+                surface.SetTextPos( 24, panel:GetTall() / 2 + ( h / 2 ) - 4 )
+                surface.DrawText( "Unlocks at Level " .. perktable[ 3 ] )
+                return true
+            end
         end
     end
 end
@@ -1821,8 +1894,11 @@ vgui.Register( "PerksPanel", perkspanel, "DPanel" )
 net.Receive( "GetUnlockedWeaponsCallback", function()
     GAMEMODE.UnlockedWeapons = net.ReadTable()
     GAMEMODE.UnlockedPrimaries = { {}, {}, {}, {}, {} }
+    GAMEMODE.TempUnlockedPrimaries = table.Copy( GAMEMODE.UnlockedPrimaries )
     GAMEMODE.UnlockedSecondaries = { {}, {}, {}, {}, {}, {}, {} }
+    GAMEMODE.TempUnlockedSecondaries = table.Copy( GAMEMODE.UnlockedSecondaries )
     GAMEMODE.UnlockedEquipment = {}
+    GAMEMODE.TempUnlockedEquipment = table.Copy( GAMEMODE.UnlockedEquipment )
     
     local typetoint = { ar = 1, smg = 2, sg = 3, sr = 4, lmg = 5, pt = 6, mn = 7, eq = 8 }
     for k, v in pairs( GAMEMODE.UnlockedWeapons ) do
@@ -1839,5 +1915,27 @@ net.Receive( "GetUnlockedWeaponsCallback", function()
             table.insert( GAMEMODE.UnlockedEquipment, GAMEMODE.WeaponsList[ v ] )
         end
     end
+
+    if GAMEMODE.AllowFullShop then
+        local lockedweapons = {}
+        local throwaway = {}
+        for k, v in pairs( GAMEMODE.UnlockedWeapons ) do
+            throwaway[v] = k
+        end
+
+        for k, v in pairs( GAMEMODE.WeaponsList ) do
+            if !throwaway[k] then
+                if v.slot == 1 then
+                    table.insert( GAMEMODE.TempUnlockedPrimaries[ typetoint[v.type] ], v )
+                elseif v.slot == 2 then
+                    table.insert( GAMEMODE.TempUnlockedSecondaries[ typetoint[v.type] ], v )
+                elseif v.slot == 3 then
+                    table.insert( GAMEMODE.TempUnlockedEquipment, v )
+                end
+                lockedweapons[ #lockedweapons + 1 ] = v
+            end
+        end
+    end
+
     hook.Run( "ReceivedUnlockedWeapons" )
 end )

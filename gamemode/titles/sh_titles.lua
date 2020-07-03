@@ -33,20 +33,25 @@ GM.TitleMasterTable = {
     { id = "denier", title = "The Denier", description = "Earn \"Denied\" (end a player's killspree) 5 times", rare = 1, req = 5 },
     { id = "rejector", title = "The Rejector", description = "Earn \"Rejected\" (end a player's killstreak) 20 times", rare = 1, req = 20 },
     { id = "bloodmoney", title = "Blood Money", description = "Earn \"Payback\" and \"Headshot\" in the same kill 5 times", rare = 3, req = 10 },
-    { id = "brainiac", title = "The Brainiac", description = "Earn 5 additional kills from Headpopper's explosion", rare = 2, req = 5 },
+    { id = "brainiac", title = "The Brainiac", description = "Earn 5 additional kills from Headpopper's explosion", rare = 3, req = 5 },
     { id = "airborne", title = "The Airborne", description = "Earn 20 kills while flying through the air after the second jump of double jump", rare = 1, req = 20 },
     { id = "skeetshoot", title = "Skeet Shooter", description = "Earn 10 kills on players who are flying through the air", rare = 1, req = 10 },
     { id = "elements", title = "Elementalist", description = "Earn 1 kill with pryomancer's generated fire while the enemy is slowed by Frostbite", rare = 4, req = 1 },
     { id = "unkillable", title = "The Unkillable", description = "Restore 200 hp in a single life", rare = 3, req = 1 },
-    { id = "infected", title = "Infected", description = "???????????????", rare = 4, req = 1, noshow = true }, --//I know this is technically a SECRET tag, but it's the ONLY ONE
+    { id = "infected", title = "Infected", description = "???????????????", rare = 4, req = 1, noshow = true }, --//Secret tag: get melee killed by someone with it equipped
     { id = "lowprofile", title = "Low Profile", description = "Earn 30 kills while crouching", rare = 0, req = 30 },
     --{ id = "bhopasshole", title = "BHopping Asshole", description = "Get 10 kills while bunny-hopping", rare = 1, req = 10 },
     { id = "blinged", title = "Blinged Out", description = "Earn all of the attachments for any gun 10 times", rare = 1, req = 10 },
-    { id = "joat", title = "Jack Of All Trades", description = "Earn all of the attachments for any gun 20 times", rare = 2, req = 20 }
+    { id = "joat", title = "Jack Of All Trades", description = "Earn all of the attachments for any gun 20 times", rare = 2, req = 20 },
+    { id = "shit", title = "Actually Shit", description = "Secret tag", rare = 3, req = 1, noshow = true }, --//Secret tag: die 40 times in a single game
+    { id = "666", title = "The Number of The Beast", description = "Secret tag", rare = 2, req = 1, noshow = true },
+    --{ id = "snipers", title = "Sniper Afficienado", description = "Get 1000 kills with any sniper rifles", rare = 3, req = 0 }, --Sniper afficienado
+    { id = "sidearms", title = "Super Sidearms", description = "Get 1000 kills with sidearms", rare = 4, req = 1000 },
+    { id = "favorite", title = "My Favorite Gun", description = "Earn 1000 kills with any one weapon", rare = 4, req = 1 },
+    { id = "biggame", title = "Big Game Hunter", description = "Earn \"Big Game Hunter\" (kill your vendetta, who is also best on the team) 20 times", rare = 4, req = 20 }
     --{ id = "", title = "", description = "", rare = 0, req = 0 },
     --[[
         Getting the final kill of a match x times
-
     ]]
 }
 --//The PData is saved as id .. "count"

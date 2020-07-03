@@ -286,6 +286,10 @@ hook.Add( "KillFeedKillstreak", "KillstreakCounting", function( ply, level )
     end
 end )
 
+hook.Add( "KillFeedBGH", "BigGameHunterCounting", function( ply )
+    IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "biggame" ) )
+end )
+
 hook.Add( "GameWinningKill", "GameWinningKillCounting", function( ply, dmginfo )
     --IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "" ) )
 end )
@@ -326,8 +330,57 @@ hook.Add( "DoPlayerDeath", "IsInAir?", function( vic, att, dmginfo )
     end
 end )
 
+function CheckFor666Title( ply )
+    if ply:Frags() == 6 and ply:Deaths() == 6 and ply:GetPData( "g_assists" ) == "6" then
+        if !GAMEMODE:CheckTitleOwnership( ply, "666" ) then
+            GAMEMODE:GivePlayerTitle( ply, "666" )
+        end
+    end
+end
+hook.Add( "DoPlayerDeath", "SecretTitles", function( vic, att, dmginfo )
+    if vic:Deaths() == 40 and !GAMEMODE:CheckTitleOwnership( vic, "shit" ) then
+        GAMEMODE:GivePlayerTitle( vic, "shit" )
+    end
+    CheckFor666Title( vic )
+    CheckFor666Title( att )
+end )
+hook.Add( "KillFeedAssist", "SecretTitlesAssists", function( ply )
+    CheckFor666Title( ply )
+end )
+
+hook.Add( "DoPlayerDeath", "CheckAttachmentOverages", function( vic, att, dmginfo )
+    local wep = att:GetActiveWeapon()
+    if !wep or !wep:IsValid() or weapons.Get( wep:GetClass() ).base != "cw_base" then return end
+
+    local totalkills = GetStatTrak( att, wep )
+    if wep_att[ wep:GetClass() ] and totalkills > wep_att[ wep:GetClass() ][ #wep_att[ wep:GetClass() ] ][ 2 ] then
+        if !GAMEMODE:CheckTitleOwnership( att, wep:GetClass() .. "_attmastery" ) then
+            GAMEMODE:GivePlayerTitle( att, wep:GetClass() .. "_attmastery" )
+        end
+    end
+end )
+
+hook.Add( "DoPlayerDeath", "SidearmKills", function( vic, att, dmginfo )
+    local wep = att:GetActiveWeapon()
+    if isSecondary( wep ) then
+        IncrementTitleCounting( att, "sidearms" )
+    end
+end )
+
+hook.Add( "DoPlayerDeath", "FavoriteWeapon", function( vic, att, dmginfo )
+    local wep = att:GetActiveWeapon()
+    if !wep or !wep:IsValid() or weapons.Get( wep:GetClass() ).base != "cw_base" then return end
+
+    local totalkills = GetStatTrak( att, wep )
+    if totalkills == 1000 then
+        if !GAMEMODE:CheckTitleOwnership( att, "favorite" ) then
+            GAMEMODE:GivePlayerTitle( att, "favorite" )
+        end
+    end
+end )
+
 --[[hook.Add( "", "", function( ply )
-    IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "" )
+    IncrementTitleCounting( ply, GAMEMODE:GetTitleTable( "" ) )
     ply:SetPData( "count", ply:GetPData( "count" ) + 1 )
 
     if tonumber( ply:GetPData( tab.id .. "count" ) ) == tab.req then

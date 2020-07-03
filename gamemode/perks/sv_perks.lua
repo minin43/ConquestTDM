@@ -98,13 +98,3 @@ end
 for k, v in pairs( file.Find( "tdm/gamemode/perks/perks/*.lua", "LUA" ) ) do
     include( "/perks/" .. v )
 end
-
---[[
-    Possible new perk mechanics:
-    "The Bonus" - double mags received on flag capture
-    "The Grind" - All point generation gets a 5% boost (or some %)
-    "The Grind Part 2" - All kills earn double towards attachment progression
-    Titan - Every 5th kill earned counts double towards ticket drain & TDM killcount, flag capturing pressure is also doubled
-    "Angel: when nearby teammates you cause a passive heal of 2 hp per 3 seconds within 30 ticks ( not sure the ingame term) of the player, but does not heal themselves over time. 
-        if a teammate reaches a state of death ( i.e about to die) the player dies instead and gives the teammate all HP they had before death."
-]]

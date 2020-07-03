@@ -4,6 +4,8 @@ util.AddNetworkString( "EndBleedOverlay" )
 GM.BleedoutTable = {}
 GM.BleedoutDuration = 3 --//In seconds
 GM.BleedoutTicksPerSecond = 4 --//How many damage "hits" or "ticks" we want the player to take per second the bleedout is occuring
+GM.BleedoutBulletDamageReduction = 0.05 --//How much bullet damage is entirely nullified
+GM.BleedoutBleedDamagePercent = 0.25 --//How much damage, post-nullification, is applied as a DoT
 
 hook.Add( "EntityTakeDamage", "BleedoutShit", function( ply, dmginfo )
     local att = dmginfo:GetAttacker()
@@ -12,7 +14,7 @@ hook.Add( "EntityTakeDamage", "BleedoutShit", function( ply, dmginfo )
 
     if CheckPerk( ply ) == "bleedout" then
         if att:IsPlayer() and dmginfo:IsBulletDamage() and att:Team() != ply:Team() then
-            local bleedDamage = dmginfo:GetDamage() * 0.20
+            local bleedDamage = dmginfo:GetDamage() * GAMEMODE.BleedoutBleedDamagePercent
             
             if GAMEMODE.BleedoutTable[ ply ] then
                 GAMEMODE.BleedoutTable[ ply ].lastattacker = att
@@ -23,7 +25,7 @@ hook.Add( "EntityTakeDamage", "BleedoutShit", function( ply, dmginfo )
                 GAMEMODE.BleedoutTable[ ply ] = { lastattacker = att, damagetodo = bleedDamage, damagedone = 0, wep = dmginfo:GetInflictor() }
             end
             
-            dmginfo:SetDamage( dmginfo:GetDamage() * 0.75 )
+            dmginfo:SetDamage( dmginfo:GetDamage() * (1 - GAMEMODE.BleedoutBleedDamagePercent - GAMEMODE.BleedoutBleedDamagePercent) )
             
             timer.Create( "BleedingOn" .. id( ply:SteamID() ), 1 / GAMEMODE.BleedoutTicksPerSecond, GAMEMODE.BleedoutDuration * GAMEMODE.BleedoutTicksPerSecond, function()
                 if GAMEMODE.BleedoutTable[ ply ] and ply:Alive() then
@@ -63,4 +65,4 @@ hook.Add("DoPlayerDeath", "DisplayBleedoutIconOnDeath", function( ply, att, dmgi
     end
 end)
 
-RegisterPerk( "Bleedout", "bleedout", 30, "Provides 5% damage reduction against bullets, with another 20% reduction applied as a 3 second long, damage-over-time bleeding effect." )
+RegisterPerk( "Bleedout", "bleedout", 30, "Provides 5% damage reduction against bullets, with an extra 25% reduction applied as a 3 second long, damage-over-time bleeding effect." )

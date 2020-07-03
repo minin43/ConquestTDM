@@ -59,6 +59,17 @@ function GM:LoadoutMenu( switchingTo )
         end
     end )
 
+    if !GAMEMODE.LastSentLoadout and file.Exists( "data/tdm/loadout.txt" ) then
+        local toverify = util.JSONToTable( file.Read( "data/tdm/loadout.txt", "DATA" ) )
+        GAMEMODE.LastSentLoadout = { --A lot of the verification/validity checks come in the form of checking the panel exists to shift scroll panels to
+            [1] = { toverify[1][1] or "cw_ar15", toverify[1][2] },
+            [2] = { toverify[2][1], toverify[2][2] },
+            [3] = toverify[3],
+            [4] = toverify[4],
+            [5] = { toverify[5][1], toverify[5][2] or 0, toverify[5][3] }
+        }
+    end
+
     self.MyModels = self.MyModels or {}
     net.Start( "GetUnlockedModels" )
     net.SendToServer()
@@ -202,6 +213,8 @@ function GM:LoadoutMenu( switchingTo )
         close.hover = false
     end
 
+    GAMEMODE.PreventLoadout = GAMEMODE.PreventLoadout or {}
+
     local PMPanel = vgui.Create( "PlayermodelPanel", self.LoadoutMain )
     PMPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (self.TitleBar * 1.5) )
     PMPanel:SetPos( 0, self.TitleBar )
@@ -209,7 +222,7 @@ function GM:LoadoutMenu( switchingTo )
     if self.LastSentLoadout then
         if IsDefaultModel(self.LastSentLoadout[5][1]) then
             PMPanel:SetModel( nil, "models/weapons/w_rif_m4a1.mdl" )
-        else
+        elseif GetModelTableByDirectory( self.LastSentLoadout[5][1] ) then
             PMPanel:SetModel( self.LastSentLoadout[5][1], "models/weapons/w_rif_m4a1.mdl" )
         end
         PMPanel:SetSkin( self.LastSentLoadout[5][2] )
@@ -219,7 +232,8 @@ function GM:LoadoutMenu( switchingTo )
                 PMPanel:SetBodygroup( k, v )
             end
         end
-    else
+    else 
+    
         PMPanel:SetModel( nil, "models/weapons/w_rif_m4a1.mdl" )
     end
     PMPanel:SetFOV( 60 )
@@ -258,27 +272,59 @@ function GM:LoadoutMenu( switchingTo )
     PPanel:SetPos( self.LoadoutMain:GetWide() / 5, GAMEMODE.TitleBar )
     PPanel:SetReferenceModelPanel( self.LoadoutMain.PMPanel )
     PPanel:DoSetup()
+    if GAMEMODE.PreventLoadout.primary then
+        PPanel.PaintOver = function( panel, w, h )
+            surface.SetDrawColor( 0, 0, 0, 170 )
+            surface.DrawRect( 0, 0, w, h )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        PPanel:KillFocus()
+    end
     self.LoadoutMainPPanel = PPanel
 
     local SPanel = vgui.Create( "SecondariesPanel", self.LoadoutMain )
     SPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (GAMEMODE.TitleBar * 1.5) )
     SPanel:SetPos( self.LoadoutMain:GetWide() / 5 * 2, GAMEMODE.TitleBar )
     SPanel:DoSetup()
+    if GAMEMODE.PreventLoadout.secondary then
+        SPanel.PaintOver = function( panel, w, h )
+            surface.SetDrawColor( 0, 0, 0, 170 )
+            surface.DrawRect( 0, 0, w, h )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        SPanel:KillFocus()
+    end
     self.LoadoutMainSPanel = SPanel
 
     local EPanel = vgui.Create( "EquipmentPanel", self.LoadoutMain )
     EPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (GAMEMODE.TitleBar * 1.5) )
     EPanel:SetPos( self.LoadoutMain:GetWide() / 5 * 3, GAMEMODE.TitleBar )
     EPanel:DoSetup()
+    if GAMEMODE.PreventLoadout.equipment then
+        EPanel.PaintOver = function( panel, w, h )
+            surface.SetDrawColor( 0, 0, 0, 170 )
+            surface.DrawRect( 0, 0, w, h )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        EPanel:KillFocus()
+    end
     self.LoadoutMainEPanel = EPanel
 
     local PerkPanel = vgui.Create( "PerksPanel", self.LoadoutMain )
     PerkPanel:SetSize( self.LoadoutMain:GetWide() / 5, self.LoadoutMain:GetTall() - (GAMEMODE.TitleBar * 1.5) )
     PerkPanel:SetPos( self.LoadoutMain:GetWide() / 5 * 4, GAMEMODE.TitleBar )
     PerkPanel:DoSetup()
+    if GAMEMODE.PreventLoadout.perks then
+        PerkPanel.PaintOver = function( panel, w, h )
+            surface.SetDrawColor( 0, 0, 0, 170 )
+            surface.DrawRect( 0, 0, w, h )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        end
+        PerkPanel:KillFocus()
+    end
     self.LoadoutMainPerkPanel = PerkPanel
 
-    timer.Simple( 0.2, function()
+    timer.Simple( 0.3, function()
         if !self.LoadoutMain then return end
 
         if self.LastSentLoadout then
@@ -403,6 +449,8 @@ function GM:LoadoutMenu( switchingTo )
             chat.AddText( "Your loadout will be given on your next spawn" )
         end
         self.LoadoutMain:Close()
+
+        file.Write( "data/tdm/loadout.txt", util.TableToJSON( GAMEMODE.LastSentLoadout ) )
     end
 end
 
@@ -558,3 +606,4 @@ hook.Add( "PlayerBindPress", "DropWeapon", function( ply, bind, pressed )
         net.SendToServer()
     end
 end )
+

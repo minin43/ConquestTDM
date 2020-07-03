@@ -1,0 +1,27 @@
+Update 1.20	Out 00/00/2020
+
+New Content
+ 1. New & Improved Deathscreen
+    - Damage values should now be 100% accurate and account for damage-reducing mechanics such as vendetta
+    - Helpful tips will occaisonally appear if you die certain ways enough times
+ 2. Single-game Events
+    - Every match has a 5% chance to play with a special event that alters the gameplay in some, exciting or silly way
+ 3. 5 new titles:
+    - Super Sidearms: "Get 1000 kills with sidearms" (tracking for this begins with this update)
+    - My Favorite Gun: "Get 1000 kills with any single weapon"
+    - Big Game Hunter: "Earn 'big game hunter' 20 times"
+    - And two secret titles
+
+Bugfixes
+ 1. BigGameHunter is now being tracked
+ 2. Held weapons should now drop on death
+
+Quality of Life Improvements
+ 1. Loadouts now save between maps and re-joins
+ 2. "Random" mapvote choice will now try to choose a map suitable for the amount of players on the server
+
+Balance Changes
+ 1. Bleedout's damage-over-time bleed effect has been increased from 20% to 25%
+
+Misc Changes
+ 1. 

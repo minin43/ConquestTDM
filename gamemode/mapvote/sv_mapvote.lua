@@ -71,9 +71,19 @@ function EndMapvote()
     if winningMap == "" or winningMap == "repeat" or winningMap == "legend" then
         sendtoclient = "repeat"
         winningMap = file.Read( "tdm/lastmap.txt", "DATA" )
-    elseif winningMap == "random" then
-        local tab, map = table.Random( GAMEMODE.MapTable )
-        winningMap = map
+    elseif winningMap == "random" then --This got messy
+        local suggestedplayercount = { Tiny = {min = 0, max = 6}, Small = {min = 4, max = 10}, Midsize = {min = 6, max = 12}, Large = {min = 8, max = 16}, Massive = {min = 10, max = 20} }
+        local tab, map
+        local plycount = #player.GetAll()
+        for i = 1, 4 do --"try" to find a suitable chance, but continue to leave it up to chance whether one is found
+            tab, map = table.Random( GAMEMODE.MapTable )
+            if plycount > suggestedplayercount[ tab.size ].min and plycount < suggestedplayercount[ tab.size ].max then
+                winningMap = map
+            end
+        end
+        if winningMap == "random" then --If the first 3 attempts didn't find one close, just go with the final, 4th random
+            winningMap = map
+        end
         sendtoclient = "random"
     end
 

@@ -1,6 +1,7 @@
 util.AddNetworkString( "CloseDeathScreen" )
 util.AddNetworkString( "StartDeathScreen" )
 util.AddNetworkString( "UpdateDeathScreen" )
+util.AddNetworkString( "PreDeathScreen" )
 
 function GM:PlayerDeathThink( ply )
 	if ply.NextSpawnTime and ply.NextSpawnTime > CurTime() then 
@@ -13,7 +14,6 @@ function GM:PlayerDeathThink( ply )
 	end
 end
 
---This is fuckin' awful
 hook.Add( "Think", "GetWeps", function()
 	for k, v in next, player.GetAll() do
 		if IsValid( v ) and v:Alive() then
@@ -40,27 +40,22 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	--//Killer's entity
 	local attacker = att or ply
 
+	--//Killer's HP, saved here instead of in 1.5 seconds when their health may or may not have changed
+	local remaininghp = attacker:Health() or 0
+
 	--//Killshot position
+	local killshots = {
+		HITGROUP_HEAD = "head",
+		HITGROUP_CHEST = "chest",
+		HITGROUP_STOMACH = "stomach",
+		HITGROUP_LEFTARM = "left arm",
+		HITGROUP_RIGHTARM = "right arm",
+		HITGROUP_LEFTLEG = "left leg",
+		HITGROUP_RIGHTLEG = "right leg"
+	}
 	local hitgroup = "suicide"
 	if dmginfo:IsBulletDamage() then
-		local throwaway = ply:LastHitGroup()
-		if throwaway == HITGROUP_HEAD then
-			hitgroup = "head"
-		elseif throwaway == HITGROUP_CHEST then
-			hitgroup = "chest"
-		elseif throwaway == HITGROUP_STOMACH then
-			hitgroup = "stomach"
-		elseif throwaway == HITGROUP_LEFTARM then
-			hitgroup = "left arm"
-		elseif throwaway == HITGROUP_RIGHTARM then
-			hitgroup = "right arm"
-		elseif throwaway == HITGROUP_LEFTLEG then
-			hitgroup = "left leg"
-		elseif throwaway == HITGROUP_RIGHTLEG then
-			hitgroup = "right leg"
-		else 
-			hitgroup = "unknown" 
-		end
+		hitgroup = killshots[ ply:LastHitGroup() ] or "unknown"
 	elseif dmginfo:IsExplosionDamage() then
 		hitgroup = "internal"
 	elseif dmginfo:IsFallDamage() then
@@ -80,15 +75,15 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	end
 	
 	local damagedone = 0
-	if ply != att and att:IsPlayer() then
-		if !GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ] or !GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ][ id( ply:SteamID() ) ] then
-			damagedone = dmginfo:GetDamage()
-		else
-			damagedone = GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ][ GAMEMODE.DamageSaving[ id( attacker:SteamID() ) ].lifeCount ][ id( ply:SteamID() ) ][ GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount ] or 0
+	timer.Simple( 0, function()
+		if ply != att and att:IsPlayer() then
+			damagedone = GAMEMODE.DamageSaving[ id(attacker:SteamID()) ][ id(ply:SteamID()) ] or dmginfo:GetDamage()
 		end
-	else
-		damagedone = 0
-	end
+
+		net.Start( "PreDeathScreen" )
+			net.WriteTable( GAMEMODE.DamageSaving[ id(ply:SteamID()) ] )
+		net.Send( ply )
+	end )
 
 	local wasVendetta = false
 	if GAMEMODE.VendettaList[ id( attacker:SteamID() ) ].ActiveSaves and GAMEMODE.VendettaList[ id( attacker:SteamID() ) ].ActiveSaves[ id( ply:SteamID() ) ] then
@@ -108,9 +103,10 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
             net.WriteString( perk )
             net.WriteString( hitgroup )
             net.WriteString( wepused )
-            net.WriteString( tostring( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife ) )
-            net.WriteString( damagedone )
-            net.WriteString( title )
+			net.WriteString( title )
+			net.WriteInt( remaininghp, 8 )
+            net.WriteInt( GAMEMODE.KillInfoTracking[ id( att:SteamID() ) ].KillsThisLife, 8 )
+            net.WriteInt( damagedone, 16 )
             net.WriteBool( wasVendetta )
         net.Send( ply )
 		
@@ -130,11 +126,15 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	end )
 end )
 
-hook.Add( "PlayerSpawn", "closeds", function( ply )
+hook.Add( "PlayerSpawn", "SetupInfo&CloseDeathScreen", function( ply )
 	if ply:IsBot() then return end
     net.Start( "CloseDeathScreen" )
     net.Send( ply )
-	GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount = GAMEMODE.DamageSaving[ id( ply:SteamID() ) ].lifeCount + 1
+
+	GAMEMODE.DamageSaving[ id(ply:SteamID()) ] = {}
+	for k, v in pairs( player.GetAll() ) do
+		GAMEMODE.DamageSaving[ id(v:SteamID()) ][ id(ply:SteamID()) ] = 0
+	end
 end )
 
 hook.Add( "EntityTakeDamage", "TrackDamage", function( vic, dmginfo )
@@ -142,36 +142,12 @@ hook.Add( "EntityTakeDamage", "TrackDamage", function( vic, dmginfo )
 	if vic and vic:IsPlayer() and !vic:IsBot() and att and att:IsPlayer() then
 		local vicID = id( vic:SteamID() )
 		local attID = id( att:SteamID() )
-		local Lives = GAMEMODE.DamageSaving[ vicID ].lifeCount
 
-		--//Messy and difficult to read, but necessary to track damage done per life - set up the tables for both the victim and the attacker
-		GAMEMODE.DamageSaving[ vicID ][ Lives ] = GAMEMODE.DamageSaving[ vicID ][ Lives ] or { }
-		GAMEMODE.DamageSaving[ attID ][ Lives ] = GAMEMODE.DamageSaving[ attID ][ Lives ] or { }
-		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] = GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ] or { }
-		GAMEMODE.DamageSaving[ attID ][ Lives ][ vicID ] = GAMEMODE.DamageSaving[ attID ][ Lives ][ vicID ] or { }
-		GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] = ( GAMEMODE.DamageSaving[ vicID ][ Lives ][ attID ][ GAMEMODE.DamageSaving[ attID ].lifeCount ] or 0 ) + dmginfo:GetDamage()
+		local damagedone = vic:Health() -- dmginfo:GetDamage()
+		--//Track damage throughout your current life, wait for server to calculate damage reduction from other mechanics
+		timer.Simple( 0, function()
+			damagedone = damagedone - vic:Health()
+			GAMEMODE.DamageSaving[ vicID ][ attID ] = (GAMEMODE.DamageSaving[ vicID ][ attID ] or 0) + damagedone
+		end )
 	end
 end )
-
---[[
-	Above table should look something like this:
-
-	GAMEMODE.DamageSaving = {
-		Steamx0x1x123456 = { 			- Victim's SteamID
-			1 = { 						- This victim's # of lives up to this point
-				Steamx1x1x246832 = {		- Their attacker's SteamID
-					1 = 45,				- The attacker's current # of lives = the damage they've done so far in it
-					2 = 67,
-					3 = 11,
-					4 = 90
-				}
-			}
-			2 = {
-				Steamx1x1x246832 = {
-					4 = 20,
-					6 = 30
-				}
-			}
-		}
-	}
-]]

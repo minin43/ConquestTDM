@@ -29,7 +29,7 @@ GM.MapTable = { --Controls both the map autodownload and the mapvote information
 		tags = { } },
     [ "gm_forestforts" ] = { id = 253493702, size = "Large", img = "vgui/maps/forestforts.png", type = "hl2",
 		tags = { "snipers" } },
-    [ "ttt_forest_final" ] = { id = 147635981, size = "Small", img = "vgui/maps/forestfinal.png", type = "hl2",
+    [ "ttt_forest_final" ] = { id = 147635981, size = "Midsize", img = "vgui/maps/forestfinal.png", type = "hl2",
 		tags = { } },
     [ "ttt_riverside_b3" ] = { id = 312731430, size = "Small", img = "vgui/maps/riverside.png", type = "hl2",
 		tags = { } },

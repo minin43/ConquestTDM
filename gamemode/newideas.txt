@@ -12,7 +12,7 @@ Future ideas:
         - rp_limansk blue side spawn fucking SUCKS
     - Perk ideas
         - Donasan - shooting friendlies heals them
-    - Add CSS CORRECTLY
     - Add back in PhD Flopper? Since now we have anti-explosive equipment, also can reduce movespeed shortly after using it?
-    - Dropping/picking up weapons should save the skin
-    - Finish events
+
+    FINAL THINGS BEFORE 1.20
+    - Add CSS CORRECTLY

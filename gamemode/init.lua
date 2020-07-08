@@ -527,18 +527,18 @@ end
     Moved to sv_loadout
 end )]]
 
-function ApplyWeaponSkin( ply, wep, skinmat )
-    if !ply or !wep or !skinmat then return end
+function ApplyWeaponSkin( ply, wepclass, skinmat )
+    if !ply or !wepclass or !skinmat then return end
 
     for k, v in pairs( ply:GetWeapons() ) do
-        if v:GetClass() == wep then
+        if v:GetClass() == wepclass then
             v:SetMaterial( skinmat )
         end
     end
 
     --Received in cl_weapon_submaterials
     net.Start( "ApplyWeaponSkin" )
-        net.WriteString( wep )
+        net.WriteString( wepclass )
         net.WriteString( skinmat )
     net.Send( ply )
 end
@@ -616,7 +616,7 @@ function giveLoadout( ply )
     ply:Give( "weapon_fists" )
 
 	if GAMEMODE.PreventLoadout.forced then
-		for k, v in pairs( GAMEMODE.PreventLoadout.forced ) do
+        for k, v in pairs( GAMEMODE.PreventLoadout.forced ) do
 			ply:Give( v )
 		end
 	end
@@ -632,8 +632,8 @@ local dontgive = {
 }
 local col = {}
 col[0] = Vector( 0, 0, 0 )
-col[1] = Vector( 1.0, .2, .2 )
-col[2] = Vector( .2, .2, 1.0 )
+col[1] = Vector( 1.0, 0.2, 0.2 )
+col[2] = Vector( 0.2, 0.2, 1.0 )
 
 function GM:PlayerSpawn( ply )
 	if ply.curprimary then

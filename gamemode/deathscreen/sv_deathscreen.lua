@@ -59,7 +59,9 @@ hook.Add( "DoPlayerDeath", "SendDeathScreen", function( ply, att, dmginfo )
 	elseif dmginfo:IsExplosionDamage() then
 		hitgroup = "internal"
 	elseif dmginfo:IsFallDamage() then
-		hitgroup = "ground"
+        hitgroup = "ground"
+    elseif dmginfo:IsDamageType( DMG_BURN ) or dmginfo:IsDamageType( DMG_SLOWBURN ) then
+        hitgroup = "burns"
 	end
 	
 	--//Weapon used

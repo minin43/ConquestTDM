@@ -176,85 +176,87 @@ function GM:OpenHelp( firstTime )
 	end
 
 	if firstTime then
-			local close = vgui.Create( "DButton", self.HelpScrollBar )
-			close:Dock( TOP )
-			surface.SetFont( "HelpHeader" )
-			local wide = surface.GetTextSize("UNDERSTOOD, LET'S PLAY")
-			local remainingspace = ( self.HelpScrollBar:GetWide() - wide ) / 2
-			close:DockMargin( remainingspace, 0, remainingspace, 0 )
-			close:SetText( "" )
-			close.Think = function()
-				close:SetSize( wide + 8, 24 + 8 + 8 )
-			end
-			close.Paint = function()
-				surface.SetTextColor( 0, 0, 0 )
-				surface.SetFont( "HelpHeader" )
-				surface.SetTextPos( 4, 2 )
-				surface.DrawText( "UNDERSTOOD, LET'S PLAY" )
+        local close = vgui.Create( "DButton", self.HelpScrollBar )
+        close:Dock( TOP )
+        surface.SetFont( "HelpHeader" )
+        local wide = surface.GetTextSize("UNDERSTOOD, LET'S PLAY")
+        local remainingspace = ( self.HelpScrollBar:GetWide() - wide ) / 2
+        close:DockMargin( remainingspace, 0, remainingspace, 0 )
+        close:SetText( "" )
+        close.Think = function()
+            close:SetSize( wide + 8, 24 + 8 + 8 )
+        end
+        close.Paint = function()
+            surface.SetTextColor( 0, 0, 0 )
+            surface.SetFont( "HelpHeader" )
+            surface.SetTextPos( 4, 2 )
+            surface.DrawText( "UNDERSTOOD, LET'S PLAY" )
 
-				if close.hover then
-					draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall() - 8, Color( 0, 0, 0, 153 ) )
-				end
-			end
-			close.DoClick = function()
-				self.HelpMain:Close()
-				LocalPlayer():ConCommand( "tdm_spawnmenu" )
-				net.Start( "AcceptedHelp" )
-				net.SendToServer()
-			end
-			close.OnCursorEntered = function()
-				close.hover = true
-			end
-			close.OnCursorExited = function()
-				close.hover = false
-			end
-		else
-			local back = vgui.Create( "DButton", self.HelpMain )
-			back:SetSize( 40, 40 )
-			back:SetPos( 8, 8 )
-			back:SetText( "" )
-			back.DoClick = function()
-				self.HelpMain:Close()
-				GAMEMODE:MenuMain()
-			end
-			back.Paint = function()
-				if back.hover then
-					surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
-				else
-					surface.SetDrawColor( 0, 0, 0, 220 )
-				end
-				surface.SetMaterial( GAMEMODE.Icons.Menu.backIcon )
-				surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
-			end
-			back.OnCursorEntered = function()
-				back.hover = true
-			end
-			back.OnCursorExited = function()
-				back.hover = false
-			end
+            if close.hover then
+                draw.RoundedBox( 4, 0, 0, close:GetWide(), close:GetTall() - 8, Color( 0, 0, 0, 153 ) )
+            end
+        end
+        close.DoClick = function()
+            self.HelpMain:Close()
+            LocalPlayer():ConCommand( "tdm_spawnmenu" )
+            net.Start( "AcceptedHelp" )
+            net.SendToServer()
+        end
+        close.OnCursorEntered = function()
+            close.hover = true
+        end
+        close.OnCursorExited = function()
+            close.hover = false
+        end
+    else
+        local back = vgui.Create( "DButton", self.HelpMain )
+        back:SetSize( 40, 40 )
+        back:SetPos( 8, 8 )
+        back:SetText( "" )
+        back.DoClick = function()
+            self.HelpMain:Close()
+            GAMEMODE:MenuMain()
+        end
+        back.Paint = function()
+            if back.hover then
+                surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
+            else
+                surface.SetDrawColor( 0, 0, 0, 220 )
+            end
+            surface.SetMaterial( GAMEMODE.Icons.Menu.backIcon )
+            surface.DrawTexturedRect( 0, 0, back:GetWide(), back:GetTall() )
+        end
+        back.OnCursorEntered = function()
+            back.hover = true
+        end
+        back.OnCursorExited = function()
+            back.hover = false
+        end
 
-			local close = vgui.Create( "DButton", self.HelpMain )
-			close:SetSize( 40, 40 )
-			close:SetPos( self.HelpMain:GetWide() - 8 - close:GetWide(), 8 )
-			close:SetText( "" )
-			close.DoClick = function()
-				self.HelpMain:Close()
-			end
-			close.Paint = function()
-				if close.hover then
-					surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
-				else
-					surface.SetDrawColor( 0, 0, 0, 220 )
-				end
-				surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
-				surface.DrawTexturedRect( 0, 0, close:GetWide(), close:GetTall() )
-			end
-			close.OnCursorEntered = function()
-				close.hover = true
-			end
-			close.OnCursorExited = function()
-				close.hover = false
-			end
-		end
+        local close = vgui.Create( "DButton", self.HelpMain )
+        close:SetSize( 40, 40 )
+        close:SetPos( self.HelpMain:GetWide() - 8 - close:GetWide(), 8 )
+        close:SetText( "" )
+        close.DoClick = function()
+            self.HelpMain:Close()
+        end
+        close.Paint = function()
+            if close.hover then
+                surface.SetDrawColor( colorScheme[ LocalPlayer():Team() ].ButtonIndicator )
+            else
+                surface.SetDrawColor( 0, 0, 0, 220 )
+            end
+            surface.SetMaterial( GAMEMODE.Icons.Menu.cancelIcon )
+            surface.DrawTexturedRect( 0, 0, close:GetWide(), close:GetTall() )
+        end
+        close.OnCursorEntered = function()
+            close.hover = true
+        end
+        close.OnCursorExited = function()
+            close.hover = false
+        end
+    end
+
+    GAMEMODE:DrawEventStatuses( self.HelpMain )
 end
 

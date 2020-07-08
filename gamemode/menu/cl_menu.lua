@@ -101,6 +101,7 @@ function GM:MenuMain()
     end
     
     GAMEMODE:DrawEventStatuses( self.ChooseMain )
+    GAMEMODE:DrawSingleEventStatus( self.ChooseMain )
 end
 
 concommand.Add( "tdm_menu", GM.MenuMain )

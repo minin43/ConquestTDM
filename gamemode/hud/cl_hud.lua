@@ -202,7 +202,7 @@ local overlayTable = {
 }
 --//Handles perk overlays, net.Receive's found lower in file. Surface draws are drawn in order, so important overlays should be drawn last
 hook.Add( "HUDPaint", "HUD_OverlayEffects", function()
-    if not LocalPlayer():Alive() or GAMEMODE.Realism then 
+    if not LocalPlayer():Alive() --[[or GAMEMODE.Realism]] then 
         overlayTable.slaw_rate = 0
         overlayTable.bleedout_rate = 0
         return 
@@ -382,6 +382,8 @@ hook.Add( "HUDPaint", "HUD_RoundInfo", function()
 		--draw.SimpleText( blueExtra, "Time", ScrW() / 2 + 70, 9, Color( 255, 255, 255, 177 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
+    if GAMEMODE.Realism then return end
+
 	surface.SetFont( "Info" )
 	local info = "[F1] Menu | [F2] Loadout | [F3] Shop | [F4] Choose Team"
     local infowidth, infoheight = surface.GetTextSize( info )
@@ -481,22 +483,27 @@ hook.Add( "HUDPaint", "HUD_HealthAndAmmo", function()
 	end]]
 end )
 
-local bombimage = Material( "" )
+surface.CreateFont( "CampfireBombFont", { font = "Exo 2", size = 64, weight = 600, antialias = true } )
+local bombimage = Material( "vgui/bomb_icon.png" )
 hook.Add( "HUDPaint", "HUD_CampfireBomb", function()
-	if GAMEMODE.CampfireBomb then
+	if GAMEMODE.CampfireBomb and LocalPlayer():Alive() then
 		surface.SetDrawColor( 255, 255, 255 )
 		surface.SetMaterial( bombimage )
-		surface.DrawTexturedRect( ScrW() - 260, ScrH() - 169, 64, 64 )
+        surface.DrawTexturedRect( ScrW() - 180, ScrH() - 300, 128, 128 )
+        surface.SetDrawColor( GAMEMODE.TeamColor )
+        surface.DrawTexturedRect( ScrW() - 178, ScrH() - 298, 132, 132 )
 		if GAMEMODE.CampfireBomb <= 10 then
-			draw.SimpleText( GAMEMODE.CampfireBomb, "DermaDefault", ScrW() - 228, ScrH() - 137, colorScheme[0]["GameTimerLow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( GAMEMODE.CampfireBomb, "CampfireBombFont", ScrW() - 115, ScrH() - 235, colorScheme[0]["GameTimerLow"], TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		else
-			draw.SimpleText( GAMEMODE.CampfireBomb, "DermaDefault", ScrW() - 228, ScrH() - 137, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+			draw.SimpleText( GAMEMODE.CampfireBomb, "CampfireBombFont", ScrW() - 115, ScrH() - 235, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
 	end
 end )
 
 --//Draws your individual information, your $ and level - this is LEGACY code, I don't write this messy
 hook.Add( "HUDPaint", "HUD_PersonalInfo", function()
+    if GAMEMODE.Realism then return end
+
 	local teamcolor = team.GetColor( LocalPlayer():Team() )
 	local n = 11
 	teamcolor = Color( math.Clamp( teamcolor.r, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.g, 255 / n * ( n - 1 ), 255 ), math.Clamp( teamcolor.b, 255 / n * ( n - 1 ), 255 ) )
@@ -888,6 +895,7 @@ hook.Add( "PreDrawHalos", "AddHalos", function()
 end )
 
 usermessage.Hook( "enemyflagcaptured", function( um )
+    if GAMEMODE.Realism then return end
 	surface.PlaySound( "ui/hud_ctf_enemycapturesflag_xp0_wave.mp3" )
 
 	local flag = um:ReadString()
@@ -924,6 +932,7 @@ usermessage.Hook( "enemyflagcaptured", function( um )
 end )
 
 usermessage.Hook( "friendlyflagcaptured", function( um )
+    if GAMEMODE.Realism then return end
 	surface.PlaySound( "ui/hud_ctf_friendlycapturesflag_xp0_wave.mp3" )
 
 	local flag = um:ReadString()

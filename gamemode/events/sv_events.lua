@@ -9,6 +9,24 @@ GM.EventTimers = GM.EventTimers or {}
 GM.EventTimers.Active = GM.EventTimers.Active or {}
 GM.EventTimers.Dormant = GM.EventTimers.Dormant or {}
 
+--//Queues up an event to play for the next map, accepts 
+function QueueEventNextMap( eventID )
+    local newEvent = GAMEMODE.EventTable.Single[ math.random( #GAMEMODE.EventTable.Single ) ].id
+
+    if eventID then
+        if RetrieveEventTable( eventID ) then
+            newEvent = eventID
+        end
+    end
+
+    file.Write( "tdm/newevent.txt", newEvent )
+    return newEvent
+end
+
+function GetEventNextMap()
+    return file.Read( "tdm/newevent.txt", "DATA" )
+end
+
 --//Counts how many seconds have passed from the start of the year to the given time
 function GetTimeInSeconds( tab )
     if not istable( tab ) then return 0 end
@@ -243,10 +261,10 @@ end )
 
 --//When the server changes map or boots up, check to see if any single-game event should start
 hook.Add( "Initialize", "StartSingleMatchEvents", function()
-    if file.Exists( "tdm/newevent.txt" ) then
+    if file.Exists( "tdm/newevent.txt", "DATA" ) then
         local event = file.Read( "tdm/newevent.txt", "DATA" )
         StartSingleEvent( event )
-        --file.Delete( "tdm/newevent.txt" ) Disabled while I test
+        file.Delete( "tdm/newevent.txt" )
     end
 end )
 --[[

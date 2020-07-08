@@ -87,10 +87,6 @@ function EndMapvote()
         sendtoclient = "random"
     end
 
-    if doEvent then
-        file.Write( "tdm/newevent.txt", doEvent )
-    end
-
     net.Start( "MapvoteFinished" )
         net.WriteString( sendtoclient or winningMap )
     net.Broadcast()
@@ -125,9 +121,12 @@ hook.Add( "StartMapvote", "RunMapvote", function( winningTeam, preventRepeat )
         GAMEMODE.MapTable[ lastmap ] = nil
     end
 
-    --//Event logic, 1 in 20 chance to run an event
-    if math.random( 20 ) == 1 then
-        doEvent = GAMEMODE.EventTable.Single[ math.random( #GAMEMODE.EventTable.Single ) ].id
+    --//Event logic, 1 in 15 chance to run an event
+    if file.Exists( "tdm/newevent.txt", "DATA" ) then
+        doEvent = GetEventNextMap()
+    elseif math.random( 15 ) == 1 then
+        --doEvent = GAMEMODE.EventTable.Single[ math.random( #GAMEMODE.EventTable.Single ) ].id
+        doEvent = QueueEventNextMap()
     end
     
     for counter = 1, 6 do

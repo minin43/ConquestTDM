@@ -175,6 +175,7 @@ end )
 --//When implementing future title tracking, keep in mind GETPData returns the value as a STRING. Simple comparisons for if-then statements will SILENTLY FAIL
 
 function IncrementTitleCounting( ply, tab )
+    if !ply or !ply:IsPlayer() then return end
     --if isstring( tab ) then tab = GAMEMODE.GetTitleTable( tab ) end --//I got lazy, see if you can deduce at what point
     ply:SetPData( tab.id .. "count", ply:GetPData( tab.id .. "count" ) + 1 )
 
@@ -200,6 +201,8 @@ hook.Add( "AllAttachmentsUnlocked", "AttachmentCounting", function( ply, wep )
 end )
 
 hook.Add( "DoPlayerDeath", "CTakeDamageInfoCounting", function( vic, att, dmginfo )
+    if !att or !att:IsPlayer() then return end
+
     if dmginfo:IsDamageType( DMG_SLASH ) or dmginfo:IsDamageType( DMG_CLUB ) or dmginfo:GetInflictor():GetClass() == "weapon_fists" then --or dmginfo:GetInflictor() == "" then
         if GAMEMODE:CheckEquippedTitle( att ) == "infected" then
             IncrementTitleCounting( vic, GAMEMODE:GetTitleTable( "infected" ) )
@@ -342,39 +345,47 @@ hook.Add( "DoPlayerDeath", "SecretTitles", function( vic, att, dmginfo )
         GAMEMODE:GivePlayerTitle( vic, "shit" )
     end
     CheckFor666Title( vic )
-    CheckFor666Title( att )
+    if att and att:IsPlayer() then
+        CheckFor666Title( att )
+    end
 end )
 hook.Add( "KillFeedAssist", "SecretTitlesAssists", function( ply )
     CheckFor666Title( ply )
 end )
 
 hook.Add( "DoPlayerDeath", "CheckAttachmentOverages", function( vic, att, dmginfo )
-    local wep = att:GetActiveWeapon()
-    if !wep or !wep:IsValid() or weapons.Get( wep:GetClass() ).base != "cw_base" then return end
+    if att and att:IsPlayer() then
+        local wep = att:GetActiveWeapon()
+        if !wep or !wep:IsValid() or weapons.Get( wep:GetClass() ).base != "cw_base" then return end
 
-    local totalkills = GetStatTrak( att, wep )
-    if wep_att[ wep:GetClass() ] and totalkills > wep_att[ wep:GetClass() ][ #wep_att[ wep:GetClass() ] ][ 2 ] then
-        if !GAMEMODE:CheckTitleOwnership( att, wep:GetClass() .. "_attmastery" ) then
-            GAMEMODE:GivePlayerTitle( att, wep:GetClass() .. "_attmastery" )
+        local totalkills = GetStatTrak( att, wep )
+        if wep_att[ wep:GetClass() ] and totalkills > wep_att[ wep:GetClass() ][ #wep_att[ wep:GetClass() ] ][ 2 ] then
+            if !GAMEMODE:CheckTitleOwnership( att, wep:GetClass() .. "_attmastery" ) then
+                GAMEMODE:GivePlayerTitle( att, wep:GetClass() .. "_attmastery" )
+            end
         end
     end
 end )
 
 hook.Add( "DoPlayerDeath", "SidearmKills", function( vic, att, dmginfo )
-    local wep = att:GetActiveWeapon()
-    if isSecondary( wep ) then
-        IncrementTitleCounting( att, "sidearms" )
+    if att and att:IsPlayer() then
+        local wep = att:GetActiveWeapon()
+        if isSecondary( wep ) then
+            IncrementTitleCounting( att, "sidearms" )
+        end
     end
 end )
 
 hook.Add( "DoPlayerDeath", "FavoriteWeapon", function( vic, att, dmginfo )
-    local wep = att:GetActiveWeapon()
-    if !wep or !wep:IsValid() or weapons.Get( wep:GetClass() ).base != "cw_base" then return end
+    if att and att:IsPlayer() then
+        local wep = att:GetActiveWeapon()
+        if !wep or !wep:IsValid() or weapons.Get( wep:GetClass() ).base != "cw_base" then return end
 
-    local totalkills = GetStatTrak( att, wep )
-    if totalkills == 1000 then
-        if !GAMEMODE:CheckTitleOwnership( att, "favorite" ) then
-            GAMEMODE:GivePlayerTitle( att, "favorite" )
+        local totalkills = GetStatTrak( att, wep )
+        if totalkills == 1000 then
+            if !GAMEMODE:CheckTitleOwnership( att, "favorite" ) then
+                GAMEMODE:GivePlayerTitle( att, "favorite" )
+            end
         end
     end
 end )

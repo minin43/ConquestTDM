@@ -137,3 +137,32 @@ local addTokens = ulx.command("CTDM Commands", "ulx addtokens", ulx.addTokens, "
 addTokens:addParam{type = ULib.cmds.PlayersArg}
 addTokens:addParam{type = ULib.cmds.StringArg, hint = "Prestige Tokens To Add"}
 addTokens:defaultAccess(ULib.ACCESS_SUPERADMIN)
+
+--//Set a new event for the next map
+
+ulx.ctdmevents = {}
+ulx.ctdmeventsnamebyid = {}
+for k, v in pairs( GM.EventTable.Single ) do
+    ulx.ctdmevents[ #ulx.ctdmevents + 1 ] = v.name
+    ulx.ctdmeventsnamebyid[ v.name ] = v.id
+end
+function ulx.addEvent(calling_ply, eventname)
+    local eventid = ulx.ctdmeventsnamebyid[ eventname ]
+    QueueEventNextMap( eventid )
+    ulx.fancyLogAdmin(calling_ply, "#A Queued the event " .. eventname .. " to play next map!")
+end
+local addEvent = ulx.command("CTDM Commands", "ulx addevent", ulx.addEvent, "!addevent")
+addEvent:addParam{ type=ULib.cmds.StringArg, completes=ulx.ctdmevents, hint="event", error="invalid event \"%s\" specified", ULib.cmds.restrictToCompletes }
+addEvent:defaultAccess(ULib.ACCESS_SUPERADMIN)
+
+--//Forces a mapvote
+
+function ulx.forceMapvote(calling_ply)
+    timer.Simple( 1, function()
+        hook.Run( "StartMapvote", true )
+    end )
+    ulx.fancyLogAdmin(calling_ply, "#A forced a mapvote!")
+end
+local forceMapvote = ulx.command("CTDM Commands", "ulx forcemapvote", ulx.forceMapvote, "!forcemapvote")
+--forceMapvote:addParam
+forceMapvote:defaultAccess(ULib.ACCESS_SUPERADMIN)

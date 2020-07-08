@@ -5,11 +5,9 @@ hook.Add( "EntityTakeDamage", "ReboundDamageChecks", function( ply, dmginfo )
 	GAMEMODE.ReboundHealthBack = GAMEMODE.ReboundHealthBack or { }
 
 	if CheckPerk( vic ) == "rebound"  then
-        GAMEMODE.ReboundHealthBack[ id( vic:SteamID() ) ] = ( GAMEMODE.ReboundHealthBack[ id( vic:SteamID() ) ] or 0 ) + ( dmginfo:GetDamage() * 0.30 )
+        GAMEMODE.ReboundHealthBack[ id( vic:SteamID() ) ] = ( GAMEMODE.ReboundHealthBack[ id( vic:SteamID() ) ] or 0 ) + ( dmginfo:GetDamage() * 0.50 )
     end
 end )
-
---//Should probably include kill/death checks for removing vengeance targets from the client
 
 hook.Add( "PlayerHurt", "ReboundRegen", function( ply, att ) --Ripped right from regeneration w/ minor edits
 	if ply:IsValid() and  CheckPerk( ply ) == "rebound" then
@@ -50,5 +48,5 @@ hook.Add( "PlayerDeath", "RemoveReboundRegen", function( ply )
 	end
 end )
 
-RegisterPerk( "Rebound", "rebound", 15, "Heal back 30% of all damage received after a short delay." )
+RegisterPerk( "Rebound", "rebound", 15, "Slowly heal back 50% of all damage received after a short delay." )
 --RegisterPerk( "Vengeance", "vengeance", 8, "Deal bonus damage to your previous killers & heal back a small % of damage done to you, by them.")

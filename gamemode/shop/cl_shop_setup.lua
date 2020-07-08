@@ -9,17 +9,6 @@ GM.typematerials = { Material( "vgui/ar_icon.png" ), Material( "vgui/smg_icon.pn
 GM.levelmaterials = { Material( "vgui/level_locked.png" ), Material( "vgui/level_unlocked.png" ) }
 GM.moneymaterials = { Material( "vgui/money_locked.png" ), Material( "vgui/money_unlocked.png" ) }
 
-surface.CreateFont( "Exo-20-600" , { font = "Exo 2", size = 20, weight = 600 } )
-surface.CreateFont( "Exo-36-600" , { font = "Exo 2", size = 36, weight = 600 } )
-surface.CreateFont( "Exo-32-600" , { font = "Exo 2", size = 32, weight = 600 } )
-surface.CreateFont( "Exo-16-500" , { font = "Exo 2", size = 16, weight = 500 } )
-surface.CreateFont( "Exo-16-600" , { font = "Exo 2", size = 16, weight = 600 } )
-surface.CreateFont( "Exo-24-600" , { font = "Exo 2", size = 24, weight = 600 } )
-surface.CreateFont( "Exo-32-400", { font = "Exo 2", size = 32 } )
-
-surface.CreateFont( "Exo-28-600", { font = "Exo 2", size = 28, weight = 600 } )
-surface.CreateFont( "Exo-40-600", { font = "Exo 2", size = 40, weight = 600 } )
-
 --//
 
 --WeaponInfo is used both in cl_shop_setup as well as cl_loadout_setup

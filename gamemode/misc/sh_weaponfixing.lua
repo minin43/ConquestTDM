@@ -6,6 +6,26 @@ hook.Add( "InitPostEntity", "FixWeapons", function()
         return
     end
 
+    if weapons.Get( "cw_melee_base" ) then
+        local wep = weapons.GetStored( "cw_melee_base" )
+
+        wep.BackstabDamageMultiplier = 2 --originally 3
+
+        function wep:getDealtDamage(ent)
+            local dmg = type(self.attackDamage) == "table" and math.random(self.attackDamage[1], self.attackDamage[2]) or self.attackDamage
+            
+            if ent:IsPlayer() and self:isBackstab(ent) then
+                dmg = dmg * self.BackstabDamageMultiplier
+            end
+            
+            --Removed the velocity bonus
+            --local velocity = self.Owner:GetVelocity()
+            --dmg = dmg + velocity:Length() / self.VelocityToDamageDivider
+            
+            return dmg
+        end
+    end
+
     --Fixes the error when spectating someone first-person and they open their attachments
     function CustomizableWeaponry:hasAttachment(ply, att, lookIn)
         if not self.useAttachmentPossessionSystem then

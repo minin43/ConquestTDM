@@ -1145,6 +1145,7 @@ function GM:BalanceWeapons()
     if weapons.Get( "cw_extrema_ratio_official" ) then
         local wep = weapons.GetStored( "cw_extrema_ratio_official" )
         wep.Slot = 3
+        wep.SecondaryAttackDamage = {40, 45}
     end
 
     --Most balancing for these equipment can be found natively in the entities folder, or in sh_weaponfixing.lua

@@ -1,3 +1,15 @@
+surface.CreateFont( "Exo-20-600" , { font = "Exo 2", size = 20, weight = 600 } )
+surface.CreateFont( "Exo-36-600" , { font = "Exo 2", size = 36, weight = 600 } )
+surface.CreateFont( "Exo-32-600" , { font = "Exo 2", size = 32, weight = 600 } )
+surface.CreateFont( "Exo-16-500" , { font = "Exo 2", size = 16, weight = 500 } )
+surface.CreateFont( "Exo-16-600" , { font = "Exo 2", size = 16, weight = 600 } )
+surface.CreateFont( "Exo-24-600" , { font = "Exo 2", size = 24, weight = 600 } )
+surface.CreateFont( "Exo-32-400", { font = "Exo 2", size = 32 } )
+
+surface.CreateFont( "Exo-28-600", { font = "Exo 2", size = 28, weight = 600 } )
+surface.CreateFont( "Exo-40-600", { font = "Exo 2", size = 40, weight = 600 } )
+
+--//colorScheme is MCFX's attempt to globalize all colors, which he gave up on
 colorScheme = {
 	[0] = { --spectator/misc colors
 		--unique to spectator
@@ -84,7 +96,8 @@ GM.Icons = {
 	Mapvote = { --//Any icons for the tags found in MapTable
 		snipers = Material( "vgui/sniper_icon.png", "smooth" ), --same material as GAMEMODE.Icons.Weapons.sr
         flags = Material( "vgui/flagIcon.png", "smooth" ),
-        resupply = Material( "vgui/resupply_icon.png", "smooth" )
+        resupply = Material( "vgui/resupply_icon.png", "smooth" ),
+        event = Material( "vgui/rolling-dices.png", "smooth" ) --Forgot to name this correctly, whoops.
     },
     Menu = {
         moneylocked = Material( "vgui/money_locked.png", "smooth" ),

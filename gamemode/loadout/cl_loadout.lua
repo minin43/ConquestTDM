@@ -59,17 +59,6 @@ function GM:LoadoutMenu( switchingTo )
         end
     end )
 
-    if !GAMEMODE.LastSentLoadout and file.Exists( "data/tdm/loadout.txt" ) then
-        local toverify = util.JSONToTable( file.Read( "data/tdm/loadout.txt", "DATA" ) )
-        GAMEMODE.LastSentLoadout = { --A lot of the verification/validity checks come in the form of checking the panel exists to shift scroll panels to
-            [1] = { toverify[1][1] or "cw_ar15", toverify[1][2] },
-            [2] = { toverify[2][1], toverify[2][2] },
-            [3] = toverify[3],
-            [4] = toverify[4],
-            [5] = { toverify[5][1], toverify[5][2] or 0, toverify[5][3] }
-        }
-    end
-
     self.MyModels = self.MyModels or {}
     net.Start( "GetUnlockedModels" )
     net.SendToServer()
@@ -233,7 +222,6 @@ function GM:LoadoutMenu( switchingTo )
             end
         end
     else 
-    
         PMPanel:SetModel( nil, "models/weapons/w_rif_m4a1.mdl" )
     end
     PMPanel:SetFOV( 60 )
@@ -276,9 +264,10 @@ function GM:LoadoutMenu( switchingTo )
         PPanel.PaintOver = function( panel, w, h )
             surface.SetDrawColor( 0, 0, 0, 170 )
             surface.DrawRect( 0, 0, w, h )
-            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
         PPanel:KillFocus()
+        PPanel:SetDisabled( true )
     end
     self.LoadoutMainPPanel = PPanel
 
@@ -290,9 +279,10 @@ function GM:LoadoutMenu( switchingTo )
         SPanel.PaintOver = function( panel, w, h )
             surface.SetDrawColor( 0, 0, 0, 170 )
             surface.DrawRect( 0, 0, w, h )
-            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
         SPanel:KillFocus()
+        SPanel:SetDisabled( true )
     end
     self.LoadoutMainSPanel = SPanel
 
@@ -304,9 +294,10 @@ function GM:LoadoutMenu( switchingTo )
         EPanel.PaintOver = function( panel, w, h )
             surface.SetDrawColor( 0, 0, 0, 170 )
             surface.DrawRect( 0, 0, w, h )
-            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
         EPanel:KillFocus()
+        EPanel:SetDisabled( true )
     end
     self.LoadoutMainEPanel = EPanel
 
@@ -318,34 +309,69 @@ function GM:LoadoutMenu( switchingTo )
         PerkPanel.PaintOver = function( panel, w, h )
             surface.SetDrawColor( 0, 0, 0, 170 )
             surface.DrawRect( 0, 0, w, h )
-            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Currently Disabled", "Exo-32-600", w / 2, h / 2, Color( 0, 0, 0 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         end
         PerkPanel:KillFocus()
+        PerkPanel:SetDisabled( true )
     end
     self.LoadoutMainPerkPanel = PerkPanel
 
-    timer.Simple( 0.3, function()
-        if !self.LoadoutMain then return end
-
+    GAMEMODE.AttemptLoadoutTries = 0
+    timer.Create( "TryToLoadOldLoadout", 0.1, 0, function()
+        if !self.LoadoutMain or ( GAMEMODE.AttemptLoadoutPrim and GAMEMODE.AttemptLoadoutSec and GAMEMODE.AttemptLoadoutEquip and GAMEMODE.AttemptLoadoutPerk ) then 
+            GAMEMODE.AttemptLoadoutPrim = false
+            GAMEMODE.AttemptLoadoutSec = false
+            GAMEMODE.AttemptLoadoutEquip = false
+            GAMEMODE.AttemptLoadoutPerk = false
+            timer.Remove( "TryToLoadOldLoadout" ) 
+            return 
+        end
+        GAMEMODE.AttemptLoadoutTries = GAMEMODE.AttemptLoadoutTries + 1
+        
         if self.LastSentLoadout then
-            if self.LastSentLoadout[1][1] and PPanel.scrollpanel.buttons[ self.LastSentLoadout[1][1] ] then
-                PPanel.scrollpanel:ScrollToChild( PPanel.scrollpanel.buttons[ self.LastSentLoadout[1][1] ] )
-                PPanel:SelectWeapon( self.LastSentLoadout[1][1] )
-                PPanel:SelectSkin( self.LastSentLoadout[1][2] or "" )
+            if self.LastSentLoadout[1][1] then
+                if PPanel.scrollpanel and PPanel.scrollpanel.buttons[ self.LastSentLoadout[1][1] ] then
+                    PPanel.scrollpanel:ScrollToChild( PPanel.scrollpanel.buttons[ self.LastSentLoadout[1][1] ] )
+                    PPanel:SelectWeapon( self.LastSentLoadout[1][1] )
+                    PPanel:SelectSkin( self.LastSentLoadout[1][2] or "" )
+                    GAMEMODE.AttemptLoadoutPrim = true
+                end
+            else
+                GAMEMODE.AttemptLoadoutPrim = true
             end
-            if self.LastSentLoadout[2][1] and SPanel.scrollpanel.buttons[ self.LastSentLoadout[2][1] ] then
-                SPanel.scrollpanel:ScrollToChild( SPanel.scrollpanel.buttons[ self.LastSentLoadout[2][1] ] )
-                SPanel:SelectWeapon( self.LastSentLoadout[2][1] )
-                SPanel:SelectSkin( self.LastSentLoadout[2][2] or "" )
+            if self.LastSentLoadout[2][1] then
+                if SPanel.scrollpanel and SPanel.scrollpanel.buttons[ self.LastSentLoadout[2][1] ] then
+                    SPanel.scrollpanel:ScrollToChild( SPanel.scrollpanel.buttons[ self.LastSentLoadout[2][1] ] )
+                    SPanel:SelectWeapon( self.LastSentLoadout[2][1] )
+                    SPanel:SelectSkin( self.LastSentLoadout[2][2] or "" )
+                    GAMEMODE.AttemptLoadoutSec = true
+                end
+            else
+                GAMEMODE.AttemptLoadoutSec = true
             end
-            if self.LastSentLoadout[3] and EPanel.scrollpanel.buttons[ self.LastSentLoadout[3] ] then
-                EPanel.scrollpanel:ScrollToChild( EPanel.scrollpanel.buttons[ self.LastSentLoadout[3] ] )
-                EPanel:SelectWeapon( self.LastSentLoadout[3] )
+            if self.LastSentLoadout[3] then
+                if EPanel.scrollpanel and EPanel.scrollpanel.buttons[ self.LastSentLoadout[3] ] then
+                    EPanel.scrollpanel:ScrollToChild( EPanel.scrollpanel.buttons[ self.LastSentLoadout[3] ] )
+                    EPanel:SelectWeapon( self.LastSentLoadout[3] )
+                    GAMEMODE.AttemptLoadoutEquip = true
+                end
+            else
+                GAMEMODE.AttemptLoadoutEquip = true
             end
-            if self.LastSentLoadout[4] and PerkPanel.scrollpanel.buttons[ self.LastSentLoadout[4] ] then
-                PerkPanel.scrollpanel:ScrollToChild( PerkPanel.scrollpanel.buttons[ self.LastSentLoadout[4] ] )
-                PerkPanel:SelectPerk( GetPerkTable(self.LastSentLoadout[4]) )
+            if self.LastSentLoadout[4] then
+                if PerkPanel.scrollpanel and PerkPanel.scrollpanel.buttons[ self.LastSentLoadout[4] ] then
+                    PerkPanel.scrollpanel:ScrollToChild( PerkPanel.scrollpanel.buttons[ self.LastSentLoadout[4] ] )
+                    PerkPanel:SelectPerk( GetPerkTable(self.LastSentLoadout[4]) )
+                    GAMEMODE.AttemptLoadoutPerk = true
+                end
+            else
+                GAMEMODE.AttemptLoadoutPerk = true
             end
+        end
+
+        if GAMEMODE.AttemptLoadoutTries >= 20 then
+            timer.Remove( "TryToLoadOldLoadout" )
+            return
         end
     end )
 
@@ -450,8 +476,12 @@ function GM:LoadoutMenu( switchingTo )
         end
         self.LoadoutMain:Close()
 
-        file.Write( "data/tdm/loadout.txt", util.TableToJSON( GAMEMODE.LastSentLoadout ) )
+        if !GAMEMODE.PreventLoadoutSaving then
+            file.Write( "tdm/loadout.txt", util.TableToJSON( GAMEMODE.LastSentLoadout ) )
+        end
     end
+
+    GAMEMODE:DrawEventStatuses( self.LoadoutMain )
 end
 
 --The old prestige shit I wrote for the old loadoutmenu, adapted for the current one. Just got really lazy and didn't want to rewrite any of this
@@ -607,3 +637,15 @@ hook.Add( "PlayerBindPress", "DropWeapon", function( ply, bind, pressed )
     end
 end )
 
+--hook.Add( "InitPostEntity", "SaveOldLoadout", function()
+if file.Exists( "tdm/loadout.txt", "DATA" ) then
+    local toverify = util.JSONToTable( file.Read( "tdm/loadout.txt", "DATA" ) )
+    GM.LastSentLoadout = { --A lot of the verification/validity checks come in the form of checking the panel exists to shift scroll panels to
+        [1] = { toverify[1][1] or "cw_ar15", toverify[1][2] },
+        [2] = { toverify[2][1], toverify[2][2] },
+        [3] = toverify[3],
+        [4] = toverify[4],
+        [5] = { toverify[5][1], toverify[5][2] or 0, toverify[5][3] }
+    }
+end
+--end )

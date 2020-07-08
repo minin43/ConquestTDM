@@ -275,6 +275,9 @@ function GM:TeamMenu()
 		end
     end
     
+    GAMEMODE:DrawEventStatuses( self.TeamMain )
+    GAMEMODE:DrawSingleEventStatus( self.TeamMain )
+
     net.Start( "RequestActiveEvents" )
     net.SendToServer() 
 end

@@ -296,7 +296,7 @@ function GM:OpenTitles()
         end )
     end
 
-    --GAMEMODE:DrawEventStatuses( self.TitleMain )
+    GAMEMODE:DrawEventStatuses( self.TitleMain )
 end
 
 net.Receive( "EquipTitleCallback", function()

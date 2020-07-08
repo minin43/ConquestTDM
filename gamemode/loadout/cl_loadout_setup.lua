@@ -1270,7 +1270,12 @@ function primariespanel:RepopulateList()
         throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
         throwaway:Dock( TOP )
         throwaway.Paint = function( panel, w, h )
-            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Unlocked By An Event!", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+            surface.SetFont( "Exo-24-600" )
+            local tw, th = surface.GetTextSize( "Unlocked By An Event!" )
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawLine( w / 2 - (tw / 2) - 4, h / 2 + (th / 2) + 2, w / 2 + (tw / 2) + 4, h / 2 + (th / 2) + 2 )
         end
         for k, v in pairs( GAMEMODE.TempUnlockedPrimaries ) do
             for _, weptable in pairs( v ) do
@@ -1296,6 +1301,14 @@ function primariespanel:SetReferenceModelPanel( panel )
 end
 
 function primariespanel:SelectWeapon( wepclass )
+    if !wepclass then
+        if RetrieveWeaponTable( "cw_ar15" ) then
+            wepclass = "cw_ar15"
+        else
+            wepclass = GAMEMODE.WeaponsList[1][2]
+        end
+    end
+    
     self.selectedweapon = wepclass or "cw_ar15"
     self.weaponinfo = self.weaponinfo or vgui.Create( "WeaponInfo", self )
     self.weaponinfo:SetPos( 0, self:GetTall() / 2 )
@@ -1453,7 +1466,12 @@ function secondariespanel:RepopulateList()
         throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
         throwaway:Dock( TOP )
         throwaway.Paint = function( panel, w, h )
-            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Unlocked By An Event!", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+            surface.SetFont( "Exo-24-600" )
+            local tw, th = surface.GetTextSize( "Unlocked By An Event!" )
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawLine( w / 2 - (tw / 2) - 4, h / 2 + (th / 2) + 2, w / 2 + (tw / 2) + 4, h / 2 + (th / 2) + 2 )
         end
         for k, v in pairs( GAMEMODE.TempUnlockedSecondaries ) do
             for _, weptable in pairs( v ) do
@@ -1529,7 +1547,7 @@ vgui.Register( "SecondariesPanel", secondariespanel, "DPanel" )
 local equipmentbutton = {}--table.Copy( basebutton )
 
 function equipmentbutton:Paint()
-    if self.weapontable.vip then
+    if self.weapontable and self.weapontable.vip then
         surface.SetDrawColor( GAMEMODE.ColorRarities[ 3 ] )
         surface.SetMaterial( GAMEMODE.Icons.Menu.vipIcon )
         surface.DrawTexturedRect( 2, 8, self:GetTall() - 16, self:GetTall() - 16 )
@@ -1630,17 +1648,22 @@ function equipmentpanel:RepopulateList()
         throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
         throwaway:Dock( TOP )
         throwaway.Paint = function( panel, w, h )
-            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Unlocked By An Event!", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            
+            surface.SetFont( "Exo-24-600" )
+            local tw, th = surface.GetTextSize( "Unlocked By An Event!" )
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawLine( w / 2 - (tw / 2) - 4, h / 2 + (th / 2) + 2, w / 2 + (tw / 2) + 4, h / 2 + (th / 2) + 2 )
         end
-        for k, v in pairs( GAMEMODE.TempUnlockedEquipment ) do
-            for _, weptable in pairs( v ) do
-                local button = vgui.Create( "EquipmentButton", self.scrollpanel )
-                button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
-                button:Dock( TOP )
-                button:SetTrueParent( self, k )
-                button:SetWeapon( weptable[2] )
-                self.scrollpanel.buttons[ weptable[2] ] = button
-            end
+        --print("printing TempUnlockedEquipment")
+        for _, weptable in pairs( GAMEMODE.TempUnlockedEquipment ) do
+            --print(k, v, _, weptable, weptable[2])
+            local button = vgui.Create( "EquipmentButton", self.scrollpanel )
+            button:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
+            button:Dock( TOP )
+            button:SetTrueParent( self, k )
+            button:SetWeapon( weptable[2] )
+            self.scrollpanel.buttons[ weptable[2] ] = button
         end
     end
 
@@ -1824,7 +1847,12 @@ function perkspanel:RepopulateList()
         throwaway:SetSize( self.scrollpanel:GetWide(), GAMEMODE.TitleBar )
         throwaway:Dock( TOP )
         throwaway.Paint = function( panel, w, h )
-            draw.SimpleText( "- Unlocked By An Event! -", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+            draw.SimpleText( "Unlocked By An Event!", "Exo-24-600", throwaway:GetWide() / 2, throwaway:GetTall() / 2, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+            surface.SetFont( "Exo-24-600" )
+            local tw, th = surface.GetTextSize( "Unlocked By An Event!" )
+            surface.SetDrawColor( GAMEMODE.TeamColor )
+            surface.DrawLine( w / 2 - (tw / 2) - 4, h / 2 + (th / 2) + 2, w / 2 + (tw / 2) + 4, h / 2 + (th / 2) + 2 )
         end
     end
     for _, perktable in ipairs( GAMEMODE.Perks.locked ) do
@@ -1935,6 +1963,10 @@ net.Receive( "GetUnlockedWeaponsCallback", function()
                 lockedweapons[ #lockedweapons + 1 ] = v
             end
         end
+        print("fullshop debug")
+        --PrintTable( GAMEMODE.UnlockedPrimaries )
+        --PrintTable( GAMEMODE.TempUnlockedPrimaries )
+        PrintTable(GAMEMODE.TempUnlockedEquipment)
     end
 
     hook.Run( "ReceivedUnlockedWeapons" )

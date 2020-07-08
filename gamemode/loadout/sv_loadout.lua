@@ -209,49 +209,57 @@ net.Receive( "SetLoadout", function( len, ply )
     end
 end )
 
-hook.Add( "PlayerInitialSpawn", "SetupPrecacheEnvironment", function( ply )
-    GAMEMODE.RecacheUnlockedTable[ ply ] = {wep = true, skin = true, model = true, perk = true}
-    GAMEMODE.UnlockedMasterTable[ ply ] = {wep = {}, skin = {}, model = {}, perk = {}}
-    GAMEMODE.UnlockedMasterTableClassKey[ ply ] = {wep = {}, skin = {}, model = {}}
-    GAMEMODE.EquippedWeapons[ ply ] = {}
-end )
+function GM:DropWeapon( ply, dropAll )
+    if dropAll then
+        local dropprim = GAMEMODE.EquippedWeapons[ ply ].prim
+        local dropsec = GAMEMODE.EquippedWeapons[ ply ].sec
+        local plyweapons = ply:GetWeapons()
 
-function GM:DropWeapon( ply )
-    if !ply.spawning and ply:Alive() then
-        local todrop = ply:GetActiveWeapon()
-
-        if !todrop or !todrop:IsValid() or isExtra( todrop:GetClass() ) then return end
-        
-        if CustomizableWeaponry and todrop.Base == "cw_base" then
-            ply:ConCommand( "cw_dropweapon" )
-            if todrop.Slot == 0 then
-                GAMEMODE.EquippedWeapons[ ply ].prim = nil
-            elseif todrop.Slot == 1 then
-                GAMEMODE.EquippedWeapons[ ply ].sec = nil
-            end
-        else
-            local toSpawn = ents.Create( todrop:GetClass() )
-            toSpawn:SetClip1( todrop:Clip1() )
-            toSpawn:SetClip2( todrop:Clip2() )
-            ply:StripWeapon( todrop:GetClass() )
-            toSpawn:SetPos( ply:GetShootPos() + ( ply:GetAimVector() * 20 ) )
-            toSpawn:Spawn()
-            toSpawn.rspawn = true
-            timer.Simple( 0.5, function()
-                toSpawn.rspawn = nil
-            end )
-            timer.Simple( 15, function()
-                if toSpawn == nil or !toSpawn:IsValid() or toSpawn:GetOwner() == nil then 
-                    return 
-                end -- fixed by cobalt 1/30/16
-                if toSpawn:GetOwner():IsValid() and toSpawn:GetOwner():IsPlayer() then 
-                else
-                    toSpawn:Remove()
+        if dropprim then
+            CustomizableWeaponry:dropWeapon( ply, plyweapons[1] )
+            GAMEMODE.EquippedWeapons[ ply ].prim = nil
+        end
+        if dropsec then
+            CustomizableWeaponry:dropWeapon( ply, plyweapons[2] )
+            GAMEMODE.EquippedWeapons[ ply ].sec = nil
+        end
+    else
+        if !ply.spawning and ply:Alive() then
+            local todrop = ply:GetActiveWeapon()
+            if !todrop or !todrop:IsValid() or isExtra( todrop:GetClass() ) then return end
+            
+            if CustomizableWeaponry and todrop.Base == "cw_base" then
+                ply:ConCommand( "cw_dropweapon" )
+                if todrop.Slot == 0 then
+                    GAMEMODE.EquippedWeapons[ ply ].prim = nil
+                elseif todrop.Slot == 1 then
+                    GAMEMODE.EquippedWeapons[ ply ].sec = nil
                 end
-            end )
-            local phys = toSpawn:GetPhysicsObject()
-            if phys and IsValid( phys ) and phys ~= NULL then
-                phys:SetVelocity( ply:EyeAngles():Forward() * 300 )
+            else
+                local toSpawn = ents.Create( todrop:GetClass() )
+                toSpawn:SetClip1( todrop:Clip1() )
+                toSpawn:SetClip2( todrop:Clip2() )
+                ply:StripWeapon( todrop:GetClass() )
+                toSpawn:SetPos( ply:GetShootPos() + ( ply:GetAimVector() * 20 ) )
+                toSpawn:Spawn()
+                --//Legacy bits, don't necessarily care to figure out what it's good for
+                toSpawn.rspawn = true
+                timer.Simple( 0.5, function()
+                    toSpawn.rspawn = nil
+                end )
+                timer.Simple( 15, function()
+                    if toSpawn == nil or !toSpawn:IsValid() or toSpawn:GetOwner() == nil then 
+                        return 
+                    end
+                    if toSpawn:GetOwner():IsValid() and toSpawn:GetOwner():IsPlayer() then 
+                    else
+                        toSpawn:Remove()
+                    end
+                end )
+                local phys = toSpawn:GetPhysicsObject()
+                if phys and IsValid( phys ) and phys ~= NULL then
+                    phys:SetVelocity( ply:EyeAngles():Forward() * 300 )
+                end
             end
         end
     end
@@ -262,9 +270,16 @@ net.Receive( "CTDMDropWeapon", function( len, ply )
     GAMEMODE:DropWeapon( ply )
 end )
 
+hook.Add( "PlayerInitialSpawn", "SetupPrecacheEnvironment", function( ply )
+    GAMEMODE.RecacheUnlockedTable[ ply ] = {wep = true, skin = true, model = true, perk = true}
+    GAMEMODE.UnlockedMasterTable[ ply ] = {wep = {}, skin = {}, model = {}, perk = {}}
+    GAMEMODE.UnlockedMasterTableClassKey[ ply ] = {wep = {}, skin = {}, model = {}}
+    GAMEMODE.EquippedWeapons[ ply ] = {}
+end )
+
 --Since the standard CW2 drop function doesn't create a wep ent, but prop_physics or some shit, we have to do this hacky work-around
 hook.Add( "OnEntityCreated", "AlterCW2Pickup", function( wepent )
-    if wep:GetClass() == "cw_dropped_weapon" then
+    if wepent:GetClass() == "cw_dropped_weapon" then
         function wepent:canPickup(activator)
             if !activator:IsPlayer() then return end
             
@@ -344,6 +359,74 @@ hook.Add( "OnEntityCreated", "AlterCW2Pickup", function( wepent )
             self.M203Chamber = wep.M203Chamber
         end
 
+        function wepent:Use(activator, caller)
+            if hook.Call("CW20_PreventCWWeaponPickup", nil, self, activator) then
+                return
+            end
+            
+            local pos = self:GetPos() - activator:GetShootPos()
+            local pickupDotProduct = activator:EyeAngles():Forward():Dot(pos) / pos:Length()
+                
+            if pickupDotProduct < self.pickupDotProduct then
+                return
+            end
+            
+            -- if use key is down we restrict picking the weapon up, because we might be wanting to throw a grenade, and if we throw + pick up the weapon - nothing will happen, because weapons will be switched
+            if CurTime() < self.useDelay then
+                return
+            end
+            
+            local curWep = activator:GetActiveWeapon()
+            
+            -- can't pick up a weapon if we're performing an action of some kind
+            if IsValid(curWep) and curWep.CW20Weapon and curWep.dt.State == CW_ACTION then
+                return
+            end
+            
+            local canGetWeapon, canGetAttachments = self:canPickup(activator)
+            local wep = nil
+            
+            if canGetWeapon then -- give the weapon if possible
+                wep = activator:Give(self:GetWepClass())
+                hook.Call("CW20_PickedUpCW20Weapon", nil, activator, self, wep)
+                wep.disableDropping = true -- we set this variable to true so that the player can not drop the weapon using the cw_dropweapon command until attachments are applied
+            end
+            
+            if canGetAttachments then -- give attachments if possible
+                CustomizableWeaponry.giveAttachments(activator, self.stringAttachmentIDs)
+            end
+            
+            local attachments = self.containedAttachments
+            local magSize = self.magSize
+            local m203Chamber = self.M203Chamber
+            local oldwepclass = wepent:GetWepClass()
+            local oldwepskin = wepent:GetMaterial()
+            
+            if wep then -- if we were given a weapon, load up the attachments on it
+                timer.Simple(0.3, function()
+                    if not IsValid(wep) then
+                        return
+                    end
+                    
+                    wep:SetClip1(0) -- set magsize to 0 before loading attachments, because some of them unload the mag and that way we can cheat ammo (by dropping and picking up again)
+                    
+                    CustomizableWeaponry.preset.load(wep, attachments, "DroppedWeaponPreset") -- the preset system is super flexible and can easily be used for such purposes
+                    
+                    wep:SetClip1(magSize) -- set the mag size only after we've attached everything
+                    wep:setM203Chamber(m203Chamber)
+                    wep.disableDropping = false -- set it to false, now we can drop it
+
+                    ApplyWeaponSkin( activator, oldwepclass, oldwepskin )
+                    
+                    hook.Call("CW20_FinishedPickingUpCW20Weapon", nil, activator, wep)
+                end)
+            end
+            
+            if canGetWeapon or canGetAttachments then
+                self:Remove()
+            end
+        end
+
         --[[local weptable = RetrieveWeaponTable( self:GetClass() )
         if weptable then
             if weptable.slot == 1 then
@@ -399,7 +482,7 @@ hook.Add( "OnEntityCreated", "DeleteCW2Drops", function( wep )
 end)
 
 --Reset backend saved data on player death
-hook.Add( "DoPlayerDeath", "Clear&DropWeapons", function( ply, att, dmginfo ) 
-    GAMEMODE:DropWeapon( ply )
+hook.Add( "PlayerDeath", "Clear&DropWeapons", function( ply, att, dmginfo )
+    GAMEMODE:DropWeapon( ply, 2 )
 	GAMEMODE.EquippedWeapons[ ply ] = {}
 end )

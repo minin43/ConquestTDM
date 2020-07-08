@@ -186,6 +186,8 @@ function GM:OpenShop()
         v.Tab.Paint = function() return true end
         v.Tab.DoClick = function() return true end
     end
+
+    GAMEMODE:DrawEventStatuses( self.ShopMain )
 end
 
 function GM:AttemptBuyWeapon( wepclass )

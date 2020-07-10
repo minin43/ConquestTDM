@@ -1,4 +1,4 @@
-Update 1.20	Out 00/00/2020
+Update 1.20	Out 07/10/2020
 
 New Content
  1. New & Improved Deathscreen
@@ -18,12 +18,14 @@ New Content
 Bugfixes
  1. BigGameHunter is now being tracked
  2. Players should now drop all of their weapons on death
- 3. Dropped weapons now save the weapon skin, and when picked back up, come equipped with their skin
+ 3. ttt_tarnish and ttt_cod4_vacant had the wrong flag locations set
+ 4. dm_runoff had the A and B flag swapped
 
 Quality of Life Improvements
  1. Loadouts now save between maps and re-joins
  2. "Random" mapvote choice will now try to choose a map suitable for the amount of players on the server
  3. Double XP Weekend and Happy Hour info is now displayed across all menus and sub-menus
+ 4. Dropped weapons now save the weapon skin, and when picked back up, come equipped with their skin
 
 Balance Changes
  1. Bleedout's damage-over-time bleed effect has been increased from 20% to 25%

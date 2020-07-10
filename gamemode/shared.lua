@@ -2,7 +2,7 @@ GM.Name = "Conquest Team Deathmatch"
 GM.Author = "Logan, Whuppo, Cobalt"
 GM.Email = "conquesttdm@gmail.com"
 GM.Website = "N/A"
-GM.Version = "Conquest Team Deathmatch V. 1.19"
+GM.Version = "Conquest Team Deathmatch V. 1.20"
 GM.redTeamName = "Red Team"
 GM.blueTeamName = "Blue Team"
 

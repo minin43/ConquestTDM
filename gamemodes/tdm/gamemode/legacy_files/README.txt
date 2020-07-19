@@ -1,0 +1,1 @@
+These are all disabled files, for things I planned on adding and decided against, or things I removed because I didn't like them or they didn't work.

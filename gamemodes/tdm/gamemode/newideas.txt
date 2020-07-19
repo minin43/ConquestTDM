@@ -1,0 +1,15 @@
+Future ideas:
+    - New Modes
+        - Some "advance" mode, like assault in UT2004
+    - New kill events & associated sounds
+        Killing machine -> end the game with the most kills
+        Juggernaut -> 
+        Maniac -> 
+        Warpath -> 
+    - Balancing concerns:
+        - npc_galleria_mess, red side
+        - cs_east_borough, stairs that look into red spawn
+        - rp_limansk blue side spawn fucking SUCKS
+    - Perk ideas
+        - Donasan - shooting friendlies heals them
+    - Add back in PhD Flopper? Since now we have anti-explosive equipment, also can reduce movespeed shortly after using it?
